@@ -1,0 +1,49 @@
+package frc.team5190.robot.drive;
+
+import com.ctre.phoenix.drive.DiffDrive;
+import com.ctre.phoenix.drive.DriveMode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team5190.robot.MotorIds;
+import frc.team5190.robot.OI;
+
+public class DriveTrainSubsystem extends Subsystem {
+
+    public TalonSRX frontLeft;
+    public TalonSRX frontRight;
+    public TalonSRX rearLeft;
+    public TalonSRX rearRight;
+
+    public DiffDrive driveBase;
+
+    public DriveTrainSubsystem() {
+
+        frontLeft = new TalonSRX(MotorIds.INSTANCE.getFRONT_LEFT_VAL());
+        frontRight = new TalonSRX(MotorIds.INSTANCE.getFRONT_RIGHT_VAL());
+        rearLeft = new TalonSRX(MotorIds.INSTANCE.getREAR_LEFT_VAL());
+        rearRight = new TalonSRX(MotorIds.INSTANCE.getREAR_RIGHT_VAL());
+
+        frontLeft.setInverted(true);
+        rearLeft.setInverted(true);
+
+        frontLeft.set(ControlMode.PercentOutput, 0);
+        rearLeft.follow(frontLeft);
+
+        frontRight.set(ControlMode.PercentOutput, 0);
+        rearRight.follow(frontRight);
+
+        driveBase = new DiffDrive(frontLeft, frontRight);
+
+    }
+
+    @Override
+    protected void initDefaultCommand() {
+        this.setDefaultCommand(new DriveCommand());
+    }
+
+    public void testDrive() {
+        driveBase.set(DriveMode.PercentOutput, OI.INSTANCE.getXbox().getY(GenericHID.Hand.kLeft), -OI.INSTANCE.getXbox().getX(GenericHID.Hand.kLeft));
+    }
+}
