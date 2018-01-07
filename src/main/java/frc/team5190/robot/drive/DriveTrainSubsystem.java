@@ -4,7 +4,8 @@ import com.ctre.phoenix.drive.DiffDrive;
 import com.ctre.phoenix.drive.DriveMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.GenericHID;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team5190.robot.Constants;
 import frc.team5190.robot.OI;
@@ -16,6 +17,8 @@ public class DriveTrainSubsystem extends Subsystem {
     public TalonSRX frontRight;
     public TalonSRX rearLeft;
     public TalonSRX rearRight;
+
+    public AHRS navX;
 
     private DiffDrive driveBase;
 
@@ -34,6 +37,8 @@ public class DriveTrainSubsystem extends Subsystem {
         frontRight.set(ControlMode.PercentOutput, 0);
         rearRight.follow(frontRight);
 
+        navX = new AHRS(SPI.Port.kMXP);
+
         driveBase = new DiffDrive(frontLeft, frontRight);
     }
 
@@ -43,6 +48,10 @@ public class DriveTrainSubsystem extends Subsystem {
     }
 
     public void testDrive() {
-        driveBase.set(DriveMode.PercentOutput, OI.INSTANCE.getXbox().getY(GenericHID.Hand.kLeft), -OI.INSTANCE.getXbox().getX(GenericHID.Hand.kLeft));
+        driveBase.set(DriveMode.PercentOutput, OI.INSTANCE.getYLeft(), -OI.INSTANCE.getXLeft());
+    }
+
+    public void turn(double curve) {
+        driveBase.set(DriveMode.PercentOutput, 0, curve);
     }
 }

@@ -186,6 +186,13 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="Prateek">
+      <words>
+        <w>xbox</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/2018Bot.iml" filepath="$PROJECT_DIR$/2018Bot.iml" />
