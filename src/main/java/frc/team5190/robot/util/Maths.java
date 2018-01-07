@@ -1,4 +1,4 @@
-package frc.team5190.robot;
+package frc.team5190.robot.util;
 
 public class Maths {
 

@@ -2,15 +2,17 @@ package frc.team5190.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.team5190.robot.drive.DriveTrainSubsystem;
+import frc.team5190.robot.drive.DTRSubsystem;
 
 public class Robot extends IterativeRobot {
 
-    public static DriveTrainSubsystem driveTrain;
+    public static DTRSubsystem driveTrain;
+    public static OI oi;
 
     @Override
     public void robotInit() {
-        driveTrain = new DriveTrainSubsystem();
+        driveTrain = new DTRSubsystem();
+        oi = new OI();
     }
 
     @Override

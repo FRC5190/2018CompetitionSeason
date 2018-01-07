@@ -26,8 +26,14 @@ public class NavSubsystem extends PIDSubsystem
 
     @Override
     protected double returnPIDInput() {
-        currentAngle = Robot.driveTrain.navX.getAngle();
-        return currentAngle;
+        if (this.current == STAGE.ANGLE) {
+            currentAngle = Robot.driveTrain.navX.getAngle();
+            return currentAngle;
+        }
+        else {
+            // how far you've gone
+            return 0;
+        }
     }
 
     @Override

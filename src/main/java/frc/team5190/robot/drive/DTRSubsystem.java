@@ -8,16 +8,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team5190.robot.Constants;
-import frc.team5190.robot.Maths;
-import frc.team5190.robot.OI;
-
-import javax.naming.ldap.Control;
+import frc.team5190.robot.Robot;
+import frc.team5190.robot.util.Constants;
+import frc.team5190.robot.util.Maths;
 
 @SuppressWarnings("WeakerAccess")
-public class DriveTrainSubsystem extends Subsystem {
+public class DTRSubsystem extends Subsystem {
+
+    // Clockwork vals
 
     public TalonSRX frontLeft;
     public TalonSRX frontRight;
@@ -28,11 +27,11 @@ public class DriveTrainSubsystem extends Subsystem {
 
     private DiffDrive driveBase;
 
-    public DriveTrainSubsystem() {
-        frontLeft   = new TalonSRX(Constants.INSTANCE.getFrontLeftMotorVal());
-        frontRight  = new TalonSRX(Constants.INSTANCE.getFrontRightMotorVal());
-        rearLeft    = new TalonSRX(Constants.INSTANCE.getRearLeftMotorVal());
-        rearRight   = new TalonSRX(Constants.INSTANCE.getRearRightMotorVal());
+    public DTRSubsystem() {
+        frontLeft   = new TalonSRX(Constants.FRONT_LEFT);
+        frontRight  = new TalonSRX(Constants.FRONT_RIGHT);
+        rearLeft    = new TalonSRX(Constants.REAR_LEFT);
+        rearRight   = new TalonSRX(Constants.REAR_RIGHT);
 
         frontLeft.set(ControlMode.Velocity, 0);
         frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
@@ -48,25 +47,22 @@ public class DriveTrainSubsystem extends Subsystem {
         frontRight.setSensorPhase(true);
 
         frontRight.config_kP(0, 0.6, 0);
-        frontLeft.config_kF(0, Maths.calculateFGain(1, 18.3f, 2, 1440), 0);
+        frontRight.config_kF(0, Maths.calculateFGain(1, 18.3f, 2, 1440), 0);
 
         rearRight.follow(frontRight);
 
         navX = new AHRS(SPI.Port.kMXP);
 
         driveBase = new DiffDrive(frontLeft, frontRight);
-
-//        JoystickButton aButton = new JoystickButton(OI.INSTANCE.getXbox(), 1);
-//        aButton.whenPressed(new FootCommand());
     }
 
     @Override
     protected void initDefaultCommand() {
-        this.setDefaultCommand(new DriveCommand());
+        this.setDefaultCommand(new DTRCommand());
     }
 
     public void testDrive() {
-        falconTankDrive(OI.INSTANCE.getXbox().getY(GenericHID.Hand.kRight), -OI.INSTANCE.getXbox().getY(GenericHID.Hand.kLeft));
+        falconTankDrive(-Robot.oi.getXbox().getY(GenericHID.Hand.kLeft), Robot.oi.getXbox().getY(GenericHID.Hand.kRight));
     }
 
     public void turn(double curve) {
