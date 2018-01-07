@@ -6,11 +6,9 @@ import edu.wpi.first.wpilibj.XboxController
 object OI {
     val xbox = XboxController(0)
 
-    fun getYLeft(): Double {
-        return xbox.getY(GenericHID.Hand.kLeft)
-    }
+    val yLeft: Double
+        get() = xbox.getY(GenericHID.Hand.kLeft)
 
-    fun getXLeft(): Double {
-        return xbox.getX(GenericHID.Hand.kLeft)
-    }
+    val xLeft: Double
+        get() = xbox.getX(GenericHID.Hand.kLeft)
 }

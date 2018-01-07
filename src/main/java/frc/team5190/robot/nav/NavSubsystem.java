@@ -3,7 +3,8 @@ package frc.team5190.robot.nav;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.team5190.robot.Robot;
 
-public class NavigationSubsystemPrateek extends PIDSubsystem
+@SuppressWarnings("ALL")
+public class NavSubsystem extends PIDSubsystem
 {
     private int currentX;
     private int currentY;
@@ -11,9 +12,15 @@ public class NavigationSubsystemPrateek extends PIDSubsystem
     private double currentAngle;
     private double targetAngle;
 
-    public boolean isAngleCalibrated = false;
+    private double distance;
 
-    public NavigationSubsystemPrateek(double p, double i, double d) {
+    private STAGE current;
+
+    private enum STAGE {
+        ANGLE, STRAIGHT;
+    }
+
+    public NavSubsystem(double p, double i, double d) {
         super(p, i, d);
     }
 
@@ -25,11 +32,16 @@ public class NavigationSubsystemPrateek extends PIDSubsystem
 
     @Override
     protected void usePIDOutput(double output) {
-        if (Math.abs(currentAngle - targetAngle) > 0.2) {
-            Robot.driveTrain.turn(output);
+        if (this.current == STAGE.ANGLE) {
+            if (Math.abs(targetAngle - currentAngle) > 0.2) {
+                Robot.driveTrain.turn(output);
+            }
+            else {
+                current = STAGE.STRAIGHT;
+            }
         }
         else {
-            isAngleCalibrated = true;
+
         }
     }
 
@@ -39,12 +51,12 @@ public class NavigationSubsystemPrateek extends PIDSubsystem
     }
 
     private void goToCoordinates(int targetX, int targetY) {
-        double hyp   = Math.sqrt(Math.pow((targetX - currentX), 2) + Math.pow((targetY - currentY), 2));
-        double angle = Math.acos((targetX - currentX) / hyp);
+        distance     = Math.hypot((targetX - currentX), (targetY - currentY));
+        double angle = Math.acos((targetX - currentX) / distance);
 
         this.targetAngle = currentAngle + angle;
         this.setSetpoint(targetAngle);
         this.setAbsoluteTolerance(0.2);
-
+        this.current = STAGE.ANGLE;
     }
 }

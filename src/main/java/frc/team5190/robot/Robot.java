@@ -6,10 +6,11 @@ import frc.team5190.robot.drive.DriveTrainSubsystem;
 
 public class Robot extends IterativeRobot {
 
-    public static DriveTrainSubsystem driveTrain = new DriveTrainSubsystem();
+    public static DriveTrainSubsystem driveTrain;
 
     @Override
     public void robotInit() {
+        driveTrain = new DriveTrainSubsystem();
     }
 
     @Override

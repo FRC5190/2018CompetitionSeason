@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5643d40-4c4c-4f88-8086-deb4059309fb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavigationSubsystemPrateek.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/2018Bot.ipr" afterPath="$PROJECT_DIR$/2018Bot.ipr" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Maths.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/Hello.java" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavigationSubsystemPrateek.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavSubsystem.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/2018Bot.iws" afterPath="$PROJECT_DIR$/2018Bot.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt" />
     </list>
@@ -99,23 +101,23 @@
       <file leaf-file-name="DriveTrainSubsystem.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1368">
-              <caret line="57" column="0" lean-forward="true" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+            <state relative-caret-position="1086">
+              <caret line="88" column="52" lean-forward="true" selection-start-line="88" selection-start-column="52" selection-end-line="88" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#404#437#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NavigationSubsystemPrateek.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavigationSubsystemPrateek.java">
+      <file leaf-file-name="NavSubsystem.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavSubsystem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1152">
-              <caret line="36" column="41" lean-forward="true" selection-start-line="36" selection-start-column="41" selection-end-line="36" selection-end-column="41" />
+            <state relative-caret-position="888">
+              <caret line="37" column="13" lean-forward="true" selection-start-line="37" selection-start-column="13" selection-end-line="37" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#118#142#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -670,7 +672,6 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/test.kt" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot/jV.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/OI.java" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/C.java" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/C.kt" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Constants.java" />
@@ -680,12 +681,17 @@
         <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveCommand.java" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/RobotMap.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Constants.kt" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/Hello.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavigationSubsystem.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Maths.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/OI.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/OIJ.java" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/FootCommand.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavigationSubsystemPrateek.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavSubsystem.java" />
       </list>
     </option>
   </component>
@@ -721,10 +727,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
-      <pane id="Scope" />
-      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -795,6 +799,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -821,7 +827,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.Build Project">
+  <component name="RunManager" selected="Gradle.Deploy to Robot">
     <configuration name="Build Project" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -962,7 +968,14 @@
       <option name="project" value="LOCAL" />
       <updated>1515288747349</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="added nav system">
+      <created>1515337222462</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1515337222462</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TodoView">
@@ -987,10 +1000,11 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292761" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292761" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2245509" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292761" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15157185" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1005,7 +1019,6 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -1015,7 +1028,8 @@
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
     <MESSAGE value="test git" />
     <MESSAGE value="fixed var names" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed var names" />
+    <MESSAGE value="added nav system" />
+    <option name="LAST_COMMIT_MESSAGE" value="added nav system" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1023,37 +1037,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding>
-            <element signature="e#28#111#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="47" lean-forward="false" selection-start-line="7" selection-start-column="47" selection-end-line="7" selection-end-column="47" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#404#437#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Constants.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -1074,9 +1057,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="697">
           <caret line="44" column="34" lean-forward="false" selection-start-line="44" selection-start-column="34" selection-end-line="44" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1096,7 +1077,6 @@
           <caret line="39" column="39" lean-forward="true" selection-start-line="39" selection-start-column="39" selection-end-line="39" selection-end-column="39" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#404#437#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1114,7 +1094,7 @@
         <state relative-caret-position="119">
           <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1131,9 +1111,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="731">
           <caret line="43" column="34" lean-forward="false" selection-start-line="43" selection-start-column="34" selection-end-line="43" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1150,7 +1128,7 @@
         <state relative-caret-position="68">
           <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1161,7 +1139,6 @@
           <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="18" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#404#437#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1170,9 +1147,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="20" lean-forward="false" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1196,15 +1171,12 @@
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/CANTalon.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.1.1/beb4907631b352f07723679c3e90632c0533e725/wpilibj-java-2018.1.1-sources.jar!/edu/wpi/first/wpilibj/RobotDrive.java" />
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/can/BaseMotorController.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot/jV.java" />
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/IMotorController.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/IMotorControllerEnhanced.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/can/TalonSRX.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.1.1/beb4907631b352f07723679c3e90632c0533e725/wpilibj-java-2018.1.1-sources.jar!/edu/wpi/first/wpilibj/SpeedController.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.1.1/beb4907631b352f07723679c3e90632c0533e725/wpilibj-java-2018.1.1-sources.jar!/edu/wpi/first/wpilibj/drive/DifferentialDrive.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/mechanical/Gearbox.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/OI.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/drive/DiffDrive.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/drive/DriveMode.java" />
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/C.java" />
@@ -1219,45 +1191,17 @@
         <state relative-caret-position="216">
           <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/RobotMap.kt" />
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding>
-            <element signature="e#28#111#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Constants.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="2" column="7" lean-forward="false" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/Hello.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
           <caret line="2" column="0" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="8" column="77" lean-forward="false" selection-start-line="8" selection-start-column="77" selection-end-line="8" selection-end-column="77" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1273,27 +1217,91 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="507">
           <caret line="968" column="18" lean-forward="false" selection-start-line="968" selection-start-column="18" selection-end-line="968" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/can/MotControllerJNI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="675">
+          <caret line="227" column="7" lean-forward="false" selection-start-line="227" selection-start-column="5" selection-end-line="227" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/can/BaseMotorController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="24">
+          <caret line="369" column="0" lean-forward="true" selection-start-line="369" selection-start-column="0" selection-end-line="369" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/IMotorController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="507">
+          <caret line="59" column="21" lean-forward="false" selection-start-line="59" selection-start-column="21" selection-end-line="59" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/OIJ.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/FootCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Constants.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <element signature="e#28#111#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/Maths.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="27" column="13" lean-forward="false" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1368">
-          <caret line="57" column="0" lean-forward="true" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+        <state relative-caret-position="1086">
+          <caret line="88" column="52" lean-forward="true" selection-start-line="88" selection-start-column="52" selection-end-line="88" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#404#437#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavigationSubsystemPrateek.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavSubsystem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1152">
-          <caret line="36" column="41" lean-forward="true" selection-start-line="36" selection-start-column="41" selection-end-line="36" selection-end-column="41" />
+        <state relative-caret-position="888">
+          <caret line="37" column="13" lean-forward="true" selection-start-line="37" selection-start-column="13" selection-end-line="37" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#118#142#0" expanded="true" />
           </folding>
         </state>
       </provider>
