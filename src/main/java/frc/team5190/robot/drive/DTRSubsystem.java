@@ -70,8 +70,7 @@ public class DTRSubsystem extends Subsystem {
     }
 
 
-    public void falconTankDrive(double leftValue, double rightValue)
-    {
+    public void falconTankDrive(double leftValue, double rightValue) {
         if (leftValue >= 0.0) {
             leftValue = leftValue * leftValue;
         }

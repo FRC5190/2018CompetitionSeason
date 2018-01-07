@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5643d40-4c4c-4f88-8086-deb4059309fb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/OI.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/util/Constants.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Constants.kt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Maths.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/util/Maths.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveCommand.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DTRCommand.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DriveTrainSubsystem.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DTRSubsystem.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/2018Bot.iws" afterPath="$PROJECT_DIR$/2018Bot.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/Robot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavSubsystem.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NavSubsystem.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DTRSubsystem.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DTRSubsystem.java" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -104,8 +96,8 @@
       <file leaf-file-name="DTRSubsystem.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DTRSubsystem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="18" column="21" lean-forward="false" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+            <state relative-caret-position="885">
+              <caret line="72" column="69" lean-forward="false" selection-start-line="72" selection-start-column="69" selection-end-line="72" selection-end-column="69" />
               <folding />
             </state>
           </provider>
@@ -954,7 +946,14 @@
       <option name="project" value="LOCAL" />
       <updated>1515349547790</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Code cleanup">
+      <created>1515354530027</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1515354530027</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1009,7 +1008,8 @@
     <MESSAGE value="fixed var names" />
     <MESSAGE value="added nav system" />
     <MESSAGE value="worked on nav" />
-    <option name="LAST_COMMIT_MESSAGE" value="worked on nav" />
+    <MESSAGE value="Code cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code cleanup" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1273,8 +1273,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/drive/DTRSubsystem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="18" column="21" lean-forward="false" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+        <state relative-caret-position="885">
+          <caret line="72" column="69" lean-forward="false" selection-start-line="72" selection-start-column="69" selection-end-line="72" selection-end-column="69" />
           <folding />
         </state>
       </provider>
