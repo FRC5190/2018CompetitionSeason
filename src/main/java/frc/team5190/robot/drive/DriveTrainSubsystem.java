@@ -6,9 +6,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team5190.robot.MotorIds;
+import frc.team5190.robot.Constants;
 import frc.team5190.robot.OI;
 
+@SuppressWarnings("WeakerAccess")
 public class DriveTrainSubsystem extends Subsystem {
 
     public TalonSRX frontLeft;
@@ -16,14 +17,13 @@ public class DriveTrainSubsystem extends Subsystem {
     public TalonSRX rearLeft;
     public TalonSRX rearRight;
 
-    public DiffDrive driveBase;
+    private DiffDrive driveBase;
 
     public DriveTrainSubsystem() {
-
-        frontLeft = new TalonSRX(MotorIds.INSTANCE.getFRONT_LEFT_VAL());
-        frontRight = new TalonSRX(MotorIds.INSTANCE.getFRONT_RIGHT_VAL());
-        rearLeft = new TalonSRX(MotorIds.INSTANCE.getREAR_LEFT_VAL());
-        rearRight = new TalonSRX(MotorIds.INSTANCE.getREAR_RIGHT_VAL());
+        frontLeft   = new TalonSRX(Constants.INSTANCE.getFrontLeftMotorVal());
+        frontRight  = new TalonSRX(Constants.INSTANCE.getFrontRightMotorVal());
+        rearLeft    = new TalonSRX(Constants.INSTANCE.getRearLeftMotorVal());
+        rearRight   = new TalonSRX(Constants.INSTANCE.getRearRightMotorVal());
 
         frontLeft.setInverted(true);
         rearLeft.setInverted(true);
@@ -35,7 +35,6 @@ public class DriveTrainSubsystem extends Subsystem {
         rearRight.follow(frontRight);
 
         driveBase = new DiffDrive(frontLeft, frontRight);
-
     }
 
     @Override
