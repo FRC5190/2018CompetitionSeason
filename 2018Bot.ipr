@@ -65,6 +65,10 @@
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
   </component>
+  <component name="Kotlin2JsCompilerArguments">
+    <option name="sourceMapEmbedSources" />
+    <option name="sourceMapPrefix" />
+  </component>
   <component name="Palette2">
     <group name="Swing">
       <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
@@ -189,6 +193,7 @@
   <component name="ProjectDictionaryState">
     <dictionary name="Prateek">
       <words>
+        <w>waypoints</w>
         <w>xbox</w>
       </words>
     </dictionary>
@@ -210,6 +215,13 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="libraryTable">
+    <library name="Gradle: :Pathfinder-Java:">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/Pathfinder-Java.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="Gradle: edu.wpi.first.cscore:cscore-java:1.1.0">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.1.0/89fb12244cef59046d8b23ad332651d3b2503e96/cscore-java-1.1.0.jar!/" />

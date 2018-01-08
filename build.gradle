@@ -26,6 +26,9 @@ deploy {
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
 }
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
 // and NavX.
@@ -35,6 +38,7 @@ dependencies {
     compile navx()
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile name: 'Pathfinder-Java'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

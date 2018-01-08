@@ -14,7 +14,8 @@ import frc.team5190.robot.util.Constants;
 import frc.team5190.robot.util.Maths;
 
 @SuppressWarnings("WeakerAccess")
-public class DTRSubsystem extends Subsystem {
+public class DTRSubsystem extends Subsystem
+{
 
     // Clockwork vals
 
@@ -27,11 +28,12 @@ public class DTRSubsystem extends Subsystem {
 
     private DiffDrive driveBase;
 
-    public DTRSubsystem() {
-        frontLeft   = new TalonSRX(Constants.FRONT_LEFT);
-        frontRight  = new TalonSRX(Constants.FRONT_RIGHT);
-        rearLeft    = new TalonSRX(Constants.REAR_LEFT);
-        rearRight   = new TalonSRX(Constants.REAR_RIGHT);
+    public DTRSubsystem()
+    {
+        frontLeft = new TalonSRX(Constants.FRONT_LEFT);
+        frontRight = new TalonSRX(Constants.FRONT_RIGHT);
+        rearLeft = new TalonSRX(Constants.REAR_LEFT);
+        rearRight = new TalonSRX(Constants.REAR_RIGHT);
 
         frontLeft.set(ControlMode.Velocity, 0);
         frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
@@ -57,38 +59,43 @@ public class DTRSubsystem extends Subsystem {
     }
 
     @Override
-    protected void initDefaultCommand() {
+    protected void initDefaultCommand()
+    {
         this.setDefaultCommand(new DTRCommand());
     }
 
-    public void testDrive() {
-        falconTankDrive(-Robot.oi.getXbox().getY(GenericHID.Hand.kLeft), Robot.oi.getXbox().getY(GenericHID.Hand.kRight));
-    }
-
-    public void turn(double curve) {
-        driveBase.set(DriveMode.PercentOutput, 0, curve);
+    public void testDrive()
+    {
+        tankDrive(-Robot.oi.getXbox().getY(GenericHID.Hand.kLeft), Robot.oi.getXbox().getY(GenericHID.Hand.kRight), ControlMode.Velocity);
     }
 
 
-    public void falconTankDrive(double leftValue, double rightValue) {
-        if (leftValue >= 0.0) {
+    public void tankDrive(double leftValue, double rightValue, ControlMode mode)
+    {
+        if (leftValue >= 0.0)
+        {
             leftValue = leftValue * leftValue;
         }
-        else {
+        else
+        {
             leftValue = -(leftValue * leftValue);
         }
-        if (rightValue >= 0.0) {
+        if (rightValue >= 0.0)
+        {
             rightValue = rightValue * rightValue;
         }
-        else {
+        else
+        {
             rightValue = -(rightValue * rightValue);
         }
 
-        leftValue *= 1049;
-        rightValue *= 1049;
+        if (mode == ControlMode.Velocity)
+        {
+            leftValue *= 1049;
+            rightValue *= 1049;
+        }
 
-        frontLeft.set(ControlMode.Velocity, leftValue);
-        frontRight.set(ControlMode.Velocity, rightValue);
-
+        frontLeft.set(mode, leftValue);
+        frontRight.set(mode, rightValue);
     }
 }
