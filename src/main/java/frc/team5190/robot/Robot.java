@@ -8,16 +8,13 @@ import frc.team5190.robot.navigation.NAVSubsystem;
 public class Robot extends IterativeRobot
 {
 
-    public static DTRSubsystem driveTrain;
-    public static NAVSubsystem navigation;
-    public static OI oi;
+    public static DTRSubsystem driveTrain = new DTRSubsystem();
+    public static NAVSubsystem navigation = new NAVSubsystem();
+    public static XD oi = new XD();
 
     @Override
     public void robotInit()
     {
-        driveTrain = new DTRSubsystem();
-        navigation = new NAVSubsystem();
-        oi = new OI();
     }
 
     @Override

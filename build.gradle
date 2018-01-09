@@ -4,6 +4,7 @@ plugins {
     id "eclipse"
     id "idea"
     id "jaci.openrio.gradle.GradleRIO" version "2018.01.06a"
+    id "jaci.gradle.EmbeddedTools" version "2018.01.06b" apply false
 }
 
 def TEAM = 5190
@@ -26,7 +27,7 @@ deploy {
 
 repositories {
     mavenCentral()
-    flatDir {
+   flatDir {
         dirs 'libs'
     }
 }
