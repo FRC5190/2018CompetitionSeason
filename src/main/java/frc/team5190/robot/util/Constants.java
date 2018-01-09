@@ -19,4 +19,8 @@ public class Constants
     public static final int TICKS_PER_ROTATION = 1440;
     public static final int WHEEL_RADIUS       = 2;
 
+    // Velocities
+    public static final double HIGH_GEAR_MAX = 18.3;
+    public static final double LOW_GEAR_MAX  = 5;
+
 }

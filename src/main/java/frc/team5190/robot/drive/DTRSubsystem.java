@@ -1,7 +1,5 @@
 package frc.team5190.robot.drive;
 
-import com.ctre.phoenix.drive.DiffDrive;
-import com.ctre.phoenix.drive.DriveMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -11,13 +9,9 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team5190.robot.Robot;
 import frc.team5190.robot.util.Constants;
-import frc.team5190.robot.util.Maths;
 
 @SuppressWarnings("WeakerAccess")
-public class DTRSubsystem extends Subsystem
-{
-
-    // Clockwork vals
+public class DTRSubsystem extends Subsystem {
 
     public TalonSRX frontLeft;
     public TalonSRX frontRight;
@@ -26,71 +20,43 @@ public class DTRSubsystem extends Subsystem
 
     public AHRS navX;
 
-    private DiffDrive driveBase;
-
-    public DTRSubsystem()
-    {
+    public DTRSubsystem() {
         frontLeft = new TalonSRX(Constants.FRONT_LEFT);
         frontRight = new TalonSRX(Constants.FRONT_RIGHT);
         rearLeft = new TalonSRX(Constants.REAR_LEFT);
         rearRight = new TalonSRX(Constants.REAR_RIGHT);
 
-        frontLeft.set(ControlMode.Velocity, 0);
-        frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        frontLeft.setSensorPhase(true);
-
-        frontLeft.config_kP(0, 0.6, 0);
-        frontLeft.config_kF(0, Maths.calculateFGain(1, 18.3f, 2, 1440), 0);
+        DTRHelper.configurePIDF(frontLeft, 0.6, 0, 0, 1, Constants.HIGH_GEAR_MAX, Constants.WHEEL_RADIUS, Constants.TICKS_PER_ROTATION, FeedbackDevice.QuadEncoder);
+        DTRHelper.configurePIDF(frontRight, 0.6, 0, 0, 1, Constants.HIGH_GEAR_MAX, Constants.WHEEL_RADIUS, Constants.TICKS_PER_ROTATION, FeedbackDevice.QuadEncoder);
 
         rearLeft.follow(frontLeft);
-
-        frontRight.set(ControlMode.Velocity, 0);
-        frontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        frontRight.setSensorPhase(true);
-
-        frontRight.config_kP(0, 0.6, 0);
-        frontRight.config_kF(0, Maths.calculateFGain(1, 18.3f, 2, 1440), 0);
-
         rearRight.follow(frontRight);
 
         navX = new AHRS(SPI.Port.kMXP);
-
-        driveBase = new DiffDrive(frontLeft, frontRight);
     }
 
     @Override
-    protected void initDefaultCommand()
-    {
+    protected void initDefaultCommand() {
         this.setDefaultCommand(new DTRCommand());
     }
 
-    public void testDrive()
-    {
+    public void xboxDrive() {
         tankDrive(-Robot.oi.getXbox().getY(GenericHID.Hand.kLeft), Robot.oi.getXbox().getY(GenericHID.Hand.kRight), ControlMode.Velocity);
     }
 
-
-    public void tankDrive(double leftValue, double rightValue, ControlMode mode)
-    {
-        if (leftValue >= 0.0)
-        {
+    public void tankDrive(double leftValue, double rightValue, ControlMode mode) {
+        if (leftValue >= 0.0) {
             leftValue = leftValue * leftValue;
-        }
-        else
-        {
+        } else {
             leftValue = -(leftValue * leftValue);
         }
-        if (rightValue >= 0.0)
-        {
+        if (rightValue >= 0.0) {
             rightValue = rightValue * rightValue;
-        }
-        else
-        {
+        } else {
             rightValue = -(rightValue * rightValue);
         }
 
-        if (mode == ControlMode.Velocity)
-        {
+        if (mode == ControlMode.Velocity) {
             leftValue *= 1049;
             rightValue *= 1049;
         }
@@ -101,12 +67,9 @@ public class DTRSubsystem extends Subsystem
         frontRight.set(mode, rightValue);
     }
 
-    public void reset()
-    {
+    public void reset() {
         navX.reset();
         navX.setAngleAdjustment(90);
         tankDrive(0, 0, ControlMode.PercentOutput);
     }
-
-
 }

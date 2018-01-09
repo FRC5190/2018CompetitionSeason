@@ -69,6 +69,9 @@
     <option name="sourceMapEmbedSources" />
     <option name="sourceMapPrefix" />
   </component>
+  <component name="Kotlin2JvmCompilerArguments">
+    <option name="jvmTarget" value="1.8" />
+  </component>
   <component name="Palette2">
     <group name="Swing">
       <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
@@ -189,6 +192,27 @@
         <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
       </item>
     </group>
+  </component>
+  <component name="ProjectCodeStyleSettingsManager">
+    <option name="PER_PROJECT_SETTINGS">
+      <value>
+        <codeStyleSettings language="JAVA">
+          <option name="BRACE_STYLE" value="2" />
+          <option name="CLASS_BRACE_STYLE" value="2" />
+          <option name="METHOD_BRACE_STYLE" value="2" />
+          <option name="LAMBDA_BRACE_STYLE" value="2" />
+          <option name="ELSE_ON_NEW_LINE" value="true" />
+          <option name="IF_BRACE_FORCE" value="3" />
+          <option name="DOWHILE_BRACE_FORCE" value="3" />
+          <option name="WHILE_BRACE_FORCE" value="3" />
+          <option name="FOR_BRACE_FORCE" value="3" />
+          <indentOptions>
+            <option name="SMART_TABS" value="true" />
+          </indentOptions>
+        </codeStyleSettings>
+      </value>
+    </option>
+    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default" />
   </component>
   <component name="ProjectDictionaryState">
     <dictionary name="Prateek">
@@ -319,6 +343,21 @@
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.opencv/opencv-java/3.2.0/da5215ba2c023701a644802a1fcd93749061f90d/opencv-java-3.2.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="KotlinJavaRuntime">
+      <CLASSES>
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib.jar!/" />
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-reflect.jar!/" />
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-test.jar!/" />
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk7.jar!/" />
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk8.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-sources.jar!/" />
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk7-sources.jar!/" />
+        <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-jdk8-sources.jar!/" />
       </SOURCES>
     </library>
   </component>

@@ -5,11 +5,11 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team5190.robot.navigation.NAVCommand;
 
 @SuppressWarnings("unused")
-public class XD
+public class OI
 {
     private XboxController xbox = new XboxController(0);
 
-    public XD()
+    public OI()
     {
         JoystickButton buttonA = new JoystickButton(xbox, 1);
         JoystickButton buttonX = new JoystickButton(xbox, 3);

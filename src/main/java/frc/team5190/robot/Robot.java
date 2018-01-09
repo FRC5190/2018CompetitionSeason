@@ -10,7 +10,7 @@ public class Robot extends IterativeRobot
 
     public static DTRSubsystem driveTrain = new DTRSubsystem();
     public static NAVSubsystem navigation = new NAVSubsystem();
-    public static XD oi = new XD();
+    public static OI oi = new OI();
 
     @Override
     public void robotInit()
