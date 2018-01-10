@@ -11,7 +11,7 @@ public class DriveCommand extends Command {
 
     @Override
     protected void execute() {
-        Robot.driveTrain.testDrive();
+        Robot.driveTrain.drive();
     }
 
     @Override
