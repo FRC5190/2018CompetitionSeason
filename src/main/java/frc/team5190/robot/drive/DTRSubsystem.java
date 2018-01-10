@@ -61,8 +61,6 @@ public class DTRSubsystem extends Subsystem {
             rightValue *= 1049;
         }
 
-        System.out.println("LEFT: " + leftValue);
-
         frontLeft.set(mode, leftValue);
         frontRight.set(mode, rightValue);
     }

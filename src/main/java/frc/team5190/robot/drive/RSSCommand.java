@@ -9,7 +9,6 @@ public class RSSCommand extends Command
     public RSSCommand()
     {
         requires(Robot.driveTrain);
-        requires(Robot.navigation);
     }
 
     @Override

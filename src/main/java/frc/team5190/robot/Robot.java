@@ -1,65 +1,59 @@
 package frc.team5190.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team5190.robot.drive.DTRSubsystem;
-import frc.team5190.robot.navigation.NAVSubsystem;
+import frc.team5190.robot.navigation.NAVHelper;
 
-public class Robot extends IterativeRobot
-{
+public class Robot extends IterativeRobot {
 
     public static DTRSubsystem driveTrain = new DTRSubsystem();
-    public static NAVSubsystem navigation = new NAVSubsystem();
     public static OI oi = new OI();
 
     @Override
-    public void robotInit()
-    {
+    public void robotInit() {
+        NAVHelper.AutoMode autonomousMode = NAVHelper.AutoMode.CENTER;
+
+        try {
+            NAVHelper.configPointsFromCSV(autonomousMode);
+        } catch (Exception e) {
+            System.out.println("Auto init failed.");
+            // TODO implement backup
+        }
     }
 
     @Override
-    public void disabledInit()
-    {
+    public void disabledInit() {
     }
 
     @Override
-    public void autonomousInit()
-    {
+    public void autonomousInit() {
     }
 
     @Override
-    public void teleopInit()
-    {
+    public void teleopInit() {
     }
 
     @Override
-    public void testInit()
-    {
+    public void testInit() {
     }
 
     @Override
-    public void robotPeriodic()
-    {
+    public void robotPeriodic() {
     }
 
     @Override
-    public void disabledPeriodic()
-    {
+    public void disabledPeriodic() {
     }
 
     @Override
-    public void autonomousPeriodic()
-    {
+    public void autonomousPeriodic() {
     }
 
     @Override
-    public void teleopPeriodic()
-    {
-        Scheduler.getInstance().run();
+    public void teleopPeriodic() {
     }
 
     @Override
-    public void testPeriodic()
-    {
+    public void testPeriodic() {
     }
 }
