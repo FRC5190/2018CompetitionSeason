@@ -1,4 +1,4 @@
-package frc.team5190.robot
+package frc.team5190.robot.sensors
 
 import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.I2C
