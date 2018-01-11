@@ -1,11 +1,8 @@
 package frc.team5190.robot.drive
 
-import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team5190.robot.MainXbox
-import frc.team5190.robot.MotorIds
+import frc.team5190.robot.*
 import frc.team5190.robot.drive.commands.TeleDriveCommand
-import frc.team5190.robot.talonListOf
 
 object DriveSubsystem : Subsystem() {
 
@@ -28,8 +25,8 @@ object DriveSubsystem : Subsystem() {
 
     fun drive() {
         when (controlMode) {
-            DriveMode.TANK -> falconDrive.tankDrive(MainXbox.getY(GenericHID.Hand.kLeft), MainXbox.getY(GenericHID.Hand.kRight))
-            DriveMode.CURVE -> falconDrive.curvatureDrive(MainXbox.getY(GenericHID.Hand.kLeft), MainXbox.getX(GenericHID.Hand.kLeft), MainXbox.aButton)
+            DriveMode.TANK -> falconDrive.tankDrive(MainXbox.leftY(), MainXbox.rightY())
+            DriveMode.CURVE -> falconDrive.curvatureDrive(MainXbox.leftY(), MainXbox.leftX(), MainXbox.aButton)
         }
         when {
             MainXbox.backButtonPressed -> DriveMode.TANK

@@ -1,3 +1,7 @@
+import jaci.openrio.gradle.GradleRIOPlugin
+import jaci.openrio.gradle.frc.FRCJavaArtifact
+import jaci.openrio.gradle.frc.RoboRIO
+
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.10"
     id "java"
@@ -13,12 +17,12 @@ def ROBOT_CLASS = "frc.team5190.robot.Robot"
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
     targets {
-        target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
+        target("roborio", RoboRIO) {
             team = TEAM
         }
     }
     artifacts {
-        artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+        artifact('frcJava', FRCJavaArtifact) {
             targets << "roborio"
         }
     }
@@ -36,6 +40,8 @@ dependencies {
     compile openrio.powerup.matchData()
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    compile project(':AutoPath')
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
@@ -43,7 +49,7 @@ dependencies {
 // knows where to look for our Robot Class.
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
+    manifest GradleRIOPlugin.javaManifest(ROBOT_CLASS)
 }
 
 task wrapper(type: Wrapper) {
