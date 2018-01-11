@@ -11,6 +11,7 @@ class NAVHelper {
        private val leftPath = "C:\\Users\\prate\\Downloads\\testpath_left.csv"
        private val rightPath = "C:\\Users\\prate\\Downloads\\testpath_right.csv"
 
+
        fun getTrajectory(mode : AutoMode) {
            when (mode) {
                AutoMode.LEFT -> {

@@ -239,13 +239,6 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="libraryTable">
-    <library name="Gradle: :Pathfinder-Java:">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/libs/Pathfinder-Java.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
     <library name="Gradle: edu.wpi.first.cscore:cscore-java:1.1.0">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.1.0/89fb12244cef59046d8b23ad332651d3b2503e96/cscore-java-1.1.0.jar!/" />
@@ -282,6 +275,15 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpiutil/wpiutil-java/3.0.0/950917d431d417eea7f1f90cba3d144ede38814b/wpiutil-java-3.0.0-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Gradle: jaci.pathfinder:Pathfinder-Java:1.8">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/jaci.pathfinder/Pathfinder-Java/1.8/c37dcf790766dd0c023cc00c57bb2e2e4e58f487/Pathfinder-Java-1.8.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/jaci.pathfinder/Pathfinder-Java/1.8/f99c341d8a52f2445060989aef1af8ab7bb458ed/Pathfinder-Java-1.8-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Gradle: openrio.mirror.third.ctre:CTRE-phoenix-java:5.1.2.1">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/420d7e83c54d4a19446355e6f544c2a92e18a65d/CTRE-phoenix-java-5.1.2.1.jar!/" />
@@ -298,6 +300,15 @@
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.kauailabs/navx-java/3.0.342/35a06a0b5be816d2e88139e1a3529148fab3a675/navx-java-3.0.342-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: openrio.powerup:MatchData:2018.01.07">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.powerup/MatchData/2018.01.07/30351a05ab4661f0ee307e782747fe4ba8bfe866/MatchData-2018.01.07.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.powerup/MatchData/2018.01.07/5621fbfada81352fb32981607a0ae4310163e9e9/MatchData-2018.01.07-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.10">

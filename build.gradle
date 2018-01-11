@@ -3,7 +3,7 @@ plugins {
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.07"
+    id "jaci.openrio.gradle.GradleRIO" version "2018.01.11"
 }
 
 def TEAM = 5190
@@ -26,9 +26,6 @@ deploy {
 
 repositories {
     mavenCentral()
-   flatDir {
-        dirs 'libs'
-    }
 }
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
 // and NavX.
@@ -36,9 +33,10 @@ dependencies {
     compile wpilib()
     compile ctre()
     compile navx()
+    compile openrio.powerup.matchData()
+    compile pathfinder()
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile name: 'Pathfinder-Java'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
