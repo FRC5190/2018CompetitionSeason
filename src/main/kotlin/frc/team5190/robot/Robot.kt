@@ -1,11 +1,14 @@
 package frc.team5190.robot
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import frc.team5190.robot.drive.DriveTrain
+import frc.team5190.robot.navigation.NAVFeederLeft
+import frc.team5190.robot.navigation.NAVFeederRight
 import frc.team5190.robot.navigation.NAVHelper
-import frc.team5190.robot.navigation.leftPoints
-import frc.team5190.robot.navigation.rightPoints
+import frc.team5190.robot.navigation.NAVHelper.Companion.leftPoints
+import frc.team5190.robot.navigation.NAVHelper.Companion.rightPoints
 
 class Robot : IterativeRobot() {
 
@@ -13,8 +16,34 @@ class Robot : IterativeRobot() {
         DriveTrain
     }
 
+    private val leftMotionProfile by lazy {
+        NAVFeederLeft(DriveTrain.frontLeft)
+    }
+    private val rightMotionProfile by lazy {
+        NAVFeederRight(DriveTrain.frontRight)
+    }
+
+    override fun autonomousPeriodic() {
+        leftMotionProfile.control()
+        rightMotionProfile.control()
+
+        val leftOutput = leftMotionProfile.getSetValue()
+        val rightOutput = rightMotionProfile.getSetValue()
+
+        DriveTrain.frontLeft.set(ControlMode.MotionProfile, leftOutput.value.toDouble())
+        DriveTrain.frontRight.set(ControlMode.MotionProfile, rightOutput.value.toDouble())
+
+        leftMotionProfile.startMotionProfile()
+        rightMotionProfile.startMotionProfile()
+    }
+
+    override fun disabledInit() {
+        leftMotionProfile.reset()
+        rightMotionProfile.reset()
+    }
+
     override fun robotInit() {
-        val autoGenerator = NAVHelper.CENTER
+        val autoGenerator = NAVHelper.Auto.CENTER
 
         leftPoints  = autoGenerator.trajectoryLeft
         rightPoints = autoGenerator.trajectoryRight

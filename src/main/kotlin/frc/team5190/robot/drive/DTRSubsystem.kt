@@ -16,8 +16,9 @@ object DriveTrain : Subsystem() {
 
     val frontLeft = TalonSRX(MotorIDs.FRONT_LEFT)
     val frontRight = TalonSRX(MotorIDs.FRONT_RIGHT)
-    val rearLeft = TalonSRX(MotorIDs.REAR_LEFT)
-    val rearRight = TalonSRX(MotorIDs.REAR_RIGHT)
+
+    private val rearLeft = TalonSRX(MotorIDs.REAR_LEFT)
+    private val rearRight = TalonSRX(MotorIDs.REAR_RIGHT)
 
     val navX = AHRS(SPI.Port.kMXP)
 

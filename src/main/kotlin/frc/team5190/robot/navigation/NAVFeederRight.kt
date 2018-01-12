@@ -91,11 +91,11 @@ class NAVFeederRight(constTalon: TalonSRX) {
         }
     }
 
-    fun startFilling() {
-        startFilling(rightPoints, numPoints)
+    private fun startFilling() {
+        startFilling(NAVHelper.rightPoints, NAVHelper.numPoints)
     }
 
-    fun startFilling(profile : Array<Array<Double>>, totalCnt : Int) {
+    private fun startFilling(profile : Array<Array<Double>>, totalCnt : Int) {
         val point = TrajectoryPoint()
 
         if (status.hasUnderrun) {
