@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.kauailabs.navx.frc.AHRS
-import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.SPI
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.OI
@@ -20,7 +19,7 @@ object DriveTrain : Subsystem() {
     private val rearLeft = TalonSRX(MotorIDs.REAR_LEFT)
     private val rearRight = TalonSRX(MotorIDs.REAR_RIGHT)
 
-    val navX = AHRS(SPI.Port.kMXP)
+    private val navX = AHRS(SPI.Port.kMXP)
 
     init {
 
@@ -35,7 +34,7 @@ object DriveTrain : Subsystem() {
     }
 
     fun driveWithXbox() {
-        this.tankDrive(OI.getY(GenericHID.Hand.kLeft), OI.getY(GenericHID.Hand.kRight), ControlMode.PercentOutput)
+        this.tankDrive(OI.getLeftY(), OI.getRightY(), ControlMode.PercentOutput)
     }
 
     private fun tankDrive(leftOutput: Double, rightOutput: Double, mode: ControlMode) {
@@ -56,5 +55,11 @@ object DriveTrain : Subsystem() {
 
     override fun initDefaultCommand() {
         this.defaultCommand = DriveCommand()
+    }
+
+    fun reset() {
+        frontLeft.set(ControlMode.PercentOutput, 0.0)
+        frontRight.set(ControlMode.PercentOutput, 0.0)
+        navX.angleAdjustment = 90.0
     }
 }

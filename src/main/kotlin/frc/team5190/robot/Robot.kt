@@ -4,8 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import frc.team5190.robot.drive.DriveTrain
-import frc.team5190.robot.navigation.NAVFeederLeft
-import frc.team5190.robot.navigation.NAVFeederRight
+import frc.team5190.robot.navigation.NAVFeeder
 import frc.team5190.robot.navigation.NAVHelper
 import frc.team5190.robot.navigation.NAVHelper.Companion.leftPoints
 import frc.team5190.robot.navigation.NAVHelper.Companion.rightPoints
@@ -17,10 +16,10 @@ class Robot : IterativeRobot() {
     }
 
     private val leftMotionProfile by lazy {
-        NAVFeederLeft(DriveTrain.frontLeft)
+        NAVFeeder(DriveTrain.frontLeft, NAVFeeder.Side.LEFT)
     }
     private val rightMotionProfile by lazy {
-        NAVFeederRight(DriveTrain.frontRight)
+        NAVFeeder(DriveTrain.frontRight, NAVFeeder.Side.RIGHT)
     }
 
     override fun autonomousPeriodic() {
@@ -40,6 +39,8 @@ class Robot : IterativeRobot() {
     override fun disabledInit() {
         leftMotionProfile.reset()
         rightMotionProfile.reset()
+
+        Reset().start()
     }
 
     override fun robotInit() {

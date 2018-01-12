@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.Notifier
 
-class NAVFeederRight(constTalon: TalonSRX) {
+class NAVFeeder(constTalon: TalonSRX, motorSide: Side) {
 
     private var talon = constTalon
 
@@ -16,6 +16,8 @@ class NAVFeederRight(constTalon: TalonSRX) {
     private var loopTimeout = -1
     private var start = false
     private var setValue = SetValueMotionProfile.Disable
+
+    private lateinit var side: Side
 
     private val minPointsInTalon = 5
     private val numLoopsTimeout = 10
@@ -92,7 +94,10 @@ class NAVFeederRight(constTalon: TalonSRX) {
     }
 
     private fun startFilling() {
-        startFilling(NAVHelper.rightPoints, NAVHelper.numPoints)
+        when (side) {
+            Side.LEFT -> startFilling(NAVHelper.leftPoints, NAVHelper.numPoints)
+            Side.RIGHT -> startFilling(NAVHelper.rightPoints, NAVHelper.numPoints)
+        }
     }
 
     private fun startFilling(profile : Array<Array<Double>>, totalCnt : Int) {
@@ -127,5 +132,9 @@ class NAVFeederRight(constTalon: TalonSRX) {
 
     fun getSetValue(): SetValueMotionProfile {
         return setValue
+    }
+
+    enum class Side {
+        LEFT, RIGHT
     }
 }
