@@ -2,42 +2,34 @@ package frc.team5190.robot.navigation
 
 import java.io.InputStreamReader
 
-class NAVHelper {
-   companion object {
+private val leftPath = "C:\\Users\\prate\\Downloads\\testpath_left.csv"
+private val rightPath = "C:\\Users\\prate\\Downloads\\testpath_left.csv"
 
-       private lateinit var leftPoints : Array<Array<Double>>
-       private lateinit var rightPoints : Array<Array<Double>>
+val numPoints = 54
 
-       private val leftPath = "C:\\Users\\prate\\Downloads\\testpath_left.csv"
-       private val rightPath = "C:\\Users\\prate\\Downloads\\testpath_right.csv"
+lateinit var leftPoints: Array<Array<Double>>
+lateinit var rightPoints: Array<Array<Double>>
 
+enum class NAVHelper(private val leftFilePath: String, private val rightFilePath: String) {
 
-       fun getTrajectory(mode : AutoMode) {
-           when (mode) {
-               AutoMode.LEFT -> {
-                   // TODO
-               }
+    LEFT("", ""),
+    RIGHT("", ""),
+    CENTER(leftPath, rightPath);
 
-               AutoMode.CENTER -> {
-                   leftPoints = loadCSV(leftPath)
-                   rightPoints = loadCSV(rightPath)
-               }
+    val trajectoryLeft by lazy {
+        javaClass.classLoader.getResourceAsStream(leftFilePath).use { stream ->
+            InputStreamReader(stream).readLines().map {
+                it.split(",").mapNotNull { it.toDoubleOrNull() }.toTypedArray()
+            }.toTypedArray()
+        }
+    }
 
-               AutoMode.RIGHT -> {
-                   // TODO
-               }
-           }
-       }
-
-       private fun loadCSV(file: String): Array<Array<Double>> {
-           javaClass.classLoader.getResourceAsStream(file).use { stream ->
-               return InputStreamReader(stream).readLines().map { it.split(",").mapNotNull { it.toDoubleOrNull() }.toTypedArray() }.toTypedArray()
-           }
-       }
-   }
-
-    enum class AutoMode {
-        LEFT, CENTER, RIGHT
+    val trajectoryRight by lazy {
+        javaClass.classLoader.getResourceAsStream(rightFilePath).use { stream ->
+            InputStreamReader(stream).readLines().map {
+                it.split(",").mapNotNull { it.toDoubleOrNull() }.toTypedArray()
+            }.toTypedArray()
+        }
     }
 }
 

@@ -4,16 +4,20 @@ import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import frc.team5190.robot.drive.DriveTrain
 import frc.team5190.robot.navigation.NAVHelper
+import frc.team5190.robot.navigation.leftPoints
+import frc.team5190.robot.navigation.rightPoints
 
 class Robot : IterativeRobot() {
 
-    lateinit var automode : NAVHelper.AutoMode
+    init {
+        DriveTrain
+    }
 
     override fun robotInit() {
-        DriveTrain
-        automode = NAVHelper.AutoMode.CENTER
+        val autoGenerator = NAVHelper.CENTER
 
-        NAVHelper.getTrajectory(automode)
+        leftPoints  = autoGenerator.trajectoryLeft
+        rightPoints = autoGenerator.trajectoryRight
     }
 
     override fun teleopPeriodic() {
