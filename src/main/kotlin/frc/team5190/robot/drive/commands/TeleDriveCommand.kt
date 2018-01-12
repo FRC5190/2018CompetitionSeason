@@ -1,13 +1,8 @@
 package frc.team5190.robot.drive.commands
 
-import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
 
-class TeleDriveCommand : Command() {
-
-    init {
-        requires(DriveSubsystem)
-    }
+class TeleDriveCommand : DriveCommand() {
 
     override fun execute() {
         DriveSubsystem.drive()
