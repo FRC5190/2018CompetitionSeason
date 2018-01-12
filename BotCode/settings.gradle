@@ -1,4 +1,0 @@
-rootProject.name = 'BotCode'
-
-include ':AutoPath'
-project(":AutoPath").projectDir = "$rootDir/../AutoPath" as File
