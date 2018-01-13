@@ -2,6 +2,8 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.StatusFrame
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.SPI
@@ -30,6 +32,12 @@ object DriveTrain : Subsystem() {
 
         rearLeft.follow(frontLeft)
         rearRight.follow(frontRight)
+
+        frontLeft.configMotionProfileTrajectoryPeriod(50, 10)
+        frontRight.configMotionProfileTrajectoryPeriod(50, 10)
+
+        frontLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 50, 10)
+        frontRight.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 50, 10)
 
         frontLeft.inverted = true
         rearLeft.inverted = true

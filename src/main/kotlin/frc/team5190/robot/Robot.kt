@@ -18,6 +18,11 @@ class Robot : IterativeRobot() {
         navCommand.start()
     }
 
+    override fun autonomousPeriodic() {
+        Scheduler.getInstance().run()
+        println("Left: " + DriveTrain.frontLeft.sensorCollection.quadratureVelocity * 600 / 1440 + ", Right: " +
+                DriveTrain.frontRight.sensorCollection.quadratureVelocity * 600 / 1400)
+    }
 
     override fun robotInit() {
 

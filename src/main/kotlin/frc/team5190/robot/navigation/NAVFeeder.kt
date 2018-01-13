@@ -5,6 +5,7 @@ import com.ctre.phoenix.motion.SetValueMotionProfile
 import com.ctre.phoenix.motion.TrajectoryPoint
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
 
 class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
@@ -22,14 +23,7 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
     private val trajectories = constTrajectories
 
-
-    internal inner class PeriodicRunnable : java.lang.Runnable {
-        override fun run() {
-            talon.processMotionProfileBuffer()
-        }
-    }
-
-    private val notifier: Notifier = Notifier(PeriodicRunnable())
+    private val notifier = Notifier(talon::processMotionProfileBuffer)
 
     init {
         talon.changeMotionControlFramePeriod(10)
@@ -101,11 +95,19 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
             talon.clearMotionProfileHasUnderrun(0)
         }
 
+        talon.clearMotionProfileTrajectories()
+        talon.configMotionProfileTrajectoryPeriod(0, 10)
+
         trajectories.forEachIndexed { index, trajectory ->
 
-            point.position = trajectory.rotations
-            point.velocity = trajectory.rpm
-            point.profileSlotSelect = 0
+            point.position = trajectory.rotations //* Hardware.SENSOR_UNITS_PER_ROTATION
+            point.velocity = trajectory.rpm //* Hardware.SENSOR_UNITS_PER_ROTATION / 600
+
+            point.headingDeg = 0.0
+            point.profileSlotSelect0 = 0
+            point.profileSlotSelect1 = 0
+            point.timeDur = getTrajectoryDuration(trajectory.duration.toInt())
+
             point.zeroPos = index == 0
             point.isLastPoint = index + 1 == trajectories.size
 
@@ -113,6 +115,17 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
             talon.pushMotionProfileTrajectory(point)
         }
+    }
+
+    private fun getTrajectoryDuration(durationMs: Int): TrajectoryPoint.TrajectoryDuration {
+        var retval = TrajectoryPoint.TrajectoryDuration.Trajectory_Duration_0ms
+        retval = retval.valueOf(durationMs)
+
+        if (retval.value != durationMs) {
+            DriverStation.reportError("Trajectory Duration not supported", false)
+        }
+
+        return retval
     }
 
     fun startMotionProfile() {

@@ -11,11 +11,11 @@ class Maths {
         }
 
         fun feetPerSecondToRPM(feetPerSecond: Double, wheelRadius: Double): Double {
-            return feetPerSecond * 12.0f / (wheelRadius * Math.PI * 2.0) * 60f
+            return (feetPerSecond * 12.0f / (wheelRadius * Math.PI * 2.0)) * 60f
         }
 
         fun feetToRotations(feet: Double, wheelRadius: Double): Double {
-            return feet / (Math.PI * 2.0 * wheelRadius)
+            return (feet * 12.0) / (Math.PI * 2.0 * wheelRadius)
         }
     }
 }

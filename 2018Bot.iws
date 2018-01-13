@@ -2,16 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5643d40-4c4c-4f88-8086-deb4059309fb" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/testpath_left.csv" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/testpath_right.csv" />
       <change beforePath="$PROJECT_DIR$/2018Bot.iml" afterPath="$PROJECT_DIR$/2018Bot.iml" />
+      <change beforePath="$PROJECT_DIR$/2018Bot.ipr" afterPath="$PROJECT_DIR$/2018Bot.ipr" />
       <change beforePath="$PROJECT_DIR$/2018Bot.iws" afterPath="$PROJECT_DIR$/2018Bot.iws" />
+      <change beforePath="$PROJECT_DIR$/2018Bot_main.iml" afterPath="$PROJECT_DIR$/2018Bot_main.iml" />
+      <change beforePath="$PROJECT_DIR$/2018Bot_test.iml" afterPath="$PROJECT_DIR$/2018Bot_test.iml" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -100,6 +99,24 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="2018Bot" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build setup" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="2018Bot" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="documentation" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="2018Bot" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="embeddedtools" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="2018Bot" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="gradlerio" type="c8890929:TasksNode$1" />
               </path>
             </expand>
@@ -123,8 +140,8 @@
       <file leaf-file-name="Robot.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="620">
-              <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+            <state relative-caret-position="868">
+              <caret line="28" column="5" lean-forward="true" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
               <folding>
                 <element signature="e#28#256#0" expanded="true" />
               </folding>
@@ -132,11 +149,31 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="testpath_right.csv" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/testpath_right.csv">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="971">
+              <caret line="32" column="15" lean-forward="true" selection-start-line="32" selection-start-column="15" selection-end-line="32" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DTRSubsystem.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="822">
+              <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="NAVHelper.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1240">
-              <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+            <state relative-caret-position="1085">
+              <caret line="35" column="17" lean-forward="false" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="17" />
               <folding>
                 <element signature="e#39#148#0" expanded="true" />
               </folding>
@@ -144,12 +181,34 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NAVFeeder.kt" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Maths.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="620">
+              <caret line="20" column="1" lean-forward="false" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NAVCommand.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1085">
+              <caret line="37" column="1" lean-forward="false" selection-start-line="37" selection-start-column="1" selection-end-line="37" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NAVFeeder.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="781">
-              <caret line="111" column="47" lean-forward="true" selection-start-line="111" selection-start-column="47" selection-end-line="111" selection-end-column="47" />
-              <folding />
+            <state relative-caret-position="658">
+              <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+              <folding>
+                <element signature="e#39#369#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -488,8 +547,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3030997720398" />
-        <entry key="$PROJECT_DIR$/build.gradle" value="3759301857" />
+        <entry key="$PROJECT_DIR$" value="3031158178781" />
+        <entry key="$PROJECT_DIR$/build.gradle" value="2607193447" />
         <entry key="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" value="2083459160" />
       </map>
     </option>
@@ -759,7 +818,6 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DriveTrain.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAV.java" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRHelper.kt" />
-        <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/Hi.java" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeederRight.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/Reset.kt" />
@@ -767,12 +825,13 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Reset.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeederLeft.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" />
+        <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" />
       </list>
     </option>
   </component>
@@ -808,43 +867,35 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="PackagesPane">
         <subPane>
           <expand>
             <path>
               <item name="2018Bot" type="58d84e3e:PackageViewProjectNode" />
-              <item name="2018Bot" type="eaaa3913:PackageViewModuleGroupNode" />
-            </path>
-            <path>
-              <item name="2018Bot" type="58d84e3e:PackageViewProjectNode" />
-              <item name="2018Bot" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="2018Bot_main" type="616d4139:PackageViewModuleNode" />
             </path>
             <path>
               <item name="2018Bot" type="58d84e3e:PackageViewProjectNode" />
-              <item name="2018Bot" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="2018Bot_main" type="616d4139:PackageViewModuleNode" />
               <item name="frc.team5190.robot" type="1f31426a:PackageElementNode" />
             </path>
             <path>
               <item name="2018Bot" type="58d84e3e:PackageViewProjectNode" />
-              <item name="2018Bot" type="eaaa3913:PackageViewModuleGroupNode" />
+              <item name="2018Bot_main" type="616d4139:PackageViewModuleNode" />
+              <item name="frc.team5190.robot" type="1f31426a:PackageElementNode" />
+              <item name="drive" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="2018Bot" type="58d84e3e:PackageViewProjectNode" />
               <item name="2018Bot_main" type="616d4139:PackageViewModuleNode" />
               <item name="frc.team5190.robot" type="1f31426a:PackageElementNode" />
               <item name="navigation" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="2018Bot" type="58d84e3e:PackageViewProjectNode" />
-              <item name="2018Bot" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="2018Bot_main" type="616d4139:PackageViewModuleNode" />
-              <item name="frc.team5190.robot" type="1f31426a:PackageElementNode" />
-              <item name="util" type="1f31426a:PackageElementNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <expand>
@@ -909,6 +960,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -932,21 +984,6 @@
               <item name="2018Bot" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="2018Bot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="2018Bot" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
-              <item name="robot" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="2018Bot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="2018Bot" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -957,7 +994,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -967,24 +1003,27 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/Pathfinder-Java.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/libs/libCTRE_PhoenixCCI.so" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/kotlin" />
     <property name="SearchEverywhereHistoryKey" value="background&#9;ACTION&#9;Images.SetBackgroundImage&#10;plugins&#9;ACTION&#9;WelcomeScreen.Plugins&#10;color scheme&#9;ACTION&#9;ChangeColorScheme&#10;set back&#9;ACTION&#9;Images.SetBackgroundImage&#10;diff&#9;FILE&#9;jar://C:/Users/Ryan/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/drive/DiffDrive.java" />
     <property name="settings.editor.selected.configurable" value="project.kotlinCompiler" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.24458204" />
+    <property name="project.structure.side.proportion" value="0.47987616" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\libs" />
+      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main\jniLibs" />
+      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main\resources" />
+      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main" />
+      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main\kotlin\frc\team5190\robot" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\libs" />
       <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\resources" />
       <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main\kotlin\frc\team5190\robot\navigation" />
       <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main\java\jaci\pathfinder" />
-      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\libs" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main" />
-      <recent name="C:\Users\prate\Documents\Green Hope Robotics 2018 Build Season\Projects\2018Bot\src\main\kotlin\frc\team5190\robot" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -1240,7 +1279,14 @@
       <option name="project" value="LOCAL" />
       <updated>1515813323962</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Half baked motion profiling">
+      <created>1515863364628</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1515863364628</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1263,13 +1309,13 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Kotlin Bytecode" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32971558" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23989521" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23989521" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292761" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18562874" sideWeight="0.49775785" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1875" sideWeight="0.49775785" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15157185" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1280,8 +1326,8 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Kotlin Bytecode" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32971558" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292761" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292761" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1307,7 +1353,8 @@
     <MESSAGE value="Ready for CTRE to release Motion Profiling" />
     <MESSAGE value="Merged NAV classes" />
     <MESSAGE value="1/12/2018 Post Build Space" />
-    <option name="LAST_COMMIT_MESSAGE" value="1/12/2018 Post Build Space" />
+    <MESSAGE value="Half baked motion profiling" />
+    <option name="LAST_COMMIT_MESSAGE" value="Half baked motion profiling" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1317,16 +1364,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/ArcadeCoordinate.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/nav/NAVSubsystem.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/navigation/Arcade.java" />
-    <entry file="jar://$USER_HOME$/Downloads/Pathfinder-Java.jar!/jaci/pathfinder/Pathfinder.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="960">
-          <caret line="44" column="5" lean-forward="false" selection-start-line="44" selection-start-column="5" selection-end-line="44" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/Downloads/Pathfinder-Java.jar!/jaci/pathfinder/PathfinderJNI.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1032">
@@ -1412,7 +1449,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="507">
           <caret line="69" column="15" lean-forward="false" selection-start-line="69" selection-start-column="15" selection-end-line="69" selection-end-column="15" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1431,18 +1467,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="33" column="15" lean-forward="false" selection-start-line="33" selection-start-column="15" selection-end-line="33" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/motorcontrol/can/BaseMotorController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1984">
           <caret line="86" column="16" lean-forward="false" selection-start-line="86" selection-start-column="16" selection-end-line="86" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1450,7 +1478,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="507">
           <caret line="119" column="15" lean-forward="false" selection-start-line="119" selection-start-column="15" selection-end-line="119" selection-end-column="15" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1470,73 +1497,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/testpath_right.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="744">
-          <caret line="24" column="1" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/testpath_left.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="41" column="4" lean-forward="false" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2018.1.1/beb4907631b352f07723679c3e90632c0533e725/wpilibj-java-2018.1.1-sources.jar!/edu/wpi/first/wpilibj/command/Command.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="507">
           <caret line="300" column="17" lean-forward="false" selection-start-line="300" selection-start-column="17" selection-end-line="300" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding>
-            <element signature="e#28#256#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1147">
-          <caret line="37" column="1" lean-forward="true" selection-start-line="37" selection-start-column="1" selection-end-line="37" selection-end-column="1" />
-          <folding>
-            <element signature="e#39#175#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="20" column="1" lean-forward="true" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1240">
-          <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-          <folding>
-            <element signature="e#39#148#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1544,14 +1508,115 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="155">
           <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/com/ctre/phoenix/motion/TrajectoryPoint.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="744">
+          <caret line="24" column="45" lean-forward="false" selection-start-line="24" selection-start-column="45" selection-end-line="24" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/com/ctre/phoenix/motorcontrol/can/BaseMotorController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40362">
+          <caret line="1324" column="51" lean-forward="false" selection-start-line="1324" selection-start-column="51" selection-end-line="1324" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/com/ctre/phoenix/motorcontrol/can/MotControllerJNI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1342">
+          <caret line="586" column="6" lean-forward="false" selection-start-line="586" selection-start-column="6" selection-end-line="586" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1271">
+          <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/testpath_left.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="623">
+          <caret line="31" column="22" lean-forward="false" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/com/ctre/phoenix/motorcontrol/can/TalonSRX.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="507">
+          <caret line="40" column="21" lean-forward="false" selection-start-line="40" selection-start-column="21" selection-end-line="40" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1085">
+          <caret line="35" column="17" lean-forward="false" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="17" />
+          <folding>
+            <element signature="e#39#148#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="822">
+          <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1085">
+          <caret line="37" column="1" lean-forward="false" selection-start-line="37" selection-start-column="1" selection-end-line="37" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="620">
+          <caret line="20" column="1" lean-forward="false" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="781">
-          <caret line="111" column="47" lean-forward="true" selection-start-line="111" selection-start-column="47" selection-end-line="111" selection-end-column="47" />
+        <state relative-caret-position="658">
+          <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+          <folding>
+            <element signature="e#39#369#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="868">
+          <caret line="28" column="5" lean-forward="true" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
+          <folding>
+            <element signature="e#28#256#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/testpath_right.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="971">
+          <caret line="32" column="15" lean-forward="true" selection-start-line="32" selection-start-column="15" selection-end-line="32" selection-end-column="15" />
           <folding />
         </state>
       </provider>
@@ -1565,7 +1630,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.47987616" />
               </list>
             </option>
           </splitter-proportions>
@@ -1577,7 +1642,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.47987616" />
               </list>
             </option>
           </splitter-proportions>
@@ -1620,11 +1685,11 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>Gradle: edu.wpi.first.cscore:cscore-java:1.1.0</last-edited>
+          <last-edited>Gradle: :CTRE_Phoenix:</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.24458204" />
+                <option value="0.47987616" />
               </list>
             </option>
           </splitter-proportions>

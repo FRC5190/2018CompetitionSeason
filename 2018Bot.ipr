@@ -260,6 +260,28 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="libraryTable">
+    <library name="Gradle: :CTRE_Phoenix-sources:">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <NATIVE>
+        <root url="file://$PROJECT_DIR$/libs" />
+      </NATIVE>
+      <SOURCES />
+    </library>
+    <library name="Gradle: :CTRE_Phoenix:">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/libs/CTRE_Phoenix.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <NATIVE>
+        <root url="file://$PROJECT_DIR$/libs" />
+      </NATIVE>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Gradle: edu.wpi.first.cscore:cscore-java:1.1.0">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.1.0/89fb12244cef59046d8b23ad332651d3b2503e96/cscore-java-1.1.0.jar!/" />
@@ -303,15 +325,6 @@
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/jaci.pathfinder/Pathfinder-Java/1.8/f99c341d8a52f2445060989aef1af8ab7bb458ed/Pathfinder-Java-1.8-sources.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="Gradle: openrio.mirror.third.ctre:CTRE-phoenix-java:5.1.2.1">
-      <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/420d7e83c54d4a19446355e6f544c2a92e18a65d/CTRE-phoenix-java-5.1.2.1.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: openrio.mirror.third.kauailabs:navx-java:3.0.342">
