@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.SPI
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.OI
 import frc.team5190.robot.util.Hardware
-import frc.team5190.robot.util.Hardware.HIGH_GEAR_MAX
 import frc.team5190.robot.util.MotorIDs
 
 object DriveTrain : Subsystem() {
@@ -23,18 +22,21 @@ object DriveTrain : Subsystem() {
 
     init {
 
-        DTRHelper.configurePIDF(frontLeft, 0.6, 0.0, 0.0, 1.0, Hardware.HIGH_GEAR_MAX, Hardware.WHEEL_RADIUS.toDouble(),
-                Hardware.TICKS_PER_ROTATION.toDouble(), FeedbackDevice.QuadEncoder)
+        DTRHelper.configurePIDF(frontLeft, 0.2, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
+                sensorUnitsPerRotation = Hardware.SENSOR_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
 
-        DTRHelper.configurePIDF(frontRight, 0.6, 0.0, 0.0, 1.0, Hardware.HIGH_GEAR_MAX, Hardware.WHEEL_RADIUS.toDouble(),
-                Hardware.TICKS_PER_ROTATION.toDouble(), FeedbackDevice.QuadEncoder)
+        DTRHelper.configurePIDF(frontRight, 0.2, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
+                sensorUnitsPerRotation = Hardware.SENSOR_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
 
         rearLeft.follow(frontLeft)
         rearRight.follow(frontRight)
+
+        frontLeft.inverted = true
+        rearLeft.inverted = true
     }
 
     fun driveWithXbox() {
-        this.tankDrive(OI.getLeftY(), OI.getRightY(), ControlMode.PercentOutput)
+        this.tankDrive(OI.getLeftY(), OI.getRightY(), ControlMode.Velocity)
     }
 
     private fun tankDrive(leftOutput: Double, rightOutput: Double, mode: ControlMode) {
@@ -44,8 +46,16 @@ object DriveTrain : Subsystem() {
                 frontRight.set(mode, rightOutput)
             }
             ControlMode.Velocity -> {
-                frontLeft.set(mode, leftOutput * HIGH_GEAR_MAX)
-                frontRight.set(mode, rightOutput * HIGH_GEAR_MAX)
+
+                if (leftOutput > -0.07 && leftOutput < 0.07) {
+                    frontLeft.set(mode, 0.0)
+                }
+                if (rightOutput > -0.07 && rightOutput < 0.07) {
+                    frontRight.set(mode, 0.0)
+                }
+
+                frontLeft.set(mode, leftOutput * Hardware.MAX_RPM)
+                frontRight.set(mode, rightOutput * Hardware.MAX_RPM)
             }
             else -> {
                 println("Learn to dab sir.")

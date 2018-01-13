@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import frc.team5190.robot.drive.DriveTrain
 import frc.team5190.robot.navigation.NAVFeeder
 import frc.team5190.robot.navigation.NAVHelper
-import frc.team5190.robot.navigation.NAVHelper.Companion.leftPoints
-import frc.team5190.robot.navigation.NAVHelper.Companion.rightPoints
 
 class Robot : IterativeRobot() {
 
@@ -37,8 +35,8 @@ class Robot : IterativeRobot() {
     }
 
     override fun disabledInit() {
-        leftMotionProfile.reset()
-        rightMotionProfile.reset()
+//        leftMotionProfile.reset()
+//        rightMotionProfile.reset()
 
         Reset().start()
     }
@@ -46,8 +44,8 @@ class Robot : IterativeRobot() {
     override fun robotInit() {
         val autoGenerator = NAVHelper.Auto.CENTER
 
-        leftPoints  = autoGenerator.trajectoryLeft
-        rightPoints = autoGenerator.trajectoryRight
+//        leftPoints = autoGenerator.trajectoryLeft
+//        rightPoints = autoGenerator.trajectoryRight
     }
 
     override fun teleopPeriodic() {

@@ -17,7 +17,7 @@ class NAVFeeder(constTalon: TalonSRX, motorSide: Side) {
     private var start = false
     private var setValue = SetValueMotionProfile.Disable
 
-    private lateinit var side: Side
+    private var side = motorSide
 
     private val minPointsInTalon = 5
     private val numLoopsTimeout = 10
