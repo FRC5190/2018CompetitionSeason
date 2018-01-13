@@ -10,13 +10,12 @@ class Maths {
             return (power * 1023) / (rpm / 60.0 / 10 * sensorUnitsPerRotation)
         }
 
-        fun feetPerSecondToRPM(feetPerSecond: Double, wheelRadius: Float): Double {
-            return feetPerSecond * 12.0f / (wheelRadius.toDouble() * Math.PI * 2.0) * 60f
+        fun feetPerSecondToRPM(feetPerSecond: Double, wheelRadius: Double): Double {
+            return feetPerSecond * 12.0f / (wheelRadius * Math.PI * 2.0) * 60f
         }
 
         fun feetToRotations(feet: Double, wheelRadius: Double): Double {
             return feet / (Math.PI * 2.0 * wheelRadius)
         }
     }
-
 }

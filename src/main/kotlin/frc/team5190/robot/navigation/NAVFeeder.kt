@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.Notifier
 
-class NAVFeeder(constTalon: TalonSRX, motorSide: Side) {
+class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
     private var talon = constTalon
 
@@ -17,10 +17,11 @@ class NAVFeeder(constTalon: TalonSRX, motorSide: Side) {
     private var start = false
     private var setValue = SetValueMotionProfile.Disable
 
-    private var side = motorSide
-
     private val minPointsInTalon = 5
     private val numLoopsTimeout = 10
+
+    private val trajectories = constTrajectories
+
 
     internal inner class PeriodicRunnable : java.lang.Runnable {
         override fun run() {
@@ -46,7 +47,7 @@ class NAVFeeder(constTalon: TalonSRX, motorSide: Side) {
     fun control() {
         talon.getMotionProfileStatus(status)
 
-        if (loopTimeout < 0 ) {
+        if (loopTimeout < 0) {
         } else {
             if (loopTimeout == 0) {
                 // TODO
@@ -94,33 +95,21 @@ class NAVFeeder(constTalon: TalonSRX, motorSide: Side) {
     }
 
     private fun startFilling() {
-        when (side) {
-            Side.LEFT -> startFilling(NAVHelper.leftPoints, NAVHelper.numPoints)
-            Side.RIGHT -> startFilling(NAVHelper.rightPoints, NAVHelper.numPoints)
-        }
-    }
-
-    private fun startFilling(profile : Array<Array<Double>>, totalCnt : Int) {
         val point = TrajectoryPoint()
 
         if (status.hasUnderrun) {
             talon.clearMotionProfileHasUnderrun(0)
         }
 
-        talon.clearMotionProfileTrajectories()
+        trajectories.forEachIndexed { index, trajectory ->
 
-        for (a in 0 until totalCnt) {
-            point.position = profile[a][0]
-            point.velocity = profile[a][1]
-            // point.timeDurMs = profile[a][2]
-
+            point.position = trajectory.rotations
+            point.velocity = trajectory.rpm
             point.profileSlotSelect = 0
-            // point.velocityOnly = false
+            point.zeroPos = index == 0
+            point.isLastPoint = index + 1 == trajectories.size
 
-            point.zeroPos = false
-            if ((a + 1) == totalCnt) {
-                point.isLastPoint = true
-            }
+            // point.timeDurMs = trajectory.duration()
 
             talon.pushMotionProfileTrajectory(point)
         }
@@ -134,7 +123,7 @@ class NAVFeeder(constTalon: TalonSRX, motorSide: Side) {
         return setValue
     }
 
-    enum class Side {
-        LEFT, RIGHT
+    fun hasFinished(): Boolean {
+        return status.isLast
     }
 }

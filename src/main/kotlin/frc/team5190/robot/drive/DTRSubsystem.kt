@@ -39,11 +39,13 @@ object DriveTrain : Subsystem() {
         this.tankDrive(OI.getLeftY(), OI.getRightY(), ControlMode.Velocity)
     }
 
-    private fun tankDrive(leftOutput: Double, rightOutput: Double, mode: ControlMode) {
+    fun tankDrive(leftOutput: Double, rightOutput: Double, mode: ControlMode) {
         when (mode) {
             ControlMode.PercentOutput -> {
                 frontLeft.set(mode, leftOutput)
                 frontRight.set(mode, rightOutput)
+
+                println("Left: " + frontLeft.sensorCollection.quadraturePosition + ", Right: " + frontRight.sensorCollection.quadraturePosition)
             }
             ControlMode.Velocity -> {
 
