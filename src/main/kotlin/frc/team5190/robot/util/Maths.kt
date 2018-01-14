@@ -18,10 +18,12 @@ class Maths {
             return (feet * 12.0) / (Math.PI * 2.0 * wheelRadius)
         }
 
+        fun rpmToNativeUnitsPer100Ms(rpm: Double, sensorUnitsPerRotation: Double): Double {
+            return rpm * sensorUnitsPerRotation / 600
+        }
 
-        @JvmStatic
-        fun main(args: Array<String>) {
-            println(Maths.feetPerSecondToRPM(3.0, 2.0))
+        fun rotationsToNativeUnits(rot: Double, sensorUnitsPerRotation: Double): Double {
+            return rot * sensorUnitsPerRotation
         }
     }
 }

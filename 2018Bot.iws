@@ -4,14 +4,11 @@
     <list default="true" id="f5643d40-4c4c-4f88-8086-deb4059309fb" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/2018Bot.iws" afterPath="$PROJECT_DIR$/2018Bot.iws" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRHelper.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRHelper.kt" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt" afterPath="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/testpath_left.csv" afterPath="$PROJECT_DIR$/src/main/resources/testpath_left.csv" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/testpath_right.csv" afterPath="$PROJECT_DIR$/src/main/resources/testpath_right.csv" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -140,22 +137,10 @@
       <file leaf-file-name="NAVFeeder.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3782">
-              <caret line="129" column="0" lean-forward="false" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
+            <state relative-caret-position="1308">
+              <caret line="113" column="0" lean-forward="false" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
               <folding>
-                <element signature="e#39#409#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="NAVCommand.kt" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="899">
-              <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-              <folding>
-                <element signature="e#39#215#0" expanded="true" />
+                <element signature="e#39#369#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -164,8 +149,8 @@
       <file leaf-file-name="DTRSubsystem.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="961">
-              <caret line="41" column="33" lean-forward="true" selection-start-line="41" selection-start-column="33" selection-end-line="41" selection-end-column="33" />
+            <state relative-caret-position="310">
+              <caret line="20" column="57" lean-forward="true" selection-start-line="20" selection-start-column="57" selection-end-line="20" selection-end-column="57" />
               <folding />
             </state>
           </provider>
@@ -174,9 +159,31 @@
       <file leaf-file-name="Maths.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="620">
-              <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+            <state relative-caret-position="868">
+              <caret line="28" column="1" lean-forward="false" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NAVHelper.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="341">
+              <caret line="13" column="32" lean-forward="true" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Robot.kt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="930">
+              <caret line="35" column="35" lean-forward="true" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
+              <folding>
+                <element signature="e#28#315#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -184,8 +191,8 @@
       <file leaf-file-name="Constants.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="10" column="46" lean-forward="false" selection-start-line="10" selection-start-column="46" selection-end-line="10" selection-end-column="46" />
+            <state relative-caret-position="496">
+              <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -802,15 +809,15 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/OI.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Reset.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeederLeft.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRHelper.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt" />
       </list>
     </option>
   </component>
@@ -982,7 +989,7 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/libs/libCTRE_PhoenixCCI.so" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/kotlin" />
-    <property name="SearchEverywhereHistoryKey" value="navcomm&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;maths&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/util/Maths.kt&#10;navcomma&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;navfeeder&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt&#10;dtrsubsy&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt&#10;constants&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/util/Constants.kt&#10;testpat&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/resources/testpath_left.csv&#10;background&#9;ACTION&#9;Images.SetBackgroundImage&#10;con&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/util/Constants.kt&#10;dtr&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt&#10;dtrsub&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt&#10;robot&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/Robot.kt&#10;testp&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/resources/testpath_left.csv&#10;dtrhelper&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRHelper.kt&#10;navcommand&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;testpath&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/resources/testpath_left.csv&#10;navfee&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt&#10;NAVCommand&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;plugins&#9;ACTION&#9;WelcomeScreen.Plugins&#10;color scheme&#9;ACTION&#9;ChangeColorScheme&#10;set back&#9;ACTION&#9;Images.SetBackgroundImage&#10;diff&#9;FILE&#9;jar://C:/Users/Ryan/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/drive/DiffDrive.java" />
+    <property name="SearchEverywhereHistoryKey" value="robot&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/Robot.kt&#10;dtr&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt&#10;constants&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/util/Constants.kt&#10;background&#9;ACTION&#9;Images.SetBackgroundImage&#10;backgrou&#9;ACTION&#9;Images.SetBackgroundImage&#10;navfeeder&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt&#10;navhelp&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt&#10;navfee&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt&#10;maths&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/util/Maths.kt&#10;navcomm&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;navcomma&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;dtrsubsy&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt&#10;testpat&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/resources/testpath_left.csv&#10;con&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/util/Constants.kt&#10;dtrsub&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt&#10;testp&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/resources/testpath_left.csv&#10;dtrhelper&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/drive/DTRHelper.kt&#10;navcommand&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;testpath&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/resources/testpath_left.csv&#10;NAVCommand&#9;FILE&#9;file://C:/Users/prate/Documents/Green Hope Robotics 2018 Build Season/Projects/2018Bot/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt&#10;plugins&#9;ACTION&#9;WelcomeScreen.Plugins&#10;color scheme&#9;ACTION&#9;ChangeColorScheme&#10;set back&#9;ACTION&#9;Images.SetBackgroundImage&#10;diff&#9;FILE&#9;jar://C:/Users/Ryan/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.1.2.1/a6524440658bcd925d5bbd06e84b3cd6ba80c4a7/CTRE-phoenix-java-5.1.2.1-sources.jar!/com/ctre/phoenix/drive/DiffDrive.java" />
     <property name="settings.editor.selected.configurable" value="project.kotlinCompiler" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
@@ -1284,7 +1291,14 @@
       <option name="project" value="LOCAL" />
       <updated>1515872575260</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="1/13/2018 Post Build Space">
+      <created>1515892558209</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1515892558209</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1352,7 +1366,8 @@
     <MESSAGE value="Merged NAV classes" />
     <MESSAGE value="1/12/2018 Post Build Space" />
     <MESSAGE value="Half baked motion profiling" />
-    <option name="LAST_COMMIT_MESSAGE" value="Half baked motion profiling" />
+    <MESSAGE value="1/13/2018 Post Build Space" />
+    <option name="LAST_COMMIT_MESSAGE" value="1/13/2018 Post Build Space" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1362,7 +1377,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$PROJECT_DIR$/libs/Pathfinder-Java.jar!/jaci/pathfinder/followers/EncoderFollower.class" />
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team5190/robot/navigation/NAVCommand.java" />
     <entry file="jar://$PROJECT_DIR$/libs/Pathfinder-Java.jar!/jaci/pathfinder/Trajectory.class" />
     <entry file="jar://$PROJECT_DIR$/libs/Pathfinder-Java.jar!/jaci/pathfinder/Pathfinder.class" />
@@ -1464,6 +1478,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1509,17 +1524,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="7" column="11" lean-forward="false" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRHelper.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="775">
           <caret line="27" column="1" lean-forward="false" selection-start-line="27" selection-start-column="1" selection-end-line="27" selection-end-column="1" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1530,17 +1539,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/com/ctre/phoenix/motorcontrol/IMotorController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="507">
           <caret line="151" column="21" lean-forward="false" selection-start-line="151" selection-start-column="21" selection-end-line="151" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1551,53 +1554,80 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/com/ctre/phoenix/motorcontrol/can/BaseMotorController.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/javafx-src.zip!/javafx/scene/layout/Background.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-315">
-          <caret line="1242" column="42" lean-forward="true" selection-start-line="1242" selection-start-column="42" selection-end-line="1242" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="10" column="46" lean-forward="false" selection-start-line="10" selection-start-column="46" selection-end-line="10" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3782">
-          <caret line="129" column="0" lean-forward="false" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
-          <folding>
-            <element signature="e#39#409#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="961">
-          <caret line="41" column="33" lean-forward="true" selection-start-line="41" selection-start-column="33" selection-end-line="41" selection-end-column="33" />
+        <state relative-caret-position="507">
+          <caret line="72" column="19" lean-forward="false" selection-start-line="72" selection-start-column="19" selection-end-line="72" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVCommand.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="899">
-          <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+        <state relative-caret-position="837">
+          <caret line="27" column="35" lean-forward="false" selection-start-line="27" selection-start-column="35" selection-end-line="27" selection-end-column="35" />
           <folding>
             <element signature="e#39#215#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVFeeder.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1308">
+          <caret line="113" column="0" lean-forward="false" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
+          <folding>
+            <element signature="e#39#369#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/com/ctre/phoenix/motorcontrol/can/BaseMotorController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="507">
+          <caret line="329" column="21" lean-forward="false" selection-start-line="329" selection-start-column="21" selection-end-line="329" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Constants.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="496">
+          <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/drive/DTRSubsystem.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="310">
+          <caret line="20" column="57" lean-forward="true" selection-start-line="20" selection-start-column="57" selection-end-line="20" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/util/Maths.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="868">
+          <caret line="28" column="1" lean-forward="false" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/navigation/NAVHelper.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="13" column="32" lean-forward="true" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/frc/team5190/robot/Robot.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="930">
+          <caret line="35" column="35" lean-forward="true" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
+          <folding>
+            <element signature="e#28#315#0" expanded="true" />
           </folding>
         </state>
       </provider>

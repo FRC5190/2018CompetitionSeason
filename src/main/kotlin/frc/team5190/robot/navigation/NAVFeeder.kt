@@ -7,7 +7,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
-import frc.team5190.robot.util.Hardware
 
 class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
@@ -102,8 +101,8 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
         trajectories.forEachIndexed { index, trajectory ->
 
-            point.position = trajectory.rotations * Hardware.NATIVE_UNITS_PER_ROTATION
-            point.velocity = trajectory.rpm * Hardware.NATIVE_UNITS_PER_ROTATION / 600
+            point.position = trajectory.nativeUnits
+            point.velocity = trajectory.nativeUnitsPer100Ms
 
             point.headingDeg = 0.0
             point.profileSlotSelect0 = 0

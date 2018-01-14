@@ -35,6 +35,9 @@ typealias TrajectoryList = List<TrajectoryData>
 data class TrajectoryData(private val position: Double, private val velocity: Double, val duration: Long) {
     val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS.toDouble())
     val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS.toDouble())
+
+    val nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
 }
 
 

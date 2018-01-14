@@ -30,9 +30,6 @@ object DriveTrain : Subsystem() {
         DTRHelper.configurePIDF(frontRight, 0.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
                 sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
 
-        rearLeft.follow(frontLeft)
-        rearRight.follow(frontRight)
-
         frontLeft.configMotionProfileTrajectoryPeriod(10, 10)
         frontRight.configMotionProfileTrajectoryPeriod(10, 10)
 
@@ -41,6 +38,12 @@ object DriveTrain : Subsystem() {
 
         frontLeft.inverted = true
         rearLeft.inverted = true
+
+        frontLeft.configNeutralDeadband(0.04, 10)
+        frontRight.configNeutralDeadband(0.04, 10)
+
+        rearLeft.follow(frontLeft)
+        rearRight.follow(frontRight)
     }
 
     fun driveWithXbox() {
@@ -56,16 +59,8 @@ object DriveTrain : Subsystem() {
                 println("Left: " + frontLeft.sensorCollection.quadraturePosition + ", Right: " + frontRight.sensorCollection.quadraturePosition)
             }
             ControlMode.Velocity -> {
-
-                if (leftOutput > -0.07 && leftOutput < 0.07) {
-                    frontLeft.set(mode, 0.0)
-                }
-                if (rightOutput > -0.07 && rightOutput < 0.07) {
-                    frontRight.set(mode, 0.0)
-                }
-
-                frontLeft.set(mode, leftOutput * Hardware.MAX_RPM)
-                frontRight.set(mode, rightOutput * Hardware.MAX_RPM)
+                frontLeft.set(mode, leftOutput * Hardware.MAX_NATIVE_UNITS_PER_100_MS)
+                frontRight.set(mode, rightOutput * Hardware.MAX_NATIVE_UNITS_PER_100_MS)
             }
             else -> {
                 println("Learn to dab sir.")
