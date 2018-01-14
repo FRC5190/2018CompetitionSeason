@@ -8,7 +8,7 @@ object MotorIDs {
 }
 
 object Hardware {
-    const val SENSOR_UNITS_PER_ROTATION = 360
+    const val NATIVE_UNITS_PER_ROTATION = 1440
     const val WHEEL_RADIUS = 2
 
     const val MAX_RPM = 1125

@@ -17,5 +17,11 @@ class Maths {
         fun feetToRotations(feet: Double, wheelRadius: Double): Double {
             return (feet * 12.0) / (Math.PI * 2.0 * wheelRadius)
         }
+
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            println(Maths.feetPerSecondToRPM(3.0, 2.0))
+        }
     }
 }

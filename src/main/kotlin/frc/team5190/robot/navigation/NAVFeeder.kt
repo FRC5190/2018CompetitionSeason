@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
+import frc.team5190.robot.util.Hardware
 
 class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
@@ -26,8 +27,8 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
     private val notifier = Notifier(talon::processMotionProfileBuffer)
 
     init {
-        talon.changeMotionControlFramePeriod(10)
-        notifier.startPeriodic(0.01)
+        talon.changeMotionControlFramePeriod(5)
+        notifier.startPeriodic(0.005)
     }
 
     fun reset() {
@@ -46,7 +47,7 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
             if (loopTimeout == 0) {
                 // TODO
             } else {
-                loopTimeout--;
+                loopTimeout--
             }
         }
 
@@ -85,6 +86,7 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
                     }
                 }
             }
+            talon.getMotionProfileStatus(status)
         }
     }
 
@@ -100,8 +102,8 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
         trajectories.forEachIndexed { index, trajectory ->
 
-            point.position = trajectory.rotations //* Hardware.SENSOR_UNITS_PER_ROTATION
-            point.velocity = trajectory.rpm //* Hardware.SENSOR_UNITS_PER_ROTATION / 600
+            point.position = trajectory.rotations * Hardware.NATIVE_UNITS_PER_ROTATION
+            point.velocity = trajectory.rpm * Hardware.NATIVE_UNITS_PER_ROTATION / 600
 
             point.headingDeg = 0.0
             point.profileSlotSelect0 = 0
@@ -110,8 +112,6 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
             point.zeroPos = index == 0
             point.isLastPoint = index + 1 == trajectories.size
-
-            // point.timeDurMs = trajectory.duration()
 
             talon.pushMotionProfileTrajectory(point)
         }

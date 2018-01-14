@@ -14,19 +14,18 @@ class Robot : IterativeRobot() {
         DriveTrain
     }
 
+    override fun robotInit() {
+        navCommand.cancel()
+    }
+
     override fun autonomousInit() {
         navCommand.start()
     }
 
     override fun autonomousPeriodic() {
         Scheduler.getInstance().run()
-        println("Left: " + DriveTrain.frontLeft.sensorCollection.quadratureVelocity * 600 / 1440 + ", Right: " +
-                DriveTrain.frontRight.sensorCollection.quadratureVelocity * 600 / 1400)
     }
 
-    override fun robotInit() {
-
-    }
 
     override fun teleopInit() {
         navCommand.cancel()
@@ -34,6 +33,10 @@ class Robot : IterativeRobot() {
 
     override fun teleopPeriodic() {
         Scheduler.getInstance().run()
+    }
+
+    override fun disabledInit() {
+        navCommand.cancel()
     }
 }
 

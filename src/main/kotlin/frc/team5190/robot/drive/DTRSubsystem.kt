@@ -24,20 +24,20 @@ object DriveTrain : Subsystem() {
 
     init {
 
-        DTRHelper.configurePIDF(frontLeft, 0.2, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
-                sensorUnitsPerRotation = Hardware.SENSOR_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
+        DTRHelper.configurePIDF(frontLeft, 0.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
+                sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
 
-        DTRHelper.configurePIDF(frontRight, 0.2, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
-                sensorUnitsPerRotation = Hardware.SENSOR_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
+        DTRHelper.configurePIDF(frontRight, 0.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
+                sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
 
         rearLeft.follow(frontLeft)
         rearRight.follow(frontRight)
 
-        frontLeft.configMotionProfileTrajectoryPeriod(50, 10)
-        frontRight.configMotionProfileTrajectoryPeriod(50, 10)
+        frontLeft.configMotionProfileTrajectoryPeriod(10, 10)
+        frontRight.configMotionProfileTrajectoryPeriod(10, 10)
 
         frontLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 50, 10)
-        frontRight.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 50, 10)
+        frontRight.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 10, 10)
 
         frontLeft.inverted = true
         rearLeft.inverted = true

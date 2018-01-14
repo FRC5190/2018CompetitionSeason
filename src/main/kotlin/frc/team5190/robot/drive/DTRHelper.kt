@@ -15,7 +15,7 @@ class DTRHelper {
 
         fun configurePIDF(motor: TalonSRX, p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double, dev: FeedbackDevice) {
             configurePIDF(motor, p, i, d, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation))
-            motor.configSelectedFeedbackSensor(dev, 0, 0)
+            motor.configSelectedFeedbackSensor(dev, 0, 10)
         }
 
         private fun configurePIDF(motor: TalonSRX, p: Double, i: Double, d: Double, f: Double) {
