@@ -2,11 +2,15 @@ package frc.team5190.robot.navigation
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
+import frc.team5190.robot.OI
 import frc.team5190.robot.drive.DriveTrain
 
 class NAVCommand(private val path: NAVHelper) : Command() {
+
     private lateinit var leftMotionProfile: NAVFeeder
     private lateinit var rightMotionProfile: NAVFeeder
+
+    var wasPaused = false
 
     init {
         requires(DriveTrain)
@@ -21,6 +25,17 @@ class NAVCommand(private val path: NAVHelper) : Command() {
     }
 
     override fun execute() {
+
+        if (OI.xbox.bButton) {
+            leftMotionProfile.pauseMotionProfile()
+            rightMotionProfile.pauseMotionProfile()
+            wasPaused = true
+            return
+        } else if (wasPaused) {
+            leftMotionProfile.resumeMotionProfile()
+            rightMotionProfile.resumeMotionProfile()
+        }
+
         leftMotionProfile.control()
         rightMotionProfile.control()
 
@@ -32,24 +47,11 @@ class NAVCommand(private val path: NAVHelper) : Command() {
         leftMotionProfile.reset()
         rightMotionProfile.reset()
         DriveTrain.tankDrive(0.0, 0.0, ControlMode.PercentOutput)
-
-//        val leftPosDifference = DriveTrain.frontLeft.sensorCollection.quadraturePosition - leftPos
-//        val rightPosDifference = DriveTrain.frontRight.sensorCollection.quadraturePosition - rightPos
-//
-//        val leftFeet = ((leftPosDifference / Hardware.NATIVE_UNITS_PER_ROTATION) * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12
-//        val rightFeet = ((rightPosDifference / Hardware.NATIVE_UNITS_PER_ROTATION) * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12
-//
-//        println("Left Distance Traveled: $leftFeet, Right Distance Traveled: $rightFeet")
     }
 
     override fun interrupted() {
         this.end()
     }
 
-    override fun isFinished(): Boolean {
-        if (leftMotionProfile.hasFinished() && rightMotionProfile.hasFinished()) {
-            return true
-        }
-        return false
-    }
+    override fun isFinished() = leftMotionProfile.hasFinished() && rightMotionProfile.hasFinished()
 }

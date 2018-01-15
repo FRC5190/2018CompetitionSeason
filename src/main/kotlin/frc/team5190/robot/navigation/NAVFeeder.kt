@@ -87,6 +87,9 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
                         loopTimeout = -1
                     }
                 }
+                3 -> {
+                    setValue = SetValueMotionProfile.Hold
+                }
             }
             talon.getMotionProfileStatus(status)
         }
@@ -132,6 +135,14 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
     fun startMotionProfile() {
         start = true
+    }
+
+    fun pauseMotionProfile() {
+        state = 3
+    }
+
+    fun resumeMotionProfile() {
+        state = 2
     }
 
     fun getSetValue(): SetValueMotionProfile {

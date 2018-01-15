@@ -6,12 +6,14 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton
 
 class OI {
     companion object Xbox {
-        private val xbox = XboxController(0)
+        
+        val xbox = XboxController(0)
 
         private var buttonA = JoystickButton(xbox, 1)
 
         init {
             buttonA.whenPressed(frc.team5190.robot.Reset())
+
         }
 
         fun getLeftY() = xbox.getY(GenericHID.Hand.kLeft)
