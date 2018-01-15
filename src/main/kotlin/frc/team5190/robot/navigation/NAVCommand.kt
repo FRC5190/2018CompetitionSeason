@@ -2,6 +2,7 @@ package frc.team5190.robot.navigation
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.OI
 import frc.team5190.robot.drive.DriveTrain
 
@@ -25,6 +26,8 @@ class NAVCommand(private val path: NAVHelper) : Command() {
     }
 
     override fun execute() {
+
+        SmartDashboard.putBoolean("Obstacle Present", OI.xbox.bButton)
 
         if (OI.xbox.bButton) {
             leftMotionProfile.pauseMotionProfile()
