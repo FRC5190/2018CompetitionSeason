@@ -7,9 +7,12 @@ import java.io.InputStreamReader
 
 enum class NAVHelper(private val leftFilePath: String, private val rightFilePath: String) {
 
-    LEFT("", ""),
-    RIGHT("", ""),
-    CENTER("testpath_left.csv", "testpath_right.csv");
+    LEFTS_LEFT("left/left_left.csv", "left/left_right.csv"),
+    LEFTS_RIGHT("left/right_let.csv", "left/right_right.csv"),
+    CENTERS_LEFT("center/left_left.csv", "center/left_right.csv"),
+    CENTERS_RIGHT("center/right_left.csv", "center/right_right.csv"),
+    RIGHTS_LEFT("right/left_left.csv", "right/left_right.csv"),
+    RIGHTS_RIGHT("right/right_left.csv", "right/right_right.csv");
 
     val trajectoryLeft by lazy {
         javaClass.classLoader.getResourceAsStream(leftFilePath).use { stream ->
@@ -36,8 +39,8 @@ data class TrajectoryData(private val position: Double, private val velocity: Do
     val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS.toDouble())
     val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS.toDouble())
 
-    val nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
-    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+    val nativeUnits = Maths.rotationsToNativeUnits(rotations, 1440.0)
+    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, 1440.0)
 }
 
 

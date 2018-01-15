@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
+import frc.team5190.robot.drive.DriveTrain
 
 class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
@@ -23,11 +24,16 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
     private val trajectories = constTrajectories
 
+    var leftPos = Int.MIN_VALUE
+    var rightPos = Int.MIN_VALUE
+
     private val notifier = Notifier(talon::processMotionProfileBuffer)
 
     init {
         talon.changeMotionControlFramePeriod(5)
         notifier.startPeriodic(0.005)
+        talon.setSensorPhase(true)
+        DriveTrain
     }
 
     fun reset() {
@@ -63,6 +69,7 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
                         startFilling()
                         state = 1
                         loopTimeout = numLoopsTimeout
+
                     }
                 }
 

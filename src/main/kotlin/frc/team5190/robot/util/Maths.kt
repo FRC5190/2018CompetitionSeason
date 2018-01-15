@@ -7,7 +7,9 @@ class Maths {
         }
 
         fun calculateFGain(power: Double, rpm: Double, sensorUnitsPerRotation: Double): Double {
-            return (power * 1023) / (rpm / 60.0 / 10 * sensorUnitsPerRotation)
+            val f = (power * 1023) / (rpm / 60.0 / 10 * sensorUnitsPerRotation)
+            println(f)
+            return f
         }
 
         fun feetPerSecondToRPM(feetPerSecond: Double, wheelRadius: Double): Double {
