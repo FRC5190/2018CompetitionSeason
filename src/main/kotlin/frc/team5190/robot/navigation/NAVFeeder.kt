@@ -12,7 +12,6 @@ import frc.team5190.robot.drive.DriveTrain
 class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
     private var talon = constTalon
-
     private var status = MotionProfileStatus()
     private var state = 0
     private var loopTimeout = -1
