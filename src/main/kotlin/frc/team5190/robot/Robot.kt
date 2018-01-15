@@ -21,6 +21,10 @@ class Robot : IterativeRobot() {
         chooser.addObject("LSL", "LSL")
         chooser.addObject("CSL", "CSL")
         chooser.addObject("RSL", "RSL")
+        chooser.addObject("LSR", "LSR")
+        chooser.addObject("CSR", "CSR")
+        chooser.addObject("RSR", "RSR")
+
         chooser.addDefault("CSL", "CSL")
 
         SmartDashboard.putData("Auto Mode", chooser)
@@ -33,17 +37,16 @@ class Robot : IterativeRobot() {
 
         autoMode = when (chooser.selected) {
             "LSL" -> NAVHelper.LEFTS_LEFT
-//            "LSR" -> NAVHelper.LEFTS_RIGHT
+            "LSR" -> NAVHelper.LEFTS_RIGHT
             "CSL" -> NAVHelper.CENTERS_LEFT
-//            "CSR" -> NAVHelper.CENTERS_RIGHT
+            "CSR" -> NAVHelper.CENTERS_RIGHT
             "RSL" -> NAVHelper.RIGHTS_LEFT
-//            "RSR" -> NAVHelper.RIGHTS_RIGHT
+            "RSR" -> NAVHelper.RIGHTS_RIGHT
 
             else -> NAVHelper.CENTERS_LEFT // TODO implement just cross auto line method
         }
 
         navCommand = NAVCommand(autoMode)
-
         navCommand.start()
     }
 
@@ -60,10 +63,6 @@ class Robot : IterativeRobot() {
     override fun teleopPeriodic() {
         this.printToShuffleboard()
         Scheduler.getInstance().run()
-
-//        println(DriveTrain.frontLeft.sensorCollection.quadraturePosition) 1440
-//        println(DriveTrain.frontLeft.getSelectedSensorPosition(0)) 1440
-
     }
 
     override fun disabledInit() {
