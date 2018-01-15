@@ -260,28 +260,6 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="libraryTable">
-    <library name="Gradle: :CTRE_Phoenix-sources:">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <NATIVE>
-        <root url="file://$PROJECT_DIR$/libs" />
-      </NATIVE>
-      <SOURCES />
-    </library>
-    <library name="Gradle: :CTRE_Phoenix:">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/libs/CTRE_Phoenix.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <NATIVE>
-        <root url="file://$PROJECT_DIR$/libs" />
-      </NATIVE>
-      <SOURCES>
-        <root url="jar://$PROJECT_DIR$/libs/CTRE_Phoenix-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Gradle: edu.wpi.first.cscore:cscore-java:1.1.0">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.cscore/cscore-java/1.1.0/89fb12244cef59046d8b23ad332651d3b2503e96/cscore-java-1.1.0.jar!/" />
@@ -327,13 +305,22 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/jaci.pathfinder/Pathfinder-Java/1.8/f99c341d8a52f2445060989aef1af8ab7bb458ed/Pathfinder-Java-1.8-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: openrio.mirror.third.kauailabs:navx-java:3.0.342">
+    <library name="Gradle: openrio.mirror.third.ctre:CTRE-phoenix-java:5.2.1.1">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.kauailabs/navx-java/3.0.342/4af029f506ed05dda2625ba93692b3a31f40e71a/navx-java-3.0.342.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.2.1.1/469f4905ff49fe297be19c0c6724e27b444fbb5c/CTRE-phoenix-java-5.2.1.1.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.kauailabs/navx-java/3.0.342/35a06a0b5be816d2e88139e1a3529148fab3a675/navx-java-3.0.342-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.ctre/CTRE-phoenix-java/5.2.1.1/6ef53967acb57f11e0be1e3d825d8a013945bc27/CTRE-phoenix-java-5.2.1.1-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: openrio.mirror.third.kauailabs:navx-java:3.0.346">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.kauailabs/navx-java/3.0.346/b29a636918ae632c90be1b0e4161ac7bd0853731/navx-java-3.0.346.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/openrio.mirror.third.kauailabs/navx-java/3.0.346/bf97f8511e36c87629248aa073f92660a413547d/navx-java-3.0.346-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: openrio.powerup:MatchData:2018.01.07">

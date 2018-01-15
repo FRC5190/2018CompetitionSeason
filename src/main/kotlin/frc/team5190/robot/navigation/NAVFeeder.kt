@@ -23,9 +23,6 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
     private val trajectories = constTrajectories
 
-    var leftPos = Int.MIN_VALUE
-    var rightPos = Int.MIN_VALUE
-
     private val notifier = Notifier(talon::processMotionProfileBuffer)
 
     init {
