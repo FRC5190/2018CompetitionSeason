@@ -10,7 +10,7 @@ class TRNController(targetAngleDegrees: Double) : PIDOutput {
 
     private var rotateToAngleRate = 0.0
 
-    private val p = 0.0
+    private val p = 0.03
     private val i = 0.0
     private val d = 0.0
     private val f = 0.0
@@ -21,7 +21,7 @@ class TRNController(targetAngleDegrees: Double) : PIDOutput {
 
     init {
         pidController.setInputRange(-180.0, 180.0)
-        pidController.setOutputRange(-1.0, 1.0)
+        pidController.setOutputRange(-0.2, 0.2)
         pidController.setAbsoluteTolerance(2.0)
         pidController.setContinuous(true)
         pidController.disable()
@@ -39,7 +39,7 @@ class TRNController(targetAngleDegrees: Double) : PIDOutput {
         val left = rotateToAngleRate
         val right = rotateToAngleRate
 
-        DriveTrain.tankDrive(left, right, ControlMode.PercentOutput)
+        DriveTrain.tankDrive(left, -right, ControlMode.PercentOutput)
     }
 
     fun hasFinished() = Math.abs(target - DriveTrain.navX.angle) < 1
