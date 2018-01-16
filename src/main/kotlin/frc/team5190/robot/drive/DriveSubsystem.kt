@@ -1,9 +1,10 @@
 package frc.team5190.robot.drive
 
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team5190.robot.*
-import frc.team5190.robot.auto.AutoPath
+import frc.team5190.robot.MainXbox
+import frc.team5190.robot.MotorIds
 import frc.team5190.robot.drive.commands.TeleDriveCommand
+import frc.team5190.robot.talonListOf
 
 object DriveSubsystem : Subsystem() {
 
@@ -24,20 +25,17 @@ object DriveSubsystem : Subsystem() {
         this.defaultCommand = TeleDriveCommand()
     }
 
-    fun drive() {
-        when (controlMode) {
-            DriveMode.TANK -> falconDrive.tankDrive(MainXbox.getLeftY(), MainXbox.getRightY())
-            DriveMode.CURVE -> falconDrive.curvatureDrive(MainXbox.getLeftY(), MainXbox.getLeftX(), MainXbox.aButton)
-        }
+    override fun periodic() {
         when {
             MainXbox.backButtonPressed -> DriveMode.TANK
-            MainXbox.startButtonPressed -> DriveMode.CURVE
+            MainXbox.startButtonPressed -> DriveMode.ARCADE
             else -> null
         }?.let { controlMode = it }
     }
 }
 
 enum class DriveMode {
+    ARCADE,
     TANK,
     CURVE
 }

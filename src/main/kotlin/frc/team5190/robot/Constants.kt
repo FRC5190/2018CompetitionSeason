@@ -11,4 +11,12 @@ enum class MotorIds(val id: Int) {
     val talon by lazy { WPI_TalonSRX(id) }
 }
 
+object Hardware {
+    const val SENSOR_UNITS_PER_ROTATION = 360
+    const val WHEEL_RADIUS = 2
+
+    const val MAX_RPM = 1125
+    const val HIGH_GEAR_MAX = 18.3
+}
+
 fun talonListOf(vararg elements: MotorIds): List<WPI_TalonSRX> = listOf(*elements).map { it.talon }

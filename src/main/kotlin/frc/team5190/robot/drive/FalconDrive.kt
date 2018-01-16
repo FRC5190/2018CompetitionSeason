@@ -22,5 +22,4 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         allMotors.forEach { it.setNeutralMode(NeutralMode.Brake) }
     }
 
-
 }
