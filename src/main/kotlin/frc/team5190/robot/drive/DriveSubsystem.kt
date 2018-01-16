@@ -1,10 +1,10 @@
 package frc.team5190.robot.drive
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.MotorIds
 import frc.team5190.robot.drive.commands.TeleDriveCommand
-import frc.team5190.robot.talonListOf
+import frc.team5190.robot.util.MotorIDs
 
 object DriveSubsystem : Subsystem() {
 
@@ -18,8 +18,8 @@ object DriveSubsystem : Subsystem() {
             field = value
         }
 
-    val falconDrive = FalconDrive(talonListOf(MotorIds.FRONT_LEFT_VAL, MotorIds.REAR_LEFT_VAL),
-            talonListOf(MotorIds.FRONT_RIGHT_VAL, MotorIds.REAR_RIGHT_VAL))
+    val falconDrive = FalconDrive(listOf(MotorIDs.FRONT_LEFT, MotorIDs.REAR_LEFT).map { WPI_TalonSRX(it) },
+            listOf(MotorIDs.FRONT_RIGHT, MotorIDs.REAR_RIGHT).map { WPI_TalonSRX(it) })
 
     override fun initDefaultCommand() {
         this.defaultCommand = TeleDriveCommand()
