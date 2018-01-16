@@ -104,7 +104,6 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
         talon.configMotionProfileTrajectoryPeriod(0, 10)
 
         trajectories.forEachIndexed { index, trajectory ->
-
             point.position = trajectory.nativeUnits
             point.velocity = trajectory.nativeUnitsPer100Ms
 

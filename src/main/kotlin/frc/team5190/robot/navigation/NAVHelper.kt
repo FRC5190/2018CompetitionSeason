@@ -4,7 +4,6 @@ import frc.team5190.robot.util.Hardware
 import frc.team5190.robot.util.Maths
 import java.io.InputStreamReader
 
-
 enum class NAVHelper(private val leftFilePath: String, private val rightFilePath: String) {
     LEFTS_LEFT("left/left_left.csv", "left/left_right.csv"),
     LEFTS_RIGHT("left/right_let.csv", "left/right_right.csv"),
@@ -14,17 +13,16 @@ enum class NAVHelper(private val leftFilePath: String, private val rightFilePath
     RIGHTS_RIGHT("right/right_left.csv", "right/right_right.csv");
 
     val trajectoryLeft by lazy {
-        javaClass.classLoader.getResourceAsStream(leftFilePath).use { stream ->
-            return@lazy InputStreamReader(stream).readLines().map {
-                val pointData = it.split(",").map { it.trim() }
-                return@map TrajectoryData(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toLong())
-            }
-        }
+        loadTrajectory(leftFilePath)
     }
 
     val trajectoryRight by lazy {
-        javaClass.classLoader.getResourceAsStream(rightFilePath).use { stream ->
-            return@lazy InputStreamReader(stream).readLines().map {
+        loadTrajectory(rightFilePath)
+    }
+
+    private fun loadTrajectory(path: String): TrajectoryList {
+        javaClass.classLoader.getResourceAsStream(path).use { stream ->
+            return InputStreamReader(stream).readLines().map {
                 val pointData = it.split(",").map { it.trim() }
                 return@map TrajectoryData(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toLong())
             }
