@@ -3,14 +3,17 @@ package frc.team5190.robot
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 
-object OI {
-    val xbox = XboxController(0)
+object MainXbox : XboxController(0)
 
-    fun getYLeft(): Double {
-        return xbox.getY(GenericHID.Hand.kLeft)
-    }
+fun XboxController.setRumble(value: Double) = setRumble(value, value)
 
-    fun getXLeft(): Double {
-        return xbox.getX(GenericHID.Hand.kLeft)
-    }
+fun XboxController.setRumble(leftValue: Double, rightValue: Double) {
+    setRumble(GenericHID.RumbleType.kLeftRumble, leftValue)
+    setRumble(GenericHID.RumbleType.kRightRumble, rightValue)
 }
+
+fun XboxController.getLeftX() = getX(GenericHID.Hand.kLeft)
+fun XboxController.getLeftY() = getY(GenericHID.Hand.kLeft)
+
+fun XboxController.getRightX() = getX(GenericHID.Hand.kRight)
+fun XboxController.getRightY() = getY(GenericHID.Hand.kRight)

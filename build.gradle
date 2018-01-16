@@ -3,7 +3,7 @@ plugins {
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.06a"
+    id "jaci.openrio.gradle.GradleRIO" version "2018.01.15"
 }
 
 def TEAM = 5190
@@ -33,6 +33,7 @@ dependencies {
     compile wpilib()
     compile ctre()
     compile navx()
+    compile openrio.powerup.matchData()
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
