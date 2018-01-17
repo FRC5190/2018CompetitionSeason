@@ -1,3 +1,8 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
 package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -13,6 +18,9 @@ class TeleDriveCommand : Command() {
         this.requires(DriveSubsystem)
     }
 
+    /**
+     * Called periodically until the command is finished or until interrupted.
+     */
     override fun execute() {
         val mode = ControlMode.PercentOutput
         when (DriveSubsystem.controlMode) {

@@ -1,3 +1,8 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
 package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -11,6 +16,9 @@ import frc.team5190.robot.util.Hardware
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.util.scale
 
+/**
+ * Custom FalconDrive object that extends Differential Drive
+ */
 class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
                   val rightMotors: List<WPI_TalonSRX>) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
 
@@ -33,6 +41,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         configure()
     }
 
+    /**
+     * Configures PID values
+     */
     fun configure() {
         allMasters.forEach {
             it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
@@ -48,11 +59,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.setSensorPhase(true)
             it.setNeutralMode(NeutralMode.Brake)
         }
-    }
-
-    fun reset() {
-        leftMaster.set(ControlMode.PercentOutput, 0.0)
-        rightMaster.set(ControlMode.PercentOutput, 0.0)
     }
 
     val leftEncoderPosition

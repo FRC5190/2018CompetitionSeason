@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.auto.NAVCommand
-import frc.team5190.robot.auto.NAVHelper
+import frc.team5190.robot.auto.AutoCommand
+import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Hardware
@@ -18,19 +18,18 @@ class Robot : IterativeRobot() {
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
-    companion object {
 
-        val autoChooser = SendableChooser<NAVHelper>()
-    }
+    private val autoChooser = SendableChooser<AutoHelper>()
+
 
     override fun robotInit() {
-        NAVHelper.values().forEach { autoChooser.addObject(it.name, it) }
+        AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
         SmartDashboard.putData("Auto Mode", autoChooser)
     }
 
     override fun autonomousInit() {
         NavX.zeroYaw()
-        NAVCommand(autoChooser.selected ?: NAVHelper.CENTERS_LEFT).start()
+        AutoCommand(autoChooser.selected ?: AutoHelper.CENTERS_LEFT).start()
     }
 
     override fun autonomousPeriodic() {

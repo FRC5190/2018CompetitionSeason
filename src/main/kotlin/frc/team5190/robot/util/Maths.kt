@@ -1,5 +1,13 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
 package frc.team5190.robot.util
 
+/**
+ * Contains all the conversions that are required for the robot.
+ */
 class Maths {
     companion object {
         fun calculateFGain(power: Double, feetPerSecond: Double, wheelSize: Double, sensorUnitsPerRotation: Double): Double {

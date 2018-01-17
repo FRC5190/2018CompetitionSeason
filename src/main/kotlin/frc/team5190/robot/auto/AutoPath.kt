@@ -1,3 +1,8 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
 package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motion.MotionProfileStatus
@@ -7,9 +12,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 
-class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
+class AutoPath(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
 
     private var talon = constTalon
     private var status = MotionProfileStatus()
@@ -140,26 +144,7 @@ class NAVFeeder(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
     }
 
     fun resumeMotionProfile() {
-        if (state == 3) {
-            val activeTrajectoryPosition = talon.activeTrajectoryPosition
-
-            val trajectory = trajectories.find { activeTrajectoryPosition <= it.nativeUnits }!!
-            val index = trajectories.indexOf(trajectory)
-
-            SmartDashboard.putNumber("Index", index.toDouble())
-
-
-            trajectories = trajectories.subList(index, trajectories.size)
-
-            val firstNativeUnits = trajectories[0].nativeUnits
-
-            trajectories.forEach { it.nativeUnits -= firstNativeUnits }
-
-            println(trajectories.map { it.nativeUnits })
-
-            this.reset()
-            this.startMotionProfile()
-        } else return
+        state = 2
 
     }
     fun getSetValue(): SetValueMotionProfile {

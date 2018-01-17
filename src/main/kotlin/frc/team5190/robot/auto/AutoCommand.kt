@@ -1,44 +1,44 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
+
 package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import frc.team5190.robot.MainXbox
 import frc.team5190.robot.drive.DriveSubsystem
 
-class NAVCommand(private val path: NAVHelper) : Command() {
+
+/**
+ * Command that runs autonomous
+ */
+class AutoCommand(private val path: AutoHelper) : Command() {
 
     init {
         requires(DriveSubsystem)
     }
 
-    private lateinit var leftMotionProfile: NAVFeeder
-    private lateinit var rightMotionProfile: NAVFeeder
+    // Instances of AutoPath classes for each side of the DriveTrain
+    private lateinit var leftMotionProfile: AutoPath
+    private lateinit var rightMotionProfile: AutoPath
 
-    private var paused = false
-
+    /**
+     * Runs once whenever the command is started.
+     */
     override fun initialize() {
-        leftMotionProfile = NAVFeeder(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft)
+        leftMotionProfile = AutoPath(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft)
         leftMotionProfile.startMotionProfile()
 
-        rightMotionProfile = NAVFeeder(DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight)
+        rightMotionProfile = AutoPath(DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight)
         rightMotionProfile.startMotionProfile()
     }
 
+    /**
+     * Called periodically until finished or until the command has been canceled.
+     */
     override fun execute() {
-        if (MainXbox.bButton) {
-            leftMotionProfile.pauseMotionProfile()
-            rightMotionProfile.pauseMotionProfile()
-            paused = true
-//            DriveSubsystem.falconDrive.feedSafety()
-//            SmartDashboard.putBoolean("Obstacle Present", true)
-//            println("sir")
-//            return
-        } else if (paused) {
-            leftMotionProfile.resumeMotionProfile()
-            rightMotionProfile.resumeMotionProfile()
-            paused = false
-        }
-
         leftMotionProfile.control()
         rightMotionProfile.control()
 
@@ -48,11 +48,17 @@ class NAVCommand(private val path: NAVHelper) : Command() {
         DriveSubsystem.falconDrive.feedSafety()
     }
 
+    /**
+     * Called when the command has ended.
+     */
     override fun end() {
         leftMotionProfile.reset()
         rightMotionProfile.reset()
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
+    /**
+     * Ends the command when both sides of the DriveTrain have finished executing the motion profile.
+     */
     override fun isFinished() = leftMotionProfile.hasFinished() && rightMotionProfile.hasFinished()
 }
