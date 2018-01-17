@@ -35,7 +35,7 @@ enum class AutoHelper(private val leftFilePath: String, private val rightFilePat
         javaClass.classLoader.getResourceAsStream(path).use { stream ->
             return InputStreamReader(stream).readLines().map {
                 val pointData = it.split(",").map { it.trim() }
-                return@map TrajectoryData(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toLong())
+                return@map TrajectoryData(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toInt())
             }
         }
     }
@@ -43,7 +43,10 @@ enum class AutoHelper(private val leftFilePath: String, private val rightFilePat
 
 typealias TrajectoryList = List<TrajectoryData>
 
-data class TrajectoryData(private val position: Double, private val velocity: Double, val duration: Long) {
+/**
+ * Stores trajectory data for each point along the trajectory.
+ */
+data class TrajectoryData(private val position: Double, private val velocity: Double, val duration: Int) {
 
     // Converts feet and feet/sec into rotations and rotations/sec.
     val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)

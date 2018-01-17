@@ -5,6 +5,9 @@ package frc.team5190.robot
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 
+/**
+ * Xbox Controller object
+ */
 object MainXbox : XboxController(0)
 
 fun XboxController.getLeftX() = getX(GenericHID.Hand.kLeft)

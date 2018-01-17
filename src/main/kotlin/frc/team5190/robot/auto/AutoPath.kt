@@ -13,28 +13,53 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
 
-class AutoPath(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
+/**
+ * Class that feeds the talon trajectory values to follow.
+ */
+class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
 
+    // The talon to apply the trajectory to
     private var talon = constTalon
+
+    // Status of the motion profile
     private var status = MotionProfileStatus()
+
+    // Current state of the motion profile
     private var state = 0
+
+    // Timeout
     private var loopTimeout = -1
+
+    // Value used to determine whether to start the trajectory
     private var start = false
+
+    // Set value of the talon
     private var setValue = SetValueMotionProfile.Disable
 
+    // Minimum number of points in the talon before enabling
     private val minPointsInTalon = 5
+
+    // Number of loops until timeout
     private val numLoopsTimeout = 10
 
-    private var trajectories = constTrajectories
+    // The trajectory to load into the talon
+    private var trajectory = constTrajectory
 
+    // Notifier
     private val notifier = Notifier(talon::processMotionProfileBuffer)
 
+    /**
+     * Called when the class is instantiated
+     */
     init {
         talon.changeMotionControlFramePeriod(5)
         notifier.startPeriodic(0.005)
         talon.setSensorPhase(true)
     }
 
+    /**
+     * Resets the trajectory when MP ends or is canceled.
+     */
     fun reset() {
         talon.clearMotionProfileTrajectories()
         setValue = SetValueMotionProfile.Disable
@@ -43,6 +68,9 @@ class AutoPath(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
         start = false
     }
 
+    /**
+     * Called periodically and is used to control the behavior of the MP
+     */
     fun control() {
         talon.getMotionProfileStatus(status)
 
@@ -90,14 +118,14 @@ class AutoPath(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
                         loopTimeout = -1
                     }
                 }
-                3 -> {
-                    setValue = SetValueMotionProfile.Hold
-                }
             }
             talon.getMotionProfileStatus(status)
         }
     }
 
+    /**
+     * Fills the talon with the trajectory points.
+     */
     private fun startFilling() {
         val point = TrajectoryPoint()
 
@@ -108,22 +136,27 @@ class AutoPath(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
         talon.clearMotionProfileTrajectories()
         talon.configMotionProfileTrajectoryPeriod(0, 10)
 
-        trajectories.forEachIndexed { index, trajectory ->
-            point.position = trajectory.nativeUnits
-            point.velocity = trajectory.nativeUnitsPer100Ms
+        trajectory.forEachIndexed { index, tPoint ->
+            point.position = tPoint.nativeUnits
+            point.velocity = tPoint.nativeUnitsPer100Ms
 
             point.headingDeg = 0.0
             point.profileSlotSelect0 = 0
             point.profileSlotSelect1 = 0
-            point.timeDur = getTrajectoryDuration(trajectory.duration.toInt())
+            point.timeDur = getTrajectoryDuration(tPoint.duration)
 
             point.zeroPos = index == 0
-            point.isLastPoint = index + 1 == trajectories.size
+            point.isLastPoint = index + 1 == trajectory.size
 
             talon.pushMotionProfileTrajectory(point)
         }
     }
 
+    /**
+     * Returns the duration of the trajectory
+     * @param durationMs Duration of each trajectory point
+     * @return the duration of each point in TrajectoryDuration point
+     */
     private fun getTrajectoryDuration(durationMs: Int): TrajectoryPoint.TrajectoryDuration {
         var retval = TrajectoryPoint.TrajectoryDuration.Trajectory_Duration_0ms
         retval = retval.valueOf(durationMs)
@@ -135,22 +168,23 @@ class AutoPath(constTalon: TalonSRX, constTrajectories: TrajectoryList) {
         return retval
     }
 
+    /**
+     * Starts the motion profile.
+     */
     fun startMotionProfile() {
         start = true
     }
 
-    fun pauseMotionProfile() {
-        state = 3
-    }
-
-    fun resumeMotionProfile() {
-        state = 2
-
-    }
+    /**
+     * Getter for the set value property.
+     */
     fun getSetValue(): SetValueMotionProfile {
         return setValue
     }
 
+    /**
+     * Returns if the MP has finished.
+     */
     fun hasFinished(): Boolean {
         return status.isLast
     }

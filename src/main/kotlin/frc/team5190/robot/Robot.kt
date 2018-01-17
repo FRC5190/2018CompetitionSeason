@@ -1,3 +1,8 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
 package frc.team5190.robot
 
 import edu.wpi.first.wpilibj.IterativeRobot
@@ -10,6 +15,9 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Hardware
 
+/**
+ * Main robot class
+ */
 class Robot : IterativeRobot() {
 
     init {
@@ -18,39 +26,61 @@ class Robot : IterativeRobot() {
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
-
     private val autoChooser = SendableChooser<AutoHelper>()
 
-
+    /**
+     * Executed the robot first starts up
+     */
     override fun robotInit() {
         AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
         SmartDashboard.putData("Auto Mode", autoChooser)
     }
 
+    /**
+     * Executed periodically when robot is enabled.
+     */
+    override fun robotPeriodic() {
+        // Debug information
+        SmartDashboard.putNumber("Left Motor RPM", DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)
+                * 600.0 / 1440.0)
+        SmartDashboard.putNumber("Right Motor RPM", DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)
+                * 600.0 / 1440.0)
+
+        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
+        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
+
+        SmartDashboard.putNumber("Left Encoder to Feet", ((DriveSubsystem.falconDrive.leftEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION)
+                * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
+        SmartDashboard.putNumber("Right Encoder to Feet", ((DriveSubsystem.falconDrive.rightEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION)
+                * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
+    }
+
+    /**
+     * Executed when autonomous is initialized
+     */
     override fun autonomousInit() {
         NavX.zeroYaw()
         AutoCommand(autoChooser.selected ?: AutoHelper.CENTERS_LEFT).start()
     }
 
+    /**
+     * Executed periodically during autonomous.
+     */
     override fun autonomousPeriodic() {
         Scheduler.getInstance().run()
     }
 
+    /**
+     * Executed when teleop is initialized
+     */
     override fun teleopInit() {
         DriveSubsystem.currentCommand?.cancel()
     }
 
-    override fun robotPeriodic() {
+    /**
+     * Executed periodically during teleop.
+     */
+    override fun teleopPeriodic() {
         Scheduler.getInstance().run()
-
-        // Some debug information
-        SmartDashboard.putNumber("Left Motor RPM", DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0) * 600.0 / 1440.0)
-        SmartDashboard.putNumber("Right Motor RPM", DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0) * 600.0 / 1440.0)
-
-        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
-        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
-
-        SmartDashboard.putNumber("Left Encoder to Feet", ((DriveSubsystem.falconDrive.leftEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION) * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
-        SmartDashboard.putNumber("Right Encoder to Feet", ((DriveSubsystem.falconDrive.rightEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION) * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
     }
 }
