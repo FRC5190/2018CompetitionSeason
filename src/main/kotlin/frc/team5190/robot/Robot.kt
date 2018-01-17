@@ -29,7 +29,7 @@ class Robot : IterativeRobot() {
     private val autoChooser = SendableChooser<AutoHelper>()
 
     /**
-     * Executed the robot first starts up
+     * Executed when robot code first launches and is ready to be initialized.
      */
     override fun robotInit() {
         AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
@@ -37,7 +37,7 @@ class Robot : IterativeRobot() {
     }
 
     /**
-     * Executed periodically when robot is enabled.
+     * Executed periodically.
      */
     override fun robotPeriodic() {
         // Debug information
@@ -53,6 +53,8 @@ class Robot : IterativeRobot() {
                 * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
         SmartDashboard.putNumber("Right Encoder to Feet", ((DriveSubsystem.falconDrive.rightEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION)
                 * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
+
+        Scheduler.getInstance().run()
     }
 
     /**
@@ -64,23 +66,9 @@ class Robot : IterativeRobot() {
     }
 
     /**
-     * Executed periodically during autonomous.
-     */
-    override fun autonomousPeriodic() {
-        Scheduler.getInstance().run()
-    }
-
-    /**
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
         DriveSubsystem.currentCommand?.cancel()
-    }
-
-    /**
-     * Executed periodically during teleop.
-     */
-    override fun teleopPeriodic() {
-        Scheduler.getInstance().run()
     }
 }

@@ -12,7 +12,9 @@ import frc.team5190.robot.drive.DriveSubsystem
 
 
 /**
- * Command that runs autonomous
+ * Command that runs autonomous. This class selects the appropriate MP and sends it to the AutoPath class which
+ * pushes the information to the Talon.
+ * @param path The path to take during autonomous as provided by the Sendable Chooser.
  */
 class AutoCommand(private val path: AutoHelper) : Command() {
 
