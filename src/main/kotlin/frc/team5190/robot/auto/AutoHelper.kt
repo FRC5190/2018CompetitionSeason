@@ -9,6 +9,11 @@ import frc.team5190.robot.util.Hardware
 import frc.team5190.robot.util.Maths
 import java.io.InputStreamReader
 
+/**
+ * A class that contains information about the paths that the robot will take during autonomous.
+ * @param leftFilePath The file path for the trajectory of the left side of the DriveTrain
+ * @param rightFilePath The file path for the trajectory of the right side of the DriveTrain
+ */
 enum class AutoHelper(private val leftFilePath: String, private val rightFilePath: String) {
 
     // Various enums that represent the different paths the robot will take.
