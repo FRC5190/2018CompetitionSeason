@@ -12,13 +12,11 @@ enum class NAVHelper(private val leftFilePath: String, private val rightFilePath
     RIGHTS_LEFT("right/left_left.csv", "right/left_right.csv"),
     RIGHTS_RIGHT("right/right_left.csv", "right/right_right.csv");
 
-    val trajectoryLeft by lazy {
-        loadTrajectory(leftFilePath)
-    }
+    val trajectoryLeft
+        get() = loadTrajectory(leftFilePath)
 
-    val trajectoryRight by lazy {
-        loadTrajectory(rightFilePath)
-    }
+    val trajectoryRight
+        get() = loadTrajectory(rightFilePath)
 
     private fun loadTrajectory(path: String): TrajectoryList {
         javaClass.classLoader.getResourceAsStream(path).use { stream ->
@@ -36,7 +34,7 @@ data class TrajectoryData(private val position: Double, private val velocity: Do
     val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)
     val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS)
 
-    val nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+    var nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
     val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
 }
 

@@ -18,7 +18,10 @@ class Robot : IterativeRobot() {
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
-    private val autoChooser = SendableChooser<NAVHelper>()
+    companion object {
+
+        val autoChooser = SendableChooser<NAVHelper>()
+    }
 
     override fun robotInit() {
         NAVHelper.values().forEach { autoChooser.addObject(it.name, it) }

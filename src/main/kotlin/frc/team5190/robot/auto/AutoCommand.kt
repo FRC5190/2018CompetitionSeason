@@ -29,9 +29,10 @@ class NAVCommand(private val path: NAVHelper) : Command() {
             leftMotionProfile.pauseMotionProfile()
             rightMotionProfile.pauseMotionProfile()
             paused = true
+//            DriveSubsystem.falconDrive.feedSafety()
 //            SmartDashboard.putBoolean("Obstacle Present", true)
-            println("sir")
-            return
+//            println("sir")
+//            return
         } else if (paused) {
             leftMotionProfile.resumeMotionProfile()
             rightMotionProfile.resumeMotionProfile()
