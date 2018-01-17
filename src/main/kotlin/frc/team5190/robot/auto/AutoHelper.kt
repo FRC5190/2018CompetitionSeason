@@ -1,4 +1,4 @@
-package frc.team5190.robot.navigation
+package frc.team5190.robot.auto
 
 import frc.team5190.robot.util.Hardware
 import frc.team5190.robot.util.Maths
@@ -36,8 +36,8 @@ data class TrajectoryData(private val position: Double, private val velocity: Do
     val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)
     val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS)
 
-    val nativeUnits = Maths.rotationsToNativeUnits(rotations, 1440.0)
-    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, 1440.0)
+    val nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
 }
 
 

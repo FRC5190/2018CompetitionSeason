@@ -4,9 +4,9 @@ import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team5190.robot.auto.NAVCommand
+import frc.team5190.robot.auto.NAVHelper
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.navigation.NAVCommand
-import frc.team5190.robot.navigation.NAVHelper
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Hardware
 
@@ -26,7 +26,12 @@ class Robot : IterativeRobot() {
     }
 
     override fun autonomousInit() {
+        NavX.zeroYaw()
         NAVCommand(autoChooser.selected ?: NAVHelper.CENTERS_LEFT).start()
+    }
+
+    override fun autonomousPeriodic() {
+        Scheduler.getInstance().run()
     }
 
     override fun teleopInit() {

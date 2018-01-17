@@ -1,8 +1,7 @@
-package frc.team5190.robot.navigation
+package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.drive.DriveSubsystem
 
@@ -15,7 +14,7 @@ class NAVCommand(private val path: NAVHelper) : Command() {
     private lateinit var leftMotionProfile: NAVFeeder
     private lateinit var rightMotionProfile: NAVFeeder
 
-    var paused = false
+    private var paused = false
 
     override fun initialize() {
         leftMotionProfile = NAVFeeder(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft)
@@ -26,16 +25,17 @@ class NAVCommand(private val path: NAVHelper) : Command() {
     }
 
     override fun execute() {
-        SmartDashboard.putBoolean("Obstacle Present", MainXbox.bButton)
-
         if (MainXbox.bButton) {
             leftMotionProfile.pauseMotionProfile()
             rightMotionProfile.pauseMotionProfile()
             paused = true
+//            SmartDashboard.putBoolean("Obstacle Present", true)
+            println("sir")
             return
         } else if (paused) {
             leftMotionProfile.resumeMotionProfile()
             rightMotionProfile.resumeMotionProfile()
+            paused = false
         }
 
         leftMotionProfile.control()
@@ -43,6 +43,8 @@ class NAVCommand(private val path: NAVHelper) : Command() {
 
         DriveSubsystem.falconDrive.leftMaster.set(ControlMode.MotionProfile, leftMotionProfile.getSetValue().value.toDouble())
         DriveSubsystem.falconDrive.rightMaster.set(ControlMode.MotionProfile, rightMotionProfile.getSetValue().value.toDouble())
+
+        DriveSubsystem.falconDrive.feedSafety()
     }
 
     override fun end() {
