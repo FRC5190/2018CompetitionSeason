@@ -15,14 +15,14 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
                   val rightMotors: List<WPI_TalonSRX>) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
 
     val leftMaster = leftMotors[0]
-    val leftSlaves = leftMotors.subList(1, leftMotors.size)
+    private val leftSlaves = leftMotors.subList(1, leftMotors.size)
 
     val rightMaster = rightMotors[0]
-    val rightSlaves = rightMotors.subList(1, rightMotors.size)
+    private val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
-    val allMasters = listOf(leftMaster, rightMaster)
+    private val allMasters = listOf(leftMaster, rightMaster)
 
-    val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
+    private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
     init {
         leftSlaves.forEach { it.follow(leftMaster) }
@@ -35,7 +35,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     fun configure() {
         allMasters.forEach {
-            it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_LEFT_RPM.toDouble(),
+            it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
                     sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
@@ -61,6 +61,10 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     val rightEncoderPosition
         get() = rightMaster.getSelectedSensorPosition(0)
 
+    fun feedSafety() {
+        m_safetyHelper.feed()
+    }
+
     fun tankDrive(controlMode: ControlMode, _leftSpeed: Double, _rightSpeed: Double, squaredInputs: Boolean = true) {
         var leftSpeed = _leftSpeed
         var rightSpeed = _rightSpeed
@@ -84,6 +88,68 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         m_safetyHelper.feed()
     }
 
+
+    private var m_quickStopThreshold = kDefaultQuickStopThreshold
+    private var m_quickStopAlpha = kDefaultQuickStopAlpha
+    private var m_quickStopAccumulator = 0.0
+
+    fun curvatureDrive(controlMode: ControlMode, xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
+        var xSpeed = xSpeed
+        var zRotation = zRotation
+
+        xSpeed = limit(xSpeed)
+        xSpeed = applyDeadband(xSpeed, m_deadband)
+
+        zRotation = limit(zRotation)
+        zRotation = applyDeadband(zRotation, m_deadband)
+
+        val angularPower: Double
+        val overPower: Boolean
+
+        if (isQuickTurn) {
+            if (Math.abs(xSpeed) < m_quickStopThreshold) {
+                m_quickStopAccumulator = (1 - m_quickStopAlpha) * m_quickStopAccumulator + m_quickStopAlpha * limit(zRotation) * 2.0
+            }
+            overPower = true
+            angularPower = zRotation
+        } else {
+            overPower = false
+            angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator
+
+            if (m_quickStopAccumulator > 1) {
+                m_quickStopAccumulator -= 1.0
+            } else if (m_quickStopAccumulator < -1) {
+                m_quickStopAccumulator += 1.0
+            } else {
+                m_quickStopAccumulator = 0.0
+            }
+        }
+
+        var leftMotorOutput = xSpeed + angularPower
+        var rightMotorOutput = xSpeed - angularPower
+
+        // If rotation is overpowered, reduce both outputs to within acceptable range
+        if (overPower) {
+            if (leftMotorOutput > 1.0) {
+                rightMotorOutput -= leftMotorOutput - 1.0
+                leftMotorOutput = 1.0
+            } else if (rightMotorOutput > 1.0) {
+                leftMotorOutput -= rightMotorOutput - 1.0
+                rightMotorOutput = 1.0
+            } else if (leftMotorOutput < -1.0) {
+                rightMotorOutput -= leftMotorOutput + 1.0
+                leftMotorOutput = -1.0
+            } else if (rightMotorOutput < -1.0) {
+                leftMotorOutput -= rightMotorOutput + 1.0
+                rightMotorOutput = -1.0
+            }
+        }
+
+        leftMaster.set(controlMode, leftMotorOutput * controlMode.scale() * m_maxOutput)
+        rightMaster.set(controlMode, rightMotorOutput * controlMode.scale() * m_maxOutput)
+
+        m_safetyHelper.feed()
+    }
 }
 
 fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, velocity: Double, wheelSize: Double, sensorUnitsPerRotation: Double, dev: FeedbackDevice) {

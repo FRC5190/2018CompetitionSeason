@@ -1,4 +1,4 @@
-package frc.team5190.robot.navigation
+package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motion.MotionProfileStatus
 import com.ctre.phoenix.motion.SetValueMotionProfile
