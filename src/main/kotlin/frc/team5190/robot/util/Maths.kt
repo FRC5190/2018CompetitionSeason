@@ -1,27 +1,62 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
 package frc.team5190.robot.util
 
+/**
+ * Contains all the conversions that are required for the robot.
+ */
 class Maths {
     companion object {
-        fun calculateFGain(power: Double, feetPerSecond: Double, wheelSize: Double, sensorUnitsPerRotation: Double): Double {
-            return power * 1023 / (feetPerSecond * 12.0 / (wheelSize * Math.PI * 2.0) / 10.0 * sensorUnitsPerRotation)
-        }
-
+        /**
+         * Calculates F gain
+         * @param power Full throttle power.
+         * @param rpm Max RPM
+         * @param sensorUnitsPerRotation Sensor Units per rotation
+         * @return F gain
+         */
         fun calculateFGain(power: Double, rpm: Double, sensorUnitsPerRotation: Double): Double {
             return (power * 1023) / (rpm / 60.0 / 10 * sensorUnitsPerRotation)
         }
 
+        /**
+         * Converts feet per second to RPM
+         * @param feetPerSecond Feet per second
+         * @param wheelRadius Wheel radius
+         * @return RPM
+         */
         fun feetPerSecondToRPM(feetPerSecond: Double, wheelRadius: Double): Double {
             return (feetPerSecond * 12.0f / (wheelRadius * Math.PI * 2.0)) * 60f
         }
 
+        /**
+         * Converts feet to rotations
+         * @param feet Feet
+         * @param wheelRadius Wheel radius
+         * @return Rotations
+         */
         fun feetToRotations(feet: Double, wheelRadius: Double): Double {
             return (feet * 12.0) / (Math.PI * 2.0 * wheelRadius)
         }
 
+        /**
+         * Converts RPM to Native Units per 100 ms
+         * @param rpm RPM
+         * @param sensorUnitsPerRotation Sensor units per rotation
+         * @return Native units per 100 ms
+         */
         fun rpmToNativeUnitsPer100Ms(rpm: Double, sensorUnitsPerRotation: Double): Double {
             return rpm * sensorUnitsPerRotation / 600
         }
 
+        /**
+         * Converts rotations to native units
+         * @param rot rotations
+         * @param sensorUnitsPerRotation Sensor units per rotation
+         * @return Native units
+         */
         fun rotationsToNativeUnits(rot: Double, sensorUnitsPerRotation: Double): Double {
             return rot * sensorUnitsPerRotation
         }

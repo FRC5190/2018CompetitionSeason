@@ -1,3 +1,8 @@
+/**
+ * FRC Team 5190
+ * Programming Team
+ */
+
 package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -11,19 +16,29 @@ import frc.team5190.robot.util.Hardware
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.util.scale
 
+/**
+ * Custom FalconDrive object that extends Differential Drive
+ */
 class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
                   val rightMotors: List<WPI_TalonSRX>) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
 
+    // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
     private val leftSlaves = leftMotors.subList(1, leftMotors.size)
 
+    // Values for the right side of the DriveTrain
     val rightMaster = rightMotors[0]
     private val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
+    // Values for all the master motors of the DriveTrain
     private val allMasters = listOf(leftMaster, rightMaster)
 
+    // Values for all the motors of the Drive Train
     private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
+    /**
+     * Sets some initial values when the FalconDrive object is initialized.
+     */
     init {
         leftSlaves.forEach { it.follow(leftMaster) }
         rightSlaves.forEach { it.follow(rightMaster) }
@@ -33,6 +48,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         configure()
     }
 
+    /**
+     * Configures PID values
+     */
     fun configure() {
         allMasters.forEach {
             it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
@@ -50,11 +68,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
     }
 
-    fun reset() {
-        leftMaster.set(ControlMode.PercentOutput, 0.0)
-        rightMaster.set(ControlMode.PercentOutput, 0.0)
-    }
-
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)
 
@@ -65,6 +78,13 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         m_safetyHelper.feed()
     }
 
+    /**
+     * Drives the motors in tank drive motion.
+     * @param controlMode The control mode in which to drive.
+     * @param _leftSpeed The speed at which the left side of the DriveTrain should move.
+     * @param _rightSpeed The speed at which the right side of the DriveTrain should move.
+     * @param squaredInputs Decides if the inputs should be squared.
+     */
     fun tankDrive(controlMode: ControlMode, _leftSpeed: Double, _rightSpeed: Double, squaredInputs: Boolean = true) {
         var leftSpeed = _leftSpeed
         var rightSpeed = _rightSpeed
@@ -75,8 +95,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         rightSpeed = limit(rightSpeed)
         rightSpeed = applyDeadband(rightSpeed, m_deadband)
 
-        // Square the inputs (while preserving the sign) to increase fine control
-        // while permitting full power.
+        // Square the inputs (while preserving the sign) to increase fine control while permitting full power.
         if (squaredInputs) {
             leftSpeed = Math.copySign(leftSpeed * leftSpeed, leftSpeed)
             rightSpeed = Math.copySign(rightSpeed * rightSpeed, rightSpeed)
@@ -88,11 +107,18 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         m_safetyHelper.feed()
     }
 
-
+    // Variables to control Curvature Drive
     private var m_quickStopThreshold = kDefaultQuickStopThreshold
     private var m_quickStopAlpha = kDefaultQuickStopAlpha
     private var m_quickStopAccumulator = 0.0
 
+    /**
+     * Drives the motors in curvature drive motion.
+     * @param controlMode The control mode in which to drive.
+     * @param xSpeed The speed of the X axis.
+     * @param zRotation The speed of the rotation along the Z axis.
+     * @param isQuickTurn Decides if quick turn is enabled or disabled.
+     */
     fun curvatureDrive(controlMode: ControlMode, xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
         var xSpeed = xSpeed
         var zRotation = zRotation
@@ -152,16 +178,28 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     }
 }
 
-fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, velocity: Double, wheelSize: Double, sensorUnitsPerRotation: Double, dev: FeedbackDevice) {
-    configurePIDF(p, i, d, Maths.calculateFGain(power, velocity, wheelSize, sensorUnitsPerRotation))
-    configSelectedFeedbackSensor(dev, 0, 10)
-}
-
+/**
+ * Configures the PID for the specified motor
+ * @param p Proportional gain
+ * @param i Integral gain
+ * @param d Differential gain
+ * @param power Max throttle power
+ * @param rpm Max RPM
+ * @param sensorUnitsPerRotation Sensor units per rotation
+ * @param dev Feedback device used with the motor
+ */
 fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double, dev: FeedbackDevice) {
     configurePIDF(p, i, d, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation))
     configSelectedFeedbackSensor(dev, 0, 10)
 }
 
+/**
+ * Configures the PID for the specified motor
+ * @param p Proportional gain
+ * @param i Integral gain
+ * @param d Differential gain
+ * @param f Feed-forward gain
+ */
 fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, f: Double) {
     config_kP(0, p, 10)
     config_kI(0, i, 10)
