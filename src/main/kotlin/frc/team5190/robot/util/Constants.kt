@@ -11,10 +11,15 @@ import com.ctre.phoenix.motorcontrol.ControlMode
  * Contains Motor IDs.
  */
 object MotorIDs {
-    val FRONT_LEFT = 1
-    val FRONT_RIGHT = 3
-    val REAR_LEFT = 2
-    val REAR_RIGHT = 4
+    const val DRIVE_FRONT_LEFT = 1
+    const val DRIVE_FRONT_RIGHT = 3
+    const val DRIVE_REAR_LEFT = 2
+    const val DRIVE_REAR_RIGHT = 4
+
+    const val ARM = 5
+
+    const val INTAKE_LEFT = 10
+    const val INTAKE_RIGHT = 11
 }
 
 /**

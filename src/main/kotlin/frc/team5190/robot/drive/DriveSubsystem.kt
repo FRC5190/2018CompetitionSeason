@@ -26,8 +26,8 @@ object DriveSubsystem : Subsystem() {
     }
 
     // Creates an instance of FalconDrive, our custom drive class
-    val falconDrive = FalconDrive(listOf(MotorIDs.FRONT_LEFT, MotorIDs.REAR_LEFT).map { WPI_TalonSRX(it) },
-            listOf(MotorIDs.FRONT_RIGHT, MotorIDs.REAR_RIGHT).map { WPI_TalonSRX(it) })
+    val falconDrive = FalconDrive(listOf(MotorIDs.DRIVE_FRONT_LEFT, MotorIDs.DRIVE_REAR_LEFT).map { WPI_TalonSRX(it) },
+            listOf(MotorIDs.DRIVE_FRONT_RIGHT, MotorIDs.DRIVE_REAR_RIGHT).map { WPI_TalonSRX(it) })
 
     /**
      * Initializes the default command for the subsystem
