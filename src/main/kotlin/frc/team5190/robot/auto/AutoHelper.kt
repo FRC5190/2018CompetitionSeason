@@ -73,10 +73,8 @@ enum class AutoHelper(private val leftFilePath: String, private val rightFilePat
 
             val waypoints = arrayOfNulls<Waypoint>(2)
 
-            waypoints[0] = Waypoint(posX, posY, Pathfinder.d2r(posA))
-            waypoints[1] = Waypoint(7.0, 20.0, Pathfinder.d2r(90.0))
-            waypoints[2] = Waypoint(12.0, 25.0, 0.0)
-            waypoints[3] = Waypoint(finalX, finalY, Pathfinder.d2r(finalA))
+            waypoints[0] = Waypoint(posX, posY, Pathfinder.d2r(90.0))
+            waypoints[1] = Waypoint(posX, posY + 5, Pathfinder.d2r(90.0)
 
             val config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 20.0, 5.0, 3.0, 60.0)
             val trajectory = Pathfinder.generate(waypoints, config)
