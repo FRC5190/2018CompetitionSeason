@@ -16,7 +16,8 @@ import edu.wpi.first.wpilibj.Notifier
 /**
  * Class that feeds the talon trajectory values to follow.
  */
-class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
+class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, constDetailedTrajectory: DetailedTrajectoryList, calc: Boolean = false,
+               helper: AutoHelper) {
 
     // The talon to apply the trajectory to
     private var talon = constTalon
@@ -47,6 +48,15 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
 
     // Notifier
     private val notifier = Notifier(talon::processMotionProfileBuffer)
+
+    // Has been paused
+    private var paused = false
+
+    // Use this instance to calculate the new trajectory or not
+    private val calculate = calc
+
+    // Instance of the helper being used
+    private val autoHelper = helper
 
     /**
      * Called when the class is instantiated
@@ -118,6 +128,7 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
                         loopTimeout = -1
                     }
                 }
+                3 -> setValue = SetValueMotionProfile.Hold
             }
             talon.getMotionProfileStatus(status)
         }
@@ -173,6 +184,33 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
      */
     fun startMotionProfile() {
         start = true
+    }
+
+    /**
+     * Pauses the motion profile
+     */
+    fun pauseMotionProfile() {
+        state = 3
+
+        if (!paused && calculate) {
+            val index = trajectory.indexOf(trajectory.find { talon.activeTrajectoryPosition > it.nativeUnits })
+            paused = false
+            AutoHelper.generateNewPaths(index, autoHelper)
+        }
+    }
+
+    /**
+     * Resumes the motion profile
+     */
+    fun resumeMotionProfile() {
+        trajectory = if (calculate) {
+            AutoHelper.newTrajectories!![0]
+        } else {
+            AutoHelper.newTrajectories!![1]
+        }
+
+        this.reset()
+        this.startMotionProfile()
     }
 
     /**

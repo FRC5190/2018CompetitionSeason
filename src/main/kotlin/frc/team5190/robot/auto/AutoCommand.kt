@@ -9,6 +9,7 @@ package frc.team5190.robot.auto
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.sensors.NavX
 
 
 /**
@@ -20,6 +21,7 @@ class AutoCommand(private val path: AutoHelper) : Command() {
 
     init {
         requires(DriveSubsystem)
+        NavX.zeroYaw()
     }
 
     // Instances of AutoPath classes for each side of the DriveTrain
@@ -30,10 +32,10 @@ class AutoCommand(private val path: AutoHelper) : Command() {
      * Runs once whenever the command is started.
      */
     override fun initialize() {
-        leftMotionProfile = AutoPath(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft)
+        leftMotionProfile = AutoPath(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft, path.trajectoryLeftDetailed, true, path)
         leftMotionProfile.startMotionProfile()
 
-        rightMotionProfile = AutoPath(DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight)
+        rightMotionProfile = AutoPath(DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight, path.trajectoryRightDetailed, false, path)
         rightMotionProfile.startMotionProfile()
     }
 
