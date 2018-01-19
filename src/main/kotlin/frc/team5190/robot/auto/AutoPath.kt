@@ -189,7 +189,7 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, helper: Au
         this.reset()
         if (!paused && isLeft) {
             println("Calculating paths")
-            val index = autoHelper.trajectoryLeftDetailed.indexOf(autoHelper.trajectoryLeftDetailed.find { talon.activeTrajectoryPosition < it.nativeUnits }) + 2
+            val index = autoHelper.trajectoryLeftDetailed.indexOf(autoHelper.trajectoryLeftDetailed.find { talon.activeTrajectoryPosition < it.nativeUnits })
             SmartDashboard.putNumber("Index", index.toDouble())
             paused = true
             CollisionHelper.generateNewPaths(index, autoHelper)

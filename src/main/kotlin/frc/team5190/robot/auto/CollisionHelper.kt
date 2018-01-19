@@ -1,5 +1,7 @@
 package frc.team5190.robot.auto
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team5190.robot.sensors.NavX
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import jaci.pathfinder.Waypoint
@@ -7,11 +9,20 @@ import jaci.pathfinder.modifiers.TankModifier
 
 class CollisionHelper {
     companion object {
-        fun generateNewPaths(index: Int, helper: AutoHelper) {
+        fun generateNewPaths(index: Int, helper: AutoHelper?) {
+            val posX = (helper!!.trajectoryLeftDetailed[index].x + helper.trajectoryRightDetailed[index].x) / 2.0
+            val posY = (helper.trajectoryLeftDetailed[index].y + helper.trajectoryRightDetailed[index].y) / 2.0
 
-            val waypoints = fillWaypoints(index, helper)
+//            val posX = 10.0
+//            val posY = 25.0
 
-            val config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 5.0, 3.0, 60.0)
+            val waypoints = fillWaypoints(posX, posY)
+            
+//            waypoints.add(0, Waypoint(posX, posY, 90.0))
+
+            waypoints.add(0, Waypoint(posX, posY, Pathfinder.d2r(NavX.angle)))
+
+            val config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.04, 5.0, 3.0, 60.0)
             val trajectory = Pathfinder.generate(waypoints.toTypedArray(), config)
 
             val tankModifier = TankModifier(trajectory).modify(25.0 / 12.0)
@@ -22,6 +33,8 @@ class CollisionHelper {
             val newLeftList: TrajectoryList = mutableListOf()
             val newRightList: TrajectoryList = mutableListOf()
 
+
+
             for (i in 0 until left.length()) {
                 val segLeft = left.get(i)
                 newLeftList.add(i, TrajectoryData(segLeft.position, segLeft.velocity, (segLeft.dt * 1000).toInt()))
@@ -29,8 +42,6 @@ class CollisionHelper {
                 val segRight = right.get(i)
                 newRightList.add(i, TrajectoryData(segRight.position, segRight.velocity, (segRight.dt * 1000).toInt()))
             }
-
-            println("New trajectory computation completed.")
 
             newLeftList.forEach {
                 println("Pos: ${it.position}, Vel: ${it.velocity}, Dur: ${it.duration}")
@@ -44,25 +55,30 @@ class CollisionHelper {
             newTrajectories = combined
         }
 
-        private fun fillWaypoints(index: Int, helper: AutoHelper): MutableList<Waypoint> {
+        private fun fillWaypoints(posX: Double, posY: Double): MutableList<Waypoint> {
 
-            val waypoints = mutableListOf<Waypoint>()
+            SmartDashboard.putNumber("Current X", posX)
+            SmartDashboard.putNumber("Current Y", posY)
 
-            for (i in index until helper.trajectoryLeftDetailed.size step 10) {
+            val initWaypoints = mutableListOf<Waypoint>()
 
+            initWaypoints.add(0, Waypoint(6.0, 8.0, Pathfinder.d2r(90.0)))
+            initWaypoints.add(1, Waypoint(6.0, 18.0, Pathfinder.d2r(90.0)))
+            initWaypoints.add(2, Waypoint(10.0, 25.0, Pathfinder.d2r(0.0)))
+            initWaypoints.add(3, Waypoint(14.0, 22.0, Pathfinder.d2r(-90.0)))
 
-                val posX  = (helper.trajectoryLeftDetailed[i].x + helper.trajectoryRightDetailed[i].x) / 2.0
-                val posY  = (helper.trajectoryLeftDetailed[i].y + helper.trajectoryRightDetailed[i].y) / 2.0
-                val angle = (helper.trajectoryLeftDetailed[i].h + helper.trajectoryRightDetailed[i].h) / 2.0
-
-                if (i == 0) {
-                    println("X: $posX, Y: $posY, H: $angle")
-                }
-
-                waypoints.add(Waypoint(posX, posY, Pathfinder.d2r(Pathfinder.r2d(angle))))
+            return when {
+                posY > 08.0 && posY < 18.0  -> initWaypoints.subList(1, 4)
+                posY > 15.0 && posX < 10.0  -> initWaypoints.subList(2, 4)
+                posY > 18.0 && posX < 14.0  -> initWaypoints.subList(3, 4)
+                posY > 18.0 && posX > 14.0  -> TODO ("Don't go further")
+                else                        -> initWaypoints
             }
+        }
 
-            return waypoints
+        @JvmStatic
+        fun main(args: Array<String>) {
+            generateNewPaths(0, null)
         }
 
         var newTrajectories: CombinedTrajectoryLists? = null
