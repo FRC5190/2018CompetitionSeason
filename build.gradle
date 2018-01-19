@@ -34,7 +34,7 @@ dependencies {
     compile ctre()
     compile navx()
     compile openrio.powerup.matchData()
-    compile pathfinder()
+//    compile pathfinder()
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }

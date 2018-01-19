@@ -65,7 +65,7 @@ typealias CombinedTrajectoryLists = MutableList<TrajectoryList>
 /**
  * Stores trajectory data for each point along the trajectory.
  */
-data class TrajectoryData(private var position: Double, private var velocity: Double, var duration: Int) {
+data class TrajectoryData(var position: Double, var velocity: Double, var duration: Int) {
 
     // Converts feet and feet/sec into rotations and rotations/sec.
     private val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)
