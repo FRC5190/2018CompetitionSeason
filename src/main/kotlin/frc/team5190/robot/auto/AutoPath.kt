@@ -191,7 +191,7 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, helper: Au
     fun pauseMotionProfile() {
         state = 3
         if (!paused && isLeft) {
-            val index = trajectory.indexOf(trajectory.find { talon.activeTrajectoryPosition > it.nativeUnits })
+            val index = autoHelper.trajectoryLeftDetailed.indexOf(autoHelper.trajectoryLeftDetailed.find { talon.activeTrajectoryPosition > it.nativeUnits })
             paused = false
             CollisionHelper.generateNewPaths(index, autoHelper)
         } else return

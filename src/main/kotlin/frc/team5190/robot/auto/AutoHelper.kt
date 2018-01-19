@@ -77,6 +77,9 @@ data class TrajectoryData(var position: Double, var velocity: Double, var durati
 }
 
 data class DetailedTrajectoryData(private val dt: Double, val x: Double, val y: Double, private val pos: Double,
-                                  private val vel: Double, private val accel: Double, private val jerk: Double, private val heading: Double)
+                                  private val vel: Double, private val accel: Double, private val jerk: Double, private val heading: Double) {
+    val nativeUnits = Maths.rotationsToNativeUnits(Maths.feetToRotations(pos, Hardware.WHEEL_RADIUS), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+    val h = heading
+}
 
 
