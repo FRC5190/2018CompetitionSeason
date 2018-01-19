@@ -16,8 +16,7 @@ import edu.wpi.first.wpilibj.Notifier
 /**
  * Class that feeds the talon trajectory values to follow.
  */
-class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, constDetailedTrajectory: DetailedTrajectoryList, calc: Boolean = false,
-               helper: AutoHelper) {
+class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, helper: AutoHelper, left: Boolean = false) {
 
     // The talon to apply the trajectory to
     private var talon = constTalon
@@ -53,9 +52,9 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, constDetai
     private var paused = false
 
     // Use this instance to calculate the new trajectory or not
-    private val calculate = calc
+    private val isLeft = left
 
-    // Instance of the helper being used
+    // The helper object being used
     private val autoHelper = helper
 
     /**
@@ -191,22 +190,21 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, constDetai
      */
     fun pauseMotionProfile() {
         state = 3
-
-        if (!paused && calculate) {
+        if (!paused && isLeft) {
             val index = trajectory.indexOf(trajectory.find { talon.activeTrajectoryPosition > it.nativeUnits })
             paused = false
-            AutoHelper.generateNewPaths(index, autoHelper)
-        }
+            CollisionHelper.generateNewPaths(index, autoHelper)
+        } else return
     }
 
     /**
      * Resumes the motion profile
      */
     fun resumeMotionProfile() {
-        trajectory = if (calculate) {
-            AutoHelper.newTrajectories!![0]
+        trajectory = if (isLeft) {
+            CollisionHelper.newTrajectories!![0]
         } else {
-            AutoHelper.newTrajectories!![1]
+            CollisionHelper.newTrajectories!![1]
         }
 
         this.reset()

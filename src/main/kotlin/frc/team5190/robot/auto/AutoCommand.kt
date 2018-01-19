@@ -8,6 +8,7 @@ package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
+import frc.team5190.robot.MainXbox
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 
@@ -25,29 +26,44 @@ class AutoCommand(private val path: AutoHelper) : Command() {
     }
 
     // Instances of AutoPath classes for each side of the DriveTrain
-    private lateinit var leftMotionProfile: AutoPath
-    private lateinit var rightMotionProfile: AutoPath
+    private lateinit var lMotionProfile: AutoPath
+    private lateinit var rMotionProfile: AutoPath
+
+    private var hasBeenPaused = false
 
     /**
      * Runs once whenever the command is started.
      */
     override fun initialize() {
-        leftMotionProfile = AutoPath(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft, path.trajectoryLeftDetailed, true, path)
-        leftMotionProfile.startMotionProfile()
+        lMotionProfile = AutoPath(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft, path, true)
+        lMotionProfile.startMotionProfile()
 
-        rightMotionProfile = AutoPath(DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight, path.trajectoryRightDetailed, false, path)
-        rightMotionProfile.startMotionProfile()
+        rMotionProfile = AutoPath(DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight, path, false)
+        rMotionProfile.startMotionProfile()
     }
 
     /**
      * Called periodically until finished or until the command has been canceled.
      */
     override fun execute() {
-        leftMotionProfile.control()
-        rightMotionProfile.control()
 
-        DriveSubsystem.falconDrive.leftMaster.set(ControlMode.MotionProfile, leftMotionProfile.getSetValue().value.toDouble())
-        DriveSubsystem.falconDrive.rightMaster.set(ControlMode.MotionProfile, rightMotionProfile.getSetValue().value.toDouble())
+        if (MainXbox.bButton) {
+            if (!hasBeenPaused) {
+                lMotionProfile.pauseMotionProfile()
+                rMotionProfile.pauseMotionProfile()
+                hasBeenPaused = true
+            }
+        } else if (hasBeenPaused) {
+            lMotionProfile.resumeMotionProfile()
+            rMotionProfile.resumeMotionProfile()
+            hasBeenPaused = false
+        }
+
+        lMotionProfile.control()
+        rMotionProfile.control()
+
+        DriveSubsystem.falconDrive.leftMaster.set(ControlMode.MotionProfile, lMotionProfile.getSetValue().value.toDouble())
+        DriveSubsystem.falconDrive.rightMaster.set(ControlMode.MotionProfile, rMotionProfile.getSetValue().value.toDouble())
 
         DriveSubsystem.falconDrive.feedSafety()
     }
@@ -56,13 +72,13 @@ class AutoCommand(private val path: AutoHelper) : Command() {
      * Called when the command has ended.
      */
     override fun end() {
-        leftMotionProfile.reset()
-        rightMotionProfile.reset()
+        lMotionProfile.reset()
+        rMotionProfile.reset()
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
     /**
      * Ends the command when both sides of the DriveTrain have finished executing the motion profile.
      */
-    override fun isFinished() = leftMotionProfile.hasFinished() && rightMotionProfile.hasFinished()
+    override fun isFinished() = lMotionProfile.hasFinished() && rMotionProfile.hasFinished()
 }
