@@ -18,11 +18,11 @@ enum class AutoHelper(private val leftFilePath: String, private val rightFilePat
 
     // Various enums that represent the different paths the robot will take.
     LEFTS_LEFT("left/left_left", "left/left_right"),
-    LEFTS_RIGHT("left/right_let", "left/right_right"),
+//    LEFTS_RIGHT("left/right_left", "left/right_right"),
     CENTERS_LEFT("center/left_left", "center/left_right"),
-    CENTERS_RIGHT("center/right_left", "center/right_right"),
-    RIGHTS_LEFT("right/left_left", "right/left_right"),
-    RIGHTS_RIGHT("right/right_left", "right/right_right");
+//    CENTERS_RIGHT("center/right_left", "center/right_right"),
+    RIGHTS_LEFT("right/left_left", "right/left_right");
+//    RIGHTS_RIGHT("right/right_left", "right/right_right");
 
     var trajectoryLeft = loadTrajectory(leftFilePath + ".csv")
 
@@ -39,6 +39,7 @@ enum class AutoHelper(private val leftFilePath: String, private val rightFilePat
      * @return A list of points on the trajectory to read the motion profile from.
      */
     private fun loadTrajectory(path: String): TrajectoryList {
+        println(path)
         javaClass.classLoader.getResourceAsStream(path).use { stream ->
             return InputStreamReader(stream).readLines().map {
                 val pointData = it.split(",").map { it.trim() }

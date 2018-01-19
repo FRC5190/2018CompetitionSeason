@@ -31,8 +31,8 @@ class Robot : IterativeRobot() {
      * Executed when robot code first launches and is ready to be initialized.
      */
     override fun robotInit() {
-        AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
-        SmartDashboard.putData("Auto Mode", autoChooser)
+//        AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
+//        SmartDashboard.putData("Auto Mode", autoChooser)
     }
 
     /**

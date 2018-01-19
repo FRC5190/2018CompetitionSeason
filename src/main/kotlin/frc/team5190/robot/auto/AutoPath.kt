@@ -8,10 +8,10 @@ package frc.team5190.robot.auto
 import com.ctre.phoenix.motion.MotionProfileStatus
 import com.ctre.phoenix.motion.SetValueMotionProfile
 import com.ctre.phoenix.motion.TrajectoryPoint
-import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 
 /**
  * Class that feeds the talon trajectory values to follow.
@@ -92,45 +92,40 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, helper: Au
             }
         }
 
-        if (talon.controlMode != ControlMode.MotionProfile) {
-            state = 0
-            loopTimeout = -1
+        when (state) {
+            0 -> {
+                if (start) {
+                    start = false
+                    setValue = SetValueMotionProfile.Disable
+                    startFilling()
+                    state = 1
+                    loopTimeout = numLoopsTimeout
 
-        } else {
-            when (state) {
-                0 -> {
-                    if (start) {
-                        start = false
-                        setValue = SetValueMotionProfile.Disable
-                        startFilling()
-                        state = 1
-                        loopTimeout = numLoopsTimeout
-
-                    }
                 }
-
-                1 -> {
-                    if (status.btmBufferCnt > minPointsInTalon) {
-                        setValue = SetValueMotionProfile.Enable
-                        state = 2
-                        loopTimeout = numLoopsTimeout
-                    }
-                }
-
-                2 -> {
-                    if (!status.isUnderrun) {
-                        loopTimeout = numLoopsTimeout
-                    }
-                    if (status.activePointValid && status.isLast) {
-                        setValue = SetValueMotionProfile.Hold
-                        state = 0
-                        loopTimeout = -1
-                    }
-                }
-                3 -> setValue = SetValueMotionProfile.Hold
             }
-            talon.getMotionProfileStatus(status)
+
+            1 -> {
+                if (status.btmBufferCnt > minPointsInTalon) {
+                    setValue = SetValueMotionProfile.Enable
+                    state = 2
+                    loopTimeout = numLoopsTimeout
+                }
+            }
+
+            2 -> {
+                if (!status.isUnderrun) {
+                    loopTimeout = numLoopsTimeout
+                }
+                if (status.activePointValid && status.isLast) {
+                    setValue = SetValueMotionProfile.Hold
+                    state = 0
+                    loopTimeout = -1
+                }
+            }
+            3 -> setValue = SetValueMotionProfile.Hold
         }
+        talon.getMotionProfileStatus(status)
+
     }
 
     /**
@@ -190,9 +185,13 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, helper: Au
      */
     fun pauseMotionProfile() {
         state = 3
+
+        this.reset()
         if (!paused && isLeft) {
-            val index = autoHelper.trajectoryLeftDetailed.indexOf(autoHelper.trajectoryLeftDetailed.find { talon.activeTrajectoryPosition > it.nativeUnits })
-            paused = false
+            println("Calculating paths")
+            val index = autoHelper.trajectoryLeftDetailed.indexOf(autoHelper.trajectoryLeftDetailed.find { talon.activeTrajectoryPosition < it.nativeUnits }) + 2
+            SmartDashboard.putNumber("Index", index.toDouble())
+            paused = true
             CollisionHelper.generateNewPaths(index, autoHelper)
         } else return
     }
@@ -207,7 +206,6 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList, helper: Au
             CollisionHelper.newTrajectories!![1]
         }
 
-        this.reset()
         this.startMotionProfile()
     }
 

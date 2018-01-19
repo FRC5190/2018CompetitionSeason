@@ -18,7 +18,7 @@ import frc.team5190.robot.auto.AutoHelper
  */
 object MainXbox : XboxController(0) {
     init {
-        JoystickButton(this, 1).whenPressed(AutoCommand(AutoHelper.CENTERS_LEFT))
+        JoystickButton(this, 1).whenPressed(AutoCommand(AutoHelper.RIGHTS_LEFT))
     }
 }
 

@@ -40,6 +40,8 @@ class AutoCommand(private val path: AutoHelper) : Command() {
 
         rMotionProfile = AutoPath(DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight, path, false)
         rMotionProfile.startMotionProfile()
+
+        NavX.reset()
     }
 
     /**
@@ -48,7 +50,9 @@ class AutoCommand(private val path: AutoHelper) : Command() {
     override fun execute() {
 
         if (MainXbox.bButton) {
+            DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0, false)
             if (!hasBeenPaused) {
+//                DriveSubsystem.falconDrive.feedSafety()
                 lMotionProfile.pauseMotionProfile()
                 rMotionProfile.pauseMotionProfile()
                 hasBeenPaused = true
@@ -58,6 +62,7 @@ class AutoCommand(private val path: AutoHelper) : Command() {
             rMotionProfile.resumeMotionProfile()
             hasBeenPaused = false
         }
+
 
         lMotionProfile.control()
         rMotionProfile.control()
