@@ -15,7 +15,7 @@ class CollisionHelper {
             val posY = 25.0
 
             val waypoints = fillWaypoints(posX, posY)
-            
+
             waypoints.add(0, Waypoint(posX, posY, 90.0))
 
 //            waypoints.add(0, Waypoint(posX, posY, Pathfinder.d2r(NavX.angle)))
