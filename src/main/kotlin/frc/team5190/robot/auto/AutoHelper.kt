@@ -67,14 +67,14 @@ enum class AutoHelper(private val leftFilePath: String, private val rightFilePat
             val posY = (helper.trajectoryLeftDetailed[index].y + helper.trajectoryRightDetailed[index].y) / 2.0
             val posA = NavX.angle
 
-            val finalX = 14.0
-            val finalY = 23.0
-            val finalA = 270.0
+//            val finalX = 14.0
+//            val finalY = 23.0
+//            val finalA = 270.0
 
             val waypoints = arrayOfNulls<Waypoint>(2)
 
             waypoints[0] = Waypoint(posX, posY, Pathfinder.d2r(90.0))
-            waypoints[1] = Waypoint(posX, posY + 5, Pathfinder.d2r(90.0)
+            waypoints[1] = Waypoint(posX, posY + 5, Pathfinder.d2r(90.0))
 
             val config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 20.0, 5.0, 3.0, 60.0)
             val trajectory = Pathfinder.generate(waypoints, config)

@@ -54,6 +54,8 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Right Encoder to Feet", ((DriveSubsystem.falconDrive.rightEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION)
                 * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
 
+        SmartDashboard.putNumber("Gyro Angle", NavX.angle)
+
         Scheduler.getInstance().run()
     }
 
