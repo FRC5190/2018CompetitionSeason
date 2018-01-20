@@ -102,7 +102,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
 
         leftMaster.set(controlMode, leftSpeed * controlMode.scale() * m_maxOutput)
-        rightMaster.set(controlMode, -rightSpeed * controlMode.scale() * m_maxOutput)
+        rightMaster.set(controlMode, rightSpeed * controlMode.scale() * m_maxOutput)
 
         m_safetyHelper.feed()
     }
