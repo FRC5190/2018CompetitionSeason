@@ -53,7 +53,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      */
     private fun configureAutoPIDValues() {
         allMasters.forEach {
-            it.configurePIDF(0.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
+            it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
                     sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
@@ -71,7 +71,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     fun resetEncoders() {
         allMasters.forEach {
             it.setSelectedSensorPosition(0, 0, 10)
-
         }
     }
 

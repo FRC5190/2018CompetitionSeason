@@ -37,7 +37,7 @@ class TurnCommand(private val angle: Double) : Command() {
 
 class TurnController(angle: Double) : PIDController(0.025, 0.002, 0.03, NavX, PIDOutput { output ->
     println(NavX.angle)
-    DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, output)
+    DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
 }) {
     init {
         setpoint = angle

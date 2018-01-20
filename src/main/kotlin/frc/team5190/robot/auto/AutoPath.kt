@@ -48,6 +48,9 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
     // Notifier
     private val notifier = Notifier(talon::processMotionProfileBuffer)
 
+    // Boolean value to check if the motion profile has finished
+    private var isFinished = false
+
     /**
      * Called when the class is instantiated
      */
@@ -116,6 +119,7 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
                         setValue = SetValueMotionProfile.Hold
                         state = 0
                         loopTimeout = -1
+                        isFinished = true
                     }
                 }
             }
@@ -178,14 +182,10 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
     /**
      * Getter for the set value property.
      */
-    fun getSetValue(): SetValueMotionProfile {
-        return setValue
-    }
+    fun getSetValue() = setValue
 
     /**
      * Returns if the MP has finished.
      */
-    fun hasFinished(): Boolean {
-        return status.isLast
-    }
+    fun hasFinished() = isFinished
 }

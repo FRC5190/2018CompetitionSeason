@@ -23,7 +23,7 @@ object MotorIDs {
  */
 object Hardware {
     const val NATIVE_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 3.0
+    const val WHEEL_RADIUS = 2.0
 
     const val MAX_RPM = 1065
     val MAX_NATIVE_UNITS_PER_100_MS = Maths.rpmToNativeUnitsPer100Ms(MAX_RPM.toDouble(), WHEEL_RADIUS)
