@@ -45,13 +45,13 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         allMotors.forEach { it.setNeutralMode(NeutralMode.Brake) }
 
-        configure()
+        configureAutoPIDValues()
     }
 
     /**
      * Configures PID values
      */
-    fun configure() {
+    private fun configureAutoPIDValues() {
         allMasters.forEach {
             it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
                     sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
@@ -65,6 +65,12 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         allMotors.forEach {
             it.setSensorPhase(true)
             it.setNeutralMode(NeutralMode.Brake)
+        }
+    }
+
+    fun resetEncoders() {
+        allMasters.forEach {
+            it.setSelectedSensorPosition(0, 0, 10)
         }
     }
 

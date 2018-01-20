@@ -22,7 +22,8 @@ enum class AutoHelper(private val leftFilePath: String, private val rightFilePat
     CENTERS_LEFT("center/left_left.csv", "center/left_right.csv"),
     CENTERS_RIGHT("center/right_left.csv", "center/right_right.csv"),
     RIGHTS_LEFT("right/left_left.csv", "right/left_right.csv"),
-    RIGHTS_RIGHT("right/right_left.csv", "right/right_right.csv");
+    RIGHTS_RIGHT("right/right_left.csv", "right/right_right.csv"),
+    TEST("testpath_left.csv", "testpath_right.csv");
 
     val trajectoryLeft
         get() = loadTrajectory(leftFilePath)
