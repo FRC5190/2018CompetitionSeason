@@ -8,18 +8,19 @@ package frc.team5190.robot.auto
 import com.ctre.phoenix.motion.MotionProfileStatus
 import com.ctre.phoenix.motion.SetValueMotionProfile
 import com.ctre.phoenix.motion.TrajectoryPoint
-import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
+import frc.team5190.robot.drive.DriveSubsystem
 
 /**
  * Class that feeds the talon trajectory values to follow.
  */
-class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
+class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: TalonSRX, rightTrajectory: TrajectoryList, isReversed: Boolean) {
 
     // The talon to apply the trajectory to
-    private var talon = constTalon
+    private var leftTalon = leftTalon
+    private var rightTalon = rightTalon
 
     // Status of the motion profile
     private var status = MotionProfileStatus()
@@ -43,10 +44,12 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
     private val numLoopsTimeout = 10
 
     // The trajectory to load into the talon
-    private var trajectory = constTrajectory
+    private lateinit var leftTrajectory: TrajectoryList
+    private lateinit var rightTrajectory: TrajectoryList
 
     // Notifier
-    private val notifier = Notifier(talon::processMotionProfileBuffer)
+    private val leftNotifier = Notifier(leftTalon::processMotionProfileBuffer)
+    private val rightNotifier = Notifier(rightTalon::processMotionProfileBuffer)
 
     // Boolean value to check if the motion profile has finished
     private var isFinished = false
@@ -55,16 +58,54 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
      * Called when the class is instantiated
      */
     init {
-        talon.changeMotionControlFramePeriod(5)
-        notifier.startPeriodic(0.005)
-        talon.setSensorPhase(true)
+        leftTalon.changeMotionControlFramePeriod(5)
+        rightTalon.changeMotionControlFramePeriod(5)
+
+        leftNotifier.startPeriodic(0.005)
+        rightNotifier.startPeriodic(0.005)
+
+        leftTalon.setSensorPhase(true)
+        rightTalon.setSensorPhase(true)
+
+        when (isReversed) {
+            true -> {
+                DriveSubsystem.falconDrive.leftMotors.forEach {
+                    it.inverted = true
+                    it.setSensorPhase(true)
+                }
+                DriveSubsystem.falconDrive.rightMotors.forEach {
+                    it.inverted = false
+                    it.setSensorPhase(true)
+                }
+
+                this.leftTrajectory = rightTrajectory
+                this.rightTrajectory = leftTrajectory
+
+
+            }
+            false -> {
+                DriveSubsystem.falconDrive.leftMotors.forEach {
+                    it.inverted = false
+                    it.setSensorPhase(true)
+                }
+                DriveSubsystem.falconDrive.rightMotors.forEach {
+                    it.inverted = true
+                    it.setSensorPhase(true)
+                }
+
+                this.leftTrajectory = leftTrajectory
+                this.rightTrajectory = rightTrajectory
+            }
+        }
     }
 
     /**
      * Resets the trajectory when MP ends or is canceled.
      */
     fun reset() {
-        talon.clearMotionProfileTrajectories()
+        leftTalon.clearMotionProfileTrajectories()
+        rightTalon.clearMotionProfileTrajectories()
+
         setValue = SetValueMotionProfile.Disable
         state = 0
         loopTimeout = -1
@@ -75,7 +116,8 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
      * Called periodically and is used to control the behavior of the MP
      */
     fun control() {
-        talon.getMotionProfileStatus(status)
+        leftTalon.getMotionProfileStatus(status)
+        rightTalon.getMotionProfileStatus(status)
 
         if (loopTimeout < 0) {
         } else {
@@ -86,73 +128,94 @@ class AutoPath(constTalon: TalonSRX, constTrajectory: TrajectoryList) {
             }
         }
 
-        if (talon.controlMode != ControlMode.MotionProfile) {
-            state = 0
-            loopTimeout = -1
+        when (state) {
+            0 -> {
+                if (start) {
+                    start = false
+                    setValue = SetValueMotionProfile.Disable
+                    startFilling()
+                    state = 1
+                    loopTimeout = numLoopsTimeout
 
-        } else {
-            when (state) {
-                0 -> {
-                    if (start) {
-                        start = false
-                        setValue = SetValueMotionProfile.Disable
-                        startFilling()
-                        state = 1
-                        loopTimeout = numLoopsTimeout
-
-                    }
-                }
-
-                1 -> {
-                    if (status.btmBufferCnt > minPointsInTalon) {
-                        setValue = SetValueMotionProfile.Enable
-                        state = 2
-                        loopTimeout = numLoopsTimeout
-                    }
-                }
-
-                2 -> {
-                    if (!status.isUnderrun) {
-                        loopTimeout = numLoopsTimeout
-                    }
-                    if (status.activePointValid && status.isLast) {
-                        setValue = SetValueMotionProfile.Hold
-                        state = 0
-                        loopTimeout = -1
-                        isFinished = true
-                    }
                 }
             }
-            talon.getMotionProfileStatus(status)
+
+            1 -> {
+                if (status.btmBufferCnt > minPointsInTalon) {
+                    setValue = SetValueMotionProfile.Enable
+                    state = 2
+                    loopTimeout = numLoopsTimeout
+                }
+            }
+
+            2 -> {
+                if (!status.isUnderrun) {
+                    loopTimeout = numLoopsTimeout
+                }
+                if (status.activePointValid && status.isLast) {
+                    setValue = SetValueMotionProfile.Hold
+                    state = 0
+                    loopTimeout = -1
+                    isFinished = true
+                }
+            }
         }
+        leftTalon.getMotionProfileStatus(status)
+        rightTalon.getMotionProfileStatus(status)
+
     }
 
     /**
      * Fills the talon with the trajectory points.
      */
     private fun startFilling() {
-        val point = TrajectoryPoint()
+        val leftPoint = TrajectoryPoint()
+        val rightPoint = TrajectoryPoint()
 
         if (status.hasUnderrun) {
-            talon.clearMotionProfileHasUnderrun(0)
+            leftTalon.clearMotionProfileHasUnderrun(0)
+            rightTalon.clearMotionProfileHasUnderrun(0)
         }
 
-        talon.clearMotionProfileTrajectories()
-        talon.configMotionProfileTrajectoryPeriod(0, 10)
+        leftTalon.clearMotionProfileTrajectories()
+        rightTalon.clearMotionProfileTrajectories()
 
-        trajectory.forEachIndexed { index, tPoint ->
-            point.position = tPoint.nativeUnits
-            point.velocity = tPoint.nativeUnitsPer100Ms
+        leftTalon.configMotionProfileTrajectoryPeriod(0, 10)
+        rightTalon.configMotionProfileTrajectoryPeriod(0, 10)
 
-            point.headingDeg = 0.0
-            point.profileSlotSelect0 = 0
-            point.profileSlotSelect1 = 0
-            point.timeDur = getTrajectoryDuration(tPoint.duration)
+        leftTrajectory.forEachIndexed { index, tPoint ->
+            leftPoint.position = tPoint.nativeUnits
+            leftPoint.velocity = tPoint.nativeUnitsPer100Ms
 
-            point.zeroPos = index == 0
-            point.isLastPoint = index + 1 == trajectory.size
+            leftPoint.headingDeg = 0.0
+            leftPoint.profileSlotSelect0 = 0
+            leftPoint.profileSlotSelect1 = 0
+            leftPoint.timeDur = getTrajectoryDuration(tPoint.duration)
 
-            talon.pushMotionProfileTrajectory(point)
+            leftPoint.zeroPos = index == 0
+            leftPoint.isLastPoint = index + 1 == leftTrajectory.size
+
+            leftTalon.pushMotionProfileTrajectory(leftPoint)
+
+            println("Left filled")
+        }
+
+        rightTrajectory.forEachIndexed { index, tPoint ->
+            rightPoint.position = tPoint.nativeUnits
+            rightPoint.velocity = tPoint.nativeUnitsPer100Ms
+
+            rightPoint.headingDeg = 0.0
+            rightPoint.profileSlotSelect0 = 0
+            rightPoint.profileSlotSelect0 = 0
+            rightPoint.timeDur = getTrajectoryDuration(tPoint.duration)
+
+            rightPoint.zeroPos = index == 0
+            rightPoint.isLastPoint = index + 1 == rightTrajectory.size
+
+            rightTalon.pushMotionProfileTrajectory(rightPoint)
+
+            println("Right filled")
+
         }
     }
 

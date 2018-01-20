@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.auto.AutoCommandGroup
+import frc.team5190.robot.auto.AutoCommand
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
@@ -33,6 +33,7 @@ class Robot : IterativeRobot() {
      */
     override fun robotInit() {
         AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
+
         SmartDashboard.putData("Auto Mode", autoChooser)
         DriveSubsystem.falconDrive.resetEncoders()
     }
@@ -66,7 +67,19 @@ class Robot : IterativeRobot() {
      */
     override fun autonomousInit() {
         NavX.zeroYaw()
-        AutoCommandGroup(autoChooser.selected ?: AutoHelper.CENTERS_LEFT).start()
+        AutoCommand(AutoHelper.TEST, true).start()
+    }
+
+
+    override fun disabledInit() {
+        DriveSubsystem.falconDrive.leftMotors.forEach {
+            it.inverted = false
+            it.setSensorPhase(true)
+        }
+        DriveSubsystem.falconDrive.rightMotors.forEach {
+            it.inverted = true
+            it.setSensorPhase(true)
+        }
     }
 
     /**

@@ -35,16 +35,17 @@ class TurnCommand(private val angle: Double) : Command() {
     }
 }
 
-class TurnController(angle: Double) : PIDController(0.025, 0.002, 0.03, NavX, PIDOutput { output ->
+class TurnController(angle: Double) : PIDController(0.03, 0.003, 0.05, NavX, PIDOutput { output ->
     println(NavX.angle)
     DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
 }) {
     init {
+//        SmartDashboard.putData("PID Controller", this)
         setpoint = angle
         setInputRange(-180.0, 180.0)
-        val output = 0.75
+        val output = 0.9
         setOutputRange(-output, output)
-        setAbsoluteTolerance(5.0)
+        setAbsoluteTolerance(2.0)
         setContinuous(true)
         setName("DriveSystem", "RotateController")
     }
