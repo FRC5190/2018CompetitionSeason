@@ -68,6 +68,13 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
     }
 
+    fun resetEncoders() {
+        allMasters.forEach {
+            it.setSelectedSensorPosition(0, 0, 10)
+
+        }
+    }
+
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)
 

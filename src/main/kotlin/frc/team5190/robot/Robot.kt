@@ -34,12 +34,14 @@ class Robot : IterativeRobot() {
     override fun robotInit() {
         AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
         SmartDashboard.putData("Auto Mode", autoChooser)
+        DriveSubsystem.falconDrive.resetEncoders()
     }
 
     /**
      * Executed periodically.
      */
     override fun robotPeriodic() {
+
         // Debug information
         SmartDashboard.putNumber("Left Motor RPM", DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)
                 * 600.0 / 1440.0)
@@ -53,6 +55,8 @@ class Robot : IterativeRobot() {
                 * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
         SmartDashboard.putNumber("Right Encoder to Feet", ((DriveSubsystem.falconDrive.rightEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION)
                 * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
+
+        SmartDashboard.putData("Gyro", NavX)
 
         Scheduler.getInstance().run()
     }
@@ -70,5 +74,6 @@ class Robot : IterativeRobot() {
      */
     override fun teleopInit() {
         DriveSubsystem.currentCommand?.cancel()
+        DriveSubsystem.falconDrive.resetEncoders()
     }
 }

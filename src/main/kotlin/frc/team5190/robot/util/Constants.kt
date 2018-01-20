@@ -12,9 +12,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode
  */
 object MotorIDs {
 
-    const val FRONT_LEFT = 5
-    const val FRONT_RIGHT = 6
-    const val REAR_LEFT = 3
+    const val FRONT_LEFT = 1
+    const val FRONT_RIGHT = 3
+    const val REAR_LEFT = 2
     const val REAR_RIGHT = 4
 }
 
