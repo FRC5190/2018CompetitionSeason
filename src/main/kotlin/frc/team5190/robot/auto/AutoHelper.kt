@@ -55,12 +55,10 @@ typealias TrajectoryList = List<TrajectoryData>
 data class TrajectoryData(private val position: Double, private val velocity: Double, val duration: Int) {
 
     // Converts feet and feet/sec into rotations and rotations/sec.
-    val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)
-    val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS)
+    private val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)
+    private val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS)
 
     // Converts rotations and rotations/sec to native units and native units/100 ms.
     var nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
     val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
 }
-
-

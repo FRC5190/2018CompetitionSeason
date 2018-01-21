@@ -47,6 +47,10 @@ object DriveSubsystem : Subsystem() {
         }?.let { controlMode = it }
 
     }
+
+    fun reset() {
+        falconDrive.reset()
+    }
 }
 
 /**
