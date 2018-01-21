@@ -22,7 +22,7 @@ class AutoCommand(private val path: AutoHelper, private var isReversed: Boolean 
         requires(DriveSubsystem)
     }
 
-    // Instances of AutoPath classes for each side of the DriveTrain
+    // Instances of AutoPath classes for the DriveTrain
     private lateinit var motionProfile: AutoPath
 
     /**
