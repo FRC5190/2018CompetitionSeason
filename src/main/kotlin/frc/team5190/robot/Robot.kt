@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.auto.AutoCommand
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.elevator.ElevatorSubsystem
+import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Hardware
 
@@ -22,6 +24,7 @@ class Robot : IterativeRobot() {
 
     init {
         DriveSubsystem
+        ElevatorSubsystem
         NavX
     }
 
@@ -33,6 +36,7 @@ class Robot : IterativeRobot() {
      */
     override fun robotInit() {
         AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
+        ResetElevatorCommand().start()
 
         SmartDashboard.putData("Auto Mode", autoChooser)
     }
