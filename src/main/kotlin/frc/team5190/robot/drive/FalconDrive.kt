@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.util.Hardware
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.util.scale
 
@@ -53,8 +52,12 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      */
     private fun configureAutoPIDValues() {
         allMasters.forEach {
-            it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
-                    sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
+//            it.configurePIDF(0.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
+//                    sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
+
+            it.configurePIDF(0.0, 0.0, 0.0, 0.0)
+            it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
+
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
             it.configNeutralDeadband(0.04, 10)
