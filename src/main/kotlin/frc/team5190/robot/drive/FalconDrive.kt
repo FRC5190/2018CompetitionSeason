@@ -39,41 +39,44 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      * Sets some initial values when the FalconDrive object is initialized.
      */
     init {
-        leftSlaves.forEach { it.follow(leftMaster) }
-        rightSlaves.forEach { it.follow(rightMaster) }
-
-        allMotors.forEach { it.setNeutralMode(NeutralMode.Brake) }
-
-        configureAutoPIDValues()
+        reset()
     }
 
     /**
-     * Configures PID values
+     * Reset the drive train subsystem
+     * Call this when initializing  autonomous and teleop
+     * Resets all motors, their directions, and encoders
      */
-    private fun configureAutoPIDValues() {
+    internal fun reset() {
+        leftMotors.forEach { it.inverted = false }
+        rightMotors.forEach { it.inverted = true }
+
+        leftSlaves.forEach { it.follow(leftMaster) }
+        rightSlaves.forEach { it.follow(rightMaster) }
+
         allMasters.forEach {
+<<<<<<< HEAD
 //            it.configurePIDF(0.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
 //                    sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
 
             it.configurePIDF(0.0, 0.0, 0.0, 0.0)
             it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
 
+=======
+            it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(), sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+>>>>>>> master
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
             it.configNeutralDeadband(0.04, 10)
+            it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
+            it.setSelectedSensorPosition(0, 0, 10)
         }
-
-        rightMotors.forEach { it.inverted = true }
 
         allMotors.forEach {
             it.setSensorPhase(true)
             it.setNeutralMode(NeutralMode.Brake)
-        }
-    }
 
-    fun resetEncoders() {
-        allMasters.forEach {
-            it.setSelectedSensorPosition(0, 0, 10)
+            // TODO: Need to configure current limits
         }
     }
 
@@ -113,7 +116,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         leftMaster.set(controlMode, leftSpeed * controlMode.scale() * m_maxOutput)
         rightMaster.set(controlMode, rightSpeed * controlMode.scale() * m_maxOutput)
 
-        m_safetyHelper.feed()
+        feedSafety()
     }
 
     // Variables to control Curvature Drive
@@ -151,12 +154,10 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             overPower = false
             angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator
 
-            if (m_quickStopAccumulator > 1) {
-                m_quickStopAccumulator -= 1.0
-            } else if (m_quickStopAccumulator < -1) {
-                m_quickStopAccumulator += 1.0
-            } else {
-                m_quickStopAccumulator = 0.0
+            when {
+                m_quickStopAccumulator > 1 -> m_quickStopAccumulator -= 1.0
+                m_quickStopAccumulator < -1 -> m_quickStopAccumulator += 1.0
+                else -> m_quickStopAccumulator = 0.0
             }
         }
 
@@ -183,7 +184,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         leftMaster.set(controlMode, leftMotorOutput * controlMode.scale() * m_maxOutput)
         rightMaster.set(controlMode, rightMotorOutput * controlMode.scale() * m_maxOutput)
 
-        m_safetyHelper.feed()
+        feedSafety()
     }
 }
 
@@ -197,21 +198,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
  * @param sensorUnitsPerRotation Sensor units per rotation
  * @param dev Feedback device used with the motor
  */
-fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double, dev: FeedbackDevice) {
-    configurePIDF(p, i, d, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation))
-    configSelectedFeedbackSensor(dev, 0, 10)
-}
-
-/**
- * Configures the PID for the specified motor
- * @param p Proportional gain
- * @param i Integral gain
- * @param d Differential gain
- * @param f Feed-forward gain
- */
-fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, f: Double) {
+private fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double) {
     config_kP(0, p, 10)
     config_kI(0, i, 10)
     config_kD(0, d, 10)
-    config_kF(0, f, 10)
+    config_kF(0, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation), 10)
 }

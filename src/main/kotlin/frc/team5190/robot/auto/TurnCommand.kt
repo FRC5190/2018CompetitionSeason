@@ -4,10 +4,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.PIDController
 import edu.wpi.first.wpilibj.PIDOutput
 import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 
-class TurnCommand(private val angle: Double) : Command() {
+class TurnCommand(private val angle: Double) : TimedCommand(5.0) {
 
     init {
         requires(DriveSubsystem)
@@ -36,7 +37,6 @@ class TurnCommand(private val angle: Double) : Command() {
 }
 
 class TurnController(angle: Double) : PIDController(0.03, 0.003, 0.05, NavX, PIDOutput { output ->
-    println(NavX.angle)
     DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
 }) {
     init {

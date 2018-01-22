@@ -16,11 +16,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 /**
  * Class that feeds the talon trajectory values to follow.
  */
-class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: TalonSRX, rightTrajectory: TrajectoryList, isReversed: Boolean) {
-
-    // The talon to apply the trajectory to
-    private var leftTalon = leftTalon
-    private var rightTalon = rightTalon
+class AutoPath(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryList, private var rightTalon: TalonSRX, rightTrajectory: TrajectoryList, isReversed: Boolean) {
 
     // Status of the motion profile
     private var status = MotionProfileStatus()
@@ -44,8 +40,8 @@ class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: 
     private val numLoopsTimeout = 10
 
     // The trajectory to load into the talon
-    private lateinit var leftTrajectory: TrajectoryList
-    private lateinit var rightTrajectory: TrajectoryList
+    private var leftTrajectory: TrajectoryList
+    private var rightTrajectory: TrajectoryList
 
     // Notifier
     private val leftNotifier = Notifier(leftTalon::processMotionProfileBuffer)
@@ -64,38 +60,21 @@ class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: 
         leftNotifier.startPeriodic(0.005)
         rightNotifier.startPeriodic(0.005)
 
-        leftTalon.setSensorPhase(true)
-        rightTalon.setSensorPhase(true)
+        DriveSubsystem.falconDrive.leftMotors.forEach {
+            it.inverted = isReversed
+            it.setSensorPhase(true)
+        }
+        DriveSubsystem.falconDrive.rightMotors.forEach {
+            it.inverted = !isReversed
+            it.setSensorPhase(true)
+        }
 
-        when (isReversed) {
-            true -> {
-                DriveSubsystem.falconDrive.leftMotors.forEach {
-                    it.inverted = true
-                    it.setSensorPhase(true)
-                }
-                DriveSubsystem.falconDrive.rightMotors.forEach {
-                    it.inverted = false
-                    it.setSensorPhase(true)
-                }
-
-                this.leftTrajectory = rightTrajectory
-                this.rightTrajectory = leftTrajectory
-
-
-            }
-            false -> {
-                DriveSubsystem.falconDrive.leftMotors.forEach {
-                    it.inverted = false
-                    it.setSensorPhase(true)
-                }
-                DriveSubsystem.falconDrive.rightMotors.forEach {
-                    it.inverted = true
-                    it.setSensorPhase(true)
-                }
-
-                this.leftTrajectory = leftTrajectory
-                this.rightTrajectory = rightTrajectory
-            }
+        if (isReversed) {
+            this.leftTrajectory = rightTrajectory
+            this.rightTrajectory = leftTrajectory
+        } else {
+            this.leftTrajectory = leftTrajectory
+            this.rightTrajectory = rightTrajectory
         }
     }
 
@@ -110,6 +89,7 @@ class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: 
         state = 0
         loopTimeout = -1
         start = false
+        isFinished = false
     }
 
     /**
@@ -160,6 +140,7 @@ class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: 
                 }
             }
         }
+
         leftTalon.getMotionProfileStatus(status)
         rightTalon.getMotionProfileStatus(status)
 
@@ -196,8 +177,6 @@ class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: 
             leftPoint.isLastPoint = index + 1 == leftTrajectory.size
 
             leftTalon.pushMotionProfileTrajectory(leftPoint)
-
-            println("Left filled")
         }
 
         rightTrajectory.forEachIndexed { index, tPoint ->
@@ -213,9 +192,6 @@ class AutoPath(leftTalon: TalonSRX, leftTrajectory: TrajectoryList, rightTalon: 
             rightPoint.isLastPoint = index + 1 == rightTrajectory.size
 
             rightTalon.pushMotionProfileTrajectory(rightPoint)
-
-            println("Right filled")
-
         }
     }
 

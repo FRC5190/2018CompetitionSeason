@@ -35,7 +35,6 @@ class Robot : IterativeRobot() {
         AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
 
         SmartDashboard.putData("Auto Mode", autoChooser)
-        DriveSubsystem.falconDrive.resetEncoders()
     }
 
     /**
@@ -66,20 +65,13 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        NavX.zeroYaw()
+        NavX.reset()
         AutoCommand(AutoHelper.TEST, true).start()
     }
 
 
     override fun disabledInit() {
-        DriveSubsystem.falconDrive.leftMotors.forEach {
-            it.inverted = false
-            it.setSensorPhase(true)
-        }
-        DriveSubsystem.falconDrive.rightMotors.forEach {
-            it.inverted = true
-            it.setSensorPhase(true)
-        }
+        DriveSubsystem.reset()
     }
 
     /**
@@ -87,6 +79,5 @@ class Robot : IterativeRobot() {
      */
     override fun teleopInit() {
         DriveSubsystem.currentCommand?.cancel()
-        DriveSubsystem.falconDrive.resetEncoders()
     }
 }
