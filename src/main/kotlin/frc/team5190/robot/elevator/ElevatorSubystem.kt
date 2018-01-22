@@ -8,57 +8,56 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
+import frc.team5190.robot.util.*
 
 object ElevatorSubsystem : Subsystem() {
 
-    private val masterElevatorMotor = TalonSRX(20)
+    private val masterElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_MASTER)
 
     init {
-        val slaveElevatorMotor = TalonSRX(21)
+        val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
 
         masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
 
         masterElevatorMotor.setSensorPhase(false)
         slaveElevatorMotor.inverted = true
         slaveElevatorMotor.follow(masterElevatorMotor)
-        masterElevatorMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
-        masterElevatorMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
+        masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
 
-        masterElevatorMotor.configNominalOutputForward(0.85 ,10)
-        masterElevatorMotor.configPeakOutputForward(0.85, 10)
-        masterElevatorMotor.configNominalOutputReverse(-0.2, 10)
-        masterElevatorMotor.configPeakOutputReverse(-0.2, 10)
+        masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
+        masterElevatorMotor.configPeakOutput(0.85, -0.2, 10)
 
-        masterElevatorMotor.config_kP(0, 0.04, 10)     // 0.03
-        masterElevatorMotor.config_kI(0, 0.001, 10)    // 0.001
-        masterElevatorMotor.config_kD(0, 6.0, 10)      // 6.0
+        masterElevatorMotor.config_kPID(0, 0.04, 0.001, 6.0, 10)     // 0.03, 0.001, 6.0
 
-
-        masterElevatorMotor.configAllowableClosedloopError(0, 500, 10) //500
-
-
+        masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(1.0), 10) //500
     }
 
-    fun moveToPosition(position: Int) {
-        masterElevatorMotor.set(ControlMode.Position, position.toDouble())
-    }
+    fun set(output: Number) = set(ControlMode.PercentOutput, output)
 
-    fun set(output: Double) {
-        masterElevatorMotor.set(ControlMode.PercentOutput, output)
-    }
+    fun set(controlMode: ControlMode = ControlMode.PercentOutput, output: Number) = masterElevatorMotor.set(controlMode, output.toDouble())
+
+    val closedLoopError
+        get() = masterElevatorMotor.getClosedLoopError(0)
+
+    val closedLoopErrorInches
+        get() = nativeUnitsToInches(closedLoopError)
+
+    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.0) * 12.0
+    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.0)
 
     fun resetEncoders() {
         masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)
     }
 
     override fun periodic() {
+        // TODO maybe combine the Manual code and this somehow
         when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) ||  MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorCommand().start()
+            MainXbox.getBumper(GenericHID.Hand.kLeft) || MainXbox.getBumper(GenericHID.Hand.kRight) -> ManualElevatorCommand().start()
         }
     }
 
     override fun initDefaultCommand() {
-        this.defaultCommand = ElevatorCommand()
+        this.defaultCommand = ManualElevatorCommand()
     }
 }
