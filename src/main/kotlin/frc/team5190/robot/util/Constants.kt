@@ -25,7 +25,7 @@ object Hardware {
     const val WHEEL_RADIUS = 2.0
 
     const val MAX_RPM = 1065
-    const val MAX_NATIVE_UNITS_PER_100_MS = 2556
+    const val MAX_NATIVE_UNITS_PER_100_MS = 2556         // rpm * sensorUnitsPerRotation / 600
 }
 
 /**
