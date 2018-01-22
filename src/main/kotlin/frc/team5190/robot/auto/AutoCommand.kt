@@ -16,7 +16,7 @@ import frc.team5190.robot.drive.DriveSubsystem
  * pushes the information to the Talon.
  * @param path The path to take during autonomous as provided by the Sendable Chooser.
  */
-class AutoCommand(private val path: AutoHelper, private var isReversed: Boolean = false) : Command() {
+class AutoCommand(private val path: Paths, private var isReversed: Boolean = false) : Command() {
 
     init {
         requires(DriveSubsystem)
