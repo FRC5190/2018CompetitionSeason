@@ -9,11 +9,13 @@ import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.auto.AutoCommand
+import frc.team5190.robot.auto.AutoCommandGroup
 import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.Hardware
+import frc.team5190.robot.util.Maths
+import openrio.powerup.MatchData
 
 /**
  * Main robot class
@@ -26,15 +28,20 @@ class Robot : IterativeRobot() {
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
-    private val autoChooser = SendableChooser<AutoHelper>()
+    private val sideChooser = SendableChooser<StartingPositions>()
+
+    // Variable that stores which side of the switch to go to.
+    private var switchSide = MatchData.OwnedSide.UNKNOWN
+
+    // Variable that stores which side of the scale to go to.
+    private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
     /**
      * Executed when robot code first launches and is ready to be initialized.
      */
     override fun robotInit() {
-        AutoHelper.values().forEach { autoChooser.addObject(it.name, it) }
-
-        SmartDashboard.putData("Auto Mode", autoChooser)
+        StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
+        SmartDashboard.putData("Starting Position", sideChooser)
     }
 
     /**
@@ -43,18 +50,14 @@ class Robot : IterativeRobot() {
     override fun robotPeriodic() {
 
         // Debug information
-        SmartDashboard.putNumber("Left Motor RPM", DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)
-                * 600.0 / 1440.0)
-        SmartDashboard.putNumber("Right Motor RPM", DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)
-                * 600.0 / 1440.0)
+        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
+        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
         SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
         SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
 
-        SmartDashboard.putNumber("Left Encoder to Feet", ((DriveSubsystem.falconDrive.leftEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION)
-                * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
-        SmartDashboard.putNumber("Right Encoder to Feet", ((DriveSubsystem.falconDrive.rightEncoderPosition.toDouble() / Hardware.NATIVE_UNITS_PER_ROTATION)
-                * (2 * Math.PI * Hardware.WHEEL_RADIUS)) / 12)
+        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
+        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
 
         SmartDashboard.putData("Gyro", NavX)
 
@@ -65,12 +68,18 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
+        if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
+        if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+
         NavX.reset()
-        AutoCommand(AutoHelper.TEST, true).start()
+        AutoCommandGroup(AutoHelper.getPathFromData(sideChooser.selected, switchSide)).start()
     }
 
 
     override fun disabledInit() {
+        if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
+        if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+
         DriveSubsystem.reset()
     }
 

@@ -16,7 +16,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 /**
  * Class that feeds the talon trajectory values to follow.
  */
-class AutoPath(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryList, private var rightTalon: TalonSRX, rightTrajectory: TrajectoryList, isReversed: Boolean) {
+class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryList, private var rightTalon: TalonSRX, rightTrajectory: TrajectoryList, isReversed: Boolean) {
 
     // Status of the motion profile
     private var status = MotionProfileStatus()

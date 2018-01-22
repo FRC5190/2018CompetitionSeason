@@ -12,24 +12,24 @@ import frc.team5190.robot.drive.DriveSubsystem
 
 
 /**
- * Command that runs autonomous. This class selects the appropriate MP and sends it to the AutoPath class which
+ * Command that runs autonomous. This class selects the appropriate MP and sends it to the MotionProfile class which
  * pushes the information to the Talon.
  * @param path The path to take during autonomous as provided by the Sendable Chooser.
  */
-class AutoCommand(private val path: AutoHelper, private var isReversed: Boolean = false) : Command() {
+class MotionProfileCommand(private val path: Paths, private var isReversed: Boolean = false) : Command() {
 
     init {
         requires(DriveSubsystem)
     }
 
-    // Instances of AutoPath classes for the DriveTrain
-    private lateinit var motionProfile: AutoPath
+    // Instances of MotionProfile classes for the DriveTrain
+    private lateinit var motionProfile: MotionProfile
 
     /**
      * Runs once whenever the command is started.
      */
     override fun initialize() {
-        motionProfile = AutoPath(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft, DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight, isReversed)
+        motionProfile = MotionProfile(DriveSubsystem.falconDrive.leftMaster, path.trajectoryLeft, DriveSubsystem.falconDrive.rightMaster, path.trajectoryRight, isReversed)
         motionProfile.startMotionProfile()
     }
 

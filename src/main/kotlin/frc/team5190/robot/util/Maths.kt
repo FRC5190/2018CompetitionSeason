@@ -60,5 +60,23 @@ class Maths {
         fun rotationsToNativeUnits(rot: Double, sensorUnitsPerRotation: Double): Double {
             return rot * sensorUnitsPerRotation
         }
+
+        /**
+         * Converts native units per 100 ms to RPM
+         * @param nativeUnitsPer100Ms Native units per 100 ms
+         * @return RPM
+         */
+        fun nativeUnitsPer100MsToRPM(nativeUnitsPer100Ms: Int): Double {
+            return nativeUnitsPer100Ms * 600.0 / Hardware.NATIVE_UNITS_PER_ROTATION
+        }
+
+        /**
+         * Converts native units to feet
+         * @param nativeUnits Native units
+         * @return Feet
+         */
+        fun nativeUnitsToFeet(nativeUnits: Int): Double {
+            return (nativeUnits /  Hardware.NATIVE_UNITS_PER_ROTATION).toDouble() * (2 * Math.PI * Hardware.WHEEL_RADIUS) / 12.0
+        }
     }
 }
