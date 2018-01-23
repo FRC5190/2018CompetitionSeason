@@ -11,11 +11,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode
  * Contains Motor IDs.
  */
 object MotorIDs {
-    const val DRIVE_FRONT_LEFT = 1
-    const val DRIVE_FRONT_RIGHT = 3
-    const val DRIVE_REAR_LEFT = 2
-    const val DRIVE_REAR_RIGHT = 4
-
+    const val FRONT_LEFT = 1
+    const val FRONT_RIGHT = 3
+    const val REAR_LEFT = 2
+    const val REAR_RIGHT = 4
+    
     const val ARM = 5
 
     const val INTAKE_LEFT = 10
@@ -26,11 +26,11 @@ object MotorIDs {
  * Contains constants related to hardware.
  */
 object Hardware {
-    val NATIVE_UNITS_PER_ROTATION = 1440
-    val WHEEL_RADIUS = 3.75 / 2.0
+    const val NATIVE_UNITS_PER_ROTATION = 1440
+    const val WHEEL_RADIUS = 2.0
 
-    val MAX_RPM = 1065
-    val MAX_NATIVE_UNITS_PER_100_MS = Maths.rpmToNativeUnitsPer100Ms(MAX_RPM.toDouble(), WHEEL_RADIUS)
+    const val MAX_RPM = 1065
+    const val MAX_NATIVE_UNITS_PER_100_MS = 2556         // rpm * sensorUnitsPerRotation / 600
 }
 
 /**
@@ -39,7 +39,7 @@ object Hardware {
 fun ControlMode.scale(): Double {
     return when (this) {
         ControlMode.PercentOutput -> 1.0
-        ControlMode.Velocity -> Hardware.MAX_NATIVE_UNITS_PER_100_MS
+        ControlMode.Velocity -> Hardware.MAX_NATIVE_UNITS_PER_100_MS.toDouble()
         else -> TODO("Scaling for $name is not supported!")
     }
 }
