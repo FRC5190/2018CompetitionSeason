@@ -5,6 +5,7 @@
 
 package frc.team5190.robot
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
@@ -14,7 +15,6 @@ import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
@@ -71,6 +71,8 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
+        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.position)
+
         if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
         if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
 
@@ -90,6 +92,7 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.position)
         DriveSubsystem.currentCommand?.cancel()
     }
 }
