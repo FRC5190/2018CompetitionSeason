@@ -26,25 +26,27 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
 
         masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
-        masterElevatorMotor.configPeakOutput(0.85, -0.2, 10)
+        masterElevatorMotor.configPeakOutput(1.0, -0.5, 10)
 
-        masterElevatorMotor.config_kPID(0, 0.04, 0.001, 6.0, 10)     // 0.03, 0.001, 6.0
+        masterElevatorMotor.config_kPID(0, 0.5, 0.01, 6.0, 10)     // 0.03, 0.001, 6.0
 
-        masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(1.0), 10) //500
+        masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
     }
 
     fun set(output: Number) = set(ControlMode.PercentOutput, output)
 
-    fun set(controlMode: ControlMode = ControlMode.PercentOutput, output: Number) = masterElevatorMotor.set(controlMode, output.toDouble())
+    fun set(controlMode: ControlMode = ControlMode.PercentOutput, output: Number) {
+        masterElevatorMotor.set(controlMode, output.toDouble())
+    }
 
-    val closedLoopError
-        get() = masterElevatorMotor.getClosedLoopError(0)
+    val position
+        get() = masterElevatorMotor.sensorCollection.quadraturePosition
 
     val closedLoopErrorInches
-        get() = nativeUnitsToInches(closedLoopError)
+        get() = nativeUnitsToInches(masterElevatorMotor.getClosedLoopError(0))
 
-    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.0) * 12.0
-    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.0)
+    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0
+    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.3 / 2.0)
 
     fun resetEncoders() {
         masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)
@@ -52,6 +54,7 @@ object ElevatorSubsystem : Subsystem() {
 
     override fun periodic() {
         // TODO maybe combine the Manual code and this somehow
+        println("ERROR $closedLoopErrorInches")
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) || MainXbox.getBumper(GenericHID.Hand.kRight) -> ManualElevatorCommand().start()
         }

@@ -1,8 +1,8 @@
 package frc.team5190.robot.elevator
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.MainXbox
 
 class ManualElevatorCommand : Command() {
@@ -13,14 +13,13 @@ class ManualElevatorCommand : Command() {
 
     override fun execute() {
         when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) -> ElevatorSubsystem.set(0.2)
-            MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(-0.2)
-            else -> ElevatorSubsystem.set(0.0)
+            MainXbox.getBumper(GenericHID.Hand.kLeft) -> ElevatorSubsystem.set(0.3)
+            MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(-0.3)
+            MainXbox.getBumperReleased(GenericHID.Hand.kLeft) ->
+                ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.position + 500)
+            MainXbox.getBumperReleased(GenericHID.Hand.kRight) ->
+                ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.position - 1440)
         }
-    }
-
-    override fun end() {
-        ElevatorSubsystem.set(0.0)
     }
 
     override fun isFinished() = false

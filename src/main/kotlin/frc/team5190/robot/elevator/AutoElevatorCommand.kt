@@ -12,10 +12,10 @@ class AutoElevatorCommand(val pos: ElevatorPosition) : Command() {
         ElevatorSubsystem.set(ControlMode.Position, pos.ticks)
     }
 
-    override fun isFinished(): Boolean = ElevatorSubsystem.closedLoopErrorInches < 3
+    override fun isFinished(): Boolean = ElevatorSubsystem.closedLoopErrorInches < 1
 }
 
 enum class ElevatorPosition(var ticks: Int) {
-    SWITCH(ElevatorSubsystem.inchesToNativeUnits(9.0)),
-    SCALE(ElevatorSubsystem.inchesToNativeUnits(40.0))
+    SWITCH(ElevatorSubsystem.inchesToNativeUnits(18.0)),
+    SCALE(ElevatorSubsystem.inchesToNativeUnits(60.0))
 }
