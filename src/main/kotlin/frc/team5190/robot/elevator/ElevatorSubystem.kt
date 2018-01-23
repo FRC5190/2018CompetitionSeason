@@ -33,38 +33,31 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
     }
 
-    val elevatorAtBottom
-        get() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
+    fun isElevatorAtBottom() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
 
-    fun set(output: Number) = set(ControlMode.PercentOutput, output)
+    fun set(controlMode: ControlMode, output: Number) = masterElevatorMotor.set(controlMode, output.toDouble())
 
-    fun set(controlMode: ControlMode = ControlMode.PercentOutput, output: Number) {
-        masterElevatorMotor.set(controlMode, output.toDouble())
-    }
-
-    val position
+    val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition
 
     val closedLoopErrorInches
         get() = nativeUnitsToInches(masterElevatorMotor.getClosedLoopError(0))
 
-    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0
-    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.3 / 2.0)
-
-    fun resetEncoders() {
-        masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)
-    }
+    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)
 
     override fun periodic() {
         // TODO uncomment this once ankit moves the limit switch to main frame instead of the stage
-        //if (elevatorAtBottom) masterElevatorMotor.sensorCollection.setQuadraturePosition(0, 10)
+        //if (elevatorAtBottom) resetEncoders()
         // TODO maybe combine the Manual code and this somehow
         when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) || MainXbox.getBumper(GenericHID.Hand.kRight) -> ManualElevatorCommand().start()
+            MainXbox.getBumper(GenericHID.Hand.kLeft) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
     }
 
     override fun initDefaultCommand() {
         this.defaultCommand = ManualElevatorCommand()
     }
+
+    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0
+    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.3 / 2.0)
 }

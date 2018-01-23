@@ -71,7 +71,8 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.position)
+        // Resets the set point so it doesn't kill anyone
+        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
 
         if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
         if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
@@ -92,7 +93,8 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.position)
+        // Resets the set point so it doesn't kill anyone
+        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
         DriveSubsystem.currentCommand?.cancel()
     }
 }
