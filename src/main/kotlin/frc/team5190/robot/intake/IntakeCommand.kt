@@ -2,6 +2,9 @@ package frc.team5190.robot.intake
 
 import edu.wpi.first.wpilibj.command.Command
 
+/**
+ *  Command that either intakes or outputs the cube
+ */
 class IntakeCommand(private val direction: IntakeDirection) : Command() {
 
     private val outSpeed = 0.5
@@ -12,13 +15,16 @@ class IntakeCommand(private val direction: IntakeDirection) : Command() {
         requires(IntakeSubsystem)
     }
 
+    override fun initialize() {
+        IntakeSubsystem.intakeSolenoid.set(false)
+    }
+
     private var currentHistory = mutableListOf<Double>()
 
     override fun execute() {
         val motorOutput = when (direction) {
             IntakeDirection.IN -> inSpeed
             IntakeDirection.OUT -> outSpeed
-            IntakeDirection.NOTHING -> 0.0
         }
         with(IntakeSubsystem.intakeTalon) {
             set(motorOutput)
@@ -28,6 +34,14 @@ class IntakeCommand(private val direction: IntakeDirection) : Command() {
         }
     }
 
-    override fun isFinished() = direction != IntakeDirection.NOTHING && currentHistory.average() > maxCurrent
+    override fun end() {
+        IntakeSubsystem.intakeTalon.set(0.0)
+    }
 
+    override fun isFinished() = currentHistory.average() > maxCurrent
+
+}
+
+enum class IntakeDirection {
+    IN, OUT
 }
