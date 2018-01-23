@@ -13,6 +13,7 @@ import frc.team5190.robot.auto.AutoCommandGroup
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
@@ -24,6 +25,7 @@ class Robot : IterativeRobot() {
 
     init {
         DriveSubsystem
+        IntakeSubsystem
         NavX
     }
 
