@@ -6,6 +6,8 @@
 package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import edu.wpi.first.wpilibj.GenericHID
+import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
@@ -27,7 +29,8 @@ object DriveSubsystem : Subsystem() {
 
     // Creates an instance of FalconDrive, our custom drive class
     val falconDrive = FalconDrive(listOf(MotorIDs.FRONT_LEFT, MotorIDs.REAR_LEFT).map { WPI_TalonSRX(it) },
-            listOf(MotorIDs.FRONT_RIGHT, MotorIDs.REAR_RIGHT).map { WPI_TalonSRX(it) })
+            listOf(MotorIDs.FRONT_RIGHT, MotorIDs.REAR_RIGHT).map { WPI_TalonSRX(it) },
+            Solenoid(42, 0))
 
     /**
      * Initializes the default command for the subsystem
@@ -45,7 +48,6 @@ object DriveSubsystem : Subsystem() {
             MainXbox.startButtonPressed -> DriveMode.CURVE
             else -> null
         }?.let { controlMode = it }
-
     }
 
     fun reset() {

@@ -6,6 +6,7 @@
 package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.getLeftX
@@ -27,6 +28,10 @@ class TeleDriveCommand : Command() {
             DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())
             DriveMode.TANK -> DriveSubsystem.falconDrive.tankDrive(mode, -MainXbox.getLeftY(), -MainXbox.getRightY(), false)
             DriveMode.CURVE -> DriveSubsystem.falconDrive.curvatureDrive(mode, -MainXbox.getLeftY(), MainXbox.getLeftX(), MainXbox.aButton)
+        }
+        DriveSubsystem.falconDrive.gear = when {
+            MainXbox.getTriggerAxis(GenericHID.Hand.kRight) < 0.5 -> Gear.LOW
+            else -> Gear.HIGH
         }
     }
 
