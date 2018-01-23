@@ -10,10 +10,16 @@ class ResetElevatorCommand : Command() {
 
     override fun execute() {
         ElevatorSubsystem.resetEncoders()
+        //ElevatorSubsystem.set(-0.3)
     }
 
-    override fun isFinished(): Boolean {
-        return true
+    /*
+    override fun end() {
+        ElevatorSubsystem.set(0.0)
     }
+
+    override fun isFinished() = ElevatorSubsystem.elevatorAtBottom
+*/
+    override fun isFinished(): Boolean = false
 
 }

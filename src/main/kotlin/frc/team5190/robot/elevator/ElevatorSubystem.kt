@@ -26,12 +26,15 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
 
         masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
-        masterElevatorMotor.configPeakOutput(1.0, -0.5, 10)
+        masterElevatorMotor.configPeakOutput(1.0, -0.4, 10)
 
-        masterElevatorMotor.config_kPID(0, 0.5, 0.01, 6.0, 10)     // 0.03, 0.001, 6.0
+        masterElevatorMotor.config_kPID(0, 0.8, 0.01, 6.0, 10)     // 0.03, 0.001, 6.0
 
         masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
     }
+
+    val elevatorAtBottom
+        get() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
 
     fun set(output: Number) = set(ControlMode.PercentOutput, output)
 
@@ -53,8 +56,9 @@ object ElevatorSubsystem : Subsystem() {
     }
 
     override fun periodic() {
+        // TODO uncomment this once ankit moves the limit switch to main frame instead of the stage
+        //if (elevatorAtBottom) masterElevatorMotor.sensorCollection.setQuadraturePosition(0, 10)
         // TODO maybe combine the Manual code and this somehow
-        println("ERROR $closedLoopErrorInches")
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) || MainXbox.getBumper(GenericHID.Hand.kRight) -> ManualElevatorCommand().start()
         }
