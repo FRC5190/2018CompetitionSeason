@@ -25,14 +25,32 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
         masterElevatorMotor.configPeakOutput(1.0, -0.4, 10)
 
+        masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
+
+        // Position stuffs
+        masterElevatorMotor.selectProfileSlot(0, 0)
         masterElevatorMotor.config_kPID(0, 0.8, 0.01, 6.0, 10)     // 0.03, 0.001, 6.0
 
-        masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
+        // Motion Magic stuffs
+        masterElevatorMotor.selectProfileSlot(0, 1)
+        masterElevatorMotor.config_kPID(0, 0.0, 0.0, 0.0, 10)
+
+        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
+        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+
+        masterElevatorMotor.configMotionCruiseVelocity(inchesToNativeUnits(6.0) / 10, 10)
+        masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(6.0) / 10, 10)
     }
 
     fun isElevatorAtBottom() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
 
-    fun set(controlMode: ControlMode, output: Number) = masterElevatorMotor.set(controlMode, output.toDouble())
+    fun set(controlMode: ControlMode, output: Number) {
+        when (controlMode) {
+            ControlMode.Position -> masterElevatorMotor.selectProfileSlot(0, 0)
+            ControlMode.MotionMagic -> masterElevatorMotor.selectProfileSlot(0, 1)
+        }
+        masterElevatorMotor.set(controlMode, output.toDouble())
+    }
 
     val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition

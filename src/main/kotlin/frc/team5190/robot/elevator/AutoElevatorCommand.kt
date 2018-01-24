@@ -10,6 +10,10 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
     }
 
     override fun initialize() {
+        ElevatorSubsystem.set(ControlMode.MotionMagic, position.ticks)
+    }
+
+    override fun end() {
         ElevatorSubsystem.set(ControlMode.Position, position.ticks)
     }
 
