@@ -9,7 +9,7 @@ import frc.team5190.robot.util.*
 
 object ArmSubsystem : Subsystem() {
 
-    val masterArmMotor = TalonSRX(MotorIDs.ARM)
+    private val masterArmMotor = TalonSRX(MotorIDs.ARM)
 
     init {
         masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
