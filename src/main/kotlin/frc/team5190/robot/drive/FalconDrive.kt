@@ -5,17 +5,10 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.util.Hardware
-import frc.team5190.robot.util.Maths
-import frc.team5190.robot.util.configurePIDF
-import frc.team5190.robot.util.scale
+import frc.team5190.robot.util.*
 
 /**
  * Custom FalconDrive object that extends Differential Drive
@@ -57,7 +50,8 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         rightSlaves.forEach { it.follow(rightMaster) }
 
         allMasters.forEach {
-            it.configurePIDF(0.0, 0.0, 0.0, 0.0, rpm = Hardware.MAX_RPM.toDouble(), sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+            it.configPIDF(0, 0.0, 0.0, 0.0, 0.0, Hardware.MAX_RPM.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+            it.selectProfileSlot(0, 0)
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
             it.configNeutralDeadband(0.04, 10)
@@ -70,6 +64,14 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.setNeutralMode(NeutralMode.Brake)
 
             // TODO: Need to configure current limits
+        }
+    }
+
+    internal fun teleopReset() {
+        this.reset()
+        allMasters.forEach {
+            it.configPIDF(1, 0.0, 0.0, 0.0, 0.0, Hardware.MAX_RPM.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+            it.selectProfileSlot(1, 0)
         }
     }
 

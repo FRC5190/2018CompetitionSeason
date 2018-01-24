@@ -48,9 +48,10 @@ object DriveSubsystem : Subsystem() {
 
     }
 
-    fun reset() {
-        falconDrive.reset()
-    }
+    fun teleopReset() = falconDrive.teleopReset()
+
+    fun reset() = falconDrive.reset()
+
 }
 
 /**

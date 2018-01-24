@@ -25,7 +25,7 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
         masterElevatorMotor.configPeakOutput(1.0, -0.4, 10)
 
-        masterElevatorMotor.config_kPID(0, 0.8, 0.01, 6.0, 10)     // 0.03, 0.001, 6.0
+        masterElevatorMotor.configPID(0, 0.8, 0.01, 6.0, 10)     // 0.03, 0.001, 6.0
 
         masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
     }
