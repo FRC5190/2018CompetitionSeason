@@ -10,11 +10,9 @@ import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
@@ -26,9 +24,9 @@ class Robot : IterativeRobot() {
 
     init {
         DriveSubsystem
-        IntakeSubsystem
-        ElevatorSubsystem
-        ArmSubsystem
+//        IntakeSubsystem
+//        ElevatorSubsystem
+//        ArmSubsystem
         NavX
     }
 

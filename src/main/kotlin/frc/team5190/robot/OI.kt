@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
-import frc.team5190.robot.elevator.ResetElevatorCommand
 
 /**
  * Xbox Controller object
@@ -21,7 +20,7 @@ object MainXbox : XboxController(0) {
     init {
         JoystickButton(this, 1).whenPressed(AutoElevatorCommand(ElevatorPosition.SCALE))
         JoystickButton(this, 3).whenPressed(AutoElevatorCommand(ElevatorPosition.SWITCH))
-        JoystickButton(this, 2).whenPressed(ResetElevatorCommand())
+//        JoystickButton(this, 2).whenPressed(ResetElevatorCommand())
     }
 }
 

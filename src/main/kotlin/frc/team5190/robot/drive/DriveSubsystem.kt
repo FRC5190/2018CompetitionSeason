@@ -43,6 +43,7 @@ object DriveSubsystem : Subsystem() {
         when {
             MainXbox.backButtonPressed -> DriveMode.TANK
             MainXbox.startButtonPressed -> DriveMode.CURVE
+            MainXbox.bButtonPressed -> DriveMode.BONGO
             else -> null
         }?.let { controlMode = it }
 
@@ -60,5 +61,6 @@ object DriveSubsystem : Subsystem() {
 enum class DriveMode {
     ARCADE,
     TANK,
-    CURVE
+    CURVE,
+    BONGO
 }
