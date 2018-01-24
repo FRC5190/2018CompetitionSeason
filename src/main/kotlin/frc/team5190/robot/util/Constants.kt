@@ -16,6 +16,11 @@ object MotorIDs {
     const val FRONT_RIGHT = 3
     const val REAR_LEFT = 2
     const val REAR_RIGHT = 4
+  
+    const val ELEVATOR_MASTER = 20
+    const val ELEVATOR_SLAVE = 21
+
+    const val ARM = 25
 
     const val INTAKE_LEFT = 10
     const val INTAKE_RIGHT = 11

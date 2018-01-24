@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import frc.team5190.robot.util.Hardware
 import frc.team5190.robot.util.Maths
+import frc.team5190.robot.util.configurePIDF
 import frc.team5190.robot.util.scale
 
 /**
@@ -178,21 +179,4 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         feedSafety()
     }
-}
-
-/**
- * Configures the PID for the specified motor
- * @param p Proportional gain
- * @param i Integral gain
- * @param d Differential gain
- * @param power Max throttle power
- * @param rpm Max RPM
- * @param sensorUnitsPerRotation Sensor units per rotation
- * @param dev Feedback device used with the motor
- */
-private fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double) {
-    config_kP(0, p, 10)
-    config_kI(0, i, 10)
-    config_kD(0, d, 10)
-    config_kF(0, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation), 10)
 }

@@ -5,15 +5,16 @@
 
 package frc.team5190.robot
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.auto.AutoCommandGroup
-import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
@@ -26,6 +27,8 @@ class Robot : IterativeRobot() {
     init {
         DriveSubsystem
         IntakeSubsystem
+        ElevatorSubsystem
+        ArmSubsystem
         NavX
     }
 
@@ -61,6 +64,11 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
         SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
 
+        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
+        SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
+
+        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
+
         SmartDashboard.putData("Gyro", NavX)
 
         Scheduler.getInstance().run()
@@ -70,6 +78,9 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
+        // Resets the set point so it doesn't kill anyone
+        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
+
         if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
         if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
 
@@ -89,6 +100,8 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+        // Resets the set point so it doesn't kill anyone
+        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
         DriveSubsystem.currentCommand?.cancel()
     }
 }
