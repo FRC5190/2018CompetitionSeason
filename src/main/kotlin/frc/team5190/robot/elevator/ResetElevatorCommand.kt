@@ -1,5 +1,6 @@
 package frc.team5190.robot.elevator
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 
 class ResetElevatorCommand : Command() {
@@ -9,17 +10,16 @@ class ResetElevatorCommand : Command() {
     }
 
     override fun execute() {
-        ElevatorSubsystem.resetEncoders()
-        //ElevatorSubsystem.set(-0.3)
+        ElevatorSubsystem.set(ControlMode.PercentOutput, -0.3)
     }
 
-    /*
+
     override fun end() {
-        ElevatorSubsystem.set(0.0)
+        ElevatorSubsystem.resetEncoders()
+        ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
     }
 
-    override fun isFinished() = ElevatorSubsystem.elevatorAtBottom
-*/
-    override fun isFinished(): Boolean = false
+    override fun isFinished() = ElevatorSubsystem.isElevatorAtBottom()
+
 
 }

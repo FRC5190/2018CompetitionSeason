@@ -10,9 +10,8 @@ import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.auto.AutoCommandGroup
-import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.sensors.NavX
@@ -27,6 +26,7 @@ class Robot : IterativeRobot() {
     init {
         DriveSubsystem
         ElevatorSubsystem
+        ArmSubsystem
         NavX
     }
 
@@ -61,6 +61,11 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
         SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
+
+        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
+        SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
+
+        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
 
         SmartDashboard.putData("Gyro", NavX)
 

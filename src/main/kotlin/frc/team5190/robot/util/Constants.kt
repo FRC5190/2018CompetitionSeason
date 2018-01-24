@@ -18,6 +18,8 @@ object MotorIDs {
 
     const val ELEVATOR_MASTER = 20
     const val ELEVATOR_SLAVE = 21
+
+    const val ARM = 25
 }
 
 /**
