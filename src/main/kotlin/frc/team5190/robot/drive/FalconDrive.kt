@@ -42,7 +42,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      * Call this when initializing  autonomous and teleop
      * Resets all motors, their directions, and encoders
      */
-    internal fun reset() {
+    private fun reset() {
         leftMotors.forEach { it.inverted = false }
         rightMotors.forEach { it.inverted = true }
 
@@ -50,11 +50,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         rightSlaves.forEach { it.follow(rightMaster) }
 
         allMasters.forEach {
-            it.configPIDF(0, 0.0, 0.0, 0.0, 0.0, Hardware.MAX_RPM.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
-            it.selectProfileSlot(0, 0)
-            it.configMotionProfileTrajectoryPeriod(10, 10)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
-            it.configNeutralDeadband(0.04, 10)
             it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
             it.setSelectedSensorPosition(0, 0, 10)
         }
@@ -67,10 +62,21 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
     }
 
+    internal fun autoReset() {
+        this.reset()
+        allMasters.forEach {
+            it.configPIDF(0, 0.0, 0.0, 0.0, 0.0, Hardware.MAX_RPM.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+            it.selectProfileSlot(0, 0)
+            it.configMotionProfileTrajectoryPeriod(10, 10)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+        }
+    }
+
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
             it.configPIDF(1, 0.0, 0.0, 0.0, 0.0, Hardware.MAX_RPM.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+            it.clearMotionProfileTrajectories()
             it.selectProfileSlot(1, 0)
         }
     }
@@ -115,9 +121,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     }
 
     // Variables to control Curvature Drive
-    private var m_quickStopThreshold = kDefaultQuickStopThreshold
-    private var m_quickStopAlpha = kDefaultQuickStopAlpha
-    private var m_quickStopAccumulator = 0.0
+    private var stopThreshold = kDefaultQuickStopThreshold
+    private var stopAlpha = kDefaultQuickStopAlpha
+    private var stopAccumulator = 0.0
 
     /**
      * Drives the motors in curvature drive motion.
@@ -127,52 +133,57 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      * @param isQuickTurn Decides if quick turn is enabled or disabled.
      */
     fun curvatureDrive(controlMode: ControlMode, xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
-        var xSpeed = xSpeed
-        var zRotation = zRotation
+        var speed = xSpeed
+        var rotation = zRotation
 
-        xSpeed = limit(xSpeed)
-        xSpeed = applyDeadband(xSpeed, m_deadband)
+        speed = limit(speed)
+        speed = applyDeadband(speed, m_deadband)
 
-        zRotation = limit(zRotation)
-        zRotation = applyDeadband(zRotation, m_deadband)
+        rotation = limit(rotation)
+        rotation = applyDeadband(rotation, m_deadband)
 
         val angularPower: Double
         val overPower: Boolean
 
         if (isQuickTurn) {
-            if (Math.abs(xSpeed) < m_quickStopThreshold) {
-                m_quickStopAccumulator = (1 - m_quickStopAlpha) * m_quickStopAccumulator + m_quickStopAlpha * limit(zRotation) * 2.0
+            if (Math.abs(speed) < stopThreshold) {
+                stopAccumulator = (1 - stopAlpha) * stopAccumulator + stopAlpha * limit(rotation) * 2.0
             }
             overPower = true
-            angularPower = zRotation
+            angularPower = rotation
         } else {
             overPower = false
-            angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator
+            angularPower = Math.abs(speed) * rotation - stopAccumulator
 
             when {
-                m_quickStopAccumulator > 1 -> m_quickStopAccumulator -= 1.0
-                m_quickStopAccumulator < -1 -> m_quickStopAccumulator += 1.0
-                else -> m_quickStopAccumulator = 0.0
+                stopAccumulator > 1 -> stopAccumulator -= 1.0
+                stopAccumulator < -1 -> stopAccumulator += 1.0
+                else -> stopAccumulator = 0.0
             }
         }
 
-        var leftMotorOutput = xSpeed + angularPower
-        var rightMotorOutput = xSpeed - angularPower
+        var leftMotorOutput = speed + angularPower
+        var rightMotorOutput = speed - angularPower
 
         // If rotation is overpowered, reduce both outputs to within acceptable range
         if (overPower) {
-            if (leftMotorOutput > 1.0) {
-                rightMotorOutput -= leftMotorOutput - 1.0
-                leftMotorOutput = 1.0
-            } else if (rightMotorOutput > 1.0) {
-                leftMotorOutput -= rightMotorOutput - 1.0
-                rightMotorOutput = 1.0
-            } else if (leftMotorOutput < -1.0) {
-                rightMotorOutput -= leftMotorOutput + 1.0
-                leftMotorOutput = -1.0
-            } else if (rightMotorOutput < -1.0) {
-                leftMotorOutput -= rightMotorOutput + 1.0
-                rightMotorOutput = -1.0
+            when {
+                leftMotorOutput > 1.0 -> {
+                    rightMotorOutput -= leftMotorOutput - 1.0
+                    leftMotorOutput = 1.0
+                }
+                rightMotorOutput > 1.0 -> {
+                    leftMotorOutput -= rightMotorOutput - 1.0
+                    rightMotorOutput = 1.0
+                }
+                leftMotorOutput < -1.0 -> {
+                    rightMotorOutput -= leftMotorOutput + 1.0
+                    leftMotorOutput = -1.0
+                }
+                rightMotorOutput < -1.0 -> {
+                    leftMotorOutput -= rightMotorOutput + 1.0
+                    rightMotorOutput = -1.0
+                }
             }
         }
 
