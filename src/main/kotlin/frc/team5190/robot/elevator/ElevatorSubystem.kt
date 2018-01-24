@@ -1,9 +1,6 @@
 package frc.team5190.robot.elevator
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Subsystem
@@ -43,12 +40,9 @@ object ElevatorSubsystem : Subsystem() {
     val closedLoopErrorInches
         get() = nativeUnitsToInches(masterElevatorMotor.getClosedLoopError(0))
 
-    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)
+    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)!!
 
     override fun periodic() {
-        // TODO uncomment this once ankit moves the limit switch to main frame instead of the stage
-        //if (elevatorAtBottom) resetEncoders()
-        // TODO maybe combine the Manual code and this somehow
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
