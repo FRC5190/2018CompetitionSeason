@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
@@ -25,6 +26,7 @@ class Robot : IterativeRobot() {
 
     init {
         DriveSubsystem
+        IntakeSubsystem
         ElevatorSubsystem
         ArmSubsystem
         NavX
