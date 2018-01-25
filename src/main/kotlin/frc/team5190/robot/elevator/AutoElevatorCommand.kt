@@ -2,8 +2,11 @@ package frc.team5190.robot.elevator
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
+import kotlin.math.absoluteValue
 
 class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
+
+    private var time: Long = 0
 
     init {
         requires(ElevatorSubsystem)
@@ -14,10 +17,17 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
     }
 
     override fun end() {
-        ElevatorSubsystem.set(ControlMode.Position, position.ticks)
+        println("HAS FINISHED")
+        time = 0
     }
 
-    override fun isFinished(): Boolean = ElevatorSubsystem.closedLoopErrorInches < 1
+    override fun isFinished(): Boolean {
+        when(ElevatorSubsystem.closedLoopErrorInches.absoluteValue < 1){
+            true -> time++
+            else -> time = 0
+        }
+        return time > 20
+    }
 }
 
 enum class ElevatorPosition(var ticks: Int) {
