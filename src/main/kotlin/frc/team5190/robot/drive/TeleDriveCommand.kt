@@ -8,6 +8,8 @@ package frc.team5190.robot.drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.*
+import frc.team5190.robot.Bongo.getLeftBongoSpeed
+import frc.team5190.robot.Bongo.getRightBongoSpeed
 
 class TeleDriveCommand : Command() {
 
@@ -24,7 +26,7 @@ class TeleDriveCommand : Command() {
             DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())
             DriveMode.TANK -> DriveSubsystem.falconDrive.tankDrive(mode, -MainXbox.getLeftY(), -MainXbox.getRightY(), false)
             DriveMode.CURVE -> DriveSubsystem.falconDrive.curvatureDrive(mode, -MainXbox.getLeftY(), MainXbox.getLeftX(), MainXbox.aButton)
-            DriveMode.BONGO -> DriveSubsystem.falconDrive.tankDrive(mode, MainXbox.getLeftY(), MainXbox.getRightY())
+            DriveMode.BONGO -> DriveSubsystem.falconDrive.tankDrive(mode, getLeftBongoSpeed(), getRightBongoSpeed(), false)
         }
     }
 

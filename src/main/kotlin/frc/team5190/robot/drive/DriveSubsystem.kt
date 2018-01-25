@@ -14,7 +14,7 @@ import frc.team5190.robot.util.MotorIDs
 object DriveSubsystem : Subsystem() {
 
     // Establishes the drive mode for our different drivers.
-    var controlMode = DriveMode.TANK
+    var controlMode = DriveMode.BONGO
         set(value) {
             println("Changing DriveMode from $field to $value")
             field = value
