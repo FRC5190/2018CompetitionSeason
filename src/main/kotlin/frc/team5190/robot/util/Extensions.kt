@@ -14,14 +14,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
  * @param sensorUnitsPerRotation Sensor units per rotation
  * @param dev Feedback device used with the motor
  */
-fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double) {
-    config_kP(0, p, 10)
-    config_kI(0, i, 10)
-    config_kD(0, d, 10)
-    config_kF(0, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation), 10)
+fun TalonSRX.configPIDF(slotIdx: Int, p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double) {
+    config_kP(slotIdx, p, 10)
+    config_kI(slotIdx, i, 10)
+    config_kD(slotIdx, d, 10)
+    config_kF(slotIdx, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation), 10)
 }
 
-fun TalonSRX.config_kPID(slotIdx: Int, p: Double, i: Double, d: Double, timeoutMs: Int) {
+fun TalonSRX.configPID(slotIdx: Int, p: Double, i: Double, d: Double, timeoutMs: Int) {
     config_kP(slotIdx, p, timeoutMs)
     config_kI(slotIdx, i, timeoutMs)
     config_kD(slotIdx, d, timeoutMs)

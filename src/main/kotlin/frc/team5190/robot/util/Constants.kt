@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj.SensorBase
  * Contains Motor IDs.
  */
 object MotorIDs {
-    const val FRONT_LEFT = 1
+    const val FRONT_LEFT = 5
     const val FRONT_RIGHT = 3
     const val REAR_LEFT = 2
-    const val REAR_RIGHT = 4
+    const val REAR_RIGHT = 1
   
     const val ELEVATOR_MASTER = 20
     const val ELEVATOR_SLAVE = 21
@@ -43,8 +43,8 @@ object Hardware {
     const val NATIVE_UNITS_PER_ROTATION = 1440
     const val WHEEL_RADIUS = 2.0
 
-    const val MAX_RPM = 1065
-    const val MAX_NATIVE_UNITS_PER_100_MS = 2556         // rpm * sensorUnitsPerRotation / 600
+    const val MAX_RPM = 925
+    const val MAX_NATIVE_UNITS_PER_100_MS = 2220         // rpm * sensorUnitsPerRotation / 600
 }
 
 /**

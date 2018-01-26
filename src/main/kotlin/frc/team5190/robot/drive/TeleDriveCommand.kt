@@ -7,10 +7,7 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import frc.team5190.robot.MainXbox
-import frc.team5190.robot.getLeftX
-import frc.team5190.robot.getLeftY
-import frc.team5190.robot.getRightY
+import frc.team5190.robot.*
 
 class TeleDriveCommand : Command() {
 

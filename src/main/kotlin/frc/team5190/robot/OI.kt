@@ -7,12 +7,9 @@
 
 package frc.team5190.robot
 
-import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.buttons.JoystickButton
-import frc.team5190.robot.elevator.AutoElevatorCommand
-import frc.team5190.robot.elevator.ElevatorPosition
-import frc.team5190.robot.elevator.ResetElevatorCommand
+import frc.team5190.robot.elevator.*
 
 /**
  * Xbox Controller object

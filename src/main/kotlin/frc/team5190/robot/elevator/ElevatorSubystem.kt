@@ -23,11 +23,9 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
 
         masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
+        masterElevatorMotor.configPID(0, 0.8, 0.0, 0.0, 10)
         masterElevatorMotor.configPeakOutput(1.0, -0.4, 10)
-
         masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
-
-        masterElevatorMotor.config_kPID(0, 0.8, 0.0, 0.0, 10)
 
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
