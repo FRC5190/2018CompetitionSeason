@@ -64,8 +64,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     internal fun autoReset() {
         this.reset()
+
         allMasters.forEach {
-            it.configPIDF(0, 0.0, 0.0, 0.0, 0.0, Hardware.MAX_RPM.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
+            it.configPIDF(0, 0.7, 0.0, 0.0, 0.0, Hardware.MAX_RPM.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
             it.selectProfileSlot(0, 0)
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)

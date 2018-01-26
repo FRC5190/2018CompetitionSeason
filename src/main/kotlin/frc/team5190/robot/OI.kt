@@ -7,11 +7,27 @@
 
 package frc.team5190.robot
 
-import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import frc.team5190.robot.elevator.*
 
+/**
+ * GameCube Bongo Controller object
+ */
+
+object Bongo : Joystick(0) {
+    fun getLeftBongoSpeed() = when {
+        this.getRawButton(4) -> 0.5
+        this.getRawButton(2) -> -0.5
+        else -> 0.0
+    }
+
+    fun getRightBongoSpeed() = when {
+        this.getRawButton(3) -> 0.5
+        this.getRawButton(1) -> -0.5
+        else -> 0.0
+    }
+}
 /**
  * Xbox Controller object
  */
