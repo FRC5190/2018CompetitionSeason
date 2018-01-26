@@ -12,10 +12,10 @@ import edu.wpi.first.wpilibj.SensorBase
  * Contains Motor IDs.
  */
 object MotorIDs {
-    const val FRONT_LEFT = 5
+    const val FRONT_LEFT = 1
     const val FRONT_RIGHT = 3
     const val REAR_LEFT = 2
-    const val REAR_RIGHT = 1
+    const val REAR_RIGHT = 4
   
     const val ELEVATOR_MASTER = 20
     const val ELEVATOR_SLAVE = 21
