@@ -43,7 +43,6 @@ object DriveSubsystem : Subsystem() {
         when {
             MainXbox.backButtonPressed -> DriveMode.TANK
             MainXbox.startButtonPressed -> DriveMode.CURVE
-            MainXbox.bButtonPressed -> DriveMode.BONGO
             else -> null
         }?.let { controlMode = it }
 
@@ -52,7 +51,6 @@ object DriveSubsystem : Subsystem() {
     fun teleopReset() = falconDrive.teleopReset()
 
     fun autoReset() = falconDrive.autoReset()
-
 }
 
 /**
@@ -61,6 +59,5 @@ object DriveSubsystem : Subsystem() {
 enum class DriveMode {
     ARCADE,
     TANK,
-    CURVE,
-    BONGO
+    CURVE
 }
