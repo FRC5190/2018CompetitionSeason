@@ -83,28 +83,32 @@ class Robot : IterativeRobot() {
     override fun autonomousInit() {
         // Resets the set point so it doesn't kill anyone
         ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
-
-        if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
-        if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
-
+        DriveSubsystem.autoReset()
         NavX.reset()
+
+        this.pollForFMSData()
+
         AutoCommandGroup(AutoHelper.getPathFromData(sideChooser.selected, switchSide)).start()
     }
 
-
+    /**
+     * Executed once when robot is disabled.
+     */
     override fun disabledInit() {
-        if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
-        if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
-
-        DriveSubsystem.reset()
+        this.pollForFMSData()
     }
 
     /**
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-        // Resets the set point so it doesn't kill anyone
         ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
         DriveSubsystem.currentCommand?.cancel()
+        DriveSubsystem.teleopReset()
+    }
+
+    private fun pollForFMSData() {
+        if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
+        if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
     }
 }

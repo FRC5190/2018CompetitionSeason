@@ -7,10 +7,7 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import frc.team5190.robot.MainXbox
-import frc.team5190.robot.getLeftX
-import frc.team5190.robot.getLeftY
-import frc.team5190.robot.getRightY
+import frc.team5190.robot.*
 
 class TeleDriveCommand : Command() {
 
@@ -22,7 +19,9 @@ class TeleDriveCommand : Command() {
      * Called periodically until the command is finished or until interrupted.
      */
     override fun execute() {
+        // TODO Configure Velocity Drive
         val mode = ControlMode.PercentOutput
+
         when (DriveSubsystem.controlMode) {
             DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())
             DriveMode.TANK -> DriveSubsystem.falconDrive.tankDrive(mode, -MainXbox.getLeftY(), -MainXbox.getRightY(), false)
