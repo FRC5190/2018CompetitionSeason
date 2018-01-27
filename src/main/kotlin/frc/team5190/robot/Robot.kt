@@ -15,6 +15,7 @@ import frc.team5190.robot.arm.ResetArmCommand
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
+import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
@@ -59,6 +60,7 @@ class Robot : IterativeRobot() {
         SmartDashboard.putData("Starting Position", sideChooser)
 
         ResetArmCommand().start()
+        ResetElevatorCommand().start()
     }
 
     /**
@@ -79,7 +81,12 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
         SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
 
+        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition)
+
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
+        SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
+        SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
+
 
         SmartDashboard.putData("Gyro", NavX)
 
@@ -90,14 +97,14 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        // Resets the set point so it doesn't kill anyone
-        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
+        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
+        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition)
         DriveSubsystem.autoReset()
         NavX.reset()
 
         this.pollForFMSData()
 
-        AutoCommandGroup(AutoHelper.getPathFromData(sideChooser.selected, switchSide)).start()
+        AutoCommandGroup(AutoHelper.getPathFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide)).start()
     }
 
     /**
@@ -111,8 +118,11 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-        ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
+        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
+        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition)
+
         DriveSubsystem.currentCommand?.cancel()
+
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = controllerChooser.selected?: "Xbox"
     }

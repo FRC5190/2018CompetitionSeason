@@ -30,6 +30,8 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
 
+        masterElevatorMotor.configOpenloopRamp(1.5, 10)
+
         masterElevatorMotor.configMotionCruiseVelocity(1000000000, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(80.0) / 10, 10)
     }

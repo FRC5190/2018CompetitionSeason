@@ -27,8 +27,9 @@ object MotorIDs {
 }
 
 object SolenoidIDs {
-    private const val PCM = 42
+    private const val PCM = 41
 
+    const val DRIVE_PCM = 3
     const val INTAKE = 0
 
     init {

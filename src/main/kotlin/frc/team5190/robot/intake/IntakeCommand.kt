@@ -39,8 +39,8 @@ class IntakeCommand(private val direction: IntakeDirection) : Command() {
     }
 
     override fun isFinished() = currentHistory.average() > maxCurrent
-
 }
+
 
 enum class IntakeDirection {
     IN, OUT
