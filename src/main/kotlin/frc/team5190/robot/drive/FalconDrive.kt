@@ -7,6 +7,7 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import frc.team5190.robot.util.*
 
@@ -14,7 +15,8 @@ import frc.team5190.robot.util.*
  * Custom FalconDrive object that extends Differential Drive
  */
 class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
-                  val rightMotors: List<WPI_TalonSRX>) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
+                  val rightMotors: List<WPI_TalonSRX>,
+                  private val gearSolenoid: Solenoid) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
 
     // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
@@ -60,6 +62,8 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
             // TODO: Need to configure current limits
         }
+
+        gear = Gear.HIGH
     }
 
     internal fun autoReset() {
@@ -81,6 +85,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.selectProfileSlot(1, 0)
         }
     }
+    var gear
+        get() = Gear.getGear(gearSolenoid.get())
+        set(value) = gearSolenoid.set(value.state)
 
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)
@@ -192,5 +199,13 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         rightMaster.set(controlMode, rightMotorOutput * controlMode.scale() * m_maxOutput)
 
         feedSafety()
+    }
+}
+
+enum class Gear(val state: Boolean) {
+    HIGH(true), LOW(false);
+
+    companion object {
+        fun getGear(solenoidState: Boolean) = Gear.values().find { it.state == solenoidState }!!
     }
 }
