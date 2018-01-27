@@ -61,5 +61,5 @@ object DriveSubsystem : Subsystem() {
 enum class DriveMode {
     ARCADE,
     TANK,
-    CURVE,
+    CURVE
 }
