@@ -34,8 +34,9 @@ class TeleDriveCommand : Command() {
                 }
             }
         }
+
         DriveSubsystem.falconDrive.gear = when {
-            MainXbox.getTriggerAxis(GenericHID.Hand.kRight) < 0.5 -> Gear.LOW
+            MainXbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5 -> Gear.LOW
             else -> Gear.HIGH
         }
     }

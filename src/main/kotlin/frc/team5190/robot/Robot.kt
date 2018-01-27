@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.ResetArmCommand
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
@@ -26,7 +25,12 @@ import openrio.powerup.MatchData
  */
 class Robot : IterativeRobot() {
 
+    companion object {
+        var INSTANCE: Robot? = null
+    }
+
     init {
+        INSTANCE = this
         DriveSubsystem
         IntakeSubsystem
         ElevatorSubsystem
@@ -59,7 +63,6 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Starting Position", sideChooser)
 
-        ResetArmCommand().start()
         ResetElevatorCommand().start()
     }
 
