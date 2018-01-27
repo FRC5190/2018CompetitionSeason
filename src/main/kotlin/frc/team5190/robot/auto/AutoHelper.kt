@@ -48,22 +48,22 @@ class AutoHelper {
  * @param leftFilePath The file path for the trajectory of the left side of the DriveTrain
  * @param rightFilePath The file path for the trajectory of the right side of the DriveTrain
  */
-enum class Paths(private val leftFilePath: String, private val rightFilePath: String) {
+enum class Paths(private val filePath: String) {
 
     // Various enums that represent the different paths the robot will take.
-    LEFT_STATION_LEFT_SWITCH("left/left_left.csv", "left/left_right.csv"),
-    LEFT_STATION_RIGHT_SWITCH("left/right_let.csv", "left/right_right.csv"),
-    CENTER_STATION_LEFT_SWITCH("center/left_left.csv", "center/left_right.csv"),
-    CENTER_STATION_RIGHT_SWITCH("center/right_left.csv", "center/right_right.csv"),
-    RIGHT_STATION_LEFT_SWITCH("right/left_left.csv", "right/left_right.csv"),
-    RIGHT_STATION_RIGHT_SWITCH("right/right_left.csv", "right/right_right.csv"),
-    TEST("testpath_left.csv", "testpath_right.csv");
+    LEFT_STATION_LEFT_SWITCH("left_station/direct_left_switch"),
+    LEFT_STATION_RIGHT_SWITCH("left_station/direct_right_switch"),
+    CENTER_STATION_LEFT_SWITCH("center_station/direct_left_switch"),
+    CENTER_STATION_RIGHT_SWITCH("center_station/direct_right_switch"),
+    RIGHT_STATION_LEFT_SWITCH("right_station/direct_left_switch"),
+    RIGHT_STATION_RIGHT_SWITCH("right_station/direct_right_switch"),
+    TEST("testpath");
 
     val trajectoryLeft
-        get() = loadTrajectory(leftFilePath)
+        get() = loadTrajectory(filePath + "_left.csv")
 
     val trajectoryRight
-        get() = loadTrajectory(rightFilePath)
+        get() = loadTrajectory(filePath + "_right.csv")
 
 
     /**
