@@ -14,7 +14,7 @@ import frc.team5190.robot.util.*
  * Custom FalconDrive object that extends Differential Drive
  */
 class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
-                  val rightMotors: List<WPI_TalonSRX>) : DifferentialDrive(leftMotors[0], rightMotors[0]), {
+                  val rightMotors: List<WPI_TalonSRX>) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
 
     // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
