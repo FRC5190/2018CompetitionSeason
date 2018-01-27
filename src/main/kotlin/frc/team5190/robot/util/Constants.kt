@@ -42,7 +42,7 @@ object SolenoidIDs {
  */
 object Hardware {
     const val NATIVE_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 2.0
+    const val WHEEL_RADIUS = 3.0
 
     const val MAX_RPM_HIGH = 925
     const val MAX_NATIVE_UNITS_PER_100_MS = 2220         // rpm * sensorUnitsPerRotation / 600
