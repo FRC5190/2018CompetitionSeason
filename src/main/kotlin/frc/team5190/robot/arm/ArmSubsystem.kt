@@ -12,7 +12,7 @@ object ArmSubsystem : Subsystem() {
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
 
     init {
-        masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
+        masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 10)
 
         masterArmMotor.configNominalOutput(0.0, 0.0, 10)
         masterArmMotor.configPeakOutput(0.4, -0.4, 10)
@@ -22,17 +22,13 @@ object ArmSubsystem : Subsystem() {
 
     }
     val currentPosition
-        get() = masterArmMotor.sensorCollection.quadraturePosition.toDouble()
+        get() = masterArmMotor.getSelectedSensorPosition(0)
 
     val closedLoopError
         get() = masterArmMotor.getClosedLoopError(0)
 
     fun set(controlMode: ControlMode, output: Double) {
         masterArmMotor.set(controlMode, output)
-    }
-
-    fun resetEncoders() {
-        masterArmMotor.setSelectedSensorPosition(ArmPosition.UP.ticks, 0, 10)
     }
 
     override fun initDefaultCommand() {
