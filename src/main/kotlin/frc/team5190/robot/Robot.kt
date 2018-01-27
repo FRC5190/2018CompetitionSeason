@@ -35,6 +35,9 @@ class Robot : IterativeRobot() {
     // Shows a drop down on dashboard that allows us to select which mode we want
     private val sideChooser = SendableChooser<StartingPositions>()
 
+    // Shows a dropdown of the controllers that weill be used.
+    private val controllerChooser = SendableChooser<String>()
+
     // Variable that stores which side of the switch to go to.
     private var switchSide = MatchData.OwnedSide.UNKNOWN
 
@@ -46,6 +49,12 @@ class Robot : IterativeRobot() {
      */
     override fun robotInit() {
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
+
+        controllerChooser.addObject("Xbox", "Xbox")
+        controllerChooser.addObject("Bongo", "Bongo")
+
+        controllerChooser.addDefault("Xbox", "Xbox")
+
         SmartDashboard.putData("Starting Position", sideChooser)
     }
 
@@ -102,6 +111,7 @@ class Robot : IterativeRobot() {
         ElevatorSubsystem.set(ControlMode.Position, ElevatorSubsystem.currentPosition)
         DriveSubsystem.currentCommand?.cancel()
         DriveSubsystem.teleopReset()
+        DriveSubsystem.controller = controllerChooser.selected?: "Xbox"
     }
 
     private fun pollForFMSData() {

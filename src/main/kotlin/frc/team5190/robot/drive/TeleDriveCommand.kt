@@ -24,8 +24,14 @@ class TeleDriveCommand : Command() {
 
         when (DriveSubsystem.controlMode) {
             DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())
-            DriveMode.TANK -> DriveSubsystem.falconDrive.tankDrive(mode, -MainXbox.getLeftY(), -MainXbox.getRightY(), false)
             DriveMode.CURVE -> DriveSubsystem.falconDrive.curvatureDrive(mode, -MainXbox.getLeftY(), MainXbox.getLeftX(), MainXbox.aButton)
+            DriveMode.TANK -> {
+                if (DriveSubsystem.controller == "Bongo") {
+                    DriveSubsystem.falconDrive.tankDrive(mode, Bongos.getLeftBongoSpeed(), Bongos.getRightBongoSpeed())
+                } else {
+                    DriveSubsystem.falconDrive.tankDrive(mode, -MainXbox.getLeftY(), -MainXbox.getRightY())
+                }
+            }
         }
     }
 

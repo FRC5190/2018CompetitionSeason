@@ -21,6 +21,8 @@ object DriveSubsystem : Subsystem() {
             SmartDashboard.putString("Drive Mode", value.name)
         }
 
+    var controller = "Xbox"
+
     init {
         println("Drive Initialized")
     }
@@ -59,5 +61,5 @@ object DriveSubsystem : Subsystem() {
 enum class DriveMode {
     ARCADE,
     TANK,
-    CURVE
+    CURVE,
 }

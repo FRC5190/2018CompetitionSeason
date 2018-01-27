@@ -11,6 +11,21 @@ import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import frc.team5190.robot.elevator.*
 
+object Bongos : Joystick(0) {
+    fun getLeftBongoSpeed() = when {
+        this.getRawButton(4) -> 0.6
+        this.getRawButton(2) -> -0.6
+        else -> 0.0
+    }
+
+    fun getRightBongoSpeed() = when {
+        this.getRawButton(3) -> 0.6
+        this.getRawButton(1) -> -0.6
+        else -> 0.0
+    }
+}
+
+
 /**
  * Xbox Controller object
  */
