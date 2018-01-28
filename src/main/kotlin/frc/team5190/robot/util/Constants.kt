@@ -6,7 +6,6 @@
 package frc.team5190.robot.util
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.SensorBase
 
 /**
  * Contains Motor IDs.
@@ -27,14 +26,10 @@ object MotorIDs {
 }
 
 object SolenoidIDs {
-    private const val PCM = 41
+    const val PCM = 41
 
-    const val DRIVE_PCM = 3
+    const val DRIVE = 3
     const val INTAKE = 2
-
-    init {
-        SensorBase.setDefaultSolenoidModule(PCM)
-    }
 }
 
 /**

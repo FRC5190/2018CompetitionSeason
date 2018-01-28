@@ -15,7 +15,7 @@ object IntakeSubsystem : Subsystem() {
     val intakeTalon = WPI_TalonSRX(MotorIDs.INTAKE_LEFT)
 
 
-    val intakeSolenoid = Solenoid(SolenoidIDs.INTAKE)
+    val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
     init {
         val intakeTalonSlave = WPI_TalonSRX(MotorIDs.INTAKE_RIGHT)

@@ -26,7 +26,7 @@ object DriveSubsystem : Subsystem() {
 
     var controller = "Xbox"
 
-    var compressor = Compressor(41)
+    var compressor = Compressor(SolenoidIDs.PCM)
 
     init {
         println("Drive Initialized")
@@ -36,7 +36,7 @@ object DriveSubsystem : Subsystem() {
     // Creates an instance of FalconDrive, our custom drive class
     val falconDrive = FalconDrive(listOf(MotorIDs.FRONT_LEFT, MotorIDs.REAR_LEFT).map { WPI_TalonSRX(it) },
             listOf(MotorIDs.FRONT_RIGHT, MotorIDs.REAR_RIGHT).map { WPI_TalonSRX(it) },
-            Solenoid(SolenoidIDs.DRIVE_PCM))
+            Solenoid(SolenoidIDs.PCM, SolenoidIDs.DRIVE))
 
     /**
      * Initializes the default command for the subsystem

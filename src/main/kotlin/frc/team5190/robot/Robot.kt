@@ -8,10 +8,13 @@ package frc.team5190.robot
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
+import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.*
+import frc.team5190.robot.auto.AutoCommandGroup
+import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.elevator.ResetElevatorCommand
@@ -50,6 +53,8 @@ class Robot : IterativeRobot() {
      * Executed when robot code first launches and is ready to be initialized.
      */
     override fun robotInit() {
+        // https://www.chiefdelphi.com/forums/showthread.php?p=1724798
+        LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
         IntakeSubsystem
@@ -110,7 +115,8 @@ class Robot : IterativeRobot() {
 
         this.pollForFMSData()
 
-        AutoCommandGroup(AutoHelper.getPathFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide)).start()
+        AutoCommandGroup(AutoHelper.getPathFromData(sideChooser.selected
+                ?: StartingPositions.CENTER, switchSide)).start()
     }
 
     /**
@@ -130,7 +136,7 @@ class Robot : IterativeRobot() {
         DriveSubsystem.currentCommand?.cancel()
 
         DriveSubsystem.teleopReset()
-        DriveSubsystem.controller = controllerChooser.selected?: "Xbox"
+        DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
     }
 
     private fun pollForFMSData() {

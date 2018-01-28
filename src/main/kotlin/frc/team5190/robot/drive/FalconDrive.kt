@@ -5,11 +5,16 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.util.*
+import frc.team5190.robot.util.Hardware
+import frc.team5190.robot.util.configPIDF
+import frc.team5190.robot.util.scale
 
 /**
  * Custom FalconDrive object that extends Differential Drive
@@ -202,7 +207,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 }
 
 enum class Gear(val state: Boolean) {
-    HIGH(true), LOW(false);
+    HIGH(false), LOW(true);
 
     companion object {
         fun getGear(solenoidState: Boolean) = Gear.values().find { it.state == solenoidState }!!
