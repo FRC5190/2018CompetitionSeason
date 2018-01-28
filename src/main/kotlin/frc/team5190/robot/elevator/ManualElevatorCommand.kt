@@ -11,13 +11,22 @@ class ManualElevatorCommand : Command() {
         requires(ElevatorSubsystem)
     }
 
+    var triggerState = false
+
     override fun execute() {
         when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) -> ElevatorSubsystem.set(ControlMode.PercentOutput, 0.2)
-            MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(ControlMode.PercentOutput, -0.2)
-            MainXbox.getBumperReleased(GenericHID.Hand.kLeft) || MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> {
-                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-//                ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
+            MainXbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5 -> {
+                ElevatorSubsystem.set(ControlMode.PercentOutput, -0.1)
+                triggerState = true
+            }
+            MainXbox.getBumper(GenericHID.Hand.kRight) -> {
+                ElevatorSubsystem.set(ControlMode.PercentOutput, 0.4)
+            }
+            MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500)
+
+            MainXbox.getTriggerAxis(GenericHID.Hand.kRight) < 0.5 && triggerState -> {
+                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 1440)
+                triggerState = false
             }
         }
     }

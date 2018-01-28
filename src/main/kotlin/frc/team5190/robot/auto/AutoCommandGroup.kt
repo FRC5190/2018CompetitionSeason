@@ -10,10 +10,14 @@ import frc.team5190.robot.intake.IntakeDirection
 
 class AutoCommandGroup(initialPath: Paths) : CommandGroup() {
     init {
-        this.addParallel(MotionProfileCommand(initialPath))
-        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-        this.addSequential(AutoArmCommand(ArmPosition.DOWN))
-        this.addParallel(TurnCommand(90.0))
-        this.addSequential(IntakeCommand(IntakeDirection.OUT))
+        this.addSequential(object : CommandGroup() {
+            init{
+                this.addParallel(MotionProfileCommand(initialPath))
+                this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+            }
+        })
+//        this.addSequential(TurnCommand(90.0))
+        this.addSequential(IntakeCommand(IntakeDirection.OUT, true))
     }
 }

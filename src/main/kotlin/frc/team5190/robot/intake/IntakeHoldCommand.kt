@@ -13,6 +13,7 @@ class IntakeHoldCommand : Command() {
 
     override fun initialize() {
         IntakeSubsystem.intakeSolenoid.set(true)
+        IntakeSubsystem.intakeTalon.set(0.0)
     }
 
     override fun isFinished() = false

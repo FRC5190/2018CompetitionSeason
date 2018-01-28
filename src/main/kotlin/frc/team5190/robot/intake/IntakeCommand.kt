@@ -1,15 +1,14 @@
 package frc.team5190.robot.intake
 
-import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.TimedCommand
 
 /**
  *  Command that either intakes or outputs the cube
  */
-class IntakeCommand(private val direction: IntakeDirection) : Command() {
+class IntakeCommand(private val direction: IntakeDirection, val auto: Boolean = false) : TimedCommand(0.5) {
 
-    private val outSpeed = 0.5
-    private val inSpeed = -0.5
-    private val maxCurrent = 10
+    private val outSpeed = 0.75
+    private val inSpeed = -0.75
 
     init {
         requires(IntakeSubsystem)
@@ -17,30 +16,16 @@ class IntakeCommand(private val direction: IntakeDirection) : Command() {
 
     override fun initialize() {
         IntakeSubsystem.intakeSolenoid.set(false)
-    }
 
-    private var currentHistory = mutableListOf<Double>()
-
-    override fun execute() {
         val motorOutput = when (direction) {
             IntakeDirection.IN -> inSpeed
             IntakeDirection.OUT -> outSpeed
         }
-        with(IntakeSubsystem.intakeTalon) {
-            set(motorOutput)
-
-            currentHistory.add(0, outputCurrent)
-            currentHistory = currentHistory.subList(0, Math.min(50, currentHistory.size))
-        }
+        IntakeSubsystem.intakeTalon.set(motorOutput)
     }
 
-    override fun end() {
-        IntakeSubsystem.intakeTalon.set(0.0)
-    }
-
-    override fun isFinished() = currentHistory.average() > maxCurrent
+    override fun isFinished() = auto && isTimedOut
 }
-
 
 enum class IntakeDirection {
     IN, OUT

@@ -13,10 +13,10 @@ class AutoArmCommand(private val armPosition: ArmPosition) : Command() {
         ArmSubsystem.set(ControlMode.Position, armPosition.ticks.toDouble())
     }
 
-    override fun isFinished() = ArmSubsystem.closedLoopError < 400
+    override fun isFinished() = ArmSubsystem.closedLoopError < 50
 }
 
 
 enum class ArmPosition (val ticks: Int){
-    UP(0), MIDDLE(0), DOWN(0)
+    UP(0), MIDDLE(1200), DOWN(0)
 }

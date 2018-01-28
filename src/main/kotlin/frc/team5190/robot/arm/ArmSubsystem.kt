@@ -15,14 +15,17 @@ object ArmSubsystem : Subsystem() {
         masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 10)
 
         masterArmMotor.configNominalOutput(0.0, 0.0, 10)
-        masterArmMotor.configPeakOutput(0.4, -0.4, 10)
+        masterArmMotor.configPeakOutput(0.5, -0.5, 10)
+
+        masterArmMotor.configReverseSoftLimitEnable(true, 10)
+        masterArmMotor.configReverseSoftLimitThreshold(980, 10)
 
         // TODO Find values.
-        masterArmMotor.configPID(0, 0.05, 0.0, 0.0, 10)
+        masterArmMotor.configPID(0, 0.7, 0.0, 0.0, 10)
 
     }
     val currentPosition
-        get() = masterArmMotor.sensorCollection.analogInRaw
+        get() = masterArmMotor.getSelectedSensorPosition(0)
 
     val closedLoopError
         get() = masterArmMotor.getClosedLoopError(0)

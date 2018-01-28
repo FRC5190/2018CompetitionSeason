@@ -12,10 +12,9 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.AutoCommandGroup
-import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
@@ -70,6 +69,7 @@ class Robot : IterativeRobot() {
         controllerChooser.addDefault("Xbox", "Xbox")
 
         SmartDashboard.putData("Starting Position", sideChooser)
+        SmartDashboard.putData("Controller", controllerChooser)
 
         ResetElevatorCommand().start()
     }
@@ -111,12 +111,13 @@ class Robot : IterativeRobot() {
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
         ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition.toDouble())
         DriveSubsystem.autoReset()
+        DriveSubsystem.falconDrive.gear = Gear.HIGH
+
         NavX.reset()
 
         this.pollForFMSData()
 
-        AutoCommandGroup(AutoHelper.getPathFromData(sideChooser.selected
-                ?: StartingPositions.CENTER, switchSide)).start()
+        AutoCommandGroup(Paths.CENTER_STATION_LEFT_SWITCH).start()
     }
 
     /**
@@ -130,8 +131,8 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-//        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-//        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition.toDouble())
+        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
+        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition.toDouble())
 
         DriveSubsystem.currentCommand?.cancel()
 

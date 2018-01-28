@@ -17,7 +17,7 @@ class TeleDriveCommand : Command() {
     }
 
     /**
-     * Called periodically until the command is finished or until interrupted.
+     * Called periodically until the command is triggerState or until interrupted.
      */
     override fun execute() {
         // TODO Configure Velocity Drive
@@ -25,7 +25,7 @@ class TeleDriveCommand : Command() {
 
         when (DriveSubsystem.controlMode) {
             DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())
-            DriveMode.CURVE -> DriveSubsystem.falconDrive.curvatureDrive(mode, -MainXbox.getLeftY(), MainXbox.getLeftX(), MainXbox.aButton)
+            DriveMode.CURVE -> DriveSubsystem.falconDrive.curvatureDrive(mode, -MainXbox.getLeftY(), MainXbox.getLeftX(), MainXbox.xButton)
             DriveMode.TANK -> {
                 if (DriveSubsystem.controller == "Bongo") {
                     DriveSubsystem.falconDrive.tankDrive(mode, Bongos.getLeftBongoSpeed(), Bongos.getRightBongoSpeed())
@@ -36,7 +36,7 @@ class TeleDriveCommand : Command() {
         }
 
         DriveSubsystem.falconDrive.gear = when {
-            MainXbox.getTriggerAxis(GenericHID.Hand.kRight) > 0.5 -> Gear.LOW
+            MainXbox.getBumper(GenericHID.Hand.kLeft) -> Gear.LOW
             else -> Gear.HIGH
         }
     }
