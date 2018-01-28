@@ -41,3 +41,5 @@ fun XboxController.getLeftY() = getY(GenericHID.Hand.kLeft)
 
 fun XboxController.getRightX() = getX(GenericHID.Hand.kRight)
 fun XboxController.getRightY() = getY(GenericHID.Hand.kRight)
+
+fun XboxController.getTriggerPressed(hand: GenericHID.Hand, amount: Double = 0.5) = getTriggerAxis(hand) > amount
