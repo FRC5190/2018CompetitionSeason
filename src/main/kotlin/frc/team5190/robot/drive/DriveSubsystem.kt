@@ -6,6 +6,7 @@
 package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
@@ -25,8 +26,11 @@ object DriveSubsystem : Subsystem() {
 
     var controller = "Xbox"
 
+    var compressor = Compressor(41)
+
     init {
         println("Drive Initialized")
+        compressor.start()
     }
 
     // Creates an instance of FalconDrive, our custom drive class

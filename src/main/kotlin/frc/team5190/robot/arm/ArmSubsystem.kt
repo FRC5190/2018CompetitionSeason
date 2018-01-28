@@ -22,7 +22,7 @@ object ArmSubsystem : Subsystem() {
 
     }
     val currentPosition
-        get() = masterArmMotor.getSelectedSensorPosition(0)
+        get() = masterArmMotor.sensorCollection.analogInRaw
 
     val closedLoopError
         get() = masterArmMotor.getClosedLoopError(0)

@@ -16,8 +16,8 @@ class ManualArmCommand : Command() {
             MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.4)
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.4)
 
-            MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition)
-            MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition)
+            MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
+            MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
         }
     }
 

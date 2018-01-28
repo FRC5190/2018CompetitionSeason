@@ -17,20 +17,20 @@ object MotorIDs {
     const val REAR_LEFT = 2
     const val REAR_RIGHT = 4
   
-    const val ELEVATOR_MASTER = 20
-    const val ELEVATOR_SLAVE = 21
+    const val ELEVATOR_MASTER = 5
+    const val ELEVATOR_SLAVE = 6
 
-    const val ARM = 25
+    const val ARM = 8
 
-    const val INTAKE_LEFT = 10
-    const val INTAKE_RIGHT = 11
+    const val INTAKE_LEFT = 7
+    const val INTAKE_RIGHT = 9
 }
 
 object SolenoidIDs {
     private const val PCM = 41
 
     const val DRIVE_PCM = 3
-    const val INTAKE = 0
+    const val INTAKE = 2
 
     init {
         SensorBase.setDefaultSolenoidModule(PCM)

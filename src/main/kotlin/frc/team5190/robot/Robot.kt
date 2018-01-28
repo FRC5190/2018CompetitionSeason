@@ -31,11 +31,6 @@ class Robot : IterativeRobot() {
 
     init {
         INSTANCE = this
-        DriveSubsystem
-        IntakeSubsystem
-        ElevatorSubsystem
-        ArmSubsystem
-        NavX
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
@@ -50,10 +45,18 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
+
     /**
      * Executed when robot code first launches and is ready to be initialized.
      */
     override fun robotInit() {
+
+        DriveSubsystem
+        IntakeSubsystem
+        ElevatorSubsystem
+        ArmSubsystem
+        NavX
+
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
 
         controllerChooser.addObject("Xbox", "Xbox")
@@ -84,7 +87,7 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
         SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
 
-        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition)
+        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
@@ -101,7 +104,7 @@ class Robot : IterativeRobot() {
      */
     override fun autonomousInit() {
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition)
+        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition.toDouble())
         DriveSubsystem.autoReset()
         NavX.reset()
 
@@ -121,8 +124,8 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition)
+//        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
+//        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition.toDouble())
 
         DriveSubsystem.currentCommand?.cancel()
 

@@ -13,10 +13,12 @@ class ManualElevatorCommand : Command() {
 
     override fun execute() {
         when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) -> ElevatorSubsystem.set(ControlMode.Velocity, ElevatorSubsystem.inchesToNativeUnits(24.0) / 10)
-            MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(ControlMode.Velocity, -ElevatorSubsystem.inchesToNativeUnits(24.0) / 10)
-            MainXbox.getBumperReleased(GenericHID.Hand.kLeft) || MainXbox.getBumperReleased(GenericHID.Hand.kRight) ->
+            MainXbox.getBumper(GenericHID.Hand.kLeft) -> ElevatorSubsystem.set(ControlMode.PercentOutput, 0.2)
+            MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(ControlMode.PercentOutput, -0.2)
+            MainXbox.getBumperReleased(GenericHID.Hand.kLeft) || MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> {
                 ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
+//                ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
+            }
         }
     }
 

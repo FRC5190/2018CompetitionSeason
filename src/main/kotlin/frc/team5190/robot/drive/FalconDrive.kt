@@ -80,7 +80,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
-            it.configOpenloopRamp(0.5, 10)
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(1, 0)
         }

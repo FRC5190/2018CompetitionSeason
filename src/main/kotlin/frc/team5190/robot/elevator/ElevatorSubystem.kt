@@ -15,8 +15,9 @@ object ElevatorSubsystem : Subsystem() {
         val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
 
         masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
+        masterElevatorMotor.inverted = false
+//        masterElevatorMotor.setSensorPhase(false)
 
-        masterElevatorMotor.setSensorPhase(false)
         slaveElevatorMotor.inverted = true
         slaveElevatorMotor.follow(masterElevatorMotor)
         masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
@@ -30,7 +31,7 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
 
-        masterElevatorMotor.configOpenloopRamp(1.5, 10)
+//        masterElevatorMotor.configOpenloopRamp(1.5, 10)
 
         masterElevatorMotor.configMotionCruiseVelocity(1000000000, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(80.0) / 10, 10)
