@@ -58,7 +58,7 @@ object ElevatorSubsystem : Subsystem() {
 
     override fun periodic() {
         when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
+            MainXbox.getTriggerAxis(GenericHID.Hand.kRight) < 0.5 || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
     }
 
