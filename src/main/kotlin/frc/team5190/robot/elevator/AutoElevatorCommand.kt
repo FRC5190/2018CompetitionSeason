@@ -6,8 +6,6 @@ import kotlin.math.absoluteValue
 
 class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
 
-    private var time: Long = 0
-
     init {
         requires(ElevatorSubsystem)
     }
@@ -16,18 +14,7 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
         ElevatorSubsystem.set(ControlMode.MotionMagic, position.ticks)
     }
 
-    override fun end() {
-        println("HAS FINISHED")
-        time = 0
-    }
-
-    override fun isFinished(): Boolean {
-        when(ElevatorSubsystem.closedLoopErrorInches.absoluteValue < 1){
-            true -> time++
-            else -> time = 0
-        }
-        return time > 20
-    }
+    override fun isFinished() = (ElevatorSubsystem.currentPosition - position.ticks).absoluteValue < ElevatorSubsystem.inchesToNativeUnits(2.0)
 }
 
 enum class ElevatorPosition(var ticks: Int) {
