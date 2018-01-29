@@ -3,6 +3,13 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.command.CommandGroup
+
+fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
+    val group = CommandGroup()
+    create.invoke(group)
+    return group
+}
 
 /**
  * Configures the PID for the specified motor

@@ -3,8 +3,12 @@ package frc.team5190.robot.elevator
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
+import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
@@ -57,9 +61,52 @@ object ElevatorSubsystem : Subsystem() {
 
     fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)!!
 
+    private var currentCommandGroup: CommandGroup? = null
+
     override fun periodic() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
+        }
+        when(MainXbox.pov) {
+            // Up - Scale
+            0 -> commandGroup {
+                addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+            }
+            // Right - Switch
+            90 -> commandGroup {
+                // Just incase its in the behind position
+                if(ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
+                    addSequential(AutoArmCommand(ArmPosition.MIDDLE))
+                addSequential(commandGroup {
+                    addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                    addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                })
+            }
+            // Down - Intake
+            180 -> commandGroup {
+                // Just incase its in the behind position
+                if(ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
+                    addSequential(AutoArmCommand(ArmPosition.MIDDLE))
+                addSequential(commandGroup {
+                    addParallel(AutoArmCommand(ArmPosition.DOWN))
+                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                })
+            }
+            // Left - Scale Backwards
+            270 ->  commandGroup {
+                addSequential(commandGroup {
+                    addParallel(AutoArmCommand(ArmPosition.UP))
+                    addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                })
+                // Go behind once we know its all the way up
+                addSequential(AutoArmCommand(ArmPosition.BEHIND))
+            }
+            else -> null
+        }?.let {
+            currentCommandGroup?.cancel()
+            currentCommandGroup = it
+            it.start()
         }
     }
 
