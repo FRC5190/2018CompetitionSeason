@@ -5,6 +5,8 @@
 
 package frc.team5190.robot.util
 
+import kotlin.math.roundToInt
+
 /**
  * Contains all the conversions that are required for the robot.
  */
@@ -76,7 +78,30 @@ class Maths {
          * @return Feet
          */
         fun nativeUnitsToFeet(nativeUnits: Int): Double {
-            return (nativeUnits /  Hardware.NATIVE_UNITS_PER_ROTATION).toDouble() * (2 * Math.PI * Hardware.WHEEL_RADIUS) / 12.0
+            return nativeUnitsToFeet(nativeUnits, Hardware.NATIVE_UNITS_PER_ROTATION, Hardware.WHEEL_RADIUS)
+        }
+
+
+        /**
+         * Converts native units to feet
+         * @param nativeUnits Native units
+         * @param nativeUnitsPerRotation Native units per rotation
+         * @param wheelRadius Size in inches of the wheel
+         * @return Feet
+         */
+        fun nativeUnitsToFeet(nativeUnits: Int, nativeUnitsPerRotation: Int, wheelRadius: Double): Double {
+            return nativeUnits.toDouble() /  nativeUnitsPerRotation.toDouble() * (2.0 * Math.PI * wheelRadius) / 12.0
+        }
+
+        /**
+         * Converts native units to feet
+         * @param nativeUnits Native units
+         * @param nativeUnitsPerRotation Native units per rotation
+         * @param wheelRadius Size in inches of the wheel
+         * @return Feet
+         */
+        fun feetToNativeUnits(feet: Double, nativeUnitsPerRotation: Int, wheelRadius: Double): Int {
+            return (feet * 12.0 / (2.0 * Math.PI * wheelRadius) * nativeUnitsPerRotation.toDouble()).roundToInt()
         }
     }
 }

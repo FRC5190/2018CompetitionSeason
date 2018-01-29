@@ -34,7 +34,7 @@ class MotionProfileCommand(private val path: Paths, private var isReversed: Bool
     }
 
     /**
-     * Called periodically until finished or until the command has been canceled.
+     * Called periodically until triggerState or until the command has been canceled.
      */
     override fun execute() {
         motionProfile.control()
@@ -54,7 +54,7 @@ class MotionProfileCommand(private val path: Paths, private var isReversed: Bool
     }
 
     /**
-     * Ends the command when both sides of the DriveTrain have finished executing the motion profile.
+     * Ends the command when both sides of the DriveTrain have triggerState executing the motion profile.
      */
     override fun isFinished() = motionProfile.hasFinished()
 }

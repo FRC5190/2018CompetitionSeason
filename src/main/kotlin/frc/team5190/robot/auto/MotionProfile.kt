@@ -47,7 +47,7 @@ class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryL
     private val leftNotifier = Notifier(leftTalon::processMotionProfileBuffer)
     private val rightNotifier = Notifier(rightTalon::processMotionProfileBuffer)
 
-    // Boolean value to check if the motion profile has finished
+    // Boolean value to check if the motion profile has triggerState
     private var isFinished = false
 
     /**
@@ -224,7 +224,7 @@ class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryL
     fun getSetValue() = setValue
 
     /**
-     * Returns if the MP has finished.
+     * Returns if the MP has triggerState.
      */
     fun hasFinished() = isFinished
 }
