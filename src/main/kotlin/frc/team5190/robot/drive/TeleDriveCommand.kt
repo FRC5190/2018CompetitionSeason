@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.*
+import frc.team5190.robot.elevator.ElevatorSubsystem
 
 class TeleDriveCommand : Command() {
 
@@ -36,7 +37,7 @@ class TeleDriveCommand : Command() {
         }
 
         DriveSubsystem.falconDrive.gear = when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) -> Gear.LOW
+            MainXbox.getBumper(GenericHID.Hand.kLeft) || ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) > 60 -> Gear.LOW
             else -> Gear.HIGH
         }
     }

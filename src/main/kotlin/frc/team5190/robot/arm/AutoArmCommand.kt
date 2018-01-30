@@ -10,7 +10,7 @@ class AutoArmCommand(private val armPosition: ArmPosition) : Command() {
     }
 
     override fun initialize() {
-        ArmSubsystem.set(ControlMode.Position, armPosition.ticks.toDouble())
+        ArmSubsystem.set(ControlMode.MotionMagic, armPosition.ticks.toDouble())
     }
 
     override fun isFinished() = ArmSubsystem.closedLoopError < 50
@@ -18,8 +18,8 @@ class AutoArmCommand(private val armPosition: ArmPosition) : Command() {
 
 
 enum class ArmPosition (val ticks: Int){
-    BEHIND(0), // When placing scale backwards
-    UP(0), // Arm is always up, basically where it starts in auto
-    MIDDLE(1200), // Angled a little up to help placement on scale and switch
-    DOWN(0); // Lowest position, used for intaking the cube
+    BEHIND(1101), // When placing scale backwards
+    UP(971), // Arm is always up, basically where it starts in auto
+    MIDDLE(800), // Angled a little up to help placement on scale and switch
+    DOWN(720); // Lowest position, used for intaking the cube
 }

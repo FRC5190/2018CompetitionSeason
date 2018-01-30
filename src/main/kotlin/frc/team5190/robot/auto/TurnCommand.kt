@@ -15,13 +15,13 @@ class TurnCommand(angle: Double) : PIDCommand(0.03, 0.003, 0.05) {
         requires(DriveSubsystem)
 
         // Only execute the command for a total of a max of 5 seconds (should be close enough to target by then)
-        setTimeout(5.0)
+        setTimeout(3.0)
         setName("DriveSystem", "RotateController")
 
         setpoint = angle
         setInputRange(-180.0, 180.0)
         pidController.setOutputRange(-0.9, 0.9)
-        pidController.setAbsoluteTolerance(2.0)
+        pidController.setAbsoluteTolerance(5.0)
         pidController.setContinuous(true)
     }
 
