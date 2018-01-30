@@ -17,7 +17,7 @@ class AutoCommandGroup(initialPath: Paths) : CommandGroup() {
                 this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
             }
         })
-//        this.addSequential(TurnCommand(90.0))
+        this.addSequential(TurnCommand(90.0))
         this.addSequential(IntakeCommand(IntakeDirection.OUT, true))
     }
 }

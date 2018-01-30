@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.command.TimedCommand
  */
 class IntakeCommand(private val direction: IntakeDirection, val auto: Boolean = false) : TimedCommand(0.5) {
 
-    private val outSpeed = 0.75
-    private val inSpeed = -0.75
+    private val outSpeed = 0.95
+    private val inSpeed = -0.95
 
     init {
         requires(IntakeSubsystem)

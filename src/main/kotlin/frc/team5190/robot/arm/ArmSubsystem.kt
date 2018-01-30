@@ -4,7 +4,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team5190.robot.util.*
+import frc.team5190.robot.util.MotorIDs
+import frc.team5190.robot.util.configNominalOutput
+import frc.team5190.robot.util.configPID
+import frc.team5190.robot.util.configPeakOutput
 
 
 object ArmSubsystem : Subsystem() {
@@ -15,14 +18,16 @@ object ArmSubsystem : Subsystem() {
         masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 10)
 
         masterArmMotor.configNominalOutput(0.0, 0.0, 10)
-        masterArmMotor.configPeakOutput(0.5, -0.5, 10)
+        masterArmMotor.configPeakOutput(0.65, -0.65, 10)
 
-        masterArmMotor.configReverseSoftLimitEnable(true, 10)
-        masterArmMotor.configReverseSoftLimitThreshold(980, 10)
+        masterArmMotor.configReverseSoftLimitEnable(false, 10)
+        masterArmMotor.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks, 10)
 
         // TODO Find values.
-        masterArmMotor.configPID(0, 0.7, 0.0, 0.0, 10)
+        masterArmMotor.configPID(0, 4.0, 0.0, 0.0, 10)
 
+        masterArmMotor.configMotionCruiseVelocity(1000000, 10)
+        masterArmMotor.configMotionAcceleration(1000000, 10)
     }
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
