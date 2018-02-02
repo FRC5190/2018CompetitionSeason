@@ -17,6 +17,8 @@ object ArmSubsystem : Subsystem() {
     init {
         masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 10)
 
+        masterArmMotor.setSensorPhase(false)
+
         masterArmMotor.configNominalOutput(0.0, 0.0, 10)
         masterArmMotor.configPeakOutput(0.65, -0.65, 10)
 

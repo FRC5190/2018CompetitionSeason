@@ -34,7 +34,7 @@ object IntakeSubsystem : Subsystem() {
     override fun periodic() {
         if (Robot.INSTANCE!!.isOperatorControl) {
             if (MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5) {
-                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= 1010) {
+                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= 450) {
                     IntakeCommand(IntakeDirection.OUT).start()
                 } else {
                     IntakeCommand(IntakeDirection.IN).start()
