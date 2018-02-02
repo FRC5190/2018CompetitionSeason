@@ -19,11 +19,11 @@ object ElevatorSubsystem : Subsystem() {
     init {
         val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
 
-        masterElevatorMotor.setSensorPhase(true)
+        masterElevatorMotor.setSensorPhase(false)
 
         masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
-        masterElevatorMotor.inverted = true
-        slaveElevatorMotor.inverted = false
+        masterElevatorMotor.inverted = false
+        slaveElevatorMotor.inverted = true
 
         slaveElevatorMotor.follow(masterElevatorMotor)
         masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
