@@ -6,15 +6,15 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
 object ElevatorSubsystem : Subsystem() {
 
     private val masterElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_MASTER)
+
+    internal var hasReset = false
 
     init {
         val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
@@ -64,6 +64,9 @@ object ElevatorSubsystem : Subsystem() {
     private var currentCommandGroup: CommandGroup? = null
 
     override fun periodic() {
+        if (this.isElevatorAtBottom()) {
+            this.resetEncoders()
+        }
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
