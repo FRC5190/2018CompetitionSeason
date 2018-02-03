@@ -6,9 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
@@ -31,7 +29,7 @@ object ElevatorSubsystem : Subsystem() {
 
         masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
         masterElevatorMotor.configPID(0, 0.8, 0.0, 0.0, 10)
-        masterElevatorMotor.configPeakOutput(0.85, -0.85, 10)
+        masterElevatorMotor.configPeakOutput(0.70, -0.70, 10)
         masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
 
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
@@ -89,7 +87,7 @@ object ElevatorSubsystem : Subsystem() {
                 if(ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
                     addSequential(AutoArmCommand(ArmPosition.MIDDLE))
                 addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.DOWN))
+                    addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                     addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                 })
             }

@@ -18,7 +18,7 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
 }
 
 enum class ElevatorPosition(var ticks: Int) {
-    SWITCH(ElevatorSubsystem.inchesToNativeUnits(18.0)),
+    SWITCH(ElevatorSubsystem.inchesToNativeUnits(24.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(60.0)),
     INTAKE(500)
 }

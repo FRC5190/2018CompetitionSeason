@@ -57,6 +57,11 @@ enum class Paths(private val filePath: String) {
     CENTER_STATION_RIGHT_SWITCH("center_station/direct_right_switch"),
     RIGHT_STATION_LEFT_SWITCH("right_station/direct_left_switch"),
     RIGHT_STATION_RIGHT_SWITCH("right_station/direct_right_switch"),
+    BACKUP_TO_SWITCH("switch_to_scale/switch_to_direct_scale"),
+    RIGHT_SWITCH_TO_CENTER("switch_to_station/right_switch_to_center"),
+    LEFT_SWITCH_TO_CENTER("switch_to_station/left_switch_to_center"),
+    STRAIGHT_INTO_PYRAMID("switch_to_station/straight_into_pyramid"),
+    CENTER_TO_INTAKE("switch_to_station/center_to_exchange"),
     TEST("testpath");
 
     val trajectoryLeft

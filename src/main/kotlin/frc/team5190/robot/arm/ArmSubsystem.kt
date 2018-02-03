@@ -4,10 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team5190.robot.util.MotorIDs
-import frc.team5190.robot.util.configNominalOutput
-import frc.team5190.robot.util.configPID
-import frc.team5190.robot.util.configPeakOutput
+import frc.team5190.robot.util.*
 
 
 object ArmSubsystem : Subsystem() {

@@ -11,13 +11,36 @@ import frc.team5190.robot.intake.IntakeDirection
 class AutoCommandGroup(initialPath: Paths) : CommandGroup() {
     init {
         this.addSequential(object : CommandGroup() {
-            init{
+            init {
                 this.addParallel(MotionProfileCommand(initialPath))
                 this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                 this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
             }
         })
-        this.addSequential(TurnCommand(90.0))
-        this.addSequential(IntakeCommand(IntakeDirection.OUT, true))
+
+        this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5))
+
+//        this.addSequential(object : CommandGroup() {
+//            init {
+//                this.addParallel(IntakeHoldCommand(), 0.5)
+//                this.addParallel(MotionProfileCommand(Paths.LEFT_SWITCH_TO_CENTER, true))
+//                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+//                this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+//            }
+//        })
+//
+//        this.addSequential(object : CommandGroup() {
+//            init {
+//                this.addParallel(MotionProfileCommand(Paths.STRAIGHT_INTO_PYRAMID))
+//                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 3.0))
+//            }
+//        })
+//
+//        this.addSequential(IntakeHoldCommand())
+////        this.addSequential(TurnCommand(-140.0))
+////        this.addSequential(MotionProfileCommand(Paths.CENTER_TO_INTAKE))
+////        this.addSequential(TurnCommand(180.0))
+////        this.addSequential(IntakeCommand(IntakeDirection.OUT, true))
+////        this.addSequential(IntakeCommand(IntakeDirection.OUT))
     }
 }
