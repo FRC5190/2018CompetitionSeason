@@ -5,7 +5,6 @@
 
 package frc.team5190.robot
 
-import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -70,9 +69,6 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Starting Position", sideChooser)
         SmartDashboard.putData("Controller", controllerChooser)
-
-        ResetElevatorCommand().start()
-        ElevatorSubsystem.resetEncoders()
     }
 
     /**
@@ -110,8 +106,8 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition.toDouble())
+        ResetElevatorCommand().start()
+
         DriveSubsystem.autoReset()
         DriveSubsystem.falconDrive.gear = Gear.HIGH
 
@@ -133,8 +129,7 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-//        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-        ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+        ResetElevatorCommand().start()
 
         DriveSubsystem.currentCommand?.cancel()
 

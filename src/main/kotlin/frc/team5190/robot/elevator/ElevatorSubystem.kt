@@ -14,6 +14,8 @@ object ElevatorSubsystem : Subsystem() {
 
     private val masterElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_MASTER)
 
+    internal var hasReset = false
+
     init {
         val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
 
@@ -62,6 +64,9 @@ object ElevatorSubsystem : Subsystem() {
     private var currentCommandGroup: CommandGroup? = null
 
     override fun periodic() {
+        if (this.isElevatorAtBottom()) {
+            this.resetEncoders()
+        }
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
