@@ -26,6 +26,9 @@ object IntakeSubsystem : Subsystem() {
         intakeTalonSlave.inverted = true
     }
 
+    val intakeMotorAmperage
+        get() = intakeTalon.outputCurrent
+
     override fun initDefaultCommand() {
         defaultCommand = IntakeHoldCommand()
     }

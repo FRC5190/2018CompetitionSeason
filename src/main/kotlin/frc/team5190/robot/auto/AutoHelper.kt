@@ -110,24 +110,25 @@ class AutoHelper {
                                 this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                             })
 
-                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.2))
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
 
                             this.addSequential(commandGroup {
                                 this.addParallel(IntakeHoldCommand(), 0.001)
                                 this.addParallel(MotionProfileCommand(Paths.CS_L_CENTER, true))
                             })
-
-                            this.addSequential(TurnCommand(0.0))
-
+//
+//                            this.addSequential(TurnCommand(1.0))  // TODO VISION
+//
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_STRAIGHT))
                                 this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                 this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 4.0))
+                                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 2.0))
                             })
-
+//
+                            this.addSequential(IntakeHoldCommand(), 0.001)
                             this.addSequential(TurnCommand(-140.0))
-                            this.addSequential(MotionProfileCommand(Paths.CS_EXCHANGE))
+                            this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT))
                             this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5))
                         }
                         MatchData.OwnedSide.RIGHT -> commandGroup {
@@ -138,14 +139,14 @@ class AutoHelper {
                                 this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                             })
 
-                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.2))
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
 
                             this.addSequential(commandGroup {
                                 this.addParallel(IntakeHoldCommand(), 0.001)
                                 this.addParallel(MotionProfileCommand(Paths.CS_R_CENTER, true))
                             })
 
-                            this.addSequential(TurnCommand(0.0))
+//                            this.addSequential(TurnCommand(0.0)) // TODO VISION
 
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_STRAIGHT))
@@ -154,8 +155,9 @@ class AutoHelper {
                                 this.addParallel(IntakeCommand(IntakeDirection.IN, true, 4.0))
                             })
 
+                            this.addSequential(IntakeHoldCommand(), 0.001)
                             this.addSequential(TurnCommand(-140.0))
-                            this.addSequential(MotionProfileCommand(Paths.CS_EXCHANGE))
+                            this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT))
                             this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5))
                         }
                         MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
@@ -186,12 +188,6 @@ class AutoHelper {
     }
 }
 
-
-/**
- * A class that contains information about the paths that the robot will take during autonomous.
- * @param leftFilePath The file path for the trajectory of the left side of the DriveTrain
- * @param rightFilePath The file path for the trajectory of the right side of the DriveTrain
- */
 enum class Paths(private val filePath: String) {
 
     CS_L_SWITCH("CS-L/Switch"),    // DONE
@@ -234,7 +230,8 @@ enum class Paths(private val filePath: String) {
     RS_RR_SWTOSC("RS-RR/SwToSc"),   // TODO Generate
 
 
-    FEET_1_5("Utils/1.5 Ft");   // DONE
+    FEET_1_5("Utils/1.5 Ft"),       // DONE
+    FEET_10("Utils/10 Ft");         // DONE
 
 
     val trajectoryLeft

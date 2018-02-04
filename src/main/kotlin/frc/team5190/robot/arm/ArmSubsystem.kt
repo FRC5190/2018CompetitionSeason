@@ -36,6 +36,9 @@ object ArmSubsystem : Subsystem() {
     val closedLoopError
         get() = masterArmMotor.getClosedLoopError(0)
 
+    val armMotorAmperage
+        get() = masterArmMotor.outputCurrent
+
     fun set(controlMode: ControlMode, output: Double) {
         masterArmMotor.set(controlMode, output)
     }

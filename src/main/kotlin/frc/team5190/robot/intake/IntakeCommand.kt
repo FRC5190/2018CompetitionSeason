@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj.command.TimedCommand
 /**
  *  Command that either intakes or outputs the cube
  */
-class IntakeCommand(private val direction: IntakeDirection, val auto: Boolean = false, timeout: Double = 0.5) : TimedCommand(timeout) {
+class IntakeCommand(private val direction: IntakeDirection, val auto: Boolean = false, private val outSpeed: Double = 0.95,
+                    timeout: Double = 0.5) : TimedCommand(timeout) {
 
-    private val outSpeed = 0.95
     private val inSpeed = -0.95
 
     init {

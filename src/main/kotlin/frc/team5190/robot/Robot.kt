@@ -97,6 +97,11 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
         SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.motorAmperage)
+        SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
+        SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
+
+        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.armMotorAmperage)
+        SmartDashboard.putNumber("Intake Motor Amperage", IntakeSubsystem.intakeMotorAmperage)
 
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
@@ -123,6 +128,7 @@ class Robot : IterativeRobot() {
         this.pollForFMSData()
 
         AutoHelper.getCommandGroupFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide, scaleSide).start()
+//        MotionProfileCommand(Paths.FEET_10).start()
     }
 
     /**

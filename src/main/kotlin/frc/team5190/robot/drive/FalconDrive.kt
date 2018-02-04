@@ -203,7 +203,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 }
 
 enum class Gear(val state: Boolean) {
-    HIGH(true), LOW(false);
+    HIGH(false), LOW(true);
 
     companion object {
         fun getGear(solenoidState: Boolean) = Gear.values().find { it.state == solenoidState }!!

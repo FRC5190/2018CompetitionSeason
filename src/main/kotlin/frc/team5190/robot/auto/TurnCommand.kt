@@ -20,9 +20,12 @@ class TurnCommand(angle: Double) : PIDCommand(0.03, 0.003, 0.05) {
 
         setpoint = angle
         setInputRange(-180.0, 180.0)
-        pidController.setOutputRange(-0.9, 0.9)
+        pidController.setOutputRange(-0.8, 0.8)
         pidController.setAbsoluteTolerance(5.0)
         pidController.setContinuous(true)
+    }
+
+    override fun initialize() {
     }
 
     override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
