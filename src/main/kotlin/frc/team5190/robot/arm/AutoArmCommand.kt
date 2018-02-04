@@ -14,11 +14,7 @@ class AutoArmCommand(private val armPosition: ArmPosition) : Command() {
         ArmSubsystem.set(ControlMode.MotionMagic, armPosition.ticks.toDouble())
     }
 
-<<<<<<< HEAD
     override fun isFinished() = ArmSubsystem.closedLoopError < 150
-=======
-    override fun isFinished() = (ArmSubsystem.currentPosition - armPosition.ticks).absoluteValue  < 50
->>>>>>> master
 }
 
 
