@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.*
-import frc.team5190.robot.auto.*
+import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
@@ -121,7 +122,7 @@ class Robot : IterativeRobot() {
 
         this.pollForFMSData()
 
-        AutoCommandGroup(Paths.CENTER_STATION_LEFT_SWITCH).start()
+        AutoHelper.getCommandGroupFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide, scaleSide).start()
     }
 
     /**
