@@ -12,7 +12,7 @@ object ArmSubsystem : Subsystem() {
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
 
     init {
-        masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 10)
+        masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
 
         masterArmMotor.setSensorPhase(false)
 
@@ -23,10 +23,12 @@ object ArmSubsystem : Subsystem() {
         masterArmMotor.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks, 10)
 
         // TODO Find values.
-        masterArmMotor.configPID(0, 4.0, 0.0, 0.0, 10)
+        masterArmMotor.configPID(0, 2.0, 0.0, 0.0, 10)
 
         masterArmMotor.configMotionCruiseVelocity(1000000, 10)
-        masterArmMotor.configMotionAcceleration(1000000, 10)
+        masterArmMotor.configMotionAcceleration(400, 10)
+
+        masterArmMotor.configAllowableClosedloopError(0, 0, 10)
     }
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)

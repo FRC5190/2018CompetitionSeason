@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.Robot
+import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.util.MotorIDs
@@ -34,7 +35,7 @@ object IntakeSubsystem : Subsystem() {
     override fun periodic() {
         if (Robot.INSTANCE!!.isOperatorControl) {
             if (MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5) {
-                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= 450) {
+                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= ArmPosition.MIDDLE.ticks - 100) {
                     IntakeCommand(IntakeDirection.OUT).start()
                 } else {
                     IntakeCommand(IntakeDirection.IN).start()

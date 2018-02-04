@@ -11,8 +11,8 @@ class ResetElevatorCommand(private val debugging: Boolean = false) : Command() {
 
     override fun execute() {
         when (debugging) {
-            true -> ElevatorSubsystem.set(ControlMode.PercentOutput, -0.1)
-            false -> ElevatorSubsystem.set(ControlMode.PercentOutput, if (ElevatorSubsystem.hasReset) 0.0 else -0.1)
+            true -> ElevatorSubsystem.set(ControlMode.PercentOutput, -0.3)
+            false -> ElevatorSubsystem.set(ControlMode.PercentOutput, if (ElevatorSubsystem.hasReset) 0.0 else -0.3)
         }
     }
 

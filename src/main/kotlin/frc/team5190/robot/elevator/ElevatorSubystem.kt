@@ -37,7 +37,11 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
 
-//        masterElevatorMotor.configOpenloopRamp(1.5, 10)
+        masterElevatorMotor.configPeakCurrentLimit(40, 10)
+        masterElevatorMotor.configPeakCurrentDuration(2000, 10)
+
+        slaveElevatorMotor.configPeakCurrentLimit(40, 10)
+        masterElevatorMotor.configPeakCurrentDuration(2000, 10)
 
         masterElevatorMotor.configMotionCruiseVelocity(1000000000, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(80.0) / 10, 10)
@@ -51,6 +55,9 @@ object ElevatorSubsystem : Subsystem() {
 
     val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition
+
+    val motorAmperage
+        get() = masterElevatorMotor.outputCurrent
 
     val closedLoopErrorInches: Double
         get() {
@@ -92,7 +99,7 @@ object ElevatorSubsystem : Subsystem() {
                 if(ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
                     addSequential(AutoArmCommand(ArmPosition.MIDDLE))
                 addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                    addParallel(AutoArmCommand(ArmPosition.DOWN))
                     addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                 })
             }

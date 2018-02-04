@@ -5,12 +5,13 @@
 
 package frc.team5190.robot
 
+import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
@@ -19,6 +20,7 @@ import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
+import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
 /**
@@ -69,6 +71,8 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Starting Position", sideChooser)
         SmartDashboard.putData("Controller", controllerChooser)
+
+        CameraServer.getInstance().startAutomaticCapture()
     }
 
     /**
@@ -90,6 +94,8 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
 
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
+
+        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.motorAmperage)
 
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
@@ -129,7 +135,11 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-        ResetElevatorCommand().start()
+        commandGroup {
+            if (ArmSubsystem.currentPosition < ArmPosition.DOWN.ticks)
+                addSequential(AutoArmCommand(ArmPosition.DOWN))
+            addSequential(ResetElevatorCommand())
+        }.start()
 
         DriveSubsystem.currentCommand?.cancel()
 
