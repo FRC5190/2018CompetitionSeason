@@ -12,6 +12,7 @@ import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
 import frc.team5190.robot.intake.*
 import frc.team5190.robot.util.*
+import frc.team5190.robot.vision.FindCubeCommand
 import openrio.powerup.MatchData
 import java.io.InputStreamReader
 
@@ -117,7 +118,7 @@ class AutoHelper {
                                 this.addParallel(MotionProfileCommand(Paths.CS_L_CENTER, true))
                             })
 //
-//                            this.addSequential(TurnCommand(1.0))  // TODO VISION
+                            this.addSequential(FindCubeCommand())
 //
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_STRAIGHT))
@@ -146,7 +147,7 @@ class AutoHelper {
                                 this.addParallel(MotionProfileCommand(Paths.CS_R_CENTER, true))
                             })
 
-//                            this.addSequential(TurnCommand(0.0)) // TODO VISION
+                          this.addSequential(FindCubeCommand())
 
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_STRAIGHT))
