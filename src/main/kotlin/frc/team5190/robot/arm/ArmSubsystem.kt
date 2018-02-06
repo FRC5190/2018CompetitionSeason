@@ -14,7 +14,9 @@ object ArmSubsystem : Subsystem() {
     init {
         masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
 
-        masterArmMotor.setSensorPhase(false)
+        masterArmMotor.inverted = true
+
+        masterArmMotor.setSensorPhase(true)
 
         masterArmMotor.configNominalOutput(0.0, 0.0, 10)
         masterArmMotor.configPeakOutput(0.65, -0.65, 10)
@@ -23,7 +25,7 @@ object ArmSubsystem : Subsystem() {
         masterArmMotor.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks, 10)
 
         // TODO Find values.
-        masterArmMotor.configPID(0, 2.0, 0.0, 0.0, 10)
+        masterArmMotor.configPID(0, 1.5, 0.0, 0.0, 10)
 
         masterArmMotor.configMotionCruiseVelocity(1000000, 10)
         masterArmMotor.configMotionAcceleration(400, 10)

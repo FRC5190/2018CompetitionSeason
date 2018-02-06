@@ -118,7 +118,7 @@ class AutoHelper {
                                 this.addParallel(MotionProfileCommand(Paths.CS_L_CENTER, true))
                             })
 //
-                            this.addSequential(FindCubeCommand())
+//                            this.addSequential(FindCubeCommand())
 //
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_STRAIGHT))

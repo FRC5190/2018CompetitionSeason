@@ -18,9 +18,9 @@ class AutoArmCommand(private val armPosition: ArmPosition) : Command() {
 }
 
 
-enum class ArmPosition (val ticks: Int){
-    BEHIND(2800), // When placing scale backwards
-    UP(2600), // Arm is always up, basically where it starts in auto
-    MIDDLE(1900), // Angled a little up to help placement on scale and switch
-    DOWN(1668); // Lowest position, used for intaking the cube
+enum class ArmPosition(val ticks: Int) {
+    BEHIND(2800 - 800), // When placing scale backwards
+    UP(2600 - 800), // Arm is always up, basically where it starts in auto
+    MIDDLE(1900 - 800), // Angled a little up to help placement on scale and switch
+    DOWN(1668 - 800); // Lowest position, used for intaking the cube
 }
