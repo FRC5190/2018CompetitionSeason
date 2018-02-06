@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.command.Subsystem
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+
 object VisionSubsystem : Subsystem() {
     private var visionPort: SerialPort? = null
 
@@ -11,13 +12,13 @@ object VisionSubsystem : Subsystem() {
     /**
      * Returns true when the JeVois sees a target and is tracking it, false otherwise.
      */
-    var isTgtVisible = 0
+    var isTgtVisible = 0L
         private set
     /**
      * Returns the most recently seen target's angle relative to the camera in degrees
      * Positive means to the Right of center, negative means to the left
      */
-    var tgtAngle_Deg = 0.0
+    var tgtAngle_Deg = 0L
         private set
     /**
      * Returns the most recently seen target's range from the camera in inches
@@ -45,8 +46,8 @@ object VisionSubsystem : Subsystem() {
         }
 
         tracking = false
-        isTgtVisible = 0
-        tgtAngle_Deg = 0.0
+        isTgtVisible = 0L
+        tgtAngle_Deg = 0L
         tgtRange_in = 0.0
 
         var retry_counter = 0
@@ -81,11 +82,12 @@ object VisionSubsystem : Subsystem() {
 
         try {
             print("Starting JeVois Cam Stream...")
-            //            visionCam = new UsbCamera("Frc5190Cam", 0);
-            //            visionCam.setVideoMode(VideoMode.PixelFormat.kYUYV, STREAM_WIDTH_PX, STREAM_HEIGHT_PX, STREAM_RATE_FPS);
-            //            camServer = new MjpegServer("Frc5190CamServer", MJPG_STREAM_PORT);
-            //            camServer.setSource(visionCam);
-            CameraServer.getInstance().startAutomaticCapture(0)
+//            val visionCam = UsbCamera ("Frc5190Cam", 0)
+//            visionCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 30)
+//            val camServer = MjpegServer ("Frc5190CamServer", 1180)
+//            camServer.source = visionCam
+
+//            CameraServer.getInstance().startAutomaticCapture(0)
             println("SUCCESS!!")
         } catch (e: Exception) {
             DriverStation.reportError("Cannot start camera stream from JeVois", false)
@@ -182,15 +184,18 @@ object VisionSubsystem : Subsystem() {
         val parser = JSONParser()
         //System.out.println("Testing Parser: " + packet);
         try {
-            val obj = parser.parse(visionPort!!.readString())
+            val string = visionPort!!.readString()
+//            println(string)
+            val obj = parser.parse(string)
+
             val jsonObject = obj as JSONObject
-            isTgtVisible = jsonObject["Track"] as Int
-            tgtAngle_Deg = jsonObject["Angle"] as Double
+            isTgtVisible = jsonObject["Track"] as Long
+            tgtAngle_Deg = jsonObject["Angle"] as Long
             tgtRange_in = jsonObject["Range"] as Double
-            println("[$isTgtVisible, $tgtAngle_Deg, $tgtRange_in]")
+//            println("[$isTgtVisible, $tgtAngle_Deg, $tgtRange_in")
         } catch (e: Exception) {
+//            println(e.message)
             isTgtVisible = 0
-            println("Parse Exception, probably need to check you JeVois output that it's matching what you are parsing")
         }
 
     }

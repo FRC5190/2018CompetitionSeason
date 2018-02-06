@@ -9,8 +9,7 @@ package frc.team5190.robot
 
 import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.buttons.JoystickButton
-import frc.team5190.robot.elevator.AutoElevatorCommand
-import frc.team5190.robot.elevator.ElevatorPosition
+import frc.team5190.robot.vision.FindCubeCommand
 
 object Bongos : Joystick(0) {
     fun getLeftBongoSpeed() = when {
@@ -32,7 +31,7 @@ object Bongos : Joystick(0) {
  */
 object MainXbox : XboxController(0) {
     init {
-        JoystickButton(this, 1).whenPressed(AutoElevatorCommand(ElevatorPosition.SWITCH))
+        JoystickButton(this, 1).whenPressed(FindCubeCommand())
     }
 }
 
