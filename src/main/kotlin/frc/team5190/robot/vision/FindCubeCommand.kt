@@ -10,22 +10,21 @@ class FindCubeCommand() : PIDCommand(0.03, 0.003, 0.05) {
         requires(VisionSubsystem)
 
         // Only execute the command for a total of a max of 5 seconds (should be close enough to target by then)
+
+    }
+
+    override fun initialize() {
         setTimeout(5.0)
         setName("Jevois", "FindCube")
+        pidController.setAbsoluteTolerance(2.0)
 
         val startTime = Timer.getFPGATimestamp()
-        while (Timer.getFPGATimestamp() - startTime < 3) {
-            if (VisionSubsystem.isTgtVisible == 1) {
-                setpoint = VisionSubsystem.tgtAngle_Deg + NavX.pidGet()
-                setInputRange(-180.0, 180.0)
-                pidController.setOutputRange(-0.9, 0.9)
-                pidController.setAbsoluteTolerance(2.0)
-                pidController.setContinuous(true)
-                break
-            }
-            else
-                Thread.sleep(100)
-        }
+        setpoint = VisionSubsystem.tgtAngle_Deg + NavX.pidGet()
+        println(setpoint)
+        setInputRange(-180.0, 180.0)
+        pidController.setOutputRange(-0.9, 0.9)
+        pidController.setAbsoluteTolerance(2.0)
+        pidController.setContinuous(true)
     }
 
     override fun usePIDOutput(output: Double) {

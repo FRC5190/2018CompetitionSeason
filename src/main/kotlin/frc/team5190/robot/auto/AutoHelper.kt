@@ -11,8 +11,8 @@ import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
 import frc.team5190.robot.intake.*
+import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.*
-import frc.team5190.robot.vision.FindCubeCommand
 import openrio.powerup.MatchData
 import java.io.InputStreamReader
 
@@ -22,6 +22,7 @@ import java.io.InputStreamReader
 class AutoHelper {
     companion object {
         fun getCommandGroupFromData(startingPosition: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
+            NavX.reset()
             return when (startingPosition) {
                 StartingPositions.LEFT -> {
                     when (switchOwnedSide) {
@@ -118,7 +119,7 @@ class AutoHelper {
                                 this.addParallel(MotionProfileCommand(Paths.CS_L_CENTER, true))
                             })
 //
-                            this.addSequential(FindCubeCommand())
+//                            this.addSequential(FindCubeCommand())
 //
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_STRAIGHT))
@@ -147,7 +148,7 @@ class AutoHelper {
                                 this.addParallel(MotionProfileCommand(Paths.CS_R_CENTER, true))
                             })
 
-                          this.addSequential(FindCubeCommand())
+//                            this.addSequential(FindCubeCommand())
 
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_STRAIGHT))

@@ -5,7 +5,6 @@
 
 package frc.team5190.robot
 
-import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -74,8 +73,6 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Starting Position", sideChooser)
         SmartDashboard.putData("Controller", controllerChooser)
-
-        CameraServer.getInstance().startAutomaticCapture()
     }
 
     /**
@@ -109,8 +106,7 @@ class Robot : IterativeRobot() {
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
         SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
         SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
-
-
+        SmartDashboard.putData("Vision Subsystem", VisionSubsystem)
         SmartDashboard.putData("Gyro", NavX)
 
         Scheduler.getInstance().run()
@@ -125,12 +121,9 @@ class Robot : IterativeRobot() {
         DriveSubsystem.autoReset()
         DriveSubsystem.falconDrive.gear = Gear.HIGH
 
-        NavX.reset()
-
         this.pollForFMSData()
 
         AutoHelper.getCommandGroupFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide, scaleSide).start()
-//        MotionProfileCommand(Paths.FEET_10).start()
     }
 
     /**
