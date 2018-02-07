@@ -70,22 +70,22 @@ class AutoHelper {
                                         this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                                     })
 
-                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.2))
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
 
                                     this.addSequential(commandGroup {
                                         this.addParallel(IntakeHoldCommand(), 0.001)
                                         this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                     })
 
                                     this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                         this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 2.5))
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 0.5, 2.5))
                                     })
 
                                     this.addSequential(IntakeHoldCommand(), 0.001)
-                                    this.addSequential(MotionProfileCommand(Paths.LS_LR_SWTOSC))
+                                    this.addSequential(MotionProfileCommand(Paths.LS_LR_SWTOSC, true))
                                 }
 
                                 MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
@@ -93,9 +93,69 @@ class AutoHelper {
                         }
                         MatchData.OwnedSide.RIGHT -> {  // Right Switch
                             when (scaleOwnedSide) {
-                                MatchData.OwnedSide.LEFT -> TODO()   // arrayListOf(Paths.LS_RL_SWITCH1, Paths.LS_RL_SWITCH2, Paths.LS_LL_SWTOSC)  // RL
-                                MatchData.OwnedSide.RIGHT -> TODO()   // arrayListOf(Paths.LS_RR_SWITCH1, Paths.LS_RR_SWITCH2, Paths.LS_LR_SWTOSC)  // RR
-                                MatchData.OwnedSide.UNKNOWN -> TODO()   // arrayListOf(Paths.CS_STRAIGHT)
+                                MatchData.OwnedSide.LEFT -> commandGroup {
+
+                                    this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH1))
+
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(MotionProfileCommand(Paths.LS_RL_SWITCH2))
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                    })
+
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(IntakeHoldCommand(), 0.001)
+                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
+                                    })
+
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 0.5, 2.5))
+                                    })
+
+                                    this.addSequential(IntakeHoldCommand(), 0.001)
+                                    this.addSequential(MotionProfileCommand(Paths.LS_RL_SWTOSC, true))
+
+
+                                }
+                                MatchData.OwnedSide.RIGHT -> commandGroup {
+                                    this.addSequential(MotionProfileCommand(Paths.LS_RR_SWITCH1))
+
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(MotionProfileCommand(Paths.LS_RR_SWITCH2))
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                    })
+
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(IntakeHoldCommand(), 0.001)
+                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
+                                    })
+
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 0.5, 2.5))
+                                    })
+
+                                    this.addSequential(IntakeHoldCommand(), 0.001)
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(MotionProfileCommand(Paths.LS_RR_SWTOSC, true))
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                                    } )
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.7, 0.2))
+                                    this.addSequential(IntakeHoldCommand(), 0.001)
+
+                                }
+                                MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
                             }
                         }
                         MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
