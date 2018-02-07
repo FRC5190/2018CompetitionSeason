@@ -49,8 +49,12 @@ class Maths {
          * @param sensorUnitsPerRotation Sensor units per rotation
          * @return Native units per 100 ms
          */
-        fun rpmToNativeUnitsPer100Ms(rpm: Double, sensorUnitsPerRotation: Double): Double {
-            return rpm * sensorUnitsPerRotation / 600
+        fun rpmToNativeUnitsPer100Ms(rpm: Double, sensorUnitsPerRotation: Int): Double {
+            return rpm * sensorUnitsPerRotation.toDouble() / 600.0
+        }
+
+        fun feetPerSecondToNativeUnitsPer100Ms(feet: Double, wheelRadius: Double, sensorUnitsPerRotation: Int): Double{
+            return Maths.rpmToNativeUnitsPer100Ms(Maths.feetPerSecondToRPM(feet, wheelRadius), sensorUnitsPerRotation)
         }
 
         /**

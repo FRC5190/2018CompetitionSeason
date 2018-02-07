@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
+import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.util.*
 
 /**
@@ -27,7 +28,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     private val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
     // Values for all the master motors of the DriveTrain
-    private val allMasters = listOf(leftMaster, rightMaster)
+    val allMasters = listOf(leftMaster, rightMaster)
 
     // Values for all the motors of the Drive Train
     private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
@@ -74,7 +75,11 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configPIDF(0, 0.7, 0.0, 0.0, 1.0, Hardware.MAX_RPM_HIGH.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
             it.selectProfileSlot(0, 0)
             it.configMotionProfileTrajectoryPeriod(10, 10)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+
+            it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(7.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
+            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(5.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
         }
     }
 
@@ -85,6 +90,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.selectProfileSlot(1, 0)
         }
     }
+
     var gear
         get() = Gear.getGear(gearSolenoid.get())
         set(value) = gearSolenoid.set(value.state)
