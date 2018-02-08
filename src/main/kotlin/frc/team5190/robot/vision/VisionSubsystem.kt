@@ -8,7 +8,6 @@ import org.json.simple.parser.JSONParser
 object VisionSubsystem : Subsystem() {
     private var visionPort: SerialPort? = null
 
-    private var tracking = false
     /**
      * Returns true when the JeVois sees a target and is tracking it, false otherwise.
      */
@@ -18,7 +17,7 @@ object VisionSubsystem : Subsystem() {
      * Returns the most recently seen target's angle relative to the camera in degrees
      * Positive means to the Right of center, negative means to the left
      */
-    var tgtAngle_Deg = 0L
+    var tgtAngle_Deg = 0.0
         private set
     /**
      * Returns the most recently seen target's range from the camera in inches
@@ -34,10 +33,10 @@ object VisionSubsystem : Subsystem() {
      * Pass TRUE to additionaly enable a USB camera stream of what the vision camera is seeing.
      */
     init {
-        reset()
+        reset(true)
     }
 
-    fun reset() {
+    fun reset(streamVideo: Boolean) {
 
         if (visionPort != null) {
             visionPort!!.reset()
@@ -45,9 +44,8 @@ object VisionSubsystem : Subsystem() {
             visionPort = null
         }
 
-        tracking = false
         isTgtVisible = 0L
-        tgtAngle_Deg = 0L
+        tgtAngle_Deg = 0.0
         tgtRange_in = 0.0
 
         var retry_counter = 0
@@ -65,7 +63,6 @@ object VisionSubsystem : Subsystem() {
                 sleep(500)
                 println("Retry " + Integer.toString(retry_counter))
             }
-
         }
 
         //Report an error if we didn't get to open the serial port
@@ -80,19 +77,25 @@ object VisionSubsystem : Subsystem() {
             return
         }
 
-        try {
-            print("Starting JeVois Cam Stream...")
-//            val visionCam = UsbCamera ("Frc5190Cam", 0)
-//            visionCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 30)
-//            val camServer = MjpegServer ("Frc5190CamServer", 1180)
-//            camServer.source = visionCam
-
-//            CameraServer.getInstance().startAutomaticCapture(0)
-            println("SUCCESS!!")
-        } catch (e: Exception) {
-            DriverStation.reportError("Cannot start camera stream from JeVois", false)
+        if (streamVideo) {
+//            try {
+////                if (CameraServer.getInstance() != null && CameraServer.getInstance().server != null) {
+////                    CameraServer.getInstance().server.free()
+////                    CameraServer.getInstance().video.free()
+////                }
+//
+//                print("Starting JeVois Cam Stream...")
+//                //            val visionCam = UsbCamera ("Frc5190Cam", 0)
+//                //            visionCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 30)
+//                //            val camServer = MjpegServer ("Frc5190CamServer", 1180)
+//                //            camServer.source = visionCam
+//
+//                CameraServer.getInstance().startAutomaticCapture(0)
+//                println("SUCCESS!!")
+//            } catch (e: Exception) {
+//                DriverStation.reportError("Cannot start camera stream from JeVois", false)
+//            }
         }
-
     }
 
     override fun initDefaultCommand() {}
@@ -181,23 +184,25 @@ object VisionSubsystem : Subsystem() {
         if (visionPort == null)
             return
 
-        val parser = JSONParser()
-        //System.out.println("Testing Parser: " + packet);
         try {
-            val string = visionPort!!.readString()
-//            println(string)
-            val obj = parser.parse(string)
-
-            val jsonObject = obj as JSONObject
-            isTgtVisible = jsonObject["Track"] as Long
-            tgtAngle_Deg = jsonObject["Angle"] as Long
-            tgtRange_in = jsonObject["Range"] as Double
-//            println("[$isTgtVisible, $tgtAngle_Deg, $tgtRange_in")
+            if (visionPort!!.bytesReceived > 0) {
+                val string = visionPort!!.readString()
+//                println(string)
+                val parser = JSONParser()
+                val obj = parser.parse(string)
+                val jsonObject = obj as JSONObject
+                isTgtVisible = jsonObject["Track"] as Long
+                if (isTgtVisible == 1L) {
+                    tgtAngle_Deg = jsonObject["Angle"] as Double
+                    tgtRange_in = jsonObject["Range"] as Double
+                }
+                else {
+                    tgtAngle_Deg = 0.0
+                    tgtRange_in = 0.0
+                }
+            }
         } catch (e: Exception) {
-//            println(e.message)
-            isTgtVisible = 0
         }
-
     }
 
     /**
@@ -212,15 +217,6 @@ object VisionSubsystem : Subsystem() {
             println("DO NOT WAKE THE SLEEPY BEAST")
         }
 
-    }
-
-    fun startTracking() {
-        tracking = true
-    }
-
-    fun stopTracking() {
-        tracking = false
-        isTgtVisible = 0
     }
 
     private val BAUD_RATE = 115200
