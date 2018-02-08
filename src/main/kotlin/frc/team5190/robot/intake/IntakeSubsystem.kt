@@ -1,6 +1,6 @@
 package frc.team5190.robot.intake
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
@@ -11,19 +11,31 @@ import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.util.MotorIDs
 import frc.team5190.robot.util.SolenoidIDs
+import frc.team5190.robot.util.configCurrentLimiting
 
 object IntakeSubsystem : Subsystem() {
 
-    val intakeTalon = WPI_TalonSRX(MotorIDs.INTAKE_LEFT)
-
-
+    val intakeTalon = TalonSRX(MotorIDs.INTAKE_LEFT)
     val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
     init {
-        val intakeTalonSlave = WPI_TalonSRX(MotorIDs.INTAKE_RIGHT)
-        intakeTalonSlave.follow(intakeTalon)
+        // hardware for this subsystem includes two motors in master-slave config and a solenoid
+        intakeTalon.inverted = false
 
+        val intakeTalonSlave = TalonSRX(MotorIDs.INTAKE_RIGHT)
+        intakeTalonSlave.follow(intakeTalon)
         intakeTalonSlave.inverted = true
+
+        // current limiting
+        intakeTalon.configCurrentLimiting(40, 2000, 20, 10)
+        intakeTalonSlave.configCurrentLimiting(40, 2000, 20, 10)
+
+        // other configuration
+        reset()
+    }
+
+    fun reset() {
+        // nothing to reset for this subsystem
     }
 
     val intakeMotorAmperage

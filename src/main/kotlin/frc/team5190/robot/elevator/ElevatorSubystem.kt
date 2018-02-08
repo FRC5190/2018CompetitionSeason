@@ -17,34 +17,40 @@ object ElevatorSubsystem : Subsystem() {
     internal var hasReset = false
 
     init {
-        val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
-
-        masterElevatorMotor.setSensorPhase(false)
-
-        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
+        // hardware for this subsystem includes two motors in master-slave config, a quad encoder, and limit switches
         masterElevatorMotor.inverted = false
-        slaveElevatorMotor.inverted = true
-
-        slaveElevatorMotor.follow(masterElevatorMotor)
+        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
+        masterElevatorMotor.setSensorPhase(false)
         masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
 
-        masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
+        val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
+        slaveElevatorMotor.inverted = true
+        slaveElevatorMotor.follow(masterElevatorMotor)
+
+        // current limiting
+        masterElevatorMotor.configCurrentLimiting(40, 2000, 20, 10)
+        slaveElevatorMotor.configCurrentLimiting(40, 2000, 20, 10)
+
+        // Closed loop operation and output shaping
         masterElevatorMotor.configPID(0, 0.8, 0.0, 0.0, 10)
+        masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
         masterElevatorMotor.configPeakOutput(0.70, -0.70, 10)
         masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
 
-        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
-        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
-
-        masterElevatorMotor.configPeakCurrentLimit(40, 10)
-        masterElevatorMotor.configPeakCurrentDuration(2000, 10)
-
-        slaveElevatorMotor.configPeakCurrentLimit(40, 10)
-        masterElevatorMotor.configPeakCurrentDuration(2000, 10)
-
+        // motion magic settings
+        // TODO: Fix these values
         masterElevatorMotor.configMotionCruiseVelocity(1000000000, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(80.0) / 10, 10)
+
+        // more settings
+        reset()
+    }
+
+    fun reset() {
+        // these cannot be in the constructor since the status frame periods are reset every time the talon is reset
+        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
+        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
     }
 
     fun isElevatorAtBottom() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
@@ -58,13 +64,6 @@ object ElevatorSubsystem : Subsystem() {
 
     val motorAmperage
         get() = masterElevatorMotor.outputCurrent
-
-    val closedLoopErrorInches: Double
-        get() {
-            val error = nativeUnitsToInches(masterElevatorMotor.getClosedLoopError(0))
-            println("ERROR: $error")
-            return error
-        }
 
     fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)!!
 
@@ -124,6 +123,7 @@ object ElevatorSubsystem : Subsystem() {
         this.defaultCommand = ManualElevatorCommand()
     }
 
+    // TODO: Why is the wheel radius 0.65 inches?
     fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0
     fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.3 / 2.0)
 }

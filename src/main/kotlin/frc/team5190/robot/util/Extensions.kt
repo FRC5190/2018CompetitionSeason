@@ -48,3 +48,10 @@ fun TalonSRX.configLimitSwitchSource(type: LimitSwitchSource, normalOpenOrClose:
     configForwardLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
     configReverseLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
 }
+
+fun TalonSRX.configCurrentLimiting(peakAmps: Int, peakDurationMs: Int, continuousAmps: Int, timeoutMs: Int) {
+    configPeakCurrentLimit(peakAmps, timeoutMs)
+    configPeakCurrentDuration(peakDurationMs, timeoutMs)
+    configContinuousCurrentLimit(continuousAmps, timeoutMs)
+    enableCurrentLimit(true)
+}

@@ -16,6 +16,7 @@ class ManualArmCommand : Command() {
             MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.5)
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.4)
 
+            // TODO: Why are we doing motion magic in manual?
             MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
             MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         }

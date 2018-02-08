@@ -1,11 +1,12 @@
 package frc.team5190.robot.intake
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.TimedCommand
 
 /**
  *  Command that either intakes or outputs the cube
  */
-class IntakeCommand(private val direction: IntakeDirection, val auto: Boolean = false, private val outSpeed: Double = 0.95,
+class IntakeCommand(private val direction: IntakeDirection, private val auto: Boolean = false, private val outSpeed: Double = 0.95,
                     timeout: Double = 0.5) : TimedCommand(timeout) {
 
     private val inSpeed = -0.95
@@ -21,7 +22,8 @@ class IntakeCommand(private val direction: IntakeDirection, val auto: Boolean = 
             IntakeDirection.IN -> inSpeed
             IntakeDirection.OUT -> outSpeed
         }
-        IntakeSubsystem.intakeTalon.set(motorOutput)
+
+        IntakeSubsystem.intakeTalon.set(ControlMode.PercentOutput, motorOutput)
     }
 
     override fun isFinished() = auto && isTimedOut
