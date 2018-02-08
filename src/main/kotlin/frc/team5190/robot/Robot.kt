@@ -123,7 +123,21 @@ class Robot : IterativeRobot() {
 
         this.pollForFMSData()
 
+        NavX.reset()
+
         AutoHelper.getCommandGroupFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide, scaleSide).start()
+////        MotionProfileCommand(Paths.LS_LL_SWITCH).start()
+////        DriveStraightCommand(6.0).start()
+//
+////        commandGroup {
+////            this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH1))
+////            this.addSequential(TurnCommand(90.0))
+////            this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH2))
+////            this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH3))
+////        }.start()
+//
+//        MotionProfileCommand(Paths.LS_LL_SCALE).start()
+
     }
 
     /**

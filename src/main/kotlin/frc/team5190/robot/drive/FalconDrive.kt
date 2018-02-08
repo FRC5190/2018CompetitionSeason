@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.util.*
 
 /**
@@ -21,17 +20,17 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
-    private val leftSlaves = leftMotors.subList(1, leftMotors.size)
+    val leftSlaves = leftMotors.subList(1, leftMotors.size)
 
     // Values for the right side of the DriveTrain
     val rightMaster = rightMotors[0]
-    private val rightSlaves = rightMotors.subList(1, rightMotors.size)
+    val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
     // Values for all the master motors of the DriveTrain
     val allMasters = listOf(leftMaster, rightMaster)
 
     // Values for all the motors of the Drive Train
-    private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
+    val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
     /**
      * Sets some initial values when the FalconDrive object is initialized.
@@ -65,12 +64,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             // TODO: Need to configure current limits
         }
 
-        gear = Gear.HIGH
-    }
-
-    internal fun autoReset() {
-        this.reset()
-
         allMasters.forEach {
             it.configPIDF(0, 0.7, 0.0, 0.0, 1.0, Hardware.MAX_RPM_HIGH.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
             it.selectProfileSlot(0, 0)
@@ -81,13 +74,22 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(7.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
             it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(5.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
         }
+
+        gear = Gear.HIGH
     }
+
+    internal fun autoReset() {
+        this.reset()
+        allMasters.forEach { it.configPeakOutput(1.0, -1.0, 10) }
+    }
+
 
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
+            it.configPeakOutput(0.8, -0.8, 10)
             it.clearMotionProfileTrajectories()
-            it.selectProfileSlot(1, 0)
+            it.selectProfileSlot(0, 0)
         }
     }
 

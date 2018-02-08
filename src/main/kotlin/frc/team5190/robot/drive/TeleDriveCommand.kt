@@ -17,12 +17,12 @@ class TeleDriveCommand : Command() {
         this.requires(DriveSubsystem)
     }
 
-    /**
+    /**tel
      * Called periodically until the command is triggerState or until interrupted.
      */
     override fun execute() {
         // TODO Configure Velocity Drive
-        val mode = ControlMode.PercentOutput
+        val mode = ControlMode.Velocity
 
         when (DriveSubsystem.controlMode) {
             DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())
