@@ -17,9 +17,6 @@ object IntakeSubsystem : Subsystem() {
     private val currentBuffer = CircularBuffer(50)
     private val intakeTalon = TalonSRX(MotorIDs.INTAKE_LEFT)
 
-    private val intakeMotorAmperage
-        get() = intakeTalon.outputCurrent
-
     val stateBoolean
         get() = state == 1
 
@@ -35,15 +32,11 @@ object IntakeSubsystem : Subsystem() {
         intakeTalonSlave.follow(intakeTalon)
         intakeTalonSlave.inverted = true
 
-        currentBuffer.configureForTalon(IntakeConstants.PEAK_CURRENT, IntakeConstants.PEAK_DURATION)
+        currentBuffer.configureForTalon(IntakeConstants.PEAK_WATTAGE, IntakeConstants.PEAK_DURATION)
     }
 
     fun set(controlMode: ControlMode, motorOutput: Double) {
-        if (state == -1) {
-            intakeTalon.set(ControlMode.Disabled, 0.0)
-            return
-        }
-        intakeTalon.set(controlMode, if (state == 1) motorOutput else motorOutput / IntakeConstants.LIMITING_REDUCTION_FACTOR)
+        intakeTalon.set(controlMode, motorOutput, currentBuffer, IntakeConstants.LIMITING_REDUCTION_FACTOR)
     }
 
     override fun initDefaultCommand() {
@@ -51,9 +44,6 @@ object IntakeSubsystem : Subsystem() {
     }
 
     override fun periodic() {
-        currentBuffer.add(intakeMotorAmperage)
-        state = intakeTalon.limitCurrent(currentBuffer)
-
         if (!Robot.INSTANCE!!.isOperatorControl) return
 
         when {

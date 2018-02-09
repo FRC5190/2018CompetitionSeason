@@ -58,7 +58,7 @@ object DriveConstants {
 }
 
 object ElevatorConstants {
-    const val PEAK_CURRENT = 20
+    const val PEAK_WATTAGE = 100
     const val PEAK_DURATION = 1000
 
     const val NOMINAL_OUT = 0.0
@@ -77,7 +77,7 @@ object ElevatorConstants {
 }
 
 object ArmConstants {
-    const val PEAK_CURRENT = 20
+    const val PEAK_WATTAGE = 100
     const val PEAK_DURATION = 1000
 
     const val P = 1.5
@@ -96,12 +96,12 @@ object ArmConstants {
 }
 
 object IntakeConstants {
-    const val PEAK_CURRENT = 20
+    const val PEAK_WATTAGE = 100
     const val PEAK_DURATION = 1000
 
     const val DEFAULT_SPEED = 0.8
 
-    const val LIMITING_REDUCTION_FACTOR = 3
+    const val LIMITING_REDUCTION_FACTOR = 0.3
 }
 
 /**

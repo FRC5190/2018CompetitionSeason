@@ -15,9 +15,6 @@ object ElevatorSubsystem : Subsystem() {
     private val currentBuffer = CircularBuffer(50)
     private val masterElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_MASTER)
 
-    private val motorAmperage
-        get() = masterElevatorMotor.outputCurrent
-
     val isElevatorAtBottom
         get() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
 
@@ -58,7 +55,7 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
 
-        currentBuffer.configureForTalon(ElevatorConstants.PEAK_CURRENT, ElevatorConstants.PEAK_DURATION)
+        currentBuffer.configureForTalon(ElevatorConstants.PEAK_WATTAGE, ElevatorConstants.PEAK_DURATION)
 
         // more settings
         reset()
@@ -71,12 +68,8 @@ object ElevatorSubsystem : Subsystem() {
     }
 
 
-    fun set(controlMode: ControlMode, output: Number) {
-        if (state == -1) {
-            masterElevatorMotor.set(ControlMode.Disabled, 0.0)
-            return
-        }
-        masterElevatorMotor.set(controlMode, if (state == 1) output.toDouble() else 0.0)
+    fun set(controlMode: ControlMode, output: Double) {
+        masterElevatorMotor.set(controlMode, output, currentBuffer, 0.0)
     }
 
     private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
@@ -86,11 +79,6 @@ object ElevatorSubsystem : Subsystem() {
     }
 
     override fun periodic() {
-
-        currentBuffer.add(motorAmperage)
-        state = masterElevatorMotor.limitCurrent(currentBuffer)
-
-
         if (this.isElevatorAtBottom) {
             this.resetEncoders()
         }

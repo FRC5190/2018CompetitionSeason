@@ -55,14 +55,14 @@ fun TalonSRX.configCurrentLimiting(peakAmps: Int, peakDurationMs: Int, continuou
     enableCurrentLimit(true)
 }
 
-fun TalonSRX.limitCurrent(buffer: CircularBuffer): Int {
-    return when (buffer.motorState) {
-        MotorState.OK -> 1
-        MotorState.STALL -> 0
-        MotorState.DEAD -> {
-            set(ControlMode.Disabled, 0.0)
-            println("$deviceID Talon has been shut down due to stall.")
-            -1
-        }
+fun TalonSRX.set(controlMode: ControlMode, value: Double, wattRegulator: CircularBuffer, scalingFactor: Double = 0.0) {
+    wattRegulator.add(this.outputCurrent * this.motorOutputVoltage)
+
+    val newValue: Double = when (wattRegulator.motorState) {
+        MotorState.OK -> value
+        MotorState.STALL -> value * scalingFactor
+        MotorState.DEAD -> 0.0
     }
+
+    this.set(controlMode, newValue)
 }

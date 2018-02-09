@@ -11,7 +11,7 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
     }
 
     override fun initialize() {
-        ElevatorSubsystem.set(ControlMode.MotionMagic, position.ticks)
+        ElevatorSubsystem.set(ControlMode.MotionMagic, position.ticks.toDouble())
     }
 
     override fun isFinished() = (ElevatorSubsystem.currentPosition - position.ticks).absoluteValue < ElevatorSubsystem.inchesToNativeUnits(2.0)

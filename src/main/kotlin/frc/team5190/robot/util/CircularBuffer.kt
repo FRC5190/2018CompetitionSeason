@@ -10,13 +10,16 @@ class CircularBuffer(private val size: Int) {
     private var peakDur: Int? = null
     private var iterator = 0
 
-    private val numElements
-        get() = buffer.size
-
+    private var numElements = 0
     private var sum = 0.0
 
-    val average
-        get() = sum / numElements
+    val average: Double
+        get() {
+            return if (numElements == 0)
+                0.0
+            else
+                sum / numElements
+        }
 
     val motorState: MotorState
         get () {
@@ -38,9 +41,11 @@ class CircularBuffer(private val size: Int) {
         if (numElements > size - 1) {
             sum -= buffer[size - 1]
             buffer.removeAt(size - 1)
+            numElements--
         }
         sum += element
         buffer.add(0, element)
+        numElements++
     }
 
     fun configureForTalon(peak: Int, peakDur: Int) {

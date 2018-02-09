@@ -46,24 +46,15 @@ object ArmSubsystem : Subsystem() {
         masterArmMotor.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
         masterArmMotor.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
 
-        currentBuffer.configureForTalon(ArmConstants.PEAK_CURRENT, ArmConstants.PEAK_DURATION)
+        currentBuffer.configureForTalon(ArmConstants.PEAK_WATTAGE, ArmConstants.PEAK_DURATION)
     }
 
     fun set(controlMode: ControlMode, output: Double) {
-        if (state == -1) {
-            masterArmMotor.set(ControlMode.Disabled, 0.0)
-            return
-        }
-        masterArmMotor.set(controlMode, if (state == 1) output else 0.0)
+        masterArmMotor.set(controlMode, output, currentBuffer, 0.0)
     }
 
     override fun initDefaultCommand() {
         this.defaultCommand = ManualArmCommand()
-    }
-
-    override fun periodic() {
-        currentBuffer.add(motorAmperage)
-        state = masterArmMotor.limitCurrent(currentBuffer)
     }
 }
 
