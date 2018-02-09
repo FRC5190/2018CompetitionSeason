@@ -29,8 +29,8 @@ object ElevatorSubsystem : Subsystem() {
         slaveElevatorMotor.follow(masterElevatorMotor)
 
         // current limiting
-        masterElevatorMotor.configCurrentLimiting(40, 2000, 20, 10)
-        slaveElevatorMotor.configCurrentLimiting(40, 2000, 20, 10)
+        masterElevatorMotor.configCurrentLimiting(20, 200, 10, 10)
+        slaveElevatorMotor.configCurrentLimiting(20, 200, 10, 10)
 
         // brake mode
         masterElevatorMotor.setNeutralMode(NeutralMode.Brake)

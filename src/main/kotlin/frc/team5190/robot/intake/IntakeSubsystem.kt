@@ -48,6 +48,7 @@ object IntakeSubsystem : Subsystem() {
         get() = intakeTalon.outputCurrent
 
     override fun initDefaultCommand() {
+        defaultCommand = IntakeHoldCommand()
     }
 
     private var teleIntake = false
@@ -71,9 +72,7 @@ object IntakeSubsystem : Subsystem() {
             teleIntake -> {
                 currentCommand?.cancel()
                 teleIntake = false
-                IntakeHoldCommand().start()
             }
-            else -> IntakeHoldCommand().start()
         }
     }
 }
