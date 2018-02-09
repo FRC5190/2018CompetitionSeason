@@ -58,15 +58,50 @@ object DriveConstants {
 }
 
 object ElevatorConstants {
+    const val PEAK_CURRENT = 20
+    const val PEAK_DURATION = 1000
 
+    const val NOMINAL_OUT = 0.0
+    const val PEAK_OUT = 0.7
+
+    const val P = 0.8
+    const val I = 0.0
+    const val D = 0.0
+
+    const val PID_SLOT = 0
+
+    const val TOLERANCE_INCHES = 0.25
+
+    const val MOTION_VELOCITY = 1000000000
+    const val MOTION_ACCELERATION_INCHES = 80.0
 }
 
 object ArmConstants {
+    const val PEAK_CURRENT = 20
+    const val PEAK_DURATION = 1000
 
+    const val P = 1.5
+    const val I = 0.0
+    const val D = 0.0
+
+    const val PID_SLOT = 0
+
+    const val NOMINAL_OUT = 0.0
+    const val PEAK_OUT = 0.5
+
+    const val TOLERANCE = 0
+
+    const val MOTION_VELOCITY = 1000000
+    const val MOTION_ACCELERATION = 400
 }
 
 object IntakeConstants {
+    const val PEAK_CURRENT = 20
+    const val PEAK_DURATION = 1000
 
+    const val DEFAULT_SPEED = 0.8
+
+    const val LIMITING_REDUCTION_FACTOR = 3
 }
 
 /**

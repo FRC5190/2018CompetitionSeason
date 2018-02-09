@@ -12,14 +12,29 @@ import frc.team5190.robot.util.*
 
 object ElevatorSubsystem : Subsystem() {
 
+    private val currentBuffer = CircularBuffer(50)
     private val masterElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_MASTER)
+
+    private val motorAmperage
+        get() = masterElevatorMotor.outputCurrent
+
+    val isElevatorAtBottom
+        get() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
+
+    val currentPosition
+        get() = masterElevatorMotor.sensorCollection.quadraturePosition
+
+    val stateBoolean
+        get() = state == 1
 
     internal var hasReset = false
 
+    private var state = 0
+    private var currentCommandGroup: CommandGroup? = null
+
     init {
-        // hardware for this subsystem includes two motors in master-slave config, a quad encoder, and limit switches
         masterElevatorMotor.inverted = false
-        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
+        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
         masterElevatorMotor.setSensorPhase(false)
         masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
@@ -28,24 +43,22 @@ object ElevatorSubsystem : Subsystem() {
         slaveElevatorMotor.inverted = true
         slaveElevatorMotor.follow(masterElevatorMotor)
 
-        // current limiting
-        masterElevatorMotor.configCurrentLimiting(20, 200, 10, 10)
-        slaveElevatorMotor.configCurrentLimiting(20, 200, 10, 10)
-
         // brake mode
         masterElevatorMotor.setNeutralMode(NeutralMode.Brake)
         slaveElevatorMotor.setNeutralMode(NeutralMode.Brake)
 
         // Closed loop operation and output shaping
-        masterElevatorMotor.configPID(0, 0.8, 0.0, 0.0, 10)
-        masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
-        masterElevatorMotor.configPeakOutput(0.70, -0.70, 10)
-        masterElevatorMotor.configAllowableClosedloopError(0, inchesToNativeUnits(0.25), 10) //500
+        masterElevatorMotor.configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, 10)
+        masterElevatorMotor.configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), 10)
+
+        masterElevatorMotor.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
+        masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
 
         // motion magic settings
-        // TODO: Fix these values
-        masterElevatorMotor.configMotionCruiseVelocity(1000000000, 10)
-        masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(80.0) / 10, 10)
+        masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
+        masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
+
+        currentBuffer.configureForTalon(ElevatorConstants.PEAK_CURRENT, ElevatorConstants.PEAK_DURATION)
 
         // more settings
         reset()
@@ -57,57 +70,61 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
     }
 
-    fun isElevatorAtBottom() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
 
     fun set(controlMode: ControlMode, output: Number) {
-        masterElevatorMotor.set(controlMode, output.toDouble())
+        if (state == -1) {
+            masterElevatorMotor.set(ControlMode.Disabled, 0.0)
+            return
+        }
+        masterElevatorMotor.set(controlMode, if (state == 1) output.toDouble() else 0.0)
     }
 
-    val currentPosition
-        get() = masterElevatorMotor.sensorCollection.quadraturePosition
+    private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
 
-    val motorAmperage
-        get() = masterElevatorMotor.outputCurrent
-
-    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, 0, 10)!!
-
-    private var currentCommandGroup: CommandGroup? = null
+    override fun initDefaultCommand() {
+        this.defaultCommand = ManualElevatorCommand()
+    }
 
     override fun periodic() {
-        if (this.isElevatorAtBottom()) {
+
+        currentBuffer.add(motorAmperage)
+        state = masterElevatorMotor.limitCurrent(currentBuffer)
+
+
+        if (this.isElevatorAtBottom) {
             this.resetEncoders()
         }
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
-        when(MainXbox.pov) {
-            // Up - Scale
+        when (MainXbox.pov) {
+        // Up - Scale
             0 -> commandGroup {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                 addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
             }
-            // Right - Switch
+        // Right - Switch
             90 -> commandGroup {
                 // Just incase its in the behind position
-                if(ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
+                if (ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
                     addSequential(AutoArmCommand(ArmPosition.MIDDLE))
                 addSequential(commandGroup {
                     addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                     addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                 })
             }
-            // Down - Intake
+        // Down - Intake
             180 -> commandGroup {
                 // Just incase its in the behind position
-                if(ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
+                if (ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
                     addSequential(AutoArmCommand(ArmPosition.MIDDLE))
                 addSequential(commandGroup {
                     addParallel(AutoArmCommand(ArmPosition.DOWN))
                     addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                 })
             }
-            // Left - Scale Backwards
-            270 ->  commandGroup {
+        // Left - Scale Backwards
+            270 -> commandGroup {
                 addSequential(commandGroup {
                     addParallel(AutoArmCommand(ArmPosition.UP))
                     addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
@@ -121,10 +138,6 @@ object ElevatorSubsystem : Subsystem() {
             currentCommandGroup = it
             it.start()
         }
-    }
-
-    override fun initDefaultCommand() {
-        this.defaultCommand = ManualElevatorCommand()
     }
 
     fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0

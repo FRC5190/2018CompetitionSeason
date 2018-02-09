@@ -16,4 +16,3 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
 
     override fun isFinished() = (ElevatorSubsystem.currentPosition - position.ticks).absoluteValue < ElevatorSubsystem.inchesToNativeUnits(2.0)
 }
-

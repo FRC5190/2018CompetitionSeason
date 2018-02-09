@@ -15,14 +15,18 @@ import frc.team5190.robot.util.*
 object IntakeSubsystem : Subsystem() {
 
     private val currentBuffer = CircularBuffer(50)
-
     private val intakeTalon = TalonSRX(MotorIDs.INTAKE_LEFT)
-    val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
     private val intakeMotorAmperage
         get() = intakeTalon.outputCurrent
 
+    val stateBoolean
+        get() = state == 1
+
+    val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
+
     private var teleIntake = false
+    private var state = 0
 
     init {
         intakeTalon.inverted = false
@@ -31,11 +35,15 @@ object IntakeSubsystem : Subsystem() {
         intakeTalonSlave.follow(intakeTalon)
         intakeTalonSlave.inverted = true
 
-        currentBuffer.configureForTalon(20, 1000)
+        currentBuffer.configureForTalon(IntakeConstants.PEAK_CURRENT, IntakeConstants.PEAK_DURATION)
     }
 
     fun set(controlMode: ControlMode, motorOutput: Double) {
-        intakeTalon.set(controlMode, motorOutput)
+        if (state == -1) {
+            intakeTalon.set(ControlMode.Disabled, 0.0)
+            return
+        }
+        intakeTalon.set(controlMode, if (state == 1) motorOutput else motorOutput / IntakeConstants.LIMITING_REDUCTION_FACTOR)
     }
 
     override fun initDefaultCommand() {
@@ -44,16 +52,16 @@ object IntakeSubsystem : Subsystem() {
 
     override fun periodic() {
         currentBuffer.add(intakeMotorAmperage)
-        val state = intakeTalon.limitCurrent(currentBuffer)
+        state = intakeTalon.limitCurrent(currentBuffer)
 
         if (!Robot.INSTANCE!!.isOperatorControl) return
 
         when {
             MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 -> {
                 if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= ArmPosition.MIDDLE.ticks - 100) {
-                    IntakeCommand(IntakeDirection.OUT, state).start()
+                    IntakeCommand(IntakeDirection.OUT).start()
                 } else {
-                    IntakeCommand(IntakeDirection.IN, state).start()
+                    IntakeCommand(IntakeDirection.IN).start()
                 }
                 teleIntake = true
             }

@@ -7,7 +7,23 @@ import frc.team5190.robot.util.*
 
 object ArmSubsystem : Subsystem() {
 
+    private val currentBuffer =  CircularBuffer(50)
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
+
+    val currentPosition
+        get() = masterArmMotor.getSelectedSensorPosition(0)
+
+    val closedLoopError
+        get() = masterArmMotor.getClosedLoopError(0)
+
+    private val motorAmperage
+        get() = masterArmMotor.outputCurrent
+
+    val stateBoolean
+        get() = state == 1
+
+
+    private var state = 0
 
     init {
         // hardware for this subsystem includes one motor and an absolute encoder
@@ -17,55 +33,40 @@ object ArmSubsystem : Subsystem() {
         masterArmMotor.configReverseSoftLimitEnable(false, 10)
         masterArmMotor.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks, 10)
 
-        // current limiting
-        masterArmMotor.configCurrentLimiting(20, 200, 10, 10)
-
         // break mode
         masterArmMotor.setNeutralMode(NeutralMode.Brake)
 
         // closed loop configuration
-        // TODO: Tune constants and move them into a robot specific hardware file
-        masterArmMotor.configPID(0, 1.5, 0.0, 0.0, 10)
-        masterArmMotor.configNominalOutput(0.0, 0.0, 10)
-        masterArmMotor.configPeakOutput(0.4, -0.4, 10)
-        masterArmMotor.configAllowableClosedloopError(0, 0, 10)
+        masterArmMotor.configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
+        masterArmMotor.configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
+        masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+        masterArmMotor.configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
 
         // motion magic settings
-        // TODO: Fix these values
-        masterArmMotor.configMotionCruiseVelocity(1000000, 10)
-        masterArmMotor.configMotionAcceleration(400, 10)
+        masterArmMotor.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
+        masterArmMotor.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
 
-        // other settings
-        reset()
+        currentBuffer.configureForTalon(ArmConstants.PEAK_CURRENT, ArmConstants.PEAK_DURATION)
     }
-
-    fun reset() {
-        // nothing more to do
-    }
-
-    val currentPosition
-        get() = masterArmMotor.getSelectedSensorPosition(0)
-
-    val closedLoopError
-        get() = masterArmMotor.getClosedLoopError(0)
-
-    val armMotorAmperage
-        get() = masterArmMotor.outputCurrent
 
     fun set(controlMode: ControlMode, output: Double) {
-        // TODO: check whether the motor is in good state before setting the power.
-        masterArmMotor.set(controlMode, output)
+        if (state == -1) {
+            masterArmMotor.set(ControlMode.Disabled, 0.0)
+            return
+        }
+        masterArmMotor.set(controlMode, if (state == 1) output else 0.0)
     }
 
     override fun initDefaultCommand() {
         this.defaultCommand = ManualArmCommand()
     }
+
+    override fun periodic() {
+        currentBuffer.add(motorAmperage)
+        state = masterArmMotor.limitCurrent(currentBuffer)
+    }
 }
 
-// TODO: Move hardcoded values to Hardware module
 enum class ArmPosition (val ticks: Int) {
-    BEHIND(1950), // When placing scale backwards
-    UP(1950), // Arm is always up, basically where it starts in auto
-    MIDDLE(1150), // Angled a little up to help placement on scale and switch
-    DOWN(900); // Lowest position, used for intaking the cube
+    BEHIND(1950), UP(1950), MIDDLE(1150), DOWN(900);
 }

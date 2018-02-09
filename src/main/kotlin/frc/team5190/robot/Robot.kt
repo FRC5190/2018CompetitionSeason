@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.*
-import frc.team5190.robot.auto.*
+import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
@@ -94,12 +95,12 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
-        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.motorAmperage)
         SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
         SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
 
-        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.armMotorAmperage)
-        SmartDashboard.putNumber("Intake Motor Amperage", IntakeSubsystem.intakeMotorAmperage)
+        SmartDashboard.putBoolean("Elevator Motor Status", ElevatorSubsystem.stateBoolean)
+        SmartDashboard.putBoolean("Arm Motor Status", ArmSubsystem.stateBoolean)
+        SmartDashboard.putBoolean("Intake Motor Status", IntakeSubsystem.stateBoolean)
 
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
@@ -124,19 +125,10 @@ class Robot : IterativeRobot() {
 
         NavX.reset()
 
-//        AutoHelper.getCommandGroupFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide, scaleSide).start()
+        AutoHelper.getCommandGroupFromData(sideChooser.selected
+                ?: StartingPositions.CENTER, switchSide, scaleSide).start()
 
-        commandGroup {
-            this.addSequential(frc.team5190.robot.vision.FindCubeCommand())
-            this.addSequential(frc.team5190.robot.util.commandGroup {
-                this.addParallel(MotionMagicCommand((VisionSubsystem.tgtRange_in - 5) / 12))
-                this.addParallel(frc.team5190.robot.intake.IntakeCommand(frc.team5190.robot.intake.IntakeDirection.IN, true))
-            })
-            this.addSequential(frc.team5190.robot.intake.IntakeHoldCommand(), 0.001)
-            this.addSequential(frc.team5190.robot.auto.MotionProfileCommand(Paths.CS_STRAIGHT, true))
-//            this.addSequential(frc.team5190.robot.auto.MotionMagicCommand(3.0, true))
 
-        }.start()
     }
 
     /**

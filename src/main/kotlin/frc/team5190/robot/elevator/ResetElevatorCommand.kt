@@ -22,6 +22,6 @@ class ResetElevatorCommand(private val debugging: Boolean = false) : Command() {
         ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
     }
 
-    override fun isFinished() = ElevatorSubsystem.isElevatorAtBottom() || (!debugging && ElevatorSubsystem.hasReset)
+    override fun isFinished() = ElevatorSubsystem.isElevatorAtBottom || (!debugging && ElevatorSubsystem.hasReset)
 
 }
