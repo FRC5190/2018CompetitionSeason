@@ -15,16 +15,6 @@ class DriveStraightCommand(feet: Double, val isReversed: Boolean = false) : Comm
     }
 
     override fun initialize() {
-
-        DriveSubsystem.falconDrive.leftMotors.forEach {
-            it.inverted = isReversed
-            it.setSensorPhase(true)
-        }
-        DriveSubsystem.falconDrive.rightMotors.forEach {
-            it.inverted = !isReversed
-            it.setSensorPhase(true)
-        }
-
         DriveSubsystem.falconDrive.allMasters.forEach {
             it.sensorCollection.setQuadraturePosition(0, 10)
             it.set(ControlMode.MotionMagic, setPoint)

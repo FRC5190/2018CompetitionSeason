@@ -14,6 +14,7 @@ import frc.team5190.robot.elevator.ElevatorPosition
 import frc.team5190.robot.intake.*
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.*
+import frc.team5190.robot.vision.FindCubeCommand
 import openrio.powerup.MatchData
 import java.io.InputStreamReader
 
@@ -169,32 +170,32 @@ class AutoHelper {
                             // L
                             this.addSequential(commandGroup {
                                 this.addParallel(MotionProfileCommand(Paths.CS_L_SWITCH))
-//                                this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-//                                this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                             })
 
-//                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
 //
                            this.addSequential(commandGroup {
-//                                this.addParallel(IntakeHoldCommand(), 0.001)
+                                this.addParallel(IntakeHoldCommand(), 0.001)
                                 this.addParallel(MotionProfileCommand(Paths.CS_L_CENTER, true))
                             })
 //
-//                            this.addSequential(FindCubeCommand())
+                            this.addSequential(FindCubeCommand())
 //
                             this.addSequential(commandGroup {
-                                this.addParallel(DriveStraightCommand(3.5))
-//                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-//                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-//                                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 2.0))
+                                this.addParallel(DriveStraightCommand((frc.team5190.robot.vision.VisionSubsystem.tgtRange_in - 24) / 12))
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 2.0))
                             })
 
                             this.addSequential(DriveStraightCommand(1.5, true))
 //
-//                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(IntakeHoldCommand(), 0.001)
                             this.addSequential(TurnCommand(-140.0))
                             this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT))
-//                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5))
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5))
                         }
                         MatchData.OwnedSide.RIGHT -> commandGroup {
                             // R

@@ -72,7 +72,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
 
             it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(7.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
-            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(5.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
+            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(3.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
         }
 
         gear = Gear.HIGH

@@ -47,7 +47,7 @@ object ElevatorSubsystem : Subsystem() {
         reset()
     }
 
-    fun reset() {
+    private fun reset() {
         // these cannot be in the constructor since the status frame periods are reset every time the talon is reset
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
         masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)

@@ -17,10 +17,11 @@ class ManualElevatorCommand : Command() {
     override fun execute() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) -> {
-                ElevatorSubsystem.set(ControlMode.PercentOutput, 0.5)
+                ElevatorSubsystem.set(ControlMode.PercentOutput, 0.6)
                 triggerState = true
             }
             triggerState -> {
+//                ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
                 ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500)
                 triggerState = false
             }

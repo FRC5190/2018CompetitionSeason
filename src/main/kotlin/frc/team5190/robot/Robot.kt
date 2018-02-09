@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.*
-import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.Paths
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
@@ -125,19 +125,19 @@ class Robot : IterativeRobot() {
 
         NavX.reset()
 
-        AutoHelper.getCommandGroupFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide, scaleSide).start()
-////        MotionProfileCommand(Paths.LS_LL_SWITCH).start()
-////        DriveStraightCommand(6.0).start()
-//
-////        commandGroup {
-////            this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH1))
-////            this.addSequential(TurnCommand(90.0))
-////            this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH2))
-////            this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH3))
-////        }.start()
-//
-//        MotionProfileCommand(Paths.LS_LL_SCALE).start()
+//        AutoHelper.getCommandGroupFromData(sideChooser.selected?: StartingPositions.CENTER, switchSide, scaleSide).start()
 
+        commandGroup {
+            this.addSequential(frc.team5190.robot.vision.FindCubeCommand())
+            this.addSequential(frc.team5190.robot.util.commandGroup {
+                this.addParallel(frc.team5190.robot.drive.DriveStraightCommand((VisionSubsystem.tgtRange_in - 5) / 12))
+                this.addParallel(frc.team5190.robot.intake.IntakeCommand(frc.team5190.robot.intake.IntakeDirection.IN, true))
+            })
+            this.addSequential(frc.team5190.robot.intake.IntakeHoldCommand(), 0.001)
+            this.addSequential(frc.team5190.robot.auto.MotionProfileCommand(Paths.CS_STRAIGHT, true))
+//            this.addSequential(frc.team5190.robot.drive.DriveStraightCommand(3.0, true))
+
+        }.start()
     }
 
     /**
