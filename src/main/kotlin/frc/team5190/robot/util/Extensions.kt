@@ -1,9 +1,7 @@
 package frc.team5190.robot.util
 
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.CircularBuffer
 import edu.wpi.first.wpilibj.command.CommandGroup
 
 fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
@@ -22,11 +20,11 @@ fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
  * @param sensorUnitsPerRotation Sensor units per rotation
  * @param dev Feedback device used with the motor
  */
-fun TalonSRX.configPIDF(slotIdx: Int, p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double) {
+fun TalonSRX.configPIDF(slotIdx: Int, p: Double, i: Double, d: Double, rpm: Int, sensorUnitsPerRotation: Int) {
     config_kP(slotIdx, p, 10)
     config_kI(slotIdx, i, 10)
     config_kD(slotIdx, d, 10)
-    config_kF(slotIdx, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation), 10)
+    config_kF(slotIdx, Maths.calculateFGain(1.0, rpm, sensorUnitsPerRotation.toDouble()), 10)
 }
 
 fun TalonSRX.configPID(slotIdx: Int, p: Double, i: Double, d: Double, timeoutMs: Int) {
@@ -57,7 +55,14 @@ fun TalonSRX.configCurrentLimiting(peakAmps: Int, peakDurationMs: Int, continuou
     enableCurrentLimit(true)
 }
 
-//fun TalonSRX.checkWatts(amps: Int, volts: Double, regulator: WattageRagulator) : MotorState {
-//        return regulator.check(amps, colts);
-//    return MotorState.Good
-//}
+fun TalonSRX.limitCurrent(buffer: CircularBuffer): Int {
+    return when (buffer.motorState) {
+        MotorState.OK -> 1
+        MotorState.STALL -> 0
+        MotorState.DEAD -> {
+            set(ControlMode.Disabled, 0.0)
+            println("$deviceID Talon has been shut down due to stall.")
+            -1
+        }
+    }
+}

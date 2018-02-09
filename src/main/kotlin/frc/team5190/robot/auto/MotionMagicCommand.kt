@@ -1,14 +1,15 @@
-package frc.team5190.robot.drive
+package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import frc.team5190.robot.util.Hardware
+import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 import kotlin.math.absoluteValue
 
-class DriveStraightCommand(feet: Double, val isReversed: Boolean = false) : Command() {
+class MotionMagicCommand(feet: Double, val isReversed: Boolean = false) : Command() {
 
-    private val setPoint = Maths.feetToNativeUnits(feet, Hardware.NATIVE_UNITS_PER_ROTATION, Hardware.WHEEL_RADIUS).toDouble()
+    private val setPoint = Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
 
     init {
         requires(DriveSubsystem)
@@ -30,7 +31,7 @@ class DriveStraightCommand(feet: Double, val isReversed: Boolean = false) : Comm
     }
 
     override fun isFinished() =  DriveSubsystem.falconDrive.allMasters.any {
-        (it.sensorCollection.quadraturePosition - setPoint).absoluteValue < Maths.feetToNativeUnits(0.1, Hardware.NATIVE_UNITS_PER_ROTATION, Hardware.WHEEL_RADIUS).toDouble() &&
+        (it.sensorCollection.quadraturePosition - setPoint).absoluteValue < Maths.feetToNativeUnits(0.1, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble() &&
                 it.sensorCollection.quadratureVelocity < 100
     }
 

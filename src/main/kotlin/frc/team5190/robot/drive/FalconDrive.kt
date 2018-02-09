@@ -64,18 +64,18 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             // TODO: Need to configure current limits
         }
 
+
+        gear = Gear.HIGH
+
         allMasters.forEach {
-            it.configPIDF(0, 0.7, 0.0, 0.0, 1.0, Hardware.MAX_RPM_HIGH.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
-            it.selectProfileSlot(0, 0)
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
 
-            it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(7.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
-            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(3.0, Hardware.WHEEL_RADIUS, Hardware.NATIVE_UNITS_PER_ROTATION).toInt(), 10)
+            it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(7.0, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
+            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(3.0, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
         }
 
-        gear = Gear.HIGH
     }
 
     internal fun autoReset() {
@@ -95,7 +95,19 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     var gear
         get() = Gear.getGear(gearSolenoid.get())
-        set(value) = gearSolenoid.set(value.state)
+        set(value) {
+            when (value) {
+                Gear.HIGH -> allMasters.forEach {
+                    it.configPIDF(DriveConstants.PID_SLOT_HIGH, DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, DriveConstants.MAX_RPM_HIGH, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+                    it.selectProfileSlot(DriveConstants.PID_SLOT_HIGH, 0)
+                }
+                Gear.LOW -> allMasters.forEach{
+                    it.configPIDF(DriveConstants.PID_SLOT_LOW, DriveConstants.P_LOW, DriveConstants.I_LOW, DriveConstants.D_LOW, DriveConstants.MAX_RPM_LOW, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+                    it.selectProfileSlot(DriveConstants.PID_SLOT_LOW, 0)
+                }
+            }
+            gearSolenoid.set(value.state)
+        }
 
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)

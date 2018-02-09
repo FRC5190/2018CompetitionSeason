@@ -11,8 +11,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.*
-import frc.team5190.robot.auto.Paths
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
@@ -130,12 +129,12 @@ class Robot : IterativeRobot() {
         commandGroup {
             this.addSequential(frc.team5190.robot.vision.FindCubeCommand())
             this.addSequential(frc.team5190.robot.util.commandGroup {
-                this.addParallel(frc.team5190.robot.drive.DriveStraightCommand((VisionSubsystem.tgtRange_in - 5) / 12))
+                this.addParallel(MotionMagicCommand((VisionSubsystem.tgtRange_in - 5) / 12))
                 this.addParallel(frc.team5190.robot.intake.IntakeCommand(frc.team5190.robot.intake.IntakeDirection.IN, true))
             })
             this.addSequential(frc.team5190.robot.intake.IntakeHoldCommand(), 0.001)
             this.addSequential(frc.team5190.robot.auto.MotionProfileCommand(Paths.CS_STRAIGHT, true))
-//            this.addSequential(frc.team5190.robot.drive.DriveStraightCommand(3.0, true))
+//            this.addSequential(frc.team5190.robot.auto.MotionMagicCommand(3.0, true))
 
         }.start()
     }

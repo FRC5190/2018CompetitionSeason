@@ -8,13 +8,13 @@ package frc.team5190.robot.auto
 import edu.wpi.first.wpilibj.command.CommandGroup
 import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.AutoArmCommand
-import frc.team5190.robot.drive.DriveStraightCommand
 import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
 import frc.team5190.robot.intake.*
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.*
 import frc.team5190.robot.vision.FindCubeCommand
+import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 import java.io.InputStreamReader
 
@@ -184,13 +184,13 @@ class AutoHelper {
                             this.addSequential(FindCubeCommand())
 //
                             this.addSequential(commandGroup {
-                                this.addParallel(DriveStraightCommand((frc.team5190.robot.vision.VisionSubsystem.tgtRange_in - 24) / 12))
+                                this.addParallel(MotionMagicCommand((VisionSubsystem.tgtRange_in - 24) / 12))
                                 this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                 this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                 this.addParallel(IntakeCommand(IntakeDirection.IN, true, 2.0))
                             })
 
-                            this.addSequential(DriveStraightCommand(1.5, true))
+                            this.addSequential(MotionMagicCommand(1.5, true))
 //
                             this.addSequential(IntakeHoldCommand(), 0.001)
                             this.addSequential(TurnCommand(-140.0))
@@ -215,7 +215,7 @@ class AutoHelper {
 //                            this.addSequential(FindCubeCommand())
 
                             this.addSequential(commandGroup {
-                                this.addParallel(DriveStraightCommand(3.5))
+                                this.addParallel(MotionMagicCommand(3.5))
 //                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
 //                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
 //                                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 4.0))
@@ -340,10 +340,10 @@ typealias TrajectoryList = List<TrajectoryData>
 data class TrajectoryData(private val position: Double, private val velocity: Double, val duration: Int) {
 
     // Converts feet and feet/sec into rotations and rotations/sec.
-    private val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)
-    private val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS)
+    private val rotations = Maths.feetToRotations(position, DriveConstants.WHEEL_RADIUS)
+    private val rpm = Maths.feetPerSecondToRPM(velocity, DriveConstants.WHEEL_RADIUS)
 
     // Converts rotations and rotations/sec to native units and native units/100 ms.
-    var nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
-    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, Hardware.NATIVE_UNITS_PER_ROTATION)
+    var nativeUnits = Maths.rotationsToNativeUnits(rotations, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, DriveConstants.SENSOR_UNITS_PER_ROTATION)
 }

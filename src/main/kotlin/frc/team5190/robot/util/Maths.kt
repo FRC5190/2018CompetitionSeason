@@ -19,7 +19,7 @@ class Maths {
          * @param sensorUnitsPerRotation Sensor Units per rotation
          * @return F gain
          */
-        fun calculateFGain(power: Double, rpm: Double, sensorUnitsPerRotation: Double): Double {
+        fun calculateFGain(power: Double, rpm: Int, sensorUnitsPerRotation: Double): Double {
             return (power * 1023) / (rpm / 60.0 / 10 * sensorUnitsPerRotation)
         }
 
@@ -63,7 +63,7 @@ class Maths {
          * @param sensorUnitsPerRotation Sensor units per rotation
          * @return Native units
          */
-        fun rotationsToNativeUnits(rot: Double, sensorUnitsPerRotation: Double): Double {
+        fun rotationsToNativeUnits(rot: Double, sensorUnitsPerRotation: Int): Double {
             return rot * sensorUnitsPerRotation
         }
 
@@ -73,7 +73,7 @@ class Maths {
          * @return RPM
          */
         fun nativeUnitsPer100MsToRPM(nativeUnitsPer100Ms: Int): Double {
-            return nativeUnitsPer100Ms * 600.0 / Hardware.NATIVE_UNITS_PER_ROTATION
+            return nativeUnitsPer100Ms * 600.0 / DriveConstants.SENSOR_UNITS_PER_ROTATION
         }
 
         /**
@@ -82,7 +82,7 @@ class Maths {
          * @return Feet
          */
         fun nativeUnitsToFeet(nativeUnits: Int): Double {
-            return nativeUnitsToFeet(nativeUnits, Hardware.NATIVE_UNITS_PER_ROTATION, Hardware.WHEEL_RADIUS)
+            return nativeUnitsToFeet(nativeUnits, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS)
         }
 
 
