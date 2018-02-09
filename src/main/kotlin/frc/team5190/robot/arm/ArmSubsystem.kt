@@ -18,9 +18,9 @@ object ArmSubsystem : Subsystem() {
         masterArmMotor.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks, 10)
 
         // current limiting
-        masterArmMotor.configCurrentLimiting(40, 2000, 20, 10)
+        masterArmMotor.configCurrentLimiting(20, 200, 10, 10)
 
-        // TODO: what about break mode?
+        // break mode
         masterArmMotor.setNeutralMode(NeutralMode.Brake)
 
         // closed loop configuration
@@ -53,6 +53,7 @@ object ArmSubsystem : Subsystem() {
         get() = masterArmMotor.outputCurrent
 
     fun set(controlMode: ControlMode, output: Double) {
+        // TODO: check whether the motor is in good state before setting the power.
         masterArmMotor.set(controlMode, output)
     }
 

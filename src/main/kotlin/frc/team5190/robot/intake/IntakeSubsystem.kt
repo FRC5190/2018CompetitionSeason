@@ -1,5 +1,6 @@
 package frc.team5190.robot.intake
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Solenoid
@@ -27,8 +28,8 @@ object IntakeSubsystem : Subsystem() {
         intakeTalonSlave.inverted = true
 
         // current limiting
-        intakeTalon.configCurrentLimiting(40, 2000, 20, 10)
-        intakeTalonSlave.configCurrentLimiting(40, 2000, 20, 10)
+        intakeTalon.configCurrentLimiting(20, 200, 10, 10)
+        intakeTalonSlave.configCurrentLimiting(20, 200, 10, 10)
 
         // other configuration
         reset()
@@ -38,29 +39,45 @@ object IntakeSubsystem : Subsystem() {
         // nothing to reset for this subsystem
     }
 
+    fun set(controlMode: ControlMode, motorOutput: Double) {
+        // TODO: check whether the motor is in good state before setting the power.
+        intakeTalon.set(controlMode, motorOutput)
+    }
+
     val intakeMotorAmperage
         get() = intakeTalon.outputCurrent
 
     override fun initDefaultCommand() {
-        defaultCommand = IntakeHoldCommand()
     }
 
     private var teleIntake = false
 
     override fun periodic() {
-        if (Robot.INSTANCE!!.isOperatorControl) {
-            if (MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5) {
-                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= ArmPosition.MIDDLE.ticks - 100) {
+        // command orchestration
+        if (!Robot.INSTANCE!!.isOperatorControl) {
+            return
+        }
+
+        when {
+            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 -> {
+                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 ||
+                        ArmSubsystem.currentPosition >= ArmPosition.MIDDLE.ticks - 100) {
                     IntakeCommand(IntakeDirection.OUT).start()
                 } else {
                     IntakeCommand(IntakeDirection.IN).start()
                 }
                 teleIntake = true
-            } else if (teleIntake) {
+            }
+            teleIntake -> {
                 currentCommand?.cancel()
                 teleIntake = false
+                IntakeHoldCommand().start()
             }
+            else -> IntakeHoldCommand().start()
         }
     }
+}
 
+enum class IntakeDirection {
+    IN, OUT
 }

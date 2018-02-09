@@ -23,12 +23,8 @@ class IntakeCommand(private val direction: IntakeDirection, private val auto: Bo
             IntakeDirection.OUT -> outSpeed
         }
 
-        IntakeSubsystem.intakeTalon.set(ControlMode.PercentOutput, motorOutput)
+        IntakeSubsystem.set(ControlMode.PercentOutput, motorOutput)
     }
 
     override fun isFinished() = auto && isTimedOut
-}
-
-enum class IntakeDirection {
-    IN, OUT
 }

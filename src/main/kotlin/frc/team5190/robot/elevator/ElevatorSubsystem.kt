@@ -32,6 +32,10 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configCurrentLimiting(40, 2000, 20, 10)
         slaveElevatorMotor.configCurrentLimiting(40, 2000, 20, 10)
 
+        // brake mode
+        masterElevatorMotor.setNeutralMode(NeutralMode.Brake)
+        slaveElevatorMotor.setNeutralMode(NeutralMode.Brake)
+
         // Closed loop operation and output shaping
         masterElevatorMotor.configPID(0, 0.8, 0.0, 0.0, 10)
         masterElevatorMotor.configNominalOutput(0.0, 0.0, 10)
@@ -123,7 +127,12 @@ object ElevatorSubsystem : Subsystem() {
         this.defaultCommand = ManualElevatorCommand()
     }
 
-    // TODO: Why is the wheel radius 0.65 inches?
     fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0
     fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.3 / 2.0)
+}
+
+enum class ElevatorPosition(var ticks: Int) {
+    SWITCH(ElevatorSubsystem.inchesToNativeUnits(24.0)),
+    SCALE(ElevatorSubsystem.inchesToNativeUnits(60.0)),
+    INTAKE(500)
 }

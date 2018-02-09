@@ -3,6 +3,7 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.CircularBuffer
 import edu.wpi.first.wpilibj.command.CommandGroup
 
 fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
@@ -55,3 +56,8 @@ fun TalonSRX.configCurrentLimiting(peakAmps: Int, peakDurationMs: Int, continuou
     configContinuousCurrentLimit(continuousAmps, timeoutMs)
     enableCurrentLimit(true)
 }
+
+//fun TalonSRX.checkWatts(amps: Int, volts: Double, regulator: WattageRagulator) : MotorState {
+//        return regulator.check(amps, colts);
+//    return MotorState.Good
+//}

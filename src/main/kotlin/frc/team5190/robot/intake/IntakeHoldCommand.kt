@@ -14,7 +14,7 @@ class IntakeHoldCommand : Command() {
 
     override fun initialize() {
         IntakeSubsystem.intakeSolenoid.set(true)
-        IntakeSubsystem.intakeTalon.set(ControlMode.PercentOutput, 0.0)
+        IntakeSubsystem.set(ControlMode.PercentOutput, 0.0)
     }
 
     override fun isFinished() = false
