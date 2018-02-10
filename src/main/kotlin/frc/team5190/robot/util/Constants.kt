@@ -74,10 +74,12 @@ object ElevatorConstants {
 
     const val MOTION_VELOCITY = 1000000000
     const val MOTION_ACCELERATION_INCHES = 80.0
+
+    const val LIMITING_REDUCTION_FACTOR = 0.3
 }
 
 object ArmConstants {
-    const val PEAK_WATTAGE = 100
+    const val PEAK_WATTAGE = 15
     const val PEAK_DURATION = 1000
 
     const val P = 1.5
@@ -87,12 +89,14 @@ object ArmConstants {
     const val PID_SLOT = 0
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.5
+    const val PEAK_OUT = 0.7
 
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000
     const val MOTION_ACCELERATION = 400
+
+    const val LIMITING_REDUCTION_FACTOR = 0.5
 }
 
 object IntakeConstants {
