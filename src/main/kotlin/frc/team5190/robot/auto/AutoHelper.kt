@@ -324,7 +324,6 @@ enum class Paths(private val filePath: String) {
     }
 }
 
-
 /**
  * Stores starting position of the robot.
  */
