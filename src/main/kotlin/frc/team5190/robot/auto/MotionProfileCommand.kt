@@ -33,6 +33,7 @@ class MotionProfileCommand(private val path: Paths, private var isReversed: Bool
         motionProfile.startMotionProfile()
     }
 
+
     /**
      * Called periodically until triggerState or until the command has been canceled.
      */
@@ -50,6 +51,7 @@ class MotionProfileCommand(private val path: Paths, private var isReversed: Bool
      */
     override fun end() {
         motionProfile.reset()
+        DriveSubsystem.falconDrive.autoReset()
 
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }

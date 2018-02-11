@@ -31,7 +31,7 @@ object Bongos : Joystick(0) {
  */
 object MainXbox : XboxController(0) {
     init {
-        JoystickButton(this, 1).whenPressed(FindCubeCommand())
+        //JoystickButton(this, 1).whenPressed(FindCubeCommand())
     }
 }
 

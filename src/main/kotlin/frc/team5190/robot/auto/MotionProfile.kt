@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.util.DriveConstants
 
 /**
  * Class that feeds the talon trajectory values to follow.
@@ -60,11 +61,11 @@ class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryL
 
         DriveSubsystem.falconDrive.leftMotors.forEach {
             it.inverted = isReversed
-            it.setSensorPhase(false)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
         DriveSubsystem.falconDrive.rightMotors.forEach {
             it.inverted = !isReversed
-            it.setSensorPhase(false)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
 
         if (isReversed) {

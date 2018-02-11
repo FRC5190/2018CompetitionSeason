@@ -5,14 +5,19 @@
 
 package frc.team5190.robot.auto
 
+import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.CommandGroup
+import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
-import frc.team5190.robot.intake.*
-import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.*
+import frc.team5190.robot.intake.IntakeCommand
+import frc.team5190.robot.intake.IntakeDirection
+import frc.team5190.robot.intake.IntakeHoldCommand
+import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.util.Maths
+import frc.team5190.robot.util.commandGroup
 import frc.team5190.robot.vision.FindCubeCommand
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
@@ -23,232 +28,120 @@ import java.io.InputStreamReader
  */
 class AutoHelper {
     companion object {
-        fun getCommandGroupFromData(startingPosition: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
-            NavX.reset()
-            return when (startingPosition) {
-                StartingPositions.LEFT -> {
-                    when (switchOwnedSide) {
-                        MatchData.OwnedSide.LEFT -> {    // Left Switch
-                            when (scaleOwnedSide) {
-                                MatchData.OwnedSide.LEFT -> commandGroup {
-                                    // LL
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(MotionProfileCommand(Paths.LS_LL_SWITCH))
-//                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-//                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                    })
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
-//                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.2))
+            var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
 
-                                    this.addSequential(commandGroup {
-                                        //                                        this.addParallel(IntakeHoldCommand(), 0.001)
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
-//                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-//                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                                    })
+            if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-//                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 2.5))
-                                    })
+            println(folder)
 
-//                                    this.addSequential(IntakeHoldCommand(), 0.001)
-                                    this.addSequential(MotionProfileCommand(Paths.LS_LL_SWTOSC, true))
+            when (folder) {
 
-                                    this.addSequential(commandGroup {
-                                        //                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-//                                        this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
-                                    })
-
-//                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.2))
-//                                    this.addSequential(IntakeHoldCommand(), 0.001)
-
-                                }
-                                MatchData.OwnedSide.RIGHT -> commandGroup {
-                                    // LR
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(MotionProfileCommand(Paths.LS_LR_SWITCH))
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                    })
-
-                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(IntakeHoldCommand(), 0.001)
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
-                                    })
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-                                        this.addParallel(IntakeCommand(IntakeDirection.IN, 0.5, 2.5))
-                                    })
-
-                                    this.addSequential(IntakeHoldCommand(), 0.001)
-                                    this.addSequential(MotionProfileCommand(Paths.LS_LR_SWTOSC, true))
-                                }
-
-                                MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
-                            }
-                        }
-                        MatchData.OwnedSide.RIGHT -> {  // Right Switch
-                            when (scaleOwnedSide) {
-                                MatchData.OwnedSide.LEFT -> commandGroup {
-
-                                    this.addSequential(MotionProfileCommand(Paths.LS_RL_SWITCH1))
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(MotionProfileCommand(Paths.LS_RL_SWITCH2))
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                    })
-
-                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(IntakeHoldCommand(), 0.001)
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
-                                    })
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-                                        this.addParallel(IntakeCommand(IntakeDirection.IN, 0.5, 2.5))
-                                    })
-
-                                    this.addSequential(IntakeHoldCommand(), 0.001)
-                                    this.addSequential(MotionProfileCommand(Paths.LS_RL_SWTOSC, true))
-
-
-                                }
-                                MatchData.OwnedSide.RIGHT -> commandGroup {
-                                    this.addSequential(MotionProfileCommand(Paths.LS_RR_SWITCH1))
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(MotionProfileCommand(Paths.LS_RR_SWITCH2))
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                    })
-
-                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(IntakeHoldCommand(), 0.001)
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
-                                    })
-
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                                        this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-                                        this.addParallel(IntakeCommand(IntakeDirection.IN, 0.5, 2.5))
-                                    })
-
-                                    this.addSequential(IntakeHoldCommand(), 0.001)
-                                    this.addSequential(commandGroup {
-                                        this.addParallel(MotionProfileCommand(Paths.LS_RR_SWTOSC, true))
-                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                        this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
-                                    })
-                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.7, 0.2))
-                                    this.addSequential(IntakeHoldCommand(), 0.001)
-
-                                }
-                                MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
-                            }
-                        }
-                        MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
+                "LS-RL" -> {
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE))
+                            // Move elevator up during the motion profile
+                            this.addParallel(commandGroup {
+                                this.addSequential(commandGroup {
+                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                }, 0.1)
+                                this.addSequential(TimedCommand(2.5))
+                                this.addSequential(commandGroup {
+                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                })
+                            })
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
                     }
                 }
 
-                StartingPositions.CENTER -> {
-                    when (switchOwnedSide) {
-                        MatchData.OwnedSide.LEFT -> commandGroup {
-                            // L
-                            this.addSequential(commandGroup {
-                                this.addParallel(MotionProfileCommand(Paths.CS_L_SWITCH))
-                                this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                "LS-LL" -> {
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE))
+                            // Move elevator up during the motion profile
+                            this.addParallel(commandGroup {
+                                this.addSequential(commandGroup {
+                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                }, 0.1)
+                                this.addSequential(TimedCommand(2.5))
+                                this.addSequential(commandGroup {
+                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                })
                             })
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.3, outSpeed = 0.6))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                        this.addSequential(MotionMagicCommand(-1.0))
+                        this.addSequential(commandGroup {
+                            this.addParallel(TurnCommand(115.0))
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                            this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                        })
+                        this.addSequential(MotionMagicCommand(3.0))
+                        this.addSequential(FindCubeCommand())
+                        this.addSequential(MotionMagicCommand((VisionSubsystem.tgtRange_in - 10).coerceAtLeast(0.0) / 12))
+                        this.addSequential(commandGroup {
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                    }
+                    /*
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SWITCH))
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                        })
 
-                            this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
-//
-                            this.addSequential(commandGroup {
-                                this.addParallel(IntakeHoldCommand(), 0.001)
-                                this.addParallel(MotionProfileCommand(Paths.CS_L_CENTER, true))
-                            })
-//
-                            this.addSequential(FindCubeCommand())
-//
-                            this.addSequential(commandGroup {
-                                this.addParallel(MotionMagicCommand((VisionSubsystem.tgtRange_in - 24) / 12))
-                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                                this.addParallel(IntakeCommand(IntakeDirection.IN, 2.0))
-                            })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                    }*/
+                }
 
-                            this.addSequential(MotionMagicCommand(1.5, true))
-//
-                            this.addSequential(IntakeHoldCommand(), 0.001)
-                            this.addSequential(TurnCommand(-140.0))
-                            this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT))
-                            this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5))
-                        }
-                        MatchData.OwnedSide.RIGHT -> commandGroup {
-                            // R
-                            this.addSequential(commandGroup {
-                                this.addParallel(MotionProfileCommand(Paths.CS_R_SWITCH))
-//                                this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-//                                this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                            })
 
-//                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+                "CS-R" -> {
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(Paths.CS_R_SWITCH))
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                        })
 
-                            this.addSequential(commandGroup {
-                                //                                this.addParallel(IntakeHoldCommand(), 0.001)
-                                this.addParallel(MotionProfileCommand(Paths.CS_R_CENTER, true))
-                            })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
 
-//                            this.addSequential(FindCubeCommand())
+                        this.addSequential(commandGroup {
+                            this.addParallel(IntakeHoldCommand(), 0.001)
+                            this.addParallel(MotionProfileCommand(Paths.CS_R_CENTER, true))
+                        })
 
-                            this.addSequential(commandGroup {
-                                this.addParallel(MotionMagicCommand(3.5))
-//                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-//                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-//                                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 4.0))
-                            })
+                        this.addSequential(commandGroup {
+                            this.addParallel(FindCubeCommand())
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                            this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                        })
 
-//                            this.addSequential(IntakeHoldCommand(), 0.001)
-                            this.addSequential(TurnCommand(-140.0))
-                            this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT))
-                            this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5))
-                        }
-                        MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionMagicCommand((VisionSubsystem.tgtRange_in - 10.0) / 12.0))
+                            this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
+                        })
+
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+
+                        this.addSequential(MotionProfileCommand(Paths.FEET_1_5, true))
                     }
                 }
 
-                StartingPositions.RIGHT -> {
-                    when (switchOwnedSide) {
-                        MatchData.OwnedSide.LEFT -> {    // Left Switch
-                            when (scaleOwnedSide) {
-                                MatchData.OwnedSide.LEFT -> TODO() // arrayListOf(Paths.RS_LL_SWITCH1, Paths.RS_LL_SWITCH2, Paths.LS_LL_SWTOSC)  // LL
-                                MatchData.OwnedSide.RIGHT -> TODO() //arrayListOf(Paths.RS_LR_SWITCH1, Paths.RS_LL_SWITCH2, Paths.LS_LR_SWTOSC)  // LR
-                                MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
-                            }
-                        }
-                        MatchData.OwnedSide.RIGHT -> {    // Right Switch
-                            when (scaleOwnedSide) {
-                                MatchData.OwnedSide.LEFT -> TODO() //arrayListOf(Paths.RS_RL_SWITCH, Paths.LS_LL_SWTOSC)  // RL
-                                MatchData.OwnedSide.RIGHT -> TODO() //arrayListOf(Paths.RS_RR_SWITCH, Paths.LS_LR_SWTOSC)  // RR
-                                MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
-                            }
-                        }
-                        MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
-                    }
-                }
+                else -> TODO("Generate paths")
             }
         }
     }
