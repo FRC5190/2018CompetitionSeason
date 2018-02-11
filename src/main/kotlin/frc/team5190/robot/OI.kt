@@ -7,18 +7,31 @@
 
 package frc.team5190.robot
 
-import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.buttons.JoystickButton
-import frc.team5190.robot.auto.AutoCommand
-import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.vision.FindCubeCommand
+
+object Bongos : Joystick(0) {
+    fun getLeftBongoSpeed() = when {
+        this.getRawButton(4) -> 0.6
+        this.getRawButton(2) -> -0.6
+        else -> 0.0
+    }
+
+    fun getRightBongoSpeed() = when {
+        this.getRawButton(3) -> 0.6
+        this.getRawButton(1) -> -0.6
+        else -> 0.0
+    }
+}
+
 
 /**
  * Xbox Controller object
  */
 object MainXbox : XboxController(0) {
     init {
-        JoystickButton(this, 1).whenPressed(AutoCommand(AutoHelper.CENTERS_LEFT))
+        JoystickButton(this, 1).whenPressed(FindCubeCommand())
     }
 }
 
@@ -27,3 +40,5 @@ fun XboxController.getLeftY() = getY(GenericHID.Hand.kLeft)
 
 fun XboxController.getRightX() = getX(GenericHID.Hand.kRight)
 fun XboxController.getRightY() = getY(GenericHID.Hand.kRight)
+
+fun XboxController.getTriggerPressed(hand: GenericHID.Hand, amount: Double = 0.5) = getTriggerAxis(hand) > amount

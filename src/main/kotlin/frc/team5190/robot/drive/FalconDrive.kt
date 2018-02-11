@@ -5,68 +5,109 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.util.Hardware
-import frc.team5190.robot.util.Maths
-import frc.team5190.robot.util.scale
+import frc.team5190.robot.util.*
 
 /**
  * Custom FalconDrive object that extends Differential Drive
  */
 class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
-                  val rightMotors: List<WPI_TalonSRX>) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
+                  val rightMotors: List<WPI_TalonSRX>,
+                  private val gearSolenoid: Solenoid) : DifferentialDrive(leftMotors[0], rightMotors[0]) {
 
     // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
-    private val leftSlaves = leftMotors.subList(1, leftMotors.size)
+    val leftSlaves = leftMotors.subList(1, leftMotors.size)
 
     // Values for the right side of the DriveTrain
     val rightMaster = rightMotors[0]
-    private val rightSlaves = rightMotors.subList(1, rightMotors.size)
+    val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
     // Values for all the master motors of the DriveTrain
-    private val allMasters = listOf(leftMaster, rightMaster)
+    val allMasters = listOf(leftMaster, rightMaster)
 
     // Values for all the motors of the Drive Train
-    private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
+    val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
     /**
      * Sets some initial values when the FalconDrive object is initialized.
      */
     init {
-        leftSlaves.forEach { it.follow(leftMaster) }
-        rightSlaves.forEach { it.follow(rightMaster) }
-
-        allMotors.forEach { it.setNeutralMode(NeutralMode.Brake) }
-
-        configure()
+        reset()
     }
 
     /**
-     * Configures PID values
+     * Reset the drive train subsystem
+     * Call this when initializing  autonomous and teleop
+     * Resets all motors, their directions, and encoders
      */
-    fun configure() {
-        allMasters.forEach {
-            it.configurePIDF(2.0, 0.0, 0.0, 1.0, rpm = Hardware.MAX_RPM.toDouble(),
-                    sensorUnitsPerRotation = Hardware.NATIVE_UNITS_PER_ROTATION.toDouble(), dev = FeedbackDevice.QuadEncoder)
-            it.configMotionProfileTrajectoryPeriod(10, 10)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
-            it.configNeutralDeadband(0.04, 10)
-        }
-
+    private fun reset() {
+        leftMotors.forEach { it.inverted = false }
         rightMotors.forEach { it.inverted = true }
+
+        leftSlaves.forEach { it.follow(leftMaster) }
+        rightSlaves.forEach { it.follow(rightMaster) }
+
+        allMasters.forEach {
+            it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
+            it.setSelectedSensorPosition(0, 0, 10)
+        }
 
         allMotors.forEach {
             it.setSensorPhase(true)
             it.setNeutralMode(NeutralMode.Brake)
+
+            it.configOpenloopRamp(0.0, 10)
+            // TODO: Need to configure current limits
+        }
+
+
+        gear = Gear.HIGH
+
+        allMasters.forEach {
+            it.configMotionProfileTrajectoryPeriod(10, 10)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+
+            it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(7.0, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
+            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(3.0, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
+        }
+
+    }
+
+    internal fun autoReset() {
+        this.reset()
+        allMasters.forEach { it.configPeakOutput(1.0, -1.0, 10) }
+    }
+
+
+    internal fun teleopReset() {
+        this.reset()
+        allMasters.forEach {
+            it.configPeakOutput(0.8, -0.8, 10)
+            it.clearMotionProfileTrajectories()
+            it.selectProfileSlot(0, 0)
         }
     }
+
+    var gear
+        get() = Gear.getGear(gearSolenoid.get())
+        set(value) {
+            when (value) {
+                Gear.HIGH -> allMasters.forEach {
+                    it.configPIDF(DriveConstants.PID_SLOT_HIGH, DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, DriveConstants.MAX_RPM_HIGH, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+                    it.selectProfileSlot(DriveConstants.PID_SLOT_HIGH, 0)
+                }
+                Gear.LOW -> allMasters.forEach{
+                    it.configPIDF(DriveConstants.PID_SLOT_LOW, DriveConstants.P_LOW, DriveConstants.I_LOW, DriveConstants.D_LOW, DriveConstants.MAX_RPM_LOW, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+                    it.selectProfileSlot(DriveConstants.PID_SLOT_LOW, 0)
+                }
+            }
+            gearSolenoid.set(value.state)
+        }
 
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)
@@ -102,15 +143,15 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
 
         leftMaster.set(controlMode, leftSpeed * controlMode.scale() * m_maxOutput)
-        rightMaster.set(controlMode, -rightSpeed * controlMode.scale() * m_maxOutput)
+        rightMaster.set(controlMode, rightSpeed * controlMode.scale() * m_maxOutput)
 
-        m_safetyHelper.feed()
+        feedSafety()
     }
 
     // Variables to control Curvature Drive
-    private var m_quickStopThreshold = kDefaultQuickStopThreshold
-    private var m_quickStopAlpha = kDefaultQuickStopAlpha
-    private var m_quickStopAccumulator = 0.0
+    private var stopThreshold = kDefaultQuickStopThreshold
+    private var stopAlpha = kDefaultQuickStopAlpha
+    private var stopAccumulator = 0.0
 
     /**
      * Drives the motors in curvature drive motion.
@@ -120,89 +161,71 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      * @param isQuickTurn Decides if quick turn is enabled or disabled.
      */
     fun curvatureDrive(controlMode: ControlMode, xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
-        var xSpeed = xSpeed
-        var zRotation = zRotation
+        var speed = xSpeed
+        var rotation = zRotation
 
-        xSpeed = limit(xSpeed)
-        xSpeed = applyDeadband(xSpeed, m_deadband)
+        speed = limit(speed)
+        speed = applyDeadband(speed, m_deadband)
 
-        zRotation = limit(zRotation)
-        zRotation = applyDeadband(zRotation, m_deadband)
+        rotation = limit(rotation)
+        rotation = applyDeadband(rotation, m_deadband)
 
         val angularPower: Double
         val overPower: Boolean
 
         if (isQuickTurn) {
-            if (Math.abs(xSpeed) < m_quickStopThreshold) {
-                m_quickStopAccumulator = (1 - m_quickStopAlpha) * m_quickStopAccumulator + m_quickStopAlpha * limit(zRotation) * 2.0
+            if (Math.abs(speed) < stopThreshold) {
+                stopAccumulator = (1 - stopAlpha) * stopAccumulator + stopAlpha * limit(rotation) * 2.0
             }
             overPower = true
-            angularPower = zRotation
+            angularPower = rotation
         } else {
             overPower = false
-            angularPower = Math.abs(xSpeed) * zRotation - m_quickStopAccumulator
+            angularPower = Math.abs(speed) * rotation - stopAccumulator
 
-            if (m_quickStopAccumulator > 1) {
-                m_quickStopAccumulator -= 1.0
-            } else if (m_quickStopAccumulator < -1) {
-                m_quickStopAccumulator += 1.0
-            } else {
-                m_quickStopAccumulator = 0.0
+            when {
+                stopAccumulator > 1 -> stopAccumulator -= 1.0
+                stopAccumulator < -1 -> stopAccumulator += 1.0
+                else -> stopAccumulator = 0.0
             }
         }
 
-        var leftMotorOutput = xSpeed + angularPower
-        var rightMotorOutput = xSpeed - angularPower
+        var leftMotorOutput = speed + angularPower
+        var rightMotorOutput = speed - angularPower
 
         // If rotation is overpowered, reduce both outputs to within acceptable range
         if (overPower) {
-            if (leftMotorOutput > 1.0) {
-                rightMotorOutput -= leftMotorOutput - 1.0
-                leftMotorOutput = 1.0
-            } else if (rightMotorOutput > 1.0) {
-                leftMotorOutput -= rightMotorOutput - 1.0
-                rightMotorOutput = 1.0
-            } else if (leftMotorOutput < -1.0) {
-                rightMotorOutput -= leftMotorOutput + 1.0
-                leftMotorOutput = -1.0
-            } else if (rightMotorOutput < -1.0) {
-                leftMotorOutput -= rightMotorOutput + 1.0
-                rightMotorOutput = -1.0
+            when {
+                leftMotorOutput > 1.0 -> {
+                    rightMotorOutput -= leftMotorOutput - 1.0
+                    leftMotorOutput = 1.0
+                }
+                rightMotorOutput > 1.0 -> {
+                    leftMotorOutput -= rightMotorOutput - 1.0
+                    rightMotorOutput = 1.0
+                }
+                leftMotorOutput < -1.0 -> {
+                    rightMotorOutput -= leftMotorOutput + 1.0
+                    leftMotorOutput = -1.0
+                }
+                rightMotorOutput < -1.0 -> {
+                    leftMotorOutput -= rightMotorOutput + 1.0
+                    rightMotorOutput = -1.0
+                }
             }
         }
 
         leftMaster.set(controlMode, leftMotorOutput * controlMode.scale() * m_maxOutput)
         rightMaster.set(controlMode, rightMotorOutput * controlMode.scale() * m_maxOutput)
 
-        m_safetyHelper.feed()
+        feedSafety()
     }
 }
 
-/**
- * Configures the PID for the specified motor
- * @param p Proportional gain
- * @param i Integral gain
- * @param d Differential gain
- * @param power Max throttle power
- * @param rpm Max RPM
- * @param sensorUnitsPerRotation Sensor units per rotation
- * @param dev Feedback device used with the motor
- */
-fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double, dev: FeedbackDevice) {
-    configurePIDF(p, i, d, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation))
-    configSelectedFeedbackSensor(dev, 0, 10)
-}
+enum class Gear(val state: Boolean) {
+    HIGH(false), LOW(true);
 
-/**
- * Configures the PID for the specified motor
- * @param p Proportional gain
- * @param i Integral gain
- * @param d Differential gain
- * @param f Feed-forward gain
- */
-fun TalonSRX.configurePIDF(p: Double, i: Double, d: Double, f: Double) {
-    config_kP(0, p, 10)
-    config_kI(0, i, 10)
-    config_kD(0, d, 10)
-    config_kF(0, f, 10)
+    companion object {
+        fun getGear(solenoidState: Boolean) = Gear.values().find { it.state == solenoidState }!!
+    }
 }

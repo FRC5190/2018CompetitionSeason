@@ -1,9 +1,9 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.20"
+    id "org.jetbrains.kotlin.jvm" version "1.2.21"
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.15"
+    id "jaci.openrio.gradle.GradleRIO" version "2018.01.22"
 }
 
 def TEAM = 5190
@@ -30,11 +30,12 @@ repositories {
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
 // and NavX.
 dependencies {
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
     compile wpilib()
     compile ctre()
     compile navx()
     compile openrio.powerup.matchData()
-//    compile pathfinder()
+    compile pathfinder()
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
