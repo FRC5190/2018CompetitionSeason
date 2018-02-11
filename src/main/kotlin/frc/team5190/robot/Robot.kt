@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.arm.*
-import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.auto.MotionProfileCommand
+import frc.team5190.robot.auto.Paths
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
@@ -22,8 +22,6 @@ import frc.team5190.robot.listener.Listener
 import frc.team5190.robot.listener.ListenerSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
-import frc.team5190.robot.util.commandGroup
-import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
 /**
@@ -40,7 +38,7 @@ class Robot : IterativeRobot() {
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
-    private val sideChooser = SendableChooser<StartingPositions>()
+//    private val sideChooser = SendableChooser<StartingPositions>()
 
     // Shows a dropdown of the controllers that weill be used.
     private val controllerChooser = SendableChooser<String>()
@@ -60,7 +58,7 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-        VisionSubsystem
+//        VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
         Listener.INSTANCE
@@ -68,14 +66,14 @@ class Robot : IterativeRobot() {
         ArmSubsystem
         NavX
 
-        StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
+//        StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
 
         controllerChooser.addObject("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
 
         controllerChooser.addDefault("Xbox", "Xbox")
 
-        SmartDashboard.putData("Starting Position", sideChooser)
+//        SmartDashboard.putData("Starting Position", sideChooser)
         SmartDashboard.putData("Controller", controllerChooser)
     }
 
@@ -102,15 +100,11 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
         SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
 
-        SmartDashboard.putBoolean("Elevator Motor Status", ElevatorSubsystem.stateBoolean)
-        SmartDashboard.putBoolean("Arm Motor Status", ArmSubsystem.stateBoolean)
-        SmartDashboard.putBoolean("Intake Motor Status", IntakeSubsystem.stateBoolean)
-
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
         SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
         SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
-        SmartDashboard.putData("Vision Subsystem", VisionSubsystem)
+//        SmartDashboard.putData("Vision Subsystem", VisionSubsystem)
         SmartDashboard.putData("Gyro", NavX)
 
         Scheduler.getInstance().run()
@@ -129,8 +123,10 @@ class Robot : IterativeRobot() {
 
         NavX.reset()
 
-        AutoHelper.getCommandGroupFromData(sideChooser.selected
-                ?: StartingPositions.CENTER, switchSide, scaleSide).start()
+        MotionProfileCommand(Paths.LS_LL_SCALE).start()
+
+//        AutoHelper.getCommandGroupFromData(sideChooser.selected
+//                ?: StartingPositions.CENTER, switchSide, scaleSide).start()
 
 
     }
@@ -146,11 +142,11 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-        commandGroup {
-            if (ArmSubsystem.currentPosition < ArmPosition.DOWN.ticks)
-                addSequential(AutoArmCommand(ArmPosition.DOWN))
-            addSequential(ResetElevatorCommand())
-        }.start()
+//        commandGroup {
+//            if (ArmSubsystem.currentPosition < ArmPosition.DOWN.ticks)
+//                addSequential(AutoArmCommand(ArmPosition.DOWN))
+//            addSequential(ResetElevatorCommand())
+//        }.start()
 
         DriveSubsystem.currentCommand?.cancel()
 

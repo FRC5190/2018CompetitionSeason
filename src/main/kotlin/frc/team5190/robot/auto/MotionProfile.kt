@@ -5,9 +5,7 @@
 
 package frc.team5190.robot.auto
 
-import com.ctre.phoenix.motion.MotionProfileStatus
-import com.ctre.phoenix.motion.SetValueMotionProfile
-import com.ctre.phoenix.motion.TrajectoryPoint
+import com.ctre.phoenix.motion.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
@@ -62,11 +60,11 @@ class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryL
 
         DriveSubsystem.falconDrive.leftMotors.forEach {
             it.inverted = isReversed
-            it.setSensorPhase(true)
+            it.setSensorPhase(false)
         }
         DriveSubsystem.falconDrive.rightMotors.forEach {
             it.inverted = !isReversed
-            it.setSensorPhase(true)
+            it.setSensorPhase(false)
         }
 
         if (isReversed) {

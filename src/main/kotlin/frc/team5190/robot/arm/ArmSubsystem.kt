@@ -2,12 +2,14 @@ package frc.team5190.robot.arm
 
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.util.*
 
 object ArmSubsystem : Subsystem() {
 
-    private val currentBuffer =  CircularBuffer(50)
+    private val currentBuffer =  CircularBuffer(25)
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
 
     val currentPosition
@@ -19,11 +21,9 @@ object ArmSubsystem : Subsystem() {
     private val motorAmperage
         get() = masterArmMotor.outputCurrent
 
-    val stateBoolean
-        get() = state == 1
-
-
-    private var state = 0
+    private var state = MotorState.OK
+    private var time = 0.0
+    private var stalled = false
 
     init {
         // hardware for this subsystem includes one motor and an absolute encoder
@@ -39,22 +39,48 @@ object ArmSubsystem : Subsystem() {
         // closed loop configuration
         masterArmMotor.configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
         masterArmMotor.configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
-        masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+        masterArmMotor.configPeakOutput(1.0, -ArmConstants.PEAK_OUT, 10)
         masterArmMotor.configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
 
         // motion magic settings
         masterArmMotor.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
         masterArmMotor.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
 
-        currentBuffer.configureForTalon(ArmConstants.PEAK_WATTAGE, ArmConstants.PEAK_DURATION)
+        currentBuffer.configureForTalon(20, 5, 500)
     }
 
     fun set(controlMode: ControlMode, output: Double) {
-        masterArmMotor.set(controlMode, output, currentBuffer, 0.0)
+        masterArmMotor.set(controlMode, output)
     }
 
     override fun initDefaultCommand() {
         this.defaultCommand = ManualArmCommand()
+    }
+
+    override fun periodic() {
+
+        currentBuffer.add(masterArmMotor.outputCurrent)
+        state = masterArmMotor.limitCurrent(currentBuffer)
+
+        time = Timer.getFPGATimestamp()
+
+        when (state) {
+            MotorState.OK -> {
+                if (stalled) {
+                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
+                } else {
+                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+                }
+            }
+            MotorState.STALL -> {
+                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
+                stalled = true
+            }
+            MotorState.GOOD -> masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+        }
+
+        SmartDashboard.putNumber("Out Current", masterArmMotor.outputCurrent)
+        SmartDashboard.putNumber("Out Percent", masterArmMotor.motorOutputPercent)
     }
 }
 

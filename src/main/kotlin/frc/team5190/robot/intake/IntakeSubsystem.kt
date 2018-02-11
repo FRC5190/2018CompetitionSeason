@@ -32,7 +32,7 @@ object IntakeSubsystem : Subsystem() {
         intakeTalonSlave.follow(intakeTalon)
         intakeTalonSlave.inverted = true
 
-        currentBuffer.configureForTalon(IntakeConstants.PEAK_WATTAGE, IntakeConstants.PEAK_DURATION)
+        currentBuffer.configureForTalon(IntakeConstants.PEAK_WATTAGE, IntakeConstants.PEAK_DURATION, 10)
     }
 
     fun set(controlMode: ControlMode, motorOutput: Double) {

@@ -41,7 +41,7 @@ class AutoHelper {
 //                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.2))
 
                                     this.addSequential(commandGroup {
-//                                        this.addParallel(IntakeHoldCommand(), 0.001)
+                                        //                                        this.addParallel(IntakeHoldCommand(), 0.001)
                                         this.addParallel(MotionProfileCommand(Paths.FEET_1_5, true))
 //                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
 //                                        this.addParallel(AutoArmCommand(ArmPosition.DOWN))
@@ -56,7 +56,7 @@ class AutoHelper {
                                     this.addSequential(MotionProfileCommand(Paths.LS_LL_SWTOSC, true))
 
                                     this.addSequential(commandGroup {
-//                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        //                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
 //                                        this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
                                     })
 
@@ -72,7 +72,7 @@ class AutoHelper {
                                         this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                                     })
 
-//                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
 
                                     this.addSequential(commandGroup {
                                         this.addParallel(IntakeHoldCommand(), 0.001)
@@ -83,7 +83,7 @@ class AutoHelper {
                                         this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                         this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                         this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-//                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 0.5, 2.5))
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, 0.5, 2.5))
                                     })
 
                                     this.addSequential(IntakeHoldCommand(), 0.001)
@@ -105,7 +105,7 @@ class AutoHelper {
                                         this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                                     })
 
-//                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
 
                                     this.addSequential(commandGroup {
                                         this.addParallel(IntakeHoldCommand(), 0.001)
@@ -116,7 +116,7 @@ class AutoHelper {
                                         this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                         this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                         this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-//                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 0.5, 2.5))
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, 0.5, 2.5))
                                     })
 
                                     this.addSequential(IntakeHoldCommand(), 0.001)
@@ -133,7 +133,7 @@ class AutoHelper {
                                         this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                                     })
 
-//                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
 
                                     this.addSequential(commandGroup {
                                         this.addParallel(IntakeHoldCommand(), 0.001)
@@ -144,7 +144,7 @@ class AutoHelper {
                                         this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                         this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                         this.addParallel(MotionProfileCommand(Paths.FEET_1_5))
-//                                        this.addParallel(IntakeCommand(IntakeDirection.IN, true, 0.5, 2.5))
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, 0.5, 2.5))
                                     })
 
                                     this.addSequential(IntakeHoldCommand(), 0.001)
@@ -152,8 +152,8 @@ class AutoHelper {
                                         this.addParallel(MotionProfileCommand(Paths.LS_RR_SWTOSC, true))
                                         this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                                         this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
-                                    } )
-//                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.7, 0.2))
+                                    })
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.7, 0.2))
                                     this.addSequential(IntakeHoldCommand(), 0.001)
 
                                 }
@@ -174,9 +174,9 @@ class AutoHelper {
                                 this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                             })
 
-//                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5, 0.2))
 //
-                           this.addSequential(commandGroup {
+                            this.addSequential(commandGroup {
                                 this.addParallel(IntakeHoldCommand(), 0.001)
                                 this.addParallel(MotionProfileCommand(Paths.CS_L_CENTER, true))
                             })
@@ -187,7 +187,7 @@ class AutoHelper {
                                 this.addParallel(MotionMagicCommand((VisionSubsystem.tgtRange_in - 24) / 12))
                                 this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                 this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-//                                this.addParallel(IntakeCommand(IntakeDirection.IN, true, 2.0))
+                                this.addParallel(IntakeCommand(IntakeDirection.IN, 2.0))
                             })
 
                             this.addSequential(MotionMagicCommand(1.5, true))
@@ -195,7 +195,7 @@ class AutoHelper {
                             this.addSequential(IntakeHoldCommand(), 0.001)
                             this.addSequential(TurnCommand(-140.0))
                             this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT))
-//                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5))
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5))
                         }
                         MatchData.OwnedSide.RIGHT -> commandGroup {
                             // R
@@ -208,7 +208,7 @@ class AutoHelper {
 //                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5, 0.2))
 
                             this.addSequential(commandGroup {
-//                                this.addParallel(IntakeHoldCommand(), 0.001)
+                                //                                this.addParallel(IntakeHoldCommand(), 0.001)
                                 this.addParallel(MotionProfileCommand(Paths.CS_R_CENTER, true))
                             })
 
@@ -224,7 +224,7 @@ class AutoHelper {
 //                            this.addSequential(IntakeHoldCommand(), 0.001)
                             this.addSequential(TurnCommand(-140.0))
                             this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT))
-//                            this.addSequential(IntakeCommand(IntakeDirection.OUT, true, 0.5))
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, 0.5))
                         }
                         MatchData.OwnedSide.UNKNOWN -> commandGroup { this.addSequential(MotionProfileCommand(Paths.CS_STRAIGHT)) }
                     }
@@ -253,6 +253,7 @@ class AutoHelper {
         }
     }
 }
+
 
 enum class Paths(private val filePath: String) {
 
@@ -323,6 +324,7 @@ enum class Paths(private val filePath: String) {
         }
     }
 }
+
 
 /**
  * Stores starting position of the robot.

@@ -22,7 +22,7 @@ class TeleDriveCommand : Command() {
      */
     override fun execute() {
         // TODO Configure Velocity Drive
-        val mode = ControlMode.Velocity
+        val mode = ControlMode.PercentOutput
 
         when (DriveSubsystem.controlMode) {
             DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())

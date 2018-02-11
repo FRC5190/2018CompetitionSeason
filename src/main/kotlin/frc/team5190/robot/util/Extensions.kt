@@ -2,6 +2,7 @@ package frc.team5190.robot.util
 
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.CommandGroup
 
 fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
@@ -56,13 +57,29 @@ fun TalonSRX.configCurrentLimiting(peakAmps: Int, peakDurationMs: Int, continuou
 }
 
 fun TalonSRX.set(controlMode: ControlMode, value: Double, wattRegulator: CircularBuffer, scalingFactor: Double = 0.0) {
-    wattRegulator.add(this.outputCurrent * this.motorOutputVoltage)
+    wattRegulator.add(this.outputCurrent)
 
-    val newValue: Double = when (wattRegulator.motorState) {
-        MotorState.OK -> value
-        MotorState.STALL -> value * scalingFactor
-        MotorState.DEAD -> 0.0
+    val currentTime = Timer.getFPGATimestamp()
+    var newValue = 0.0
+
+    if (currentTime - wattRegulator.stallTime < 3.0) {
+        return
     }
 
+    when (wattRegulator.motorState) {
+        MotorState.OK -> newValue = value
+        MotorState.STALL -> newValue = value * scalingFactor
+        MotorState.GOOD -> {
+            wattRegulator.stallTime = currentTime
+            newValue = 0.0
+        }
+    }
+
+    println(wattRegulator.motorState.name)
+
     this.set(controlMode, newValue)
+}
+
+fun TalonSRX.limitCurrent(buffer: CircularBuffer): MotorState {
+    return buffer.motorState
 }

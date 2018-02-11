@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.arm.*
 import frc.team5190.robot.getTriggerPressed
@@ -21,13 +22,12 @@ object ElevatorSubsystem : Subsystem() {
     val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition
 
-    val stateBoolean
-        get() = state == 1
 
     internal var hasReset = false
 
-    private var state = 0
+    private var state = MotorState.OK
     private var currentCommandGroup: CommandGroup? = null
+    private var stalled = false
 
     init {
         masterElevatorMotor.inverted = false
@@ -55,7 +55,7 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
 
-        currentBuffer.configureForTalon(ElevatorConstants.PEAK_WATTAGE, ElevatorConstants.PEAK_DURATION)
+        currentBuffer.configureForTalon(5,30, 1000)
 
         // more settings
         reset()
@@ -69,7 +69,7 @@ object ElevatorSubsystem : Subsystem() {
 
 
     fun set(controlMode: ControlMode, output: Double) {
-        masterElevatorMotor.set(controlMode, output, currentBuffer, 0.0)
+        masterElevatorMotor.set(controlMode, output)
     }
 
     private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
@@ -79,6 +79,30 @@ object ElevatorSubsystem : Subsystem() {
     }
 
     override fun periodic() {
+
+        currentBuffer.add(masterElevatorMotor.outputCurrent)
+        state = masterElevatorMotor.limitCurrent(currentBuffer)
+
+
+
+        when (state) {
+            MotorState.OK -> {
+                if (stalled) {
+                    masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                } else {
+                    masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+                }
+            }
+            MotorState.STALL -> {
+                masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                stalled = true
+            }
+            MotorState.GOOD -> masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+        }
+
+        SmartDashboard.putNumber("Motor Amps", masterElevatorMotor.outputCurrent)
+        SmartDashboard.putNumber("Motor Out", masterElevatorMotor.motorOutputPercent)
+
         if (this.isElevatorAtBottom) {
             this.resetEncoders()
         }
