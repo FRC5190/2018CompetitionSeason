@@ -18,6 +18,8 @@ import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.listener.Listener
+import frc.team5190.robot.listener.ListenerSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.util.commandGroup
@@ -61,6 +63,8 @@ class Robot : IterativeRobot() {
         VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
+        Listener.INSTANCE
+        ListenerSubsystem
         ArmSubsystem
         NavX
 
