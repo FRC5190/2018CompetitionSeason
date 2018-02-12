@@ -14,7 +14,6 @@ import frc.team5190.robot.util.*
 
 object IntakeSubsystem : Subsystem() {
 
-    private val currentBuffer = CircularBuffer(50)
     private val intakeTalon = TalonSRX(MotorIDs.INTAKE_LEFT)
 
     val stateBoolean
@@ -31,12 +30,10 @@ object IntakeSubsystem : Subsystem() {
         val intakeTalonSlave = TalonSRX(MotorIDs.INTAKE_RIGHT)
         intakeTalonSlave.follow(intakeTalon)
         intakeTalonSlave.inverted = true
-
-        currentBuffer.configureForTalon(IntakeConstants.PEAK_WATTAGE, IntakeConstants.PEAK_DURATION, 10)
     }
 
     fun set(controlMode: ControlMode, motorOutput: Double) {
-        intakeTalon.set(controlMode, motorOutput, currentBuffer, IntakeConstants.LIMITING_REDUCTION_FACTOR)
+        intakeTalon.set(controlMode, motorOutput)
     }
 
     override fun initDefaultCommand() {
@@ -47,12 +44,12 @@ object IntakeSubsystem : Subsystem() {
         if (!Robot.INSTANCE!!.isOperatorControl) return
 
         when {
+            MainXbox.getBumper(GenericHID.Hand.kLeft) -> {
+                IntakeCommand(IntakeDirection.IN).start()
+                teleIntake = true
+            }
             MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 -> {
-                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= ArmPosition.MIDDLE.ticks - 100) {
-                    IntakeCommand(IntakeDirection.OUT).start()
-                } else {
-                    IntakeCommand(IntakeDirection.IN).start()
-                }
+                IntakeCommand(IntakeDirection.OUT).start()
                 teleIntake = true
             }
             teleIntake -> {

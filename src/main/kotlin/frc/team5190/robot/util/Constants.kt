@@ -55,6 +55,8 @@ object DriveConstants {
     const val D_LOW = 0.0
 
     const val PID_SLOT_LOW = 1
+
+    const val IS_RACE_ROBOT = false
 }
 
 object ElevatorConstants {

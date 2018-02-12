@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.PIDCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 
-class FindCubeCommand : PIDCommand(0.05, 0.003,0.03) {
+class FindCubeCommand : PIDCommand(0.1, 0.00,0.3) {
 
     init {
         requires(VisionSubsystem)
@@ -16,7 +16,6 @@ class FindCubeCommand : PIDCommand(0.05, 0.003,0.03) {
     override fun initialize() {
         setTimeout(5.0)
         setName("Jevois", "FindCube")
-        pidController.setAbsoluteTolerance(2.0)
 
         Timer.getFPGATimestamp()
         val visible = VisionSubsystem.isTgtVisible
@@ -28,7 +27,7 @@ class FindCubeCommand : PIDCommand(0.05, 0.003,0.03) {
         println(setpoint + 10)
         setInputRange(-180.0, 180.0)
         pidController.setOutputRange(-0.9, 0.9)
-        pidController.setAbsoluteTolerance(1.0)
+        pidController.setAbsoluteTolerance(5.0)
         pidController.setContinuous(true)
     }
 
