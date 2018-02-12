@@ -74,16 +74,9 @@ object ElevatorSubsystem : Subsystem() {
 
     private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
 
-    override fun initDefaultCommand() {
-        this.defaultCommand = ManualElevatorCommand()
-    }
-
-    override fun periodic() {
-
+    private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
         state = masterElevatorMotor.limitCurrent(currentBuffer)
-
-
 
         when (state) {
             MotorState.OK -> {
@@ -99,6 +92,15 @@ object ElevatorSubsystem : Subsystem() {
             }
             MotorState.GOOD -> masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
         }
+    }
+
+    override fun initDefaultCommand() {
+        this.defaultCommand = ManualElevatorCommand()
+    }
+
+    override fun periodic() {
+
+        currentLimiting()
 
         SmartDashboard.putNumber("Motor Amps", masterElevatorMotor.outputCurrent)
         SmartDashboard.putNumber("Motor Out", masterElevatorMotor.motorOutputPercent)

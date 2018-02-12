@@ -2,14 +2,11 @@ package frc.team5190.robot.arm
 
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Subsystem
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.util.*
 
 object ArmSubsystem : Subsystem() {
 
-    private val currentBuffer =  CircularBuffer(25)
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
 
     val currentPosition
@@ -18,12 +15,6 @@ object ArmSubsystem : Subsystem() {
     val closedLoopError
         get() = masterArmMotor.getClosedLoopError(0)
 
-    private val motorAmperage
-        get() = masterArmMotor.outputCurrent
-
-    private var state = MotorState.OK
-    private var time = 0.0
-    private var stalled = false
 
     init {
         // hardware for this subsystem includes one motor and an absolute encoder
@@ -45,8 +36,6 @@ object ArmSubsystem : Subsystem() {
         // motion magic settings
         masterArmMotor.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
         masterArmMotor.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
-
-        currentBuffer.configureForTalon(20, 5, 500)
     }
 
     fun set(controlMode: ControlMode, output: Double) {
@@ -55,32 +44,6 @@ object ArmSubsystem : Subsystem() {
 
     override fun initDefaultCommand() {
         this.defaultCommand = ManualArmCommand()
-    }
-
-    override fun periodic() {
-
-        currentBuffer.add(masterArmMotor.outputCurrent)
-        state = masterArmMotor.limitCurrent(currentBuffer)
-
-        time = Timer.getFPGATimestamp()
-
-        when (state) {
-            MotorState.OK -> {
-                if (stalled) {
-                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
-                } else {
-                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
-                }
-            }
-            MotorState.STALL -> {
-                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
-                stalled = true
-            }
-            MotorState.GOOD -> masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
-        }
-
-        SmartDashboard.putNumber("Out Current", masterArmMotor.outputCurrent)
-        SmartDashboard.putNumber("Out Percent", masterArmMotor.motorOutputPercent)
     }
 }
 
