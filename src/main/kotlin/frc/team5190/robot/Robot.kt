@@ -11,15 +11,14 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.MotionProfileCommand
-import frc.team5190.robot.auto.Paths
+import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.listener.Listener
-import frc.team5190.robot.listener.ListenerSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
@@ -38,7 +37,7 @@ class Robot : IterativeRobot() {
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
-//    private val sideChooser = SendableChooser<StartingPositions>()
+    private val sideChooser = SendableChooser<StartingPositions>()
 
     // Shows a dropdown of the controllers that weill be used.
     private val controllerChooser = SendableChooser<String>()
@@ -56,24 +55,21 @@ class Robot : IterativeRobot() {
     override fun robotInit() {
         // https://www.chiefdelphi.com/forums/showthread.php?p=1724798
         LiveWindow.disableAllTelemetry()
-
         DriveSubsystem
 //        VisionSubsystem
-        IntakeSubsystem
-        ElevatorSubsystem
-        Listener.INSTANCE
-        ListenerSubsystem
-        ArmSubsystem
+//        IntakeSubsystem
+//        ElevatorSubsystem
+//        ArmSubsystem
         NavX
+        Listener
 
-//        StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
+        StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
 
         controllerChooser.addObject("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
-
         controllerChooser.addDefault("Xbox", "Xbox")
 
-//        SmartDashboard.putData("Starting Position", sideChooser)
+        SmartDashboard.putData("Starting Position", sideChooser)
         SmartDashboard.putData("Controller", controllerChooser)
     }
 
@@ -92,21 +88,20 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
         SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
 
-        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
-        SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
-
-        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
-
-        SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
-        SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
-
-        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
-        SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
-        SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
-        SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
+//        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
+//        SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
+//
+//        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
+//
+//        SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
+//        SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
+//
+//        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
+//        SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
+//        SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
+//        SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
 //        SmartDashboard.putData("Vision Subsystem", VisionSubsystem)
         SmartDashboard.putData("Gyro", NavX)
-
         Scheduler.getInstance().run()
     }
 
@@ -122,13 +117,7 @@ class Robot : IterativeRobot() {
         this.pollForFMSData()
 
         NavX.reset()
-
-        MotionProfileCommand(Paths.LS_LL_SCALE).start()
-
-//        AutoHelper.getCommandGroupFromData(sideChooser.selected
-//                ?: StartingPositions.CENTER, switchSide, scaleSide).start()
-
-
+        AutoHelper.getAuto(StartingPositions.CENTER, MatchData.OwnedSide.LEFT, MatchData.OwnedSide.LEFT).start()
     }
 
     /**
@@ -149,7 +138,6 @@ class Robot : IterativeRobot() {
 //        }.start()
 
         DriveSubsystem.currentCommand?.cancel()
-
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
     }

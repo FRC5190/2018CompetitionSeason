@@ -31,7 +31,7 @@ class CircularBuffer(private val size: Int) {
 
             iterator = if (average > highPeak!!) iterator + 1 else 0
 
-            println(average)
+//            println(average)
 
             return when {
                 average < lowPeak!! &&  iterator < peakDur!! / 20-> MotorState.GOOD
