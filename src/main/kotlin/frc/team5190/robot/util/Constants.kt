@@ -60,6 +60,8 @@ object DriveConstants {
 }
 
 object ElevatorConstants {
+    const val SENSOR_UNITS_PER_ROTATION = 1440
+
     const val PEAK_WATTAGE = 100
     const val PEAK_DURATION = 1000
 

@@ -152,12 +152,13 @@ object ElevatorSubsystem : Subsystem() {
         }
     }
 
-    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0
-    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.3 / 2.0)
+    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.3 / 2.0) * 12.0
+    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.3 / 2.0)
 }
 
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(24.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(60.0)),
-    INTAKE(500)
+    SCALE_UP(ElevatorSubsystem.inchesToNativeUnits(60.0)),
+    INTAKE((0.35 * ElevatorConstants.SENSOR_UNITS_PER_ROTATION).toInt())
 }

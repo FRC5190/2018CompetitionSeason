@@ -5,7 +5,6 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.arm.ArmPosition
@@ -53,21 +52,53 @@ class AutoHelper {
                         })
                         this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.3, outSpeed = 0.6))
                         this.addSequential(IntakeHoldCommand(), 0.001)
+                        // 2nd cube
                         this.addSequential(MotionMagicCommand(-1.0))
                         this.addSequential(commandGroup {
-                            this.addParallel(TurnCommand(115.0))
+                            this.addParallel(TurnCommand(170.0))
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                             this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
-                        this.addSequential(MotionMagicCommand(3.0))
-                        this.addSequential(FindCubeCommand())
-                        this.addSequential(MotionMagicCommand((VisionSubsystem.tgtRange_in - 10).coerceAtLeast(0.0) / 12))
+                        this.addSequential(IntakeCommand(IntakeDirection.IN))
+                        this.addSequential(MotionMagicCommand(7.11))
+                        //this.addSequential(MotionMagicCommand(3.0))
+                        //this.addSequential(FindCubeCommand())
+                        //this.addSequential(MotionMagicCommand((VisionSubsystem.tgtRange_in - 10).coerceAtLeast(0.0) / 12))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
                         this.addSequential(commandGroup {
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                             this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
+                        this.addSequential(MotionMagicCommand(1.0), 1.0)
                         this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
                         this.addSequential(IntakeHoldCommand(), 0.001)
+                        // 3rd cube
+                        this.addSequential(MotionMagicCommand(-1.0))
+                        this.addSequential(commandGroup {
+                            this.addParallel(TurnCommand(124.0))
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                            this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.IN))
+                        this.addSequential(MotionMagicCommand(2.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE_SECOND, isReversed = true))
+                            this.addParallel(commandGroup {
+                                this.addSequential(commandGroup {
+                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_UP))
+                                    this.addParallel(AutoArmCommand(ArmPosition.UP))
+                                })
+                                this.addSequential(AutoArmCommand(ArmPosition.BEHIND))
+                            })
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                        this.addSequential(AutoArmCommand(ArmPosition.UP))
+                        this.addSequential(commandGroup {
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                            this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                        })
                     }
                     /*
                     return commandGroup {
@@ -156,6 +187,7 @@ enum class Paths(private val filePath: String) {
     LS_LL_SWITCH("LS-LL/Switch"),   // TODO Test
     LS_LL_SWTOSC("LS-LL/SwToSc"),   // TODO Test
     LS_LL_SCALE("LS-LL/Scale"),
+    LS_LL_SCALE_SECOND("LS-LL/Scale Second"),
 
     LS_LR_SWITCH("LS-LR/Switch"),
     LS_LR_SWTOSC("LS-LR/SwToSc"),   // TODO Generate
