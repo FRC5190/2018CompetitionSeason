@@ -31,35 +31,9 @@ class AutoHelper {
         fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
-
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
-            println(folder)
-
             when (folder) {
-
-                "LS-RL" -> {
-                    return commandGroup {
-                        this.addSequential(commandGroup {
-                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE))
-                            // Move elevator up during the motion profile
-                            this.addParallel(commandGroup {
-                                this.addSequential(commandGroup {
-                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                }, 0.1)
-                                this.addSequential(TimedCommand(2.5))
-                                this.addSequential(commandGroup {
-                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                })
-                            })
-                        })
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-                    }
-                }
-
                 "LS-LL" -> {
                     return commandGroup {
                         this.addSequential(commandGroup {
@@ -107,8 +81,27 @@ class AutoHelper {
                         this.addSequential(IntakeHoldCommand(), 0.001)
                     }*/
                 }
-
-
+                "LS-RL" -> {
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE))
+                            // Move elevator up during the motion profile
+                            this.addParallel(commandGroup {
+                                this.addSequential(commandGroup {
+                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                }, 0.1)
+                                this.addSequential(TimedCommand(2.5))
+                                this.addSequential(commandGroup {
+                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                })
+                            })
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                    }
+                }
                 "CS-R" -> {
                     return commandGroup {
                         this.addSequential(commandGroup {
