@@ -74,16 +74,9 @@ object ElevatorSubsystem : Subsystem() {
 
     private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
 
-    override fun initDefaultCommand() {
-        this.defaultCommand = ManualElevatorCommand()
-    }
-
-    override fun periodic() {
-
+    private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
         state = masterElevatorMotor.limitCurrent(currentBuffer)
-
-
 
         when (state) {
             MotorState.OK -> {
@@ -99,6 +92,15 @@ object ElevatorSubsystem : Subsystem() {
             }
             MotorState.GOOD -> masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
         }
+    }
+
+    override fun initDefaultCommand() {
+        this.defaultCommand = ManualElevatorCommand()
+    }
+
+    override fun periodic() {
+
+        currentLimiting()
 
         SmartDashboard.putNumber("Motor Amps", masterElevatorMotor.outputCurrent)
         SmartDashboard.putNumber("Motor Out", masterElevatorMotor.motorOutputPercent)
@@ -152,12 +154,13 @@ object ElevatorSubsystem : Subsystem() {
         }
     }
 
-    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, 1440, 1.3 / 2.0) * 12.0
-    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, 1440, 1.3 / 2.0)
+    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.3 / 2.0) * 12.0
+    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.3 / 2.0)
 }
 
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(24.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(60.0)),
-    INTAKE(500)
+    SCALE_UP(ElevatorSubsystem.inchesToNativeUnits(60.0)),
+    INTAKE((0.35 * ElevatorConstants.SENSOR_UNITS_PER_ROTATION).toInt())
 }

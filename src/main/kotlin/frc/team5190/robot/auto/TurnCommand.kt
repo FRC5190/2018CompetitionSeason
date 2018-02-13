@@ -9,7 +9,7 @@ import frc.team5190.robot.sensors.NavX
  * Command that turns the robot to a certain angle
  * @param angle Angle to turn to in degrees
  */
-class TurnCommand(angle: Double) : PIDCommand(0.03, 0.003, 0.05) {
+class TurnCommand(angle: Double) : PIDCommand(0.075, 0.00, 0.1) {
 
     init {
         requires(DriveSubsystem)
