@@ -10,12 +10,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.pathfinder.MotionProfileTrajectory
 
 /**
  * Class that feeds the talon trajectory values to follow.
  */
-class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryList, private var rightTalon: TalonSRX, rightTrajectory: TrajectoryList, isReversed: Boolean) {
+class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: MotionProfileTrajectory, private var rightTalon: TalonSRX, rightTrajectory: MotionProfileTrajectory, isReversed: Boolean) {
 
     // Status of the motion profile
     private var status = MotionProfileStatus()
@@ -39,8 +39,8 @@ class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryL
     private val numLoopsTimeout = 10
 
     // The trajectory to load into the talon
-    private var leftTrajectory: TrajectoryList
-    private var rightTrajectory: TrajectoryList
+    private var leftTrajectory: MotionProfileTrajectory
+    private var rightTrajectory: MotionProfileTrajectory
 
     // Notifier
     private val leftNotifier = Notifier(leftTalon::processMotionProfileBuffer)
@@ -61,11 +61,11 @@ class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: TrajectoryL
 
         DriveSubsystem.falconDrive.leftMotors.forEach {
             it.inverted = isReversed
-            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(true)
         }
         DriveSubsystem.falconDrive.rightMotors.forEach {
             it.inverted = !isReversed
-            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(true)
         }
 
         if (isReversed) {

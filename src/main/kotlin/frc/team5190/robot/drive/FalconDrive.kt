@@ -58,7 +58,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         allMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(true)
             it.configOpenloopRamp(0.0, 10)
             // TODO: Need to configure current limits
         }
