@@ -51,7 +51,7 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
      */
     override fun end() {
         motionProfile.reset()
-//        DriveSubsystem.falconDrive.autoReset()
+        DriveSubsystem.falconDrive.autoReset()
 
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
