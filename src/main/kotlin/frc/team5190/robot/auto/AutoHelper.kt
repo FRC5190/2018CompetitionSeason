@@ -16,7 +16,6 @@ import frc.team5190.robot.intake.IntakeDirection
 import frc.team5190.robot.intake.IntakeHoldCommand
 import frc.team5190.robot.pathfinder.Pathfinder
 import frc.team5190.robot.util.commandGroup
-import frc.team5190.robot.vision.FindCubeCommand
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
@@ -59,7 +58,7 @@ class AutoHelper {
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                             this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                             this.addParallel(frc.team5190.robot.util.commandGroup {
-                                this.addSequential(TurnCommand(-15.0))
+                                this.addSequential(TurnCommand(-15.0, true, 10.0))
                                 this.addSequential(commandGroup {
                                     this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                                     this.addParallel(MotionMagicCommand(4.0))
@@ -81,7 +80,7 @@ class AutoHelper {
                         // 3rd cube
                         this.addSequential(MotionMagicCommand(-1.0))
                         this.addSequential(commandGroup {
-                            this.addParallel(TurnCommand(124.0))
+                            this.addParallel(TurnCommand(124.0, true, 20.0))
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                             this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
@@ -158,7 +157,7 @@ class AutoHelper {
                         })
 
                         this.addSequential(commandGroup {
-                            this.addParallel(FindCubeCommand())
+                            this.addParallel(TurnCommand(10.0, true, 10.0))
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                             this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
