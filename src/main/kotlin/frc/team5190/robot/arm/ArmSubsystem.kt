@@ -48,5 +48,5 @@ object ArmSubsystem : Subsystem() {
 }
 
 enum class ArmPosition (val ticks: Int) {
-    BEHIND(1950), UP(1950), MIDDLE(1150), DOWN(900);
+    BEHIND(2200), UP(1950), MIDDLE(1150), DOWN(900);
 }

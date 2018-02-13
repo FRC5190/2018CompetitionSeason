@@ -5,7 +5,6 @@
 
 package frc.team5190.robot
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -13,13 +12,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.MotionProfileCommand
-import frc.team5190.robot.auto.Paths
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
@@ -122,8 +118,6 @@ class Robot : IterativeRobot() {
         this.pollForFMSData()
 
         NavX.reset()
-
-//        MotionProfileCommand(Paths.LS_LL_SCALE).start()
 
         AutoHelper.getAuto(StartingPositions.LEFT, MatchData.OwnedSide.LEFT, MatchData.OwnedSide.LEFT).start()
     }
