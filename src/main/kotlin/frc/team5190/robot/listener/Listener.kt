@@ -40,7 +40,7 @@ object Listener : ITableListener {
 
     fun getLeftPath(id: Int): MotionProfileTrajectory? {
         var retryCounter = 0
-        while (leftTrajectories[id] == null && retryCounter++ < 100) {
+        while (leftTrajectories[id] == null && retryCounter++ < 20) {
             Thread.sleep(50)
         }
 
@@ -53,7 +53,7 @@ object Listener : ITableListener {
 
     fun getRightPath(id: Int): MotionProfileTrajectory? {
         var retryCounter = 0
-        while (rightTrajectories[id] == null && retryCounter++ < 100) {
+        while (rightTrajectories[id] == null && retryCounter++ < 20) {
             Thread.sleep(50)
         }
 
@@ -66,7 +66,7 @@ object Listener : ITableListener {
 
     override fun valueChanged(iTable: ITable, string: String, receivedObject: Any, newValue: Boolean) {
         if (string.startsWith("response_") && newValue) {
-            val id:Int = receivedObject as Int
+            val id:Int = ((receivedObject as Double).toInt())
             val folder = pathfinderOutputTable.getString("folder_" + id, "")
             val path = pathfinderOutputTable.getString("path_" + id, "")
             deserializeTrajectoryArray(id, pathfinderOutputTable.getString("trajectories_" + id, "") as String)
@@ -99,7 +99,7 @@ object Listener : ITableListener {
     }
 
     private fun loadFromFiles(id: Int) {
-        println("Listener reading from backup store")
+        println("Reading $id from backup store")
         leftTrajectories.put(id, loadFromFile(localFiles[id] + " Left Detailed.csv", true))
         rightTrajectories.put(id, loadFromFile(localFiles[id] + " Right Detailed.csv", true))
     }

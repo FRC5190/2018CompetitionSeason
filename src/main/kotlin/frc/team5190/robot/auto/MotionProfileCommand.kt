@@ -9,24 +9,24 @@ import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.listener.Listener
 
-class MotionProfileCommand(requestId: Int, isReversed: Boolean = false) : Command() {
+class MotionProfileCommand(private val requestId: Int, private val isReversed: Boolean = false) : Command() {
 
-    private var motionProfile: MotionProfile
+    private lateinit var motionProfile: MotionProfile
 
     init {
         requires(DriveSubsystem)
-        motionProfile = MotionProfile(
-                DriveSubsystem.falconDrive.leftMaster,
-                Listener.getLeftPath(requestId)!!,
-                DriveSubsystem.falconDrive.rightMaster,
-                Listener.getRightPath(requestId)!!,
-                isReversed)
     }
 
     /**
      * Runs once whenever the command is started.
      */
     override fun initialize() {
+        motionProfile = MotionProfile(
+                DriveSubsystem.falconDrive.leftMaster,
+                Listener.getLeftPath(requestId)!!,
+                DriveSubsystem.falconDrive.rightMaster,
+                Listener.getRightPath(requestId)!!,
+                isReversed)
         motionProfile.startMotionProfile()
     }
 
@@ -45,7 +45,7 @@ class MotionProfileCommand(requestId: Int, isReversed: Boolean = false) : Comman
      */
     override fun end() {
         motionProfile.reset()
-        DriveSubsystem.falconDrive.autoReset()
+//        DriveSubsystem.falconDrive.autoReset()
 
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }

@@ -5,6 +5,7 @@
 
 package frc.team5190.robot
 
+import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -62,6 +63,7 @@ class Robot : IterativeRobot() {
 //        ArmSubsystem
         NavX
         Listener
+        CameraServer.getInstance().startAutomaticCapture("5190", 0)
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
 
@@ -109,7 +111,7 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        ResetElevatorCommand().start()
+//        ResetElevatorCommand().start()
 
         DriveSubsystem.autoReset()
         DriveSubsystem.falconDrive.gear = Gear.HIGH
@@ -117,14 +119,13 @@ class Robot : IterativeRobot() {
         this.pollForFMSData()
 
         NavX.reset()
-        AutoHelper.getAuto(StartingPositions.CENTER, MatchData.OwnedSide.LEFT, MatchData.OwnedSide.LEFT).start()
+        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide).start()
     }
 
     /**
      * Executed once when robot is disabled.
      */
     override fun disabledInit() {
-        this.pollForFMSData()
     }
 
     /**
@@ -143,7 +144,7 @@ class Robot : IterativeRobot() {
     }
 
     private fun pollForFMSData() {
-        if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
-        if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+        switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
+        scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
     }
 }
