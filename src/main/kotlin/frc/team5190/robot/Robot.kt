@@ -5,23 +5,21 @@
 
 package frc.team5190.robot
 
-import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.AutoCommandGroup
-import frc.team5190.robot.auto.Paths
+import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
+import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
 /**
@@ -38,7 +36,7 @@ class Robot : IterativeRobot() {
     }
 
     // Shows a drop down on dashboard that allows us to select which mode we want
-    private val sideChooser = SendableChooser<StartingPositions>()
+//    private val sideChooser = SendableChooser<StartingPositions>()
 
     // Shows a dropdown of the controllers that weill be used.
     private val controllerChooser = SendableChooser<String>()
@@ -58,22 +56,21 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
+        VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
         ArmSubsystem
         NavX
 
-        StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
+//        StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
 
         controllerChooser.addObject("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
 
         controllerChooser.addDefault("Xbox", "Xbox")
 
-        SmartDashboard.putData("Starting Position", sideChooser)
+//        SmartDashboard.putData("Starting Position", sideChooser)
         SmartDashboard.putData("Controller", controllerChooser)
-
-        ResetElevatorCommand().start()
     }
 
     /**
@@ -96,11 +93,14 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
+        SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
+        SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
+
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
         SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
-
-
+        SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
+//        SmartDashboard.putData("Vision Subsystem", VisionSubsystem)
         SmartDashboard.putData("Gyro", NavX)
 
         Scheduler.getInstance().run()
@@ -110,16 +110,16 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-        ArmSubsystem.set(ControlMode.Position, ArmSubsystem.currentPosition.toDouble())
+//        ResetElevatorCommand().start()
+
         DriveSubsystem.autoReset()
         DriveSubsystem.falconDrive.gear = Gear.HIGH
 
-        NavX.reset()
-
         this.pollForFMSData()
 
-        AutoCommandGroup(Paths.CENTER_STATION_LEFT_SWITCH).start()
+        NavX.reset()
+
+        AutoHelper.getAuto(StartingPositions.LEFT, MatchData.OwnedSide.LEFT, MatchData.OwnedSide.LEFT).start()
     }
 
     /**
@@ -133,8 +133,11 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-//        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition)
-        ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+//        commandGroup {
+//            if (ArmSubsystem.currentPosition < ArmPosition.DOWN.ticks)
+//                addSequential(AutoArmCommand(ArmPosition.DOWN))
+//            addSequential(ResetElevatorCommand())
+//        }.start()
 
         DriveSubsystem.currentCommand?.cancel()
 

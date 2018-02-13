@@ -1,50 +1,65 @@
 package frc.team5190.robot.intake
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.Robot
+import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.util.MotorIDs
-import frc.team5190.robot.util.SolenoidIDs
+import frc.team5190.robot.util.*
 
 object IntakeSubsystem : Subsystem() {
 
-    val intakeTalon = WPI_TalonSRX(MotorIDs.INTAKE_LEFT)
+    private val intakeTalon = TalonSRX(MotorIDs.INTAKE_LEFT)
 
+    val stateBoolean
+        get() = state == 1
 
     val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
-    init {
-        val intakeTalonSlave = WPI_TalonSRX(MotorIDs.INTAKE_RIGHT)
-        intakeTalonSlave.follow(intakeTalon)
+    private var teleIntake = false
+    private var state = 0
 
+    init {
+        intakeTalon.inverted = false
+
+        val intakeTalonSlave = TalonSRX(MotorIDs.INTAKE_RIGHT)
+        intakeTalonSlave.follow(intakeTalon)
         intakeTalonSlave.inverted = true
     }
 
-    override fun initDefaultCommand() {
-        defaultCommand = IntakeHoldCommand()
+    fun set(controlMode: ControlMode, motorOutput: Double) {
+        intakeTalon.set(controlMode, motorOutput)
     }
 
-    private var teleIntake = false
+    override fun initDefaultCommand() {
+        this.defaultCommand = IntakeHoldCommand()
+    }
 
     override fun periodic() {
-        if (Robot.INSTANCE!!.isOperatorControl) {
-            if (MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5) {
-                if (ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) >= 12 || ArmSubsystem.currentPosition >= 450) {
-                    IntakeCommand(IntakeDirection.OUT).start()
-                } else {
-                    IntakeCommand(IntakeDirection.IN).start()
-                }
+        if (!Robot.INSTANCE!!.isOperatorControl) return
+
+        when {
+            MainXbox.getBumper(GenericHID.Hand.kLeft) -> {
+                IntakeCommand(IntakeDirection.IN).start()
                 teleIntake = true
-            } else if (teleIntake) {
+            }
+            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 -> {
+                IntakeCommand(IntakeDirection.OUT).start()
+                teleIntake = true
+            }
+            teleIntake -> {
                 currentCommand?.cancel()
                 teleIntake = false
             }
         }
     }
+}
 
+enum class IntakeDirection {
+    IN, OUT
 }

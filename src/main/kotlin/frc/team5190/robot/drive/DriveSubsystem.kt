@@ -38,6 +38,12 @@ object DriveSubsystem : Subsystem() {
             listOf(MotorIDs.FRONT_RIGHT, MotorIDs.REAR_RIGHT).map { WPI_TalonSRX(it) },
             Solenoid(SolenoidIDs.PCM, SolenoidIDs.DRIVE))
 
+    val leftMotorAmperage
+        get() = falconDrive.leftMaster.outputCurrent
+
+    val rightMotorAmperage
+        get() = falconDrive.rightMaster.outputCurrent
+
     /**
      * Initializes the default command for the subsystem
      */

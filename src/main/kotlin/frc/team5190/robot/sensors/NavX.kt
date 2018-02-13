@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.I2C
 /**
  * Creates a NavX singleton object
  */
-object NavX : AHRS(I2C.Port.kMXP){
+object NavX : AHRS(I2C.Port.kMXP) {
 
     init {
         zeroYaw()
