@@ -32,14 +32,10 @@ class TurnCommand(angle: Double) : PIDCommand(0.075, 0.00, 0.1) {
 
     override fun returnPIDInput(): Double = NavX.pidGet()
 
-    private var onTargetTime: Long = 0
+    private var lastYaw = 0.0
 
     override fun isFinished(): Boolean {
-        when {
-            pidController.onTarget() -> onTargetTime++
-            else -> onTargetTime = 0
-        }
-        // stop the command once it is at the target for at least 500ms and/or the command has elapsed its max time allowed
-        return onTargetTime > 500 / 20 || isTimedOut
+        val yawDelta = (lastYaw - NavX.yaw).let { ((it + 180) % 360) - 180 }
+        return (pidController.onTarget() && yawDelta < 5.0) || isTimedOut
     }
 }

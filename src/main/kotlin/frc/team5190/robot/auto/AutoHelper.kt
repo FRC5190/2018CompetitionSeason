@@ -11,8 +11,12 @@ import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
-import frc.team5190.robot.intake.*
-import frc.team5190.robot.util.*
+import frc.team5190.robot.intake.IntakeCommand
+import frc.team5190.robot.intake.IntakeDirection
+import frc.team5190.robot.intake.IntakeHoldCommand
+import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.util.Maths
+import frc.team5190.robot.util.commandGroup
 import frc.team5190.robot.vision.FindCubeCommand
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
@@ -23,69 +27,134 @@ import java.io.InputStreamReader
  */
 class AutoHelper {
     companion object {
-        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, autoMode: AutoMode): CommandGroup {
 
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
             when (folder) {
                 "LS-LL" -> {
-                    return commandGroup {
-                        this.addSequential(commandGroup {
-                            println("HELLO SIR")
-                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE, true))
-                            // Move elevator up during the motion profile
-                            this.addParallel(commandGroup {
-                                this.addSequential(commandGroup {
-                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                }, 0.1)
-                                this.addSequential(TimedCommand(2.25))
-                                this.addSequential(commandGroup {
-                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                                    this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
-
-                                })
-                                this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.3, outSpeed = 0.5))
-                            })
-                        })
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-                        // 2nd cube
-                        //this.addSequential(AutoArmCommand(ArmPosition.MIDDLE))
-                        this.addSequential(commandGroup {
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                            this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                            this.addParallel(frc.team5190.robot.util.commandGroup {
-                                this.addSequential(TurnCommand(-15.0))
-                                this.addSequential(commandGroup {
-                                    this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
-                                    this.addParallel(MotionMagicCommand(4.0))
+                    when (autoMode) {
+                        AutoMode.TWO_CUBE_BOTH  -> return commandGroup {
+                            this.addSequential(commandGroup {
+                                this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE1, true))
+                                this.addParallel(commandGroup {
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                    }, 0.1)
+                                    this.addSequential(TimedCommand(2.25))
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                        this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                                    })
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.1, outSpeed = 0.5))
                                 })
                             })
-                        })
-                        //this.addSequential(MotionMagicCommand(3.0))
-                        //this.addSequential(FindCubeCommand())
-                        //this.addSequential(MotionMagicCommand((VisionSubsystem.tgtRange_in - 10).coerceAtLeast(0.0) / 12))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-                        this.addSequential(commandGroup {
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                            this.addParallel(MotionMagicCommand(1.3), 1.0)
-                        })
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(commandGroup {
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                this.addParallel(frc.team5190.robot.util.commandGroup {
+                                    this.addSequential(TurnCommand(-15.0))
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
+                                        this.addParallel(MotionMagicCommand(4.0))
+                                    })
+                                })
+                            })
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(commandGroup {
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                this.addParallel(MotionMagicCommand(1.3), 1.0)
+                            })
 
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-                        // 3rd cube
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+
+                            /* 3rd Cube
+                            this.addSequential(MotionMagicCommand(-1.0))
+                            this.addSequential(commandGroup {
+                                this.addParallel(TurnCommand(124.0))
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                            })
+                            this.addSequential(IntakeCommand(IntakeDirection.IN))
+                            this.addSequential(MotionMagicCommand(2.5))
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(commandGroup {
+                                this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE_SECOND, isReversed = true))
+                                this.addParallel(commandGroup {
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_UP))
+                                        this.addParallel(AutoArmCommand(ArmPosition.UP))
+                                    })
+                                    this.addSequential(AutoArmCommand(ArmPosition.BEHIND))
+                                })
+                            })
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(AutoArmCommand(ArmPosition.UP))
+                            this.addSequential(commandGroup {
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                            })
+                            */
+                        }
+                        AutoMode.TWO_CUBE_SCALE -> return commandGroup {
+                            this.addSequential(commandGroup {
+                                this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE1, true))
+                                this.addParallel(commandGroup {
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                    }, 0.1)
+                                    this.addSequential(TimedCommand(2.25))
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                        this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                                    })
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.1, outSpeed = 0.5))
+                                })
+                            })
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(commandGroup {
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                this.addParallel(commandGroup {
+                                    this.addSequential(TurnCommand(-15.0))
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
+                                        this.addParallel(MotionMagicCommand(4.0))
+                                    })
+                                })
+                            })
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(commandGroup {
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                                this.addParallel(MotionMagicCommand(-4.0), 1.0)
+                            })
+
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.1, outSpeed = 0.5))
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                        }
+
+                        /* 3rd Cube
                         this.addSequential(MotionMagicCommand(-1.0))
-                        this.addSequential(commandGroup {
+                            this
+                            .addSequential(commandGroup {
                             this.addParallel(TurnCommand(124.0))
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                             this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
                         this.addSequential(IntakeCommand(IntakeDirection.IN))
-                        this.addSequential(MotionMagicCommand(2.5))
+                            this
+                            .addSequential(MotionMagicCommand(2.5))
                         this.addSequential(IntakeHoldCommand(), 0.001)
-                        this.addSequential(commandGroup {
+                            this
+                            .addSequential(commandGroup {
                             this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE_SECOND, isReversed = true))
                             this.addParallel(commandGroup {
                                 this.addSequential(commandGroup {
@@ -96,45 +165,70 @@ class AutoHelper {
                             })
                         })
                         this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
+                            this
+                            .addSequential(IntakeHoldCommand(), 0.001)
                         this.addSequential(AutoArmCommand(ArmPosition.UP))
-                        this.addSequential(commandGroup {
+                            this
+                            .addSequential(commandGroup {
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                             this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
+                        */
                     }
-                    /*
-                    return commandGroup {
-                        this.addSequential(commandGroup {
-                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SWITCH))
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                        })
-
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-                    }*/
+                }
+                "LS-LR" -> {
+                    TODO("Get Left Switch, Pick up cube and go to other side of scale. This is the only scenario.")
                 }
                 "LS-RL" -> {
-                    return commandGroup {
-                        this.addSequential(commandGroup {
-                            this.addParallel(MotionProfileCommand(Paths.LS_LL_SCALE))
-                            // Move elevator up during the motion profile
-                            this.addParallel(commandGroup {
-                                this.addSequential(commandGroup {
-                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                                }, 0.1)
-                                this.addSequential(TimedCommand(2.5))
-                                this.addSequential(commandGroup {
-                                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                    when (autoMode) {
+                        AutoMode.TWO_CUBE_BOTH  -> {TODO()}
+                        AutoMode.TWO_CUBE_SCALE -> return commandGroup {
+                            this.addSequential(commandGroup {
+                                this.addParallel(MotionProfileCommand(Paths.LS_RL_SCALE1, true))
+                                this.addParallel(commandGroup {
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                                    }, 0.1)
+                                    this.addSequential(TimedCommand(2.25))
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                        this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                                    })
+                                    this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.1, outSpeed = 0.5))
                                 })
                             })
-                        })
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(commandGroup {
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                this.addParallel(commandGroup {
+                                    this.addSequential(TurnCommand(-15.0))
+                                    this.addSequential(commandGroup {
+                                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
+                                        this.addParallel(MotionMagicCommand(4.0))
+                                    })
+                                })
+                            })
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                            this.addSequential(commandGroup {
+                                this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                                this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                                this.addParallel(MotionMagicCommand(-4.0), 1.0)
+                            })
+
+                            this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.1, outSpeed = 0.5))
+                            this.addSequential(IntakeHoldCommand(), 0.001)
+                        }
+
+                        // No 3 Cube Autonomous
                     }
+                }
+                "LS-RR" -> {
+                    TODO("Drop in right scale, pick up cube and drop in right switch. This is the only scenario.")
+                }
+                "CS-L" -> {
+                    TODO("Drop in left switch, pick up cube from pyramid, push into exchange.")
                 }
                 "CS-R" -> {
                     return commandGroup {
@@ -164,11 +258,29 @@ class AutoHelper {
 
                         this.addSequential(IntakeHoldCommand(), 0.001)
 
-                        this.addSequential(MotionProfileCommand(Paths.FEET_1_5, true))
+                        this.addSequential(MotionMagicCommand(-1.5))
                     }
                 }
 
-                else -> TODO("Generate paths")
+                "RS-LL" -> {
+                    TODO("Drop in left scale, pick up cube and drop in left switch. This is the only scenario.")
+                }
+                "RS-LR" -> {
+                    when (autoMode) {
+                        AutoMode.TWO_CUBE_BOTH  -> TODO()
+                        AutoMode.TWO_CUBE_SCALE -> TODO()
+                    }
+                }
+                "RS-RL" -> {
+                    TODO("Drop in right switch, Pick up cube and go to other side of scale. This is the only scenario.")
+                }
+                "RS-RR" -> {
+                    when (autoMode) {
+                        AutoMode.TWO_CUBE_BOTH  -> TODO()
+                        AutoMode.TWO_CUBE_SCALE -> TODO()
+                    }
+                }
+                else -> TODO("Does not exist.")
             }
         }
     }
@@ -177,51 +289,22 @@ class AutoHelper {
 
 enum class Paths(private val filePath: String) {
 
-    CS_L_SWITCH("CS-L/Switch"),    // DONE
-    CS_L_CENTER("CS-L/Center"),    // TODO Test
+    CS_L_SWITCH("CS-L/Switch"),
+    CS_L_CENTER("CS-L/Center"),
 
-    CS_R_SWITCH("CS-R/Switch"),    // TODO Test
-    CS_R_CENTER("CS-R/Center"),    // TODO Test
+    CS_R_SWITCH("CS-R/Switch"),
+    CS_R_CENTER("CS-R/Center"),
 
-    CS_STRAIGHT("CS/Straight"),    // TODO Test
-    CS_EXCHANGE("CS/Exchange"),    // TODO Test
-
-
-    LS_LL_SWITCH("LS-LL/Switch"),   // TODO Test
-    LS_LL_SWTOSC("LS-LL/SwToSc"),   // TODO Test
-    LS_LL_SCALE("LS-LL/Scale"),
-    LS_LL_SCALE_SECOND("LS-LL/Scale Second"),
-
-    LS_LR_SWITCH("LS-LR/Switch"),
-    LS_LR_SWTOSC("LS-LR/SwToSc"),   // TODO Generate
-
-    LS_RL_SWITCH1("LS-RL/Switch 1"),  // TODO Test
-    LS_RL_SWITCH2("LS-RL/Switch 2"),  // TODO Test
-    LS_RL_SWITCH3("LS-RL/Switch 3"),
-    LS_RL_SWTOSC("LS-RL/SwToSc"),   // TODO Generate
-
-    LS_RR_SWITCH1("LS-RR/Switch1"),  // TODO Test
-    LS_RR_SWITCH2("LS-RR/Switch2"),  // TODO Test
-    LS_RR_SWTOSC("LS-RR/SwToSc"),   // TODO Generate
+    CS_STRAIGHT("CS/Straight"),
+    CS_EXCHANGE("CS/Exchange"),
 
 
-    RS_LL_SWITCH1("RS-LL/Switch1"),  // TODO Generate
-    RS_LL_SWITCH2("RS-LL/Switch2"),  // TODO Generate
-    RS_LL_SWTOSC("RS-LL/SwToSc"),   // TODO Generate
+    LS_LL_SWITCH("LS-LL/Switch"),
+    LS_LL_SCALE1("LS-LL/Scale 1"),
+    LS_LL_SCALE2("LS-LL/Scale 2"),
 
-    RS_LR_SWITCH1("RS-LR/Switch1"),  // TODO Generate
-    RS_LR_SWITCH2("RS-LR/Switch2"),  // TODO Generate
-    RS_LR_SWTOSC("RS-LR/SwToSc"),   // TODO Generate
-
-    RS_RL_SWITCH("RS-RL/Switch"),   // TODO Generate
-    RS_RL_SWTOSC("RS-RL/SwToSc"),   // TODO Generate
-
-    RS_RR_SWITCH("RS-RR/Switch"),   // TODO Generate
-    RS_RR_SWTOSC("RS-RR/SwToSc"),   // TODO Generate
-
-
-    FEET_1_5("Utils/1.5 Ft"),       // DONE
-    FEET_10("Utils/10 Ft");         // DONE
+    LS_RL_SCALE1("LS-RL/Scale 1"),
+    LS_RL_SCALE2("LS-RL/Scale 2");
 
 
     val trajectoryLeft
@@ -254,6 +337,11 @@ enum class StartingPositions {
     LEFT, CENTER, RIGHT;
 }
 
+
+enum class AutoMode {
+    TWO_CUBE_SCALE, TWO_CUBE_BOTH
+}
+
 typealias TrajectoryList = List<TrajectoryData>
 
 /**
@@ -269,3 +357,5 @@ data class TrajectoryData(private val position: Double, private val velocity: Do
     var nativeUnits = Maths.rotationsToNativeUnits(rotations, DriveConstants.SENSOR_UNITS_PER_ROTATION)
     val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, DriveConstants.SENSOR_UNITS_PER_ROTATION)
 }
+
+
