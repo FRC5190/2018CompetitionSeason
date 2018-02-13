@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package frc.team5190.robot.listener
+package frc.team5190.robot.pathfinder
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable
 import edu.wpi.first.wpilibj.tables.ITable
@@ -13,7 +13,7 @@ import java.io.ObjectInputStream
 import java.util.*
 import kotlin.collections.HashMap
 
-object Listener : ITableListener {
+object Pathfinder : ITableListener {
 
     private var pathfinderOutputTable: NetworkTable = NetworkTable.getTable("pathfinderOutput")
     private var pathfinderInputTable: NetworkTable = NetworkTable.getTable("pathfinderInput")

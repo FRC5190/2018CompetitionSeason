@@ -7,9 +7,9 @@ package frc.team5190.robot.auto
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.listener.Listener
+import frc.team5190.robot.pathfinder.Pathfinder
 
-class MotionProfileCommand(private val requestId: Int, private val isReversed: Boolean = false) : Command() {
+class MotionProfileCommand(private val requestId: Int, private val isReversed: Boolean = false, private val isMirrored: Boolean = false) : Command() {
 
     private lateinit var motionProfile: MotionProfile
 
@@ -23,9 +23,15 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
     override fun initialize() {
         motionProfile = MotionProfile(
                 DriveSubsystem.falconDrive.leftMaster,
-                Listener.getLeftPath(requestId)!!,
+                when (isMirrored) {
+                    false -> Pathfinder.getLeftPath(requestId)!!
+                    true -> Pathfinder.getRightPath(requestId)!!
+                },
                 DriveSubsystem.falconDrive.rightMaster,
-                Listener.getRightPath(requestId)!!,
+                when (isMirrored) {
+                    false -> Pathfinder.getRightPath(requestId)!!
+                    true -> Pathfinder.getLeftPath(requestId)!!
+                },
                 isReversed)
         motionProfile.startMotionProfile()
     }
