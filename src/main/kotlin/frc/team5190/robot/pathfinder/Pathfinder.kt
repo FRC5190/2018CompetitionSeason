@@ -38,9 +38,9 @@ object Pathfinder : ITableListener {
         return id
     }
 
-    fun getLeftPath(id: Int): MotionProfileTrajectory? {
+    fun getLeftPath(id: Int, localFilesOnly: Boolean = true): MotionProfileTrajectory? {
         var retryCounter = 0
-        while (leftTrajectories[id] == null && retryCounter++ < 20) {
+        while (!localFilesOnly && leftTrajectories[id] == null && retryCounter++ < 20) {
             Thread.sleep(50)
         }
 
@@ -51,9 +51,9 @@ object Pathfinder : ITableListener {
         return leftTrajectories[id]
     }
 
-    fun getRightPath(id: Int): MotionProfileTrajectory? {
+    fun getRightPath(id: Int, localFilesOnly: Boolean = true): MotionProfileTrajectory? {
         var retryCounter = 0
-        while (rightTrajectories[id] == null && retryCounter++ < 20) {
+        while (!localFilesOnly && rightTrajectories[id] == null && retryCounter++ < 20) {
             Thread.sleep(50)
         }
 
