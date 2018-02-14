@@ -11,9 +11,7 @@ import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
-import frc.team5190.robot.intake.IntakeCommand
-import frc.team5190.robot.intake.IntakeDirection
-import frc.team5190.robot.intake.IntakeHoldCommand
+import frc.team5190.robot.intake.*
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
@@ -52,7 +50,7 @@ class AutoHelper {
                                 this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                 this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                 this.addParallel(frc.team5190.robot.util.commandGroup {
-                                    this.addSequential(TurnCommand(if (folder == "LS-LL") -15.0 else 15.0, true, 10.0))
+                                    this.addSequential(TurnCommand(if (folder == "LS-LL") -15.0 else 15.0))
                                     this.addSequential(commandGroup {
                                         this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                                         this.addParallel(MotionMagicCommand(4.0))
@@ -119,7 +117,7 @@ class AutoHelper {
                                 this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                 this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                 this.addParallel(commandGroup {
-                                    this.addSequential(TurnCommand(if (folder == "LS-LL") -15.0 else 15.0, true, 10.0))
+                                    this.addSequential(TurnCommand(if (folder == "LS-LL") -15.0 else 15.0))
                                     this.addSequential(commandGroup {
                                         this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                                         this.addParallel(MotionMagicCommand(4.0))
@@ -202,7 +200,7 @@ class AutoHelper {
                                 this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                                 this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                                 this.addParallel(commandGroup {
-                                    this.addSequential(TurnCommand(if (folder == "LS-RL") -15.0 else 15.0, true, 10.0))
+                                    this.addSequential(TurnCommand(if (folder == "LS-RL") -15.0 else 15.0))
                                     this.addSequential(commandGroup {
                                         this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                                         this.addParallel(MotionMagicCommand(4.0))

@@ -11,8 +11,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.auto.*
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
@@ -119,14 +118,13 @@ class Robot : IterativeRobot() {
 
         NavX.reset()
 
-        AutoHelper.getAuto(StartingPositions.LEFT, MatchData.OwnedSide.LEFT, MatchData.OwnedSide.LEFT).start()
+        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, AutoMode.TWO_CUBE_BOTH).start()
     }
 
     /**
      * Executed once when robot is disabled.
      */
     override fun disabledInit() {
-        this.pollForFMSData()
     }
 
     /**
@@ -146,7 +144,7 @@ class Robot : IterativeRobot() {
     }
 
     private fun pollForFMSData() {
-        if (switchSide == MatchData.OwnedSide.UNKNOWN) switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
-        if (scaleSide == MatchData.OwnedSide.UNKNOWN) scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+        switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
+        scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
     }
 }
