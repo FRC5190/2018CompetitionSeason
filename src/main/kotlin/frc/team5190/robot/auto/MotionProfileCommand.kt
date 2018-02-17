@@ -7,10 +7,9 @@ package frc.team5190.robot.auto
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.pathfinder.Pathfinder
+import frc.team5190.robot.pathreader.Pathreader
 
 class MotionProfileCommand(private val requestId: Int, private val isReversed: Boolean = false, private val isMirrored: Boolean = false) : Command() {
-
     private lateinit var motionProfile: MotionProfile
 
     init {
@@ -24,13 +23,13 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
         motionProfile = MotionProfile(
                 DriveSubsystem.falconDrive.leftMaster,
                 when (isMirrored) {
-                    false -> Pathfinder.getLeftPath(requestId)!!
-                    true -> Pathfinder.getRightPath(requestId)!!
+                    false -> Pathreader.getLeftPath(requestId)!!
+                    true -> Pathreader.getRightPath(requestId)!!
                 },
                 DriveSubsystem.falconDrive.rightMaster,
                 when (isMirrored) {
-                    false -> Pathfinder.getRightPath(requestId)!!
-                    true -> Pathfinder.getLeftPath(requestId)!!
+                    false -> Pathreader.getRightPath(requestId)!!
+                    true -> Pathreader.getLeftPath(requestId)!!
                 },
                 isReversed)
         motionProfile.startMotionProfile()
@@ -51,7 +50,8 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
      */
     override fun end() {
         motionProfile.reset()
-        DriveSubsystem.falconDrive.autoReset()
+        DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
+        DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
 
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }

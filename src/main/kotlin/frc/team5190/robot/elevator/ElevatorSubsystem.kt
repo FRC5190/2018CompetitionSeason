@@ -5,9 +5,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.arm.*
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
@@ -55,7 +56,7 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
 
-        currentBuffer.configureForTalon(5,30, 1000)
+        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
 
         // more settings
         reset()
@@ -90,7 +91,10 @@ object ElevatorSubsystem : Subsystem() {
                 masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
                 stalled = true
             }
-            MotorState.GOOD -> masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+            MotorState.GOOD -> {
+                masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+                stalled = false
+            }
         }
     }
 
@@ -101,9 +105,6 @@ object ElevatorSubsystem : Subsystem() {
     override fun periodic() {
 
         currentLimiting()
-
-        SmartDashboard.putNumber("Motor Amps", masterElevatorMotor.outputCurrent)
-        SmartDashboard.putNumber("Motor Out", masterElevatorMotor.motorOutputPercent)
 
         if (this.isElevatorAtBottom) {
             this.resetEncoders()
@@ -159,8 +160,7 @@ object ElevatorSubsystem : Subsystem() {
 }
 
 enum class ElevatorPosition(var ticks: Int) {
-    SWITCH(ElevatorSubsystem.inchesToNativeUnits(24.0)),
-    SCALE(ElevatorSubsystem.inchesToNativeUnits(60.0)),
-    SCALE_UP(ElevatorSubsystem.inchesToNativeUnits(60.0)),
+    SWITCH(ElevatorSubsystem.inchesToNativeUnits(18.0)),
+    SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
     INTAKE((0.35 * ElevatorConstants.SENSOR_UNITS_PER_ROTATION).toInt())
 }

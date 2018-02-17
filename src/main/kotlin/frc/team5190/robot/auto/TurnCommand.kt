@@ -10,27 +10,32 @@ import frc.team5190.robot.vision.VisionSubsystem
  * Command that turns the robot to a certain angle
  * @param angle Angle to turn to in degrees
  */
-class TurnCommand(angle: Double, visionCheck: Boolean = false, tolerance: Double = 0.0) : PIDCommand(0.075, 0.00, 0.1) {
+class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.075, 0.00, 0.1) {
 
     init {
         requires(DriveSubsystem)
         requires(VisionSubsystem)
 
+
+    }
+
+    override fun initialize() {
         // Only execute the command for a total of a max of 5 seconds (should be close enough to target by then)
         setTimeout(3.0)
         setName("DriveSystem", "RotateController")
 
         when (visionCheck) {
-            false -> setpoint = angle
+            false -> setpoint = angle + 5
             true -> {
                 when (VisionSubsystem.isTgtVisible == 1L) {
                     false -> {
                         println("Vision subsystem did not find any target object")
                         setpoint = angle
+
                     }
                     true -> {
                         val x = NavX.pidGet()   // current absolute angle
-                        val y = x + VisionSubsystem.tgtAngle_Deg + 10 // Vision absolute angle
+                        val y = x + VisionSubsystem.tgtAngle_Deg // Vision absolute angle
                         // (y - angle) is correction and it should be less than tolerance
                         setpoint = if (Math.abs(y - angle) < tolerance) {
                             println("Vision subsystem corrected $angle to $y")
@@ -50,9 +55,6 @@ class TurnCommand(angle: Double, visionCheck: Boolean = false, tolerance: Double
         pidController.setContinuous(true)
     }
 
-    override fun initialize() {
-    }
-
     override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
 
     override fun returnPIDInput(): Double = NavX.pidGet()
@@ -61,6 +63,7 @@ class TurnCommand(angle: Double, visionCheck: Boolean = false, tolerance: Double
 
     override fun isFinished(): Boolean {
         val yawDelta = (lastYaw - NavX.yaw).let { ((it + 180) % 360) - 180 }
-        return (pidController.onTarget() && yawDelta < 5.0) || isTimedOut
+        lastYaw = NavX.yaw.toDouble()
+        return (pidController.onTarget() && yawDelta < 0.5) || isTimedOut
     }
 }

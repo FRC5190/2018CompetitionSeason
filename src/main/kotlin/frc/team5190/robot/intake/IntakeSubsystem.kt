@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.Robot
 import frc.team5190.robot.arm.ArmPosition
@@ -15,14 +16,14 @@ import frc.team5190.robot.util.*
 object IntakeSubsystem : Subsystem() {
 
     private val intakeTalon = TalonSRX(MotorIDs.INTAKE_LEFT)
+    private val currentBuffer = CircularBuffer(25)
 
-    val stateBoolean
-        get() = state == 1
+    val outputCurrent
+        get() = currentBuffer.average
 
     val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
     private var teleIntake = false
-    private var state = 0
 
     init {
         intakeTalon.inverted = false
@@ -41,7 +42,12 @@ object IntakeSubsystem : Subsystem() {
     }
 
     override fun periodic() {
+
+        currentBuffer.add(intakeTalon.outputCurrent)
+
         if (!Robot.INSTANCE!!.isOperatorControl) return
+
+        SmartDashboard.putNumber("Intake Motor Amps", this.outputCurrent)
 
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) -> {

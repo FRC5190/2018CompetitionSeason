@@ -12,7 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.pathfinder.MotionProfileTrajectory
+import frc.team5190.robot.pathreader.MotionProfileTrajectory
 import frc.team5190.robot.util.DriveConstants
 
 /**

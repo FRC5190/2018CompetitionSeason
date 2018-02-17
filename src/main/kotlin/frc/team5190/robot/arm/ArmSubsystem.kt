@@ -8,6 +8,10 @@ import frc.team5190.robot.util.*
 object ArmSubsystem : Subsystem() {
 
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
+    private val currentBuffer = CircularBuffer(25)
+
+    private var stalled = false
+    private var state = MotorState.OK
 
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
@@ -18,9 +22,9 @@ object ArmSubsystem : Subsystem() {
 
     init {
         // hardware for this subsystem includes one motor and an absolute encoder
-        masterArmMotor.inverted = false
+        masterArmMotor.inverted = ArmConstants.INVERTED
         masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
-        masterArmMotor.setSensorPhase(false)
+        masterArmMotor.setSensorPhase(ArmConstants.SENSOR_PHASE)
         masterArmMotor.configReverseSoftLimitEnable(false, 10)
         masterArmMotor.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks, 10)
 
@@ -30,23 +34,53 @@ object ArmSubsystem : Subsystem() {
         // closed loop configuration
         masterArmMotor.configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
         masterArmMotor.configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
-        masterArmMotor.configPeakOutput(1.0, -ArmConstants.PEAK_OUT, 10)
+        masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
         masterArmMotor.configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
 
         // motion magic settings
         masterArmMotor.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
         masterArmMotor.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
+
+        currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
     }
 
     fun set(controlMode: ControlMode, output: Double) {
         masterArmMotor.set(controlMode, output)
     }
 
+    private fun currentLimiting() {
+        currentBuffer.add(masterArmMotor.outputCurrent)
+        state = masterArmMotor.limitCurrent(currentBuffer)
+
+        when (state) {
+            MotorState.OK -> {
+                if (stalled) {
+                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
+                } else {
+                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+                }
+            }
+            MotorState.STALL -> {
+                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
+                stalled = true
+            }
+            MotorState.GOOD -> {
+                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+                stalled = false
+            }
+        }
+    }
+
     override fun initDefaultCommand() {
         this.defaultCommand = ManualArmCommand()
     }
+
+    override fun periodic() {
+        this.currentLimiting()
+    }
+
 }
 
 enum class ArmPosition (val ticks: Int) {
-    BEHIND(2200), UP(1950), MIDDLE(1150), DOWN(900);
+    BEHIND(2400), UP(1900), MIDDLE(1350), DOWN(1100);
 }

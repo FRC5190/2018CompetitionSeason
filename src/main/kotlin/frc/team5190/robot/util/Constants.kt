@@ -41,9 +41,9 @@ object DriveConstants {
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 0.7
+    const val P_HIGH = 2.0
     const val I_HIGH = 0.0
-    const val D_HIGH = 0.0
+    const val D_HIGH = 20.0
 
     const val PID_SLOT_HIGH = 0
 
@@ -62,13 +62,14 @@ object DriveConstants {
 object ElevatorConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
 
-    const val PEAK_WATTAGE = 100
-    const val PEAK_DURATION = 1000
+    const val LOW_PEAK = 5
+    const val HIGH_PEAK = 30
+    const val DUR = 1000
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.7
+    const val PEAK_OUT = 0.75
 
-    const val P = 0.8
+    const val P = 0.6
     const val I = 0.0
     const val D = 0.0
 
@@ -77,14 +78,15 @@ object ElevatorConstants {
     const val TOLERANCE_INCHES = 0.25
 
     const val MOTION_VELOCITY = 1000000000
-    const val MOTION_ACCELERATION_INCHES = 80.0
+    const val MOTION_ACCELERATION_INCHES = 50.0
 
     const val LIMITING_REDUCTION_FACTOR = 0.3
 }
 
 object ArmConstants {
-    const val PEAK_WATTAGE = 15
-    const val PEAK_DURATION = 1000
+    const val LOW_PEAK = 5
+    const val HIGH_PEAK = 30
+    const val DUR = 1000
 
     const val P = 1.5
     const val I = 0.0
@@ -93,23 +95,22 @@ object ArmConstants {
     const val PID_SLOT = 0
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.7
+    const val PEAK_OUT = 0.40
 
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000
-    const val MOTION_ACCELERATION = 400
+    const val MOTION_ACCELERATION = 350
 
-    const val LIMITING_REDUCTION_FACTOR = 0.5
+    const val INVERTED = false
+    const val SENSOR_PHASE = false
+
+    const val LIMITING_REDUCTION_FACTOR = 0.3
 }
 
 object IntakeConstants {
-    const val PEAK_WATTAGE = 100
-    const val PEAK_DURATION = 1000
-
     const val DEFAULT_SPEED = 0.8
-
-    const val LIMITING_REDUCTION_FACTOR = 0.3
+    const val AMP_THRESHOLD = 15
 }
 
 /**

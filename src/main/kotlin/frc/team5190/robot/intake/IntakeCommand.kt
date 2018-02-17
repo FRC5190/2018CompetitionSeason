@@ -30,5 +30,6 @@ class IntakeCommand(private val direction: IntakeDirection, private val timeout:
         IntakeSubsystem.set(ControlMode.PercentOutput, motorOutput)
     }
 
-    override fun isFinished() = timeout > 0 && isTimedOut
+    override fun isFinished() = (timeout > 0 && isTimedOut) ||
+            (direction == IntakeDirection.IN && IntakeSubsystem.outputCurrent > IntakeConstants.AMP_THRESHOLD)
 }
