@@ -50,9 +50,13 @@ class AutoHelper {
                         this.addSequential(commandGroup {
                             this.addParallel(MotionProfileCommand(switchId, true, folder == "RS-RL"))
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                            this.addParallel(AutoArmCommand(ArmPosition.UP))
                         })
-                        this.addSequential(MotionMagicCommand(2.0))
+                        this.addSequential(TurnCommand(-90.0, false))
+                        this.addSequential(frc.team5190.robot.util.commandGroup {
+                            this.addParallel(MotionMagicCommand(2.5), 1.0)
+                            this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
+                        })
                         this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
                         this.addSequential(IntakeHoldCommand(), 0.001)
                     }
@@ -77,8 +81,17 @@ class AutoHelper {
 
                         this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
                         this.addSequential(IntakeHoldCommand(), 0.001)
+
                         this.addSequential(MotionProfileCommand(centerId, true))
                         this.addSequential(pickupCubeFromCenter())
+
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(switchId))
+                        })
+
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+
                     }
                 }
                 "CS-R" -> {
@@ -119,7 +132,7 @@ class AutoHelper {
                             })
                         })
                         this.addSequential(TimedCommand(0.25))
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.4, outSpeed = 0.55))
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 1.0, outSpeed = 1.0))
                     })
                 })
                 this.addSequential(IntakeHoldCommand(), 0.001)
@@ -135,7 +148,7 @@ class AutoHelper {
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                             this.addParallel(AutoArmCommand(ArmPosition.UP))
                         }, 0.1)
-                        this.addSequential(TimedCommand(5.25))
+                        this.addSequential(TimedCommand(5.0))
                         this.addSequential(commandGroup {
                             this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
                             this.addParallel(commandGroup {
@@ -189,15 +202,19 @@ class AutoHelper {
                     this.addParallel(TurnCommand(0.0, true, 15.0))
                     this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                     this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                    this.addParallel(MotionMagicCommand(4.0))
                 })
 
-                this.addSequential(commandGroup {
-                    this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
+                this.addSequential(frc.team5190.robot.util.commandGroup {
+                    this.addParallel(MotionMagicCommand(3.75))
+                    this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                 })
 
                 this.addSequential(IntakeHoldCommand(), 0.001)
-                this.addSequential(MotionMagicCommand(-1.5))
+                this.addSequential(frc.team5190.robot.util.commandGroup {
+                    this.addParallel(MotionMagicCommand(-4.0))
+                    this.addParallel(AutoElevatorCommand(frc.team5190.robot.elevator.ElevatorPosition.SWITCH))
+                    this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
+                })
             }
         }
     }

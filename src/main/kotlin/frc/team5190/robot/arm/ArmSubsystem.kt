@@ -13,6 +13,9 @@ object ArmSubsystem : Subsystem() {
     private var stalled = false
     private var state = MotorState.OK
 
+    val motorAmps
+        get() = masterArmMotor.outputCurrent
+
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
 
@@ -82,5 +85,5 @@ object ArmSubsystem : Subsystem() {
 }
 
 enum class ArmPosition (val ticks: Int) {
-    BEHIND(2400), UP(1900), MIDDLE(1350), DOWN(1100);
+    BEHIND(2400), UP(1900), MIDDLE(1250), DOWN(1100);
 }

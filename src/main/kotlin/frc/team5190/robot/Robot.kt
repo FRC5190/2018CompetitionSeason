@@ -101,6 +101,8 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
         SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
 
+        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.motorAmps)
+
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
         SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
@@ -120,7 +122,7 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         this.pollForFMSData()
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, strategyChooser.selected).start()
+        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide, strategyChooser.selected).start()
     }
 
     /**

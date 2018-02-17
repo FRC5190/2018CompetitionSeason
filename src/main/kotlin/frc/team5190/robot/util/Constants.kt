@@ -90,7 +90,7 @@ object ArmConstants {
 
     const val P = 1.5
     const val I = 0.0
-    const val D = 0.0
+    const val D = 0.3
 
     const val PID_SLOT = 0
 

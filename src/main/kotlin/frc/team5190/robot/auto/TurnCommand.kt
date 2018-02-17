@@ -25,7 +25,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
         setName("DriveSystem", "RotateController")
 
         when (visionCheck) {
-            false -> setpoint = angle + 5
+            false -> setpoint = angle
             true -> {
                 when (VisionSubsystem.isTgtVisible == 1L) {
                     false -> {
@@ -35,7 +35,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
                     }
                     true -> {
                         val x = NavX.pidGet()   // current absolute angle
-                        val y = x + VisionSubsystem.tgtAngle_Deg // Vision absolute angle
+                        val y = x + VisionSubsystem.tgtAngle_Deg + 7// Vision absolute angle
                         // (y - angle) is correction and it should be less than tolerance
                         setpoint = if (Math.abs(y - angle) < tolerance) {
                             println("Vision subsystem corrected $angle to $y")
@@ -59,11 +59,14 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
 
     override fun returnPIDInput(): Double = NavX.pidGet()
 
-    private var lastYaw = 0.0
+    private var time = 0
 
     override fun isFinished(): Boolean {
-        val yawDelta = (lastYaw - NavX.yaw).let { ((it + 180) % 360) - 180 }
-        lastYaw = NavX.yaw.toDouble()
-        return (pidController.onTarget() && yawDelta < 0.5) || isTimedOut
+        if (pidController.onTarget()) {
+            time++
+        } else {
+            time = 0
+        }
+        return (time > 500 / 20) || isTimedOut
     }
 }
