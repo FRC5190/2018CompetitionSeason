@@ -17,5 +17,16 @@ object NavX : AHRS(I2C.Port.kMXP) {
         zeroYaw()
     }
 
-    override fun getAngle() = -pitch.toDouble()
+    val modifiedPitch: Float
+        get () = this.pitch - resetPitch
+
+    var resetPitch = this.modifiedPitch
+
+    override fun getAngle() = -modifiedPitch.toDouble()
+
+    override fun pidGet() = angle
+
+    override fun reset() {
+        resetPitch = this.pitch
+    }
 }
