@@ -16,4 +16,6 @@ object NavX : AHRS(I2C.Port.kMXP) {
     init {
         zeroYaw()
     }
+
+    override fun getAngle() = -pitch.toDouble()
 }

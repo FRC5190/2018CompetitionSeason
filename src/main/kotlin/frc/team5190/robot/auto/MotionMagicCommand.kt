@@ -28,7 +28,10 @@ class MotionMagicCommand(feet: Double,
     }
 
     override fun end() {
-        DriveSubsystem.autoReset()
+        DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
+        DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
+
+        DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
     override fun execute() {
