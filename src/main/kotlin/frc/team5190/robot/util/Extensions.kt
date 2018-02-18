@@ -1,11 +1,14 @@
 package frc.team5190.robot.util
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.CommandGroup
+import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.drive.Gear
 
-fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
+fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup {
     val group = CommandGroup()
     create.invoke(group)
     return group
@@ -49,37 +52,15 @@ fun TalonSRX.configLimitSwitchSource(type: LimitSwitchSource, normalOpenOrClose:
     configReverseLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
 }
 
-fun TalonSRX.configCurrentLimiting(peakAmps: Int, peakDurationMs: Int, continuousAmps: Int, timeoutMs: Int) {
-    configPeakCurrentLimit(peakAmps, timeoutMs)
-    configPeakCurrentDuration(peakDurationMs, timeoutMs)
-    configContinuousCurrentLimit(continuousAmps, timeoutMs)
-    enableCurrentLimit(true)
-}
-
-fun TalonSRX.set(controlMode: ControlMode, value: Double, wattRegulator: CircularBuffer, scalingFactor: Double = 0.0) {
-    wattRegulator.add(this.outputCurrent)
-
-    val currentTime = Timer.getFPGATimestamp()
-    var newValue = 0.0
-
-    if (currentTime - wattRegulator.stallTime < 3.0) {
-        return
+/**
+ * Scales the output depending on the ControlMode.
+ */
+fun ControlMode.scale(): Double {
+    return when (this) {
+        ControlMode.PercentOutput -> 1.0
+        ControlMode.Velocity ->
+            if (DriveSubsystem.falconDrive.gear == Gear.LOW) DriveConstants.MAX_STU_LOW.toDouble()
+            else DriveConstants.MAX_STU_HIGH.toDouble()
+        else -> TODO("Not supported.")
     }
-
-    when (wattRegulator.motorState) {
-        MotorState.OK -> newValue = value
-        MotorState.STALL -> newValue = value * scalingFactor
-        MotorState.GOOD -> {
-            wattRegulator.stallTime = currentTime
-            newValue = 0.0
-        }
-    }
-
-    println(wattRegulator.motorState.name)
-
-    this.set(controlMode, newValue)
-}
-
-fun TalonSRX.limitCurrent(buffer: CircularBuffer): MotorState {
-    return buffer.motorState
 }

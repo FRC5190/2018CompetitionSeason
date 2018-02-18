@@ -59,31 +59,32 @@ object DriveConstants {
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 
-    const val IS_RACE_ROBOT = false
+    const val IS_RACE_ROBOT = true
 }
 
 object ElevatorConstants {
+    // robot settings for elevator
     const val SENSOR_UNITS_PER_ROTATION = 1440
-
-    const val LOW_PEAK = 5
-    const val HIGH_PEAK = 30
-    const val DUR = 1000
-
-    const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.75
 
     const val P = 0.6
     const val I = 0.0
     const val D = 0.0
-
     const val PID_SLOT = 0
 
+    // current limiting
+    const val LOW_PEAK = 5
+    const val HIGH_PEAK = 30
+    const val DUR = 1000
+    const val LIMITING_REDUCTION_FACTOR = 0.3
+
+    // nominal and peak currents
+    const val NOMINAL_OUT = 0.0
+    const val PEAK_OUT = 0.3
     const val TOLERANCE_INCHES = 0.25
 
+    // motion magic
     const val MOTION_VELOCITY = 1000000000
     const val MOTION_ACCELERATION_INCHES = 50.0
-
-    const val LIMITING_REDUCTION_FACTOR = 0.3
 }
 
 object ArmConstants {
@@ -93,7 +94,7 @@ object ArmConstants {
 
     const val P = 1.5
     const val I = 0.0
-    const val D = 0.3
+    const val D = 0.0
     const val PID_SLOT = 0
 
     const val DOWN_TICKS = 1100
@@ -106,7 +107,7 @@ object ArmConstants {
 
     // nominal and peak currents
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.40
+    const val PEAK_OUT = 0.20
     const val TOLERANCE = 0
 
     // motion magic
@@ -117,17 +118,4 @@ object ArmConstants {
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.8
     const val AMP_THRESHOLD = 15
-}
-
-/**
- * Scales the output depending on the ControlMode.
- */
-fun ControlMode.scale(): Double {
-    return when (this) {
-        ControlMode.PercentOutput -> 1.0
-        ControlMode.Velocity ->
-            if (DriveSubsystem.falconDrive.gear == Gear.LOW) DriveConstants.MAX_STU_LOW.toDouble()
-            else DriveConstants.MAX_STU_HIGH.toDouble()
-        else -> TODO("Not supported.")
-    }
 }
