@@ -6,6 +6,25 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 
 object VisionSubsystem : Subsystem() {
+
+    /*
+    val camDisplacement = 10
+    val camDistance = 50.0
+    val camAngle = 10.0
+
+    val adjacentDistance = camDistance * Math.cos(Math.toRadians(camAngle))
+    val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(camAngle)) + camDisplacement
+
+    val robotAngle = Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
+    val robotDistance = Math.sqrt(adjacentDistance.pow(2.0) + oppositeDistance.pow(2.0))
+    */
+
+    // ROBOT ANGLE IS FINAL ANGLE TO TURN TO AND ROBOT DISTANCE IS THE DISTANCE THAT YOU SHOULD TRAVEL.
+    // CAM DISPLACEMENT IS DISTANCE FROM CAMERA TO CENTER OF ROBOT
+    // CAM DISTANCE IS DISTANCE FROM CAMERA TO TARGET
+    // CAM ANGLE IS ANGLE FROM CAMERA TO TARGET
+
+
     private var visionPort: SerialPort? = null
 
     /**
@@ -195,8 +214,7 @@ object VisionSubsystem : Subsystem() {
                 if (isTgtVisible == 1L) {
                     tgtAngle_Deg = jsonObject["Angle"] as Double
                     tgtRange_in = jsonObject["Range"] as Double
-                }
-                else {
+                } else {
                     tgtAngle_Deg = 0.0
                     tgtRange_in = 0.0
                 }
