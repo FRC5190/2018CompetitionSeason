@@ -19,10 +19,6 @@ object ArmSubsystem : Subsystem() {
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
 
-    val closedLoopError
-        get() = masterArmMotor.getClosedLoopError(0)
-
-
     init {
         // hardware for this subsystem includes one motor and an absolute encoder
         masterArmMotor.inverted = ArmConstants.INVERTED
