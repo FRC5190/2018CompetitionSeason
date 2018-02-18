@@ -5,10 +5,6 @@
 
 package frc.team5190.robot.util
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.drive.Gear
-
 /**
  * Contains Motor IDs.
  */
@@ -89,8 +85,8 @@ object ElevatorConstants {
 
 object ArmConstants {
     // robot settings for arm
-    const val INVERTED = false
-    const val SENSOR_PHASE = false
+    const val INVERTED = true
+    const val SENSOR_PHASE = true
 
     const val P = 1.5
     const val I = 0.0
