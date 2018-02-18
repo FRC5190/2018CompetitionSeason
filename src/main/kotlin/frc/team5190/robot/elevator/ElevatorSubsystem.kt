@@ -30,10 +30,11 @@ object ElevatorSubsystem : Subsystem() {
     private var state = MotorState.OK
     private var currentCommandGroup: CommandGroup? = null
     private var stalled = false
+    private var hasResetEndoder = false
 
     init {
         masterElevatorMotor.inverted = false
-        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
+        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, ElevatorConstants.PID_SLOT, 10)
         masterElevatorMotor.setSensorPhase(false)
         masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
@@ -74,11 +75,12 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.set(controlMode, output)
     }
 
-    private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
+    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
 
     private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
         state = limitCurrent(currentBuffer)
+
 
         when (state) {
             MotorState.OK -> {
@@ -105,11 +107,13 @@ object ElevatorSubsystem : Subsystem() {
 
     override fun periodic() {
 
-        currentLimiting()
 
-        if (this.isElevatorAtBottom) {
+        if (ElevatorSubsystem.isElevatorAtBottom) {
             this.resetEncoders()
         }
+
+        currentLimiting()
+
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
@@ -163,5 +167,5 @@ object ElevatorSubsystem : Subsystem() {
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
-    INTAKE((0.35 * ElevatorConstants.SENSOR_UNITS_PER_ROTATION).toInt())
+    INTAKE(ElevatorSubsystem.inchesToNativeUnits(1.0));
 }

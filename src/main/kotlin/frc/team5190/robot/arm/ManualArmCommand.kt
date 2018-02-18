@@ -16,8 +16,8 @@ class ManualArmCommand : Command() {
             MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.7)
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.4)
 
-            MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.PercentOutput, 0.0) //ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
-            MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.PercentOutput, 0.0)// ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+            MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+            MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         }
     }
 

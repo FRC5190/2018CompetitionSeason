@@ -62,7 +62,7 @@ object ElevatorConstants {
     // robot settings for elevator
     const val SENSOR_UNITS_PER_ROTATION = 4096
 
-    const val P = 0.6
+    const val P = 0.5
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
@@ -75,7 +75,7 @@ object ElevatorConstants {
 
     // nominal and peak currents
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.3
+    const val PEAK_OUT = 0.45
     const val TOLERANCE_INCHES = 0.25
 
     // motion magic

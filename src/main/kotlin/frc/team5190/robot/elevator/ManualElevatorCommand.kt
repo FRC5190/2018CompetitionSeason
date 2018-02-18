@@ -23,8 +23,8 @@ class ManualElevatorCommand : Command() {
                 triggerState = true
             }
             triggerState -> {
-                ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
-//                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
+
+                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
                 triggerState = false
             }
         }
@@ -33,7 +33,7 @@ class ManualElevatorCommand : Command() {
                 val motorOut = -0.1
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
             }
-            MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)//ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
+            MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
         }
     }
 

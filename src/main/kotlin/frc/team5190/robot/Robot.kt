@@ -5,12 +5,14 @@
 
 package frc.team5190.robot
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.MotionMagicCommand
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
@@ -19,6 +21,7 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
+import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
 /**
@@ -54,7 +57,7 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-//        VisionSubsystem
+        VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
         ArmSubsystem
@@ -108,14 +111,12 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-//      ResetElevatorCommand().start()
         DriveSubsystem.autoReset()
         DriveSubsystem.falconDrive.gear = Gear.HIGH
         NavX.reset()
 
         this.pollForFMSData()
-//        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide).start()
-        MotionMagicCommand(5.0, cruiseVel = 2.0).start()
+        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
     }
 
     /**
@@ -131,11 +132,9 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-//        commandGroup {
-//            if (ArmSubsystem.currentPosition < ArmPosition.DOWN.ticks)
-//                addSequential(AutoArmCommand(ArmPosition.DOWN))
-//            addSequential(ResetElevatorCommand())
-//        }.start()
+
+        ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
+        ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
 
         DriveSubsystem.currentCommand?.cancel()
 

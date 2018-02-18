@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import kotlin.math.pow
@@ -11,7 +12,7 @@ import kotlin.math.pow
 object VisionSubsystem : Subsystem() {
 
     private var visionPort: SerialPort? = null
-    private val camDisplacement = 10
+    private val camDisplacement = 11.25
 
     /**
      * Returns true when the JeVois sees a target and is tracking it, false otherwise.
@@ -173,7 +174,7 @@ object VisionSubsystem : Subsystem() {
         try {
             if (visionPort!!.bytesReceived > 0) {
                 val string = visionPort!!.readString()
-                //println(string)
+                println(string)
                 val parser = JSONParser()
                 val obj = parser.parse(string)
                 val jsonObject = obj as JSONObject
@@ -181,6 +182,13 @@ object VisionSubsystem : Subsystem() {
                 if (isTgtVisible == 1L) {
                     rawAngle = jsonObject["Angle"] as Double
                     rawDistance = jsonObject["Range"] as Double
+
+                    SmartDashboard.putNumber("Raw Angle", rawAngle)
+                    SmartDashboard.putNumber("Raw Distance", rawDistance)
+
+                    SmartDashboard.putNumber("Corrected Angle", correctedAngle())
+                    SmartDashboard.putNumber("Corrected Distance", correctedDistance())
+
                 } else {
                     rawAngle = 0.0
                     rawDistance = 0.0
