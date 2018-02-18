@@ -50,7 +50,7 @@ object ArmSubsystem : Subsystem() {
 
     private fun currentLimiting() {
         currentBuffer.add(masterArmMotor.outputCurrent)
-        state = masterArmMotor.limitCurrent(currentBuffer)
+        state = limitCurrent(currentBuffer)
 
         when (state) {
             MotorState.OK -> {

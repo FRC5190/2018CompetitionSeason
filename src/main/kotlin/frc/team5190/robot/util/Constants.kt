@@ -60,7 +60,7 @@ object DriveConstants {
 
 object ElevatorConstants {
     // robot settings for elevator
-    const val SENSOR_UNITS_PER_ROTATION = 1440
+    const val SENSOR_UNITS_PER_ROTATION = 4096
 
     const val P = 0.6
     const val I = 0.0
@@ -93,7 +93,7 @@ object ArmConstants {
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1100
+    const val DOWN_TICKS = 1400
 
     // current limiting
     const val LOW_PEAK = 5
@@ -103,7 +103,7 @@ object ArmConstants {
 
     // nominal and peak currents
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.20
+    const val PEAK_OUT = 0.3
     const val TOLERANCE = 0
 
     // motion magic

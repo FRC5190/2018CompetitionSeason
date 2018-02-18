@@ -6,9 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
@@ -22,6 +20,9 @@ object ElevatorSubsystem : Subsystem() {
 
     val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition
+
+    val motorCurrent
+        get() = masterElevatorMotor.outputCurrent
 
 
     internal var hasReset = false
@@ -77,7 +78,7 @@ object ElevatorSubsystem : Subsystem() {
 
     private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
-        state = masterElevatorMotor.limitCurrent(currentBuffer)
+        state = limitCurrent(currentBuffer)
 
         when (state) {
             MotorState.OK -> {

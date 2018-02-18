@@ -6,21 +6,19 @@
 package frc.team5190.robot
 
 import edu.wpi.first.wpilibj.IterativeRobot
-import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.*
+import frc.team5190.robot.auto.MotionMagicCommand
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
-import frc.team5190.robot.util.commandGroup
-import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
 /**
@@ -56,7 +54,7 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-        VisionSubsystem
+//        VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
         ArmSubsystem
@@ -65,11 +63,13 @@ class Robot : IterativeRobot() {
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
-        SmartDashboard.putData("Side Selector", sideChooser)
+        SmartDashboard.putData("Starting Position", sideChooser)
 
         controllerChooser.addObject("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
         controllerChooser.addDefault("Xbox", "Xbox")
+
+        SmartDashboard.putData("Controller", controllerChooser)
     }
 
     /**
@@ -88,19 +88,17 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
 
         SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
-        SmartDashboard.putNumber("Elevator Inches Position", ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition))
 
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
-        SmartDashboard.putNumber("Left Motor Amperage", DriveSubsystem.leftMotorAmperage)
-        SmartDashboard.putNumber("Right Motor Amerpage", DriveSubsystem.rightMotorAmperage)
-
         SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.motorAmps)
+        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.motorCurrent)
 
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
         SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
         SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
+
         SmartDashboard.putData("Gyro", NavX)
 
         Scheduler.getInstance().run()
@@ -116,7 +114,8 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         this.pollForFMSData()
-        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide).start()
+//        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide).start()
+        MotionMagicCommand(5.0, cruiseVel = 2.0).start()
     }
 
     /**
