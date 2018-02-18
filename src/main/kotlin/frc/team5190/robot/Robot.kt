@@ -39,9 +39,6 @@ class Robot : IterativeRobot() {
     // Shows a drop down on dashboard that allows us to select which mode we want
     private val sideChooser = SendableChooser<StartingPositions>()
 
-    // Shows a drop down on dashboard that allows us to select which mode we want
-    private val strategyChooser = SendableChooser<AutoMode>()
-
     // Shows a dropdown of the controllers that weill be used.
     private val controllerChooser = SendableChooser<String>()
 
@@ -69,9 +66,6 @@ class Robot : IterativeRobot() {
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
         SmartDashboard.putData("Side Selector", sideChooser)
-
-        AutoMode.values().forEach { strategyChooser.addObject(it.name.toUpperCase(), it) }
-        strategyChooser.addDefault("TWO_CUBE_BOTH", AutoMode.TWO_CUBE_BOTH)
 
         controllerChooser.addObject("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
@@ -122,13 +116,16 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         this.pollForFMSData()
-        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide, strategyChooser.selected).start()
+        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide).start()
     }
 
     /**
      * Executed once when robot is disabled.
      */
     override fun disabledInit() {
+    }
+
+    override fun disabledPeriodic() {
     }
 
     /**

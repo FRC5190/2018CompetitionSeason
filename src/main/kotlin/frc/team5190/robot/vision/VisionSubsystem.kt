@@ -1,61 +1,52 @@
 package frc.team5190.robot.vision
 
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.SerialPort
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Subsystem
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import kotlin.math.pow
 
 object VisionSubsystem : Subsystem() {
 
-    /*
-    val camDisplacement = 10
-    val camDistance = 50.0
-    val camAngle = 10.0
-
-    val adjacentDistance = camDistance * Math.cos(Math.toRadians(camAngle))
-    val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(camAngle)) + camDisplacement
-
-    val robotAngle = Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
-    val robotDistance = Math.sqrt(adjacentDistance.pow(2.0) + oppositeDistance.pow(2.0))
-    */
-
-    // ROBOT ANGLE IS FINAL ANGLE TO TURN TO AND ROBOT DISTANCE IS THE DISTANCE THAT YOU SHOULD TRAVEL.
-    // CAM DISPLACEMENT IS DISTANCE FROM CAMERA TO CENTER OF ROBOT
-    // CAM DISTANCE IS DISTANCE FROM CAMERA TO TARGET
-    // CAM ANGLE IS ANGLE FROM CAMERA TO TARGET
-
-
     private var visionPort: SerialPort? = null
+    private val camDisplacement = 10
 
     /**
      * Returns true when the JeVois sees a target and is tracking it, false otherwise.
      */
     var isTgtVisible = 0L
         private set
+
+    var tgtAngle: Double = 0.0
+        get() = correctedAngle()
+
+    var tgtDistance: Double = 0.0
+        get() = correctedDistance()
+
     /**
      * Returns the most recently seen target's angle relative to the camera in degrees
      * Positive means to the Right of center, negative means to the left
      */
-    var tgtAngle_Deg = 0.0
-        private set
+    private var rawAngle = 0.0
     /**
      * Returns the most recently seen target's range from the camera in inches
      * Range means distance along the ground from camera mount point to observed target
      * Return values should only be positive
      */
-    var tgtRange_in = 0.0
-        private set
+    private var rawDistance = 0.0
 
     /**
-     * Constructor (more complex). Opens a USB serial port to the JeVois camera, sends a few test commands checking for error,
+     * Constructor (more complex). Opens a USB serial port to the camera, sends a few test commands checking for error,
      * then fires up the user's program and begins listening for target info packets in the background.
-     * Pass TRUE to additionaly enable a USB camera stream of what the vision camera is seeing.
+     * Pass TRUE to additionally enable a USB camera stream of what the vision camera is seeing.
      */
     init {
-        reset(true)
+        reset()
     }
 
-    fun reset(streamVideo: Boolean) {
+    private fun reset() {
 
         if (visionPort != null) {
             visionPort!!.reset()
@@ -64,56 +55,35 @@ object VisionSubsystem : Subsystem() {
         }
 
         isTgtVisible = 0L
-        tgtAngle_Deg = 0.0
-        tgtRange_in = 0.0
+        rawAngle = 0.0
+        rawDistance = 0.0
 
-        var retry_counter = 0
+        var retryCounter = 0
 
         //Retry strategy to get this serial port open.
         //I have yet to see a single retry used assuming the camera is plugged in
         // but you never know.
-        while (visionPort == null && retry_counter++ < 10) {
+        while (visionPort == null && retryCounter++ < 10) {
             try {
-                print("Creating JeVois SerialPort...")
+                print("Vision: Creating JeVois SerialPort...")
                 visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
                 println("SUCCESS!!")
             } catch (e: Exception) {
                 println("FAILED!!")
                 sleep(500)
-                println("Retry " + Integer.toString(retry_counter))
             }
         }
 
         //Report an error if we didn't get to open the serial port
         if (visionPort == null) {
-            DriverStation.reportError("Cannot open serial port to JeVois. Not starting vision system.", false)
+            println("Vision: Cannot open serial port to JeVois. Not starting vision system.")
             return
         }
 
         //Test to make sure we are actually talking to the JeVois
         if (sendPing() != 0) {
-            DriverStation.reportError("JeVois ping test failed. Not starting vision system.", false)
+            println("Vision: JeVois ping test failed. Not starting vision system.")
             return
-        }
-
-        if (streamVideo) {
-//            try {
-////                if (CameraServer.getInstance() != null && CameraServer.getInstance().server != null) {
-////                    CameraServer.getInstance().server.free()
-////                    CameraServer.getInstance().video.free()
-////                }
-//
-//                print("Starting JeVois Cam Stream...")
-//                //            val visionCam = UsbCamera ("Frc5190Cam", 0)
-//                //            visionCam.setVideoMode(VideoMode.PixelFormat.kYUYV, 640, 480, 30)
-//                //            val camServer = MjpegServer ("Frc5190CamServer", 1180)
-//                //            camServer.source = visionCam
-//
-//                CameraServer.getInstance().startAutomaticCapture(0)
-//                println("SUCCESS!!")
-//            } catch (e: Exception) {
-//                DriverStation.reportError("Cannot start camera stream from JeVois", false)
-//            }
         }
     }
 
@@ -144,12 +114,10 @@ object VisionSubsystem : Subsystem() {
         var retval = 0
         sendCmd(cmd)
         retval = blockAndCheckForOK(1.0)
-        if (retval == 0) {
-            println(cmd + " OK")
-        } else if (retval == -1) {
-            println(cmd + " Produced an error")
-        } else if (retval == -2) {
-            println(cmd + " timed out")
+        when (retval) {
+            0 -> println("Vision: $cmd OK")
+            -1 -> println("Vision: $cmd produced an error")
+            -2 -> println("Vision: $cmd timed out")
         }
         return retval
     }
@@ -160,9 +128,8 @@ object VisionSubsystem : Subsystem() {
      * @param cmd String of the command to send (ex: "ping")
      */
     private fun sendCmd(cmd: String) {
-        val bytes: Int
-        bytes = visionPort!!.writeString(cmd + "\n")
-        println("wrote " + bytes + "/" + (cmd.length + 1) + " bytes, cmd: " + cmd)
+        val bytes: Int = visionPort!!.writeString(cmd + "\n")
+        println("Vision: Wrote " + bytes + "/" + (cmd.length + 1) + " bytes, cmd: " + cmd)
     }
 
 
@@ -206,17 +173,17 @@ object VisionSubsystem : Subsystem() {
         try {
             if (visionPort!!.bytesReceived > 0) {
                 val string = visionPort!!.readString()
-//                println(string)
+                //println(string)
                 val parser = JSONParser()
                 val obj = parser.parse(string)
                 val jsonObject = obj as JSONObject
                 isTgtVisible = jsonObject["Track"] as Long
                 if (isTgtVisible == 1L) {
-                    tgtAngle_Deg = jsonObject["Angle"] as Double
-                    tgtRange_in = jsonObject["Range"] as Double
+                    rawAngle = jsonObject["Angle"] as Double
+                    rawDistance = jsonObject["Range"] as Double
                 } else {
-                    tgtAngle_Deg = 0.0
-                    tgtRange_in = 0.0
+                    rawAngle = 0.0
+                    rawDistance = 0.0
                 }
             }
         } catch (e: Exception) {
@@ -235,6 +202,18 @@ object VisionSubsystem : Subsystem() {
             println("DO NOT WAKE THE SLEEPY BEAST")
         }
 
+    }
+
+    private fun correctedAngle() : Double {
+        val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
+        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
+        return Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
+    }
+
+    private fun correctedDistance() : Double {
+        val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
+        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
+        return Math.sqrt(adjacentDistance.pow(2.0) + oppositeDistance.pow(2.0))
     }
 
     private val BAUD_RATE = 115200

@@ -197,8 +197,3 @@ class AutoHelper {
 enum class StartingPositions {
     LEFT, CENTER, RIGHT;
 }
-
-
-enum class AutoMode {
-    TWO_CUBE_SCALE, TWO_CUBE_BOTH
-}

@@ -15,8 +15,6 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
     init {
         requires(DriveSubsystem)
         requires(VisionSubsystem)
-
-
     }
 
     override fun initialize() {
@@ -31,11 +29,10 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
                     false -> {
                         println("Vision subsystem did not find any target object")
                         setpoint = angle
-
                     }
                     true -> {
-                        val x = NavX.pidGet()   // current absolute angle
-                        val y = x + VisionSubsystem.tgtAngle_Deg + 7// Vision absolute angle
+                        val x = NavX.pidGet()                   // current absolute angle
+                        val y = x + VisionSubsystem.tgtAngle    // Vision absolute angle
                         // (y - angle) is correction and it should be less than tolerance
                         setpoint = if (Math.abs(y - angle) < tolerance) {
                             println("Vision subsystem corrected $angle to $y")

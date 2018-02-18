@@ -34,6 +34,9 @@ object ArmSubsystem : Subsystem() {
         // break mode
         masterArmMotor.setNeutralMode(NeutralMode.Brake)
 
+        // current limiting
+        currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
+
         // closed loop configuration
         masterArmMotor.configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
         masterArmMotor.configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
@@ -43,8 +46,6 @@ object ArmSubsystem : Subsystem() {
         // motion magic settings
         masterArmMotor.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
         masterArmMotor.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
-
-        currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
     }
 
     fun set(controlMode: ControlMode, output: Double) {
@@ -81,9 +82,11 @@ object ArmSubsystem : Subsystem() {
     override fun periodic() {
         this.currentLimiting()
     }
-
 }
 
 enum class ArmPosition (val ticks: Int) {
-    BEHIND(2400), UP(1900), MIDDLE(1250), DOWN(1100);
+    BEHIND(ArmConstants.DOWN_TICKS + 1300),
+    UP(ArmConstants.DOWN_TICKS + 800),
+    MIDDLE(ArmConstants.DOWN_TICKS + 150),
+    DOWN(ArmConstants.DOWN_TICKS);
 }

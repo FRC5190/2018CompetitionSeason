@@ -87,28 +87,31 @@ object ElevatorConstants {
 }
 
 object ArmConstants {
-    const val LOW_PEAK = 5
-    const val HIGH_PEAK = 30
-    const val DUR = 1000
+    // robot settings for arm
+    const val INVERTED = false
+    const val SENSOR_PHASE = false
 
     const val P = 1.5
     const val I = 0.0
     const val D = 0.3
-
     const val PID_SLOT = 0
 
+    const val DOWN_TICKS = 1100
+
+    // current limiting
+    const val LOW_PEAK = 5
+    const val HIGH_PEAK = 30
+    const val DUR = 1000
+    const val LIMITING_REDUCTION_FACTOR = 0.3
+
+    // nominal and peak currents
     const val NOMINAL_OUT = 0.0
     const val PEAK_OUT = 0.40
-
     const val TOLERANCE = 0
 
+    // motion magic
     const val MOTION_VELOCITY = 1000000
     const val MOTION_ACCELERATION = 350
-
-    const val INVERTED = false
-    const val SENSOR_PHASE = false
-
-    const val LIMITING_REDUCTION_FACTOR = 0.3
 }
 
 object IntakeConstants {
