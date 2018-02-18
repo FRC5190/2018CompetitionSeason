@@ -5,102 +5,195 @@
 
 package frc.team5190.robot.auto
 
-import frc.team5190.robot.util.Hardware
-import frc.team5190.robot.util.Maths
+import edu.wpi.first.wpilibj.command.CommandGroup
+import edu.wpi.first.wpilibj.command.TimedCommand
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.elevator.AutoElevatorCommand
+import frc.team5190.robot.elevator.ElevatorPosition
+import frc.team5190.robot.intake.*
+import frc.team5190.robot.pathreader.Pathreader
+import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
-import java.io.InputStreamReader
 
 /**
  * Contains methods that help with autonomous
  */
 class AutoHelper {
     companion object {
-        /**
-         * Returns a path from the specified data.
-         * @param startingPosition The starting position of the robot.
-         * @param ownedSide The side which is owned by the robot's alliance.
-         * @return The path that the robot should take.
-         */
-        fun getPathFromData(startingPosition: StartingPositions, ownedSide: MatchData.OwnedSide): Paths {
-            when {
-                startingPosition == StartingPositions.LEFT -> {
-                    if (ownedSide == MatchData.OwnedSide.LEFT) {
-                        return Paths.LEFT_STATION_LEFT_SWITCH
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
+
+            var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
+            if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
+
+            when (folder) {
+                "LS-LL", "RS-RR" -> {
+                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                    return commandGroup {
+                        this.addSequential(dropCubeOnScale(scale1Id, folder == "RS-RR", false))
+                        this.addSequential(pickupCube(folder == "LS-LL"))
+                        this.addSequential(dropCubeOnSwitch())
                     }
-                    return Paths.LEFT_STATION_RIGHT_SWITCH
                 }
-                startingPosition == StartingPositions.CENTER -> {
-                    if (ownedSide == MatchData.OwnedSide.LEFT) {
-                        return Paths.CENTER_STATION_LEFT_SWITCH
+                "LS-RL", "RS-LR" -> {
+                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                    return commandGroup {
+                        this.addSequential(dropCubeOnScale(scale1Id, folder == "RS-LR", false))
+                        this.addSequential(pickupCube(folder == "LS-RL"))
                     }
-                    return Paths.CENTER_STATION_RIGHT_SWITCH
                 }
-                ownedSide == MatchData.OwnedSide.LEFT -> return Paths.RIGHT_STATION_LEFT_SWITCH
-                else -> return Paths.RIGHT_STATION_RIGHT_SWITCH
+                "LS-LR", "RS-RL" -> {
+                    val switchId = Pathreader.requestPath("LS-LR", "Switch")
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(switchId, true, folder == "RS-RL"))
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            this.addParallel(AutoArmCommand(ArmPosition.UP))
+                        })
+                        this.addSequential(TurnCommand(-90.0, false))
+                        this.addSequential(frc.team5190.robot.util.commandGroup {
+                            this.addParallel(MotionMagicCommand(2.5), 1.0)
+                            this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                    }
+                }
+                "LS-RR", "RS-LL" -> {
+                    val scaleId = Pathreader.requestPath("LS-RR", "Scale")
+                    return commandGroup {
+                        this.addSequential(dropCubeOnScale(scaleId, folder == "RS-LL", true))
+                        this.addSequential(pickupCube(folder == "RS-LL"))
+                        this.addSequential(dropCubeOnSwitch())
+                    }
+                }
+                "CS-L" -> {
+                    val switchId = Pathreader.requestPath("CS-L", "Switch")
+                    val centerId = Pathreader.requestPath("CS-L", "Center")
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(switchId))
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                        })
+
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+
+                        this.addSequential(MotionProfileCommand(centerId, true))
+                        this.addSequential(pickupCubeFromCenter())
+
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(switchId))
+                        })
+
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+
+                    }
+                }
+                "CS-R" -> {
+                    val switchId = Pathreader.requestPath("CS-R", "Switch")
+                    val centerId = Pathreader.requestPath("CS-R", "Center")
+                    return commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(MotionProfileCommand(switchId))
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                        })
+
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeHoldCommand(), 0.001)
+                        this.addSequential(MotionProfileCommand(centerId, true))
+                        this.addSequential(pickupCubeFromCenter())
+                    }
+                }
+                else -> TODO("Does not exist.")
+            }
+        }
+
+        private fun pickupCube(leftTurn: Boolean): CommandGroup {
+            return commandGroup {
+                this.addParallel(commandGroup {
+                    this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                    this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                })
+                this.addParallel(commandGroup {
+                    this.addSequential(TurnCommand(if (leftTurn) -10.0 else 10.0, visionCheck = true, tolerance = 15.0))
+                    this.addSequential(commandGroup {
+                        this.addParallel(MotionMagicCommand(4.0, cruiseVel = 3.0), 4.0 / 3.0)
+                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
+                    })
+                    this.addSequential(IntakeHoldCommand(), 0.001)
+                })
+            }
+        }
+
+        private fun dropCubeOnScale(scaleId: Int, isMirrored: Boolean, isOpposite: Boolean): CommandGroup {
+            return commandGroup {
+                addSequential(commandGroup {
+                    this.addParallel(MotionProfileCommand(scaleId, true, isMirrored))
+                    this.addParallel(commandGroup {
+                        this.addSequential(commandGroup {
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            this.addParallel(AutoArmCommand(ArmPosition.UP))
+                        }, 0.1)
+                        this.addSequential(TimedCommand(if (isOpposite) 5.0 else 2.25))
+                        this.addSequential(commandGroup {
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                            this.addParallel(commandGroup {
+                                this.addSequential(TimedCommand(0.25))
+                                this.addSequential(AutoArmCommand(ArmPosition.BEHIND))
+                            })
+                        })
+                        this.addSequential(TimedCommand(0.25))
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 1.0, outSpeed = 1.0))
+                    })
+                })
+                this.addSequential(IntakeHoldCommand(), 0.001)
+            }
+        }
+
+        private fun dropCubeOnSwitch(): CommandGroup {
+            return commandGroup {
+                this.addSequential(MotionMagicCommand(-0.25))
+                this.addSequential(commandGroup {
+                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                })
+                this.addSequential(MotionMagicCommand(1.3), 1.0)
+                this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                this.addSequential(IntakeHoldCommand(), 0.001)
+            }
+        }
+
+        private fun pickupCubeFromCenter(): CommandGroup {
+            return commandGroup {
+                this.addSequential(commandGroup {
+                    this.addParallel(TurnCommand(0.0, true, 15.0))
+                    this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                    this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                })
+
+                this.addSequential(frc.team5190.robot.util.commandGroup {
+                    this.addParallel(MotionMagicCommand(3.75))
+                    this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
+                })
+
+                this.addSequential(IntakeHoldCommand(), 0.001)
+                this.addSequential(frc.team5190.robot.util.commandGroup {
+                    this.addParallel(MotionMagicCommand(-4.0))
+                    this.addParallel(AutoElevatorCommand(frc.team5190.robot.elevator.ElevatorPosition.SWITCH))
+                    this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
+                })
             }
         }
     }
 }
-
-
-/**
- * A class that contains information about the paths that the robot will take during autonomous.
- * @param leftFilePath The file path for the trajectory of the left side of the DriveTrain
- * @param rightFilePath The file path for the trajectory of the right side of the DriveTrain
- */
-enum class Paths(private val filePath: String) {
-
-    // Various enums that represent the different paths the robot will take.
-    LEFT_STATION_LEFT_SWITCH("left_station/direct_left_switch"),
-    LEFT_STATION_RIGHT_SWITCH("left_station/direct_right_switch"),
-    CENTER_STATION_LEFT_SWITCH("center_station/direct_left_switch"),
-    CENTER_STATION_RIGHT_SWITCH("center_station/direct_right_switch"),
-    RIGHT_STATION_LEFT_SWITCH("right_station/direct_left_switch"),
-    RIGHT_STATION_RIGHT_SWITCH("right_station/direct_right_switch"),
-    TEST("testpath");
-
-    val trajectoryLeft
-        get() = loadTrajectory(filePath + "_left.csv")
-
-    val trajectoryRight
-        get() = loadTrajectory(filePath + "_right.csv")
-
-
-    /**
-     * Loads the trajectory from the specified file.
-     * @param path The path of the file to read the data from.
-     * @return A list of points on the trajectory to read the motion profile from.
-     */
-    private fun loadTrajectory(path: String): TrajectoryList {
-        javaClass.classLoader.getResourceAsStream(path).use { stream ->
-            return InputStreamReader(stream).readLines().map {
-                val pointData = it.split(",").map { it.trim() }
-                return@map TrajectoryData(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toInt())
-            }
-        }
-    }
-}
-
 
 /**
  * Stores starting position of the robot.
  */
 enum class StartingPositions {
     LEFT, CENTER, RIGHT;
-}
-
-typealias TrajectoryList = List<TrajectoryData>
-
-/**
- * Stores trajectory data for each point along the trajectory.
- */
-data class TrajectoryData(private val position: Double, private val velocity: Double, val duration: Int) {
-
-    // Converts feet and feet/sec into rotations and rotations/sec.
-    private val rotations = Maths.feetToRotations(position, Hardware.WHEEL_RADIUS)
-    private val rpm = Maths.feetPerSecondToRPM(velocity, Hardware.WHEEL_RADIUS)
-
-    // Converts rotations and rotations/sec to native units and native units/100 ms.
-    var nativeUnits = Maths.rotationsToNativeUnits(rotations, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
-    val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
 }

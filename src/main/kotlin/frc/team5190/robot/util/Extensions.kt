@@ -1,11 +1,14 @@
 package frc.team5190.robot.util
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.CommandGroup
+import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.drive.Gear
 
-fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
+fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup {
     val group = CommandGroup()
     create.invoke(group)
     return group
@@ -21,11 +24,11 @@ fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup{
  * @param sensorUnitsPerRotation Sensor units per rotation
  * @param dev Feedback device used with the motor
  */
-fun TalonSRX.configPIDF(slotIdx: Int, p: Double, i: Double, d: Double, power: Double, rpm: Double, sensorUnitsPerRotation: Double) {
+fun TalonSRX.configPIDF(slotIdx: Int, p: Double, i: Double, d: Double, rpm: Int, sensorUnitsPerRotation: Int) {
     config_kP(slotIdx, p, 10)
     config_kI(slotIdx, i, 10)
     config_kD(slotIdx, d, 10)
-    config_kF(slotIdx, Maths.calculateFGain(power, rpm, sensorUnitsPerRotation), 10)
+    config_kF(slotIdx, Maths.calculateFGain(1.0, rpm, sensorUnitsPerRotation.toDouble()), 10)
 }
 
 fun TalonSRX.configPID(slotIdx: Int, p: Double, i: Double, d: Double, timeoutMs: Int) {
@@ -47,4 +50,17 @@ fun TalonSRX.configPeakOutput(percentForward: Double, percentReverse: Double, ti
 fun TalonSRX.configLimitSwitchSource(type: LimitSwitchSource, normalOpenOrClose: LimitSwitchNormal, timeoutMs: Int) {
     configForwardLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
     configReverseLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
+}
+
+/**
+ * Scales the output depending on the ControlMode.
+ */
+fun ControlMode.scale(): Double {
+    return when (this) {
+        ControlMode.PercentOutput -> 1.0
+        ControlMode.Velocity ->
+            if (DriveSubsystem.falconDrive.gear == Gear.LOW) DriveConstants.MAX_STU_LOW.toDouble()
+            else DriveConstants.MAX_STU_HIGH.toDouble()
+        else -> TODO("Not supported.")
+    }
 }

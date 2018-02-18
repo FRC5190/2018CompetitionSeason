@@ -1,5 +1,6 @@
 package frc.team5190.robot.intake
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 
 /**
@@ -13,9 +14,8 @@ class IntakeHoldCommand : Command() {
 
     override fun initialize() {
         IntakeSubsystem.intakeSolenoid.set(true)
-        IntakeSubsystem.intakeTalon.set(0.0)
+        IntakeSubsystem.set(ControlMode.PercentOutput, 0.0)
     }
 
     override fun isFinished() = false
-
 }

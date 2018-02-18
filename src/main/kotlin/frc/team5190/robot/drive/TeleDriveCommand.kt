@@ -17,7 +17,7 @@ class TeleDriveCommand : Command() {
         this.requires(DriveSubsystem)
     }
 
-    /**
+    /**tel
      * Called periodically until the command is triggerState or until interrupted.
      */
     override fun execute() {
@@ -37,7 +37,7 @@ class TeleDriveCommand : Command() {
         }
 
         DriveSubsystem.falconDrive.gear = when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) || ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) > 60 -> Gear.LOW
+            MainXbox.aButton || ElevatorSubsystem.nativeUnitsToInches(ElevatorSubsystem.currentPosition) > 60 -> Gear.LOW
             else -> Gear.HIGH
         }
     }

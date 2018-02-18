@@ -5,11 +5,17 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.util.*
+import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.util.configPIDF
+import frc.team5190.robot.util.configPeakOutput
+import frc.team5190.robot.util.scale
 
 /**
  * Custom FalconDrive object that extends Differential Drive
@@ -20,17 +26,17 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
-    private val leftSlaves = leftMotors.subList(1, leftMotors.size)
+    val leftSlaves = leftMotors.subList(1, leftMotors.size)
 
     // Values for the right side of the DriveTrain
     val rightMaster = rightMotors[0]
-    private val rightSlaves = rightMotors.subList(1, rightMotors.size)
+    val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
     // Values for all the master motors of the DriveTrain
-    private val allMasters = listOf(leftMaster, rightMaster)
+    val allMasters = listOf(leftMaster, rightMaster)
 
     // Values for all the motors of the Drive Train
-    private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
+    val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
     /**
      * Sets some initial values when the FalconDrive object is initialized.
@@ -57,37 +63,52 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
 
         allMotors.forEach {
-            it.setSensorPhase(true)
             it.setNeutralMode(NeutralMode.Brake)
-
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, 10)
             // TODO: Need to configure current limits
         }
 
-        gear = Gear.HIGH
-    }
 
-    internal fun autoReset() {
-        this.reset()
+        gear = Gear.HIGH
 
         allMasters.forEach {
-            it.configPIDF(0, 0.7, 0.0, 0.0, 1.0, Hardware.MAX_RPM_HIGH.toDouble(), Hardware.NATIVE_UNITS_PER_ROTATION.toDouble())
-            it.selectProfileSlot(0, 0)
             it.configMotionProfileTrajectoryPeriod(10, 10)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
         }
     }
 
+    internal fun autoReset() {
+        this.reset()
+        allMasters.forEach { it.configPeakOutput(1.0, -1.0, 10) }
+    }
+
+
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
+            it.configPeakOutput(0.8, -0.8, 10)
             it.clearMotionProfileTrajectories()
-            it.selectProfileSlot(1, 0)
+            it.selectProfileSlot(0, 0)
         }
     }
+
     var gear
         get() = Gear.getGear(gearSolenoid.get())
-        set(value) = gearSolenoid.set(value.state)
+        set(value) {
+            when (value) {
+                Gear.HIGH -> allMasters.forEach {
+                    it.configPIDF(DriveConstants.PID_SLOT_HIGH, DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, DriveConstants.MAX_RPM_HIGH, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+                    it.selectProfileSlot(DriveConstants.PID_SLOT_HIGH, 0)
+                }
+                Gear.LOW -> allMasters.forEach {
+                    it.configPIDF(DriveConstants.PID_SLOT_LOW, DriveConstants.P_LOW, DriveConstants.I_LOW, DriveConstants.D_LOW, DriveConstants.MAX_RPM_LOW, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+                    it.selectProfileSlot(DriveConstants.PID_SLOT_LOW, 0)
+                }
+            }
+            gearSolenoid.set(value.state)
+        }
 
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)
@@ -203,7 +224,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 }
 
 enum class Gear(val state: Boolean) {
-    HIGH(true), LOW(false);
+    HIGH(false), LOW(true);
 
     companion object {
         fun getGear(solenoidState: Boolean) = Gear.values().find { it.state == solenoidState }!!
