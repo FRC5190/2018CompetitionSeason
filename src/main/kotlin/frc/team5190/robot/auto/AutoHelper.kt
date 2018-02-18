@@ -5,6 +5,7 @@
 
 package frc.team5190.robot.auto
 
+import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.arm.ArmPosition
@@ -166,19 +167,17 @@ class AutoHelper {
 
         private fun pickupCube(leftTurn: Boolean): CommandGroup {
             return commandGroup {
-                this.addSequential(commandGroup {
+                this.addParallel(commandGroup {
                     this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                     this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                    this.addParallel(TurnCommand(if (leftTurn) -10.0 else 10.0, visionCheck = true, tolerance = 15.0))
                 })
-                this.addSequential(frc.team5190.robot.util.commandGroup {
+                this.addParallel(commandGroup {
+                    this.addSequential(TurnCommand(if (leftTurn) -10.0 else 10.0, visionCheck = true, tolerance = 15.0))
                     this.addSequential(commandGroup {
-                        this.addParallel(frc.team5190.robot.util.commandGroup {
-                            this.addSequential(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
-                            this.addSequential(IntakeHoldCommand(), 0.001)
-                        })
-                        this.addParallel(MotionMagicCommand(4.0), 1.0)
+                        this.addParallel(MotionMagicCommand(4.0, cruiseVel = 2.0), 1.0)
+                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                     })
+                    this.addSequential(IntakeHoldCommand(), 0.001)
                 })
             }
         }

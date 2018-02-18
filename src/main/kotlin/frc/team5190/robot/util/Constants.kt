@@ -56,6 +56,9 @@ object DriveConstants {
 
     const val PID_SLOT_LOW = 1
 
+    const val MOTION_MAGIC_CRUISE = 7.0
+    const val MOTION_MAGIC_ACCEL = 4.5
+
     const val IS_RACE_ROBOT = false
 }
 

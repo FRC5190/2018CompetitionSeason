@@ -5,11 +5,17 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.util.*
+import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.util.configPIDF
+import frc.team5190.robot.util.configPeakOutput
+import frc.team5190.robot.util.scale
 
 /**
  * Custom FalconDrive object that extends Differential Drive
@@ -70,11 +76,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configMotionProfileTrajectoryPeriod(10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
-
-            it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(7.0, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
-            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(4.5, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
         }
-
     }
 
     internal fun autoReset() {
@@ -100,7 +102,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
                     it.configPIDF(DriveConstants.PID_SLOT_HIGH, DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, DriveConstants.MAX_RPM_HIGH, DriveConstants.SENSOR_UNITS_PER_ROTATION)
                     it.selectProfileSlot(DriveConstants.PID_SLOT_HIGH, 0)
                 }
-                Gear.LOW -> allMasters.forEach{
+                Gear.LOW -> allMasters.forEach {
                     it.configPIDF(DriveConstants.PID_SLOT_LOW, DriveConstants.P_LOW, DriveConstants.I_LOW, DriveConstants.D_LOW, DriveConstants.MAX_RPM_LOW, DriveConstants.SENSOR_UNITS_PER_ROTATION)
                     it.selectProfileSlot(DriveConstants.PID_SLOT_LOW, 0)
                 }
