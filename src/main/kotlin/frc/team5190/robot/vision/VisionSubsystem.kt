@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import kotlin.math.pow
+import kotlin.math.sign
 
 object VisionSubsystem : Subsystem() {
 
@@ -30,7 +31,7 @@ object VisionSubsystem : Subsystem() {
      * Returns the most recently seen target's angle relative to the camera in degrees
      * Positive means to the Right of center, negative means to the left
      */
-    private var rawAngle = 0.0
+    var rawAngle = 0.0
     /**
      * Returns the most recently seen target's range from the camera in inches
      * Range means distance along the ground from camera mount point to observed target
@@ -174,7 +175,7 @@ object VisionSubsystem : Subsystem() {
         try {
             if (visionPort!!.bytesReceived > 0) {
                 val string = visionPort!!.readString()
-                println(string)
+//                println(string)
                 val parser = JSONParser()
                 val obj = parser.parse(string)
                 val jsonObject = obj as JSONObject
@@ -214,7 +215,10 @@ object VisionSubsystem : Subsystem() {
 
     private fun correctedAngle() : Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
+
         val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
+
+
         return Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
     }
 

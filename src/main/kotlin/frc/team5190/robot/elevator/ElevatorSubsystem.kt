@@ -166,6 +166,6 @@ object ElevatorSubsystem : Subsystem() {
 
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
-    SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
+    SCALE(ElevatorSubsystem.inchesToNativeUnits(55.0)),
     INTAKE(ElevatorSubsystem.inchesToNativeUnits(1.0));
 }

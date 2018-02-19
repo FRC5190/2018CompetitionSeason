@@ -75,7 +75,7 @@ object ElevatorConstants {
 
     // nominal and peak currents
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.45
+    const val PEAK_OUT = 0.75
     const val TOLERANCE_INCHES = 0.25
 
     // motion magic
@@ -93,7 +93,7 @@ object ArmConstants {
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1400
+    const val DOWN_TICKS = 1470
 
     // current limiting
     const val LOW_PEAK = 5
@@ -103,7 +103,7 @@ object ArmConstants {
 
     // nominal and peak currents
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.3
+    const val PEAK_OUT = 0.4
     const val TOLERANCE = 0
 
     // motion magic
