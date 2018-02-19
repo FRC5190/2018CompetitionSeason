@@ -55,12 +55,12 @@ object DriveConstants {
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 
-    const val IS_RACE_ROBOT = true
+    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
     // robot settings for elevator
-    const val SENSOR_UNITS_PER_ROTATION = 4096
+    const val SENSOR_UNITS_PER_ROTATION = 4096      // 4096 for falcon heacy, 1440 for falcon 9
 
     const val P = 0.5
     const val I = 0.0
@@ -85,15 +85,15 @@ object ElevatorConstants {
 
 object ArmConstants {
     // robot settings for arm
-    const val INVERTED = true
-    const val SENSOR_PHASE = true
+    const val INVERTED = true                  // true for falcon heavy, false for falcon  9
+    const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
 
     const val P = 1.5
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1470
+    const val DOWN_TICKS = 1470                 // 1470 for falcon heavy, 1840 for falcon 9
 
     // current limiting
     const val LOW_PEAK = 5

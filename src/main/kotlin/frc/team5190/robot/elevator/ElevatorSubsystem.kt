@@ -47,18 +47,18 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.setNeutralMode(NeutralMode.Brake)
         slaveElevatorMotor.setNeutralMode(NeutralMode.Brake)
 
+        // current limiting
+        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
+
         // Closed loop operation and output shaping
         masterElevatorMotor.configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, 10)
         masterElevatorMotor.configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), 10)
-
         masterElevatorMotor.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
         masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
 
         // motion magic settings
         masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
-
-        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
 
         // more settings
         reset()
@@ -106,8 +106,6 @@ object ElevatorSubsystem : Subsystem() {
     }
 
     override fun periodic() {
-
-
         if (ElevatorSubsystem.isElevatorAtBottom) {
             this.resetEncoders()
         }

@@ -83,10 +83,19 @@ object VisionSubsystem : Subsystem() {
         }
 
         //Test to make sure we are actually talking to the JeVois
+        sendCmd("streamoff")
+
+        sleep(100)
+        retryCounter = 0
+        while (visionPort!!.bytesReceived > 0 && retryCounter++ < 10) {
+            visionPort!!.readString()
+        }
+
         if (sendPing() != 0) {
             println("Vision: JeVois ping test failed. Not starting vision system.")
             return
         }
+        sendCmd("streamon")
     }
 
     override fun initDefaultCommand() {}

@@ -65,7 +65,7 @@ class AutoHelper {
                 "LS-RR", "RS-LL" -> {
                     val scaleId = Pathreader.requestPath("LS-RR", "Scale")
                     return commandGroup {
-//                        this.addSequential(dropCubeOnScale(scaleId, folder == "RS-LL", true))
+                        this.addSequential(dropCubeOnScale(scaleId, folder == "RS-LL", true))
                         this.addSequential(pickupCube(folder == "RS-LL"))
                         this.addSequential(dropCubeOnSwitch())
                     }
@@ -73,50 +73,25 @@ class AutoHelper {
                 "CS-L" -> {
                     val switchId = Pathreader.requestPath("CS-L", "Switch")
                     val centerId = Pathreader.requestPath("CS-L", "Center")
+                    val switch2Id = Pathreader.requestPath("CS-L", "Switch 2")
                     return commandGroup {
-                        this.addSequential(commandGroup {
-                            this.addParallel(MotionProfileCommand(switchId))
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                        })
-
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-
-                        this.addSequential(MotionProfileCommand(centerId, true))
+                        this.addSequential(dropCubeFromCenter(switchId))
+                        this.addSequential(getBackToCenter(centerId))
                         this.addSequential(pickupCubeFromCenter())
-
-                        this.addSequential(commandGroup {
-                            this.addParallel(MotionProfileCommand(switchId))
-                        })
-
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-
+                        this.addSequential(dropCubeFromCenter(switch2Id))
+                        this.addSequential((MotionMagicCommand(-2.00)))
                     }
                 }
                 "CS-R" -> {
                     val switchId = Pathreader.requestPath("CS-R", "Switch")
                     val centerId = Pathreader.requestPath("CS-R", "Center")
+                    val switch2Id = Pathreader.requestPath("CS-R", "Switch 2")
                     return commandGroup {
-                        this.addSequential(commandGroup {
-                            this.addParallel(MotionProfileCommand(switchId))
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                        })
-
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
-
-                        this.addSequential(MotionProfileCommand(centerId, true))
+                        this.addSequential(dropCubeFromCenter(switchId))
+                        this.addSequential(getBackToCenter(centerId))
                         this.addSequential(pickupCubeFromCenter())
-
-                        this.addSequential(frc.team5190.robot.util.commandGroup {
-                            this.addParallel(MotionProfileCommand(switchId))
-                        })
-
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
+                        this.addSequential(dropCubeFromCenter(switch2Id))
+                        this.addSequential((MotionMagicCommand(-2.00)))
                     }
                 }
                 else -> TODO("Does not exist.")
@@ -178,25 +153,38 @@ class AutoHelper {
             }
         }
 
-        private fun pickupCubeFromCenter(): CommandGroup {
+        private fun dropCubeFromCenter(switchId: Int): CommandGroup {
             return commandGroup {
+                this.addSequential(commandGroup {
+                    this.addParallel(MotionProfileCommand(switchId))
+                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                })
+
+                this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                this.addSequential(IntakeHoldCommand(), 0.001)
+            }
+        }
+
+        private fun getBackToCenter(centerId: Int): CommandGroup {
+            return commandGroup {
+                this.addSequential(MotionProfileCommand(centerId, true))
                 this.addSequential(commandGroup {
                     this.addParallel(TurnCommand(0.0, false, 0.0))
                     this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                     this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                 })
+            }
+        }
 
-                this.addSequential(frc.team5190.robot.util.commandGroup {
+        private fun pickupCubeFromCenter(): CommandGroup {
+            return commandGroup {
+                this.addSequential(commandGroup {
                     this.addParallel(MotionMagicCommand(4.00))
                     this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                 })
-
                 this.addSequential(IntakeHoldCommand(), 0.001)
-                this.addSequential(frc.team5190.robot.util.commandGroup {
-                    this.addParallel(MotionMagicCommand(-5.0))
-                    this.addParallel(AutoElevatorCommand(frc.team5190.robot.elevator.ElevatorPosition.SWITCH))
-                    this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
-                })
+                this.addSequential(MotionMagicCommand(-4.50))
             }
         }
     }
