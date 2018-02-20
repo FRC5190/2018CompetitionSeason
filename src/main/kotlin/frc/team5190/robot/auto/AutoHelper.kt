@@ -11,12 +11,9 @@ import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.elevator.AutoElevatorCommand
 import frc.team5190.robot.elevator.ElevatorPosition
-import frc.team5190.robot.intake.IntakeCommand
-import frc.team5190.robot.intake.IntakeDirection
-import frc.team5190.robot.intake.IntakeHoldCommand
+import frc.team5190.robot.intake.*
 import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.util.commandGroup
-import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
 /**
@@ -43,6 +40,13 @@ class AutoHelper {
                     return commandGroup {
                         this.addSequential(dropCubeOnScale(scale1Id, folder == "RS-LR", false))
                         this.addSequential(pickupCube(folder == "LS-RL"))
+                        this.addSequential(commandGroup {
+                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                            this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                            this.addParallel(MotionMagicCommand(-4.5))
+                        })
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.8, timeout = 0.65))
+                        this.addSequential(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
                     }
                 }
                 "LS-LR", "RS-RL" -> {
@@ -55,10 +59,10 @@ class AutoHelper {
                         })
                         this.addSequential(TurnCommand(-90.0, false))
                         this.addSequential(frc.team5190.robot.util.commandGroup {
+                            this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.DOWN))
                             this.addParallel(MotionMagicCommand(2.5), 1.0)
-                            this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
                         })
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.4))
                         this.addSequential(IntakeHoldCommand(), 0.001)
                     }
                 }
@@ -108,7 +112,7 @@ class AutoHelper {
                     this.addSequential(TurnCommand(if (leftTurn) -10.0 else 10.0, visionCheck = true, tolerance = 15.0))
                     this.addSequential(commandGroup {
                         this.addParallel(MotionMagicCommand(5.0, cruiseVel = 5.0))
-                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.75, inSpeed = 1.0))
+                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
                     })
                     this.addSequential(IntakeHoldCommand(), 0.001)
                 })
@@ -132,7 +136,7 @@ class AutoHelper {
                                 this.addSequential(AutoArmCommand(ArmPosition.BEHIND))
                             })
                         })
-                        this.addSequential(TimedCommand(0.25))
+//                        this.addSequential(TimedCommand(0.25))    // IS THIS NEEDED?
                         this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 1.0, outSpeed = 1.0))
                     })
                 })
@@ -142,12 +146,14 @@ class AutoHelper {
 
         private fun dropCubeOnSwitch(): CommandGroup {
             return commandGroup {
-                this.addSequential(MotionMagicCommand(-0.25))
                 this.addSequential(commandGroup {
                     this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                     this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                    this.addParallel(commandGroup {
+                        this.addSequential(TimedCommand(0.75))
+                        this.addSequential(MotionMagicCommand(1.1), 1.0)
+                    })
                 })
-                this.addSequential(MotionMagicCommand(1.3), 1.0)
                 this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
                 this.addSequential(IntakeHoldCommand(), 0.001)
             }

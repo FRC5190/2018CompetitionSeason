@@ -5,17 +5,11 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import frc.team5190.robot.util.DriveConstants
-import frc.team5190.robot.util.configPIDF
-import frc.team5190.robot.util.configPeakOutput
-import frc.team5190.robot.util.scale
+import frc.team5190.robot.util.*
 
 /**
  * Custom FalconDrive object that extends Differential Drive

@@ -34,10 +34,6 @@ class MotionMagicCommand(feet: Double,
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
-    override fun execute() {
-        DriveSubsystem.falconDrive.feedSafety()
-    }
-
     override fun isFinished() = DriveSubsystem.falconDrive.allMasters.any {
         (it.sensorCollection.quadraturePosition - setPoint).absoluteValue < Maths.feetToNativeUnits(0.1, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble() &&
                 it.sensorCollection.quadratureVelocity < 100

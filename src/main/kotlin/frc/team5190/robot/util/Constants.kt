@@ -62,7 +62,7 @@ object ElevatorConstants {
     // robot settings for elevator
     const val SENSOR_UNITS_PER_ROTATION = 4096      // 4096 for falcon heacy, 1440 for falcon 9
 
-    const val P = 0.5
+    const val P = 0.35
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
@@ -88,12 +88,12 @@ object ArmConstants {
     const val INVERTED = true                  // true for falcon heavy, false for falcon  9
     const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
 
-    const val P = 1.5
+    const val P = 1.75
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1470                 // 1470 for falcon heavy, 1840 for falcon 9
+    const val DOWN_TICKS = 1420                 // 1470 for falcon heavy, 1840 for falcon 9
 
     // current limiting
     const val LOW_PEAK = 5

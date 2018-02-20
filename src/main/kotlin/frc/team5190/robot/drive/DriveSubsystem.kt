@@ -55,6 +55,7 @@ object DriveSubsystem : Subsystem() {
      * Executed periodically. Used for switching drive modes.
      */
     override fun periodic() {
+        falconDrive.feedSafety()
         when {
             MainXbox.backButtonPressed -> DriveMode.TANK
             MainXbox.startButtonPressed -> DriveMode.CURVE

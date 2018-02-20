@@ -13,11 +13,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.MotionMagicCommand
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
+import frc.team5190.robot.elevator.ResetElevatorCommand
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
@@ -111,6 +111,7 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
+
         DriveSubsystem.autoReset()
         DriveSubsystem.falconDrive.gear = Gear.HIGH
         NavX.reset()
@@ -119,19 +120,22 @@ class Robot : IterativeRobot() {
         AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
     }
 
+
+    override fun autonomousPeriodic() {}
+
     /**
      * Executed once when robot is disabled.
      */
-    override fun disabledInit() {
-    }
+    override fun disabledInit() {}
 
-    override fun disabledPeriodic() {
-    }
+    override fun disabledPeriodic() {}
 
     /**
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+
+        ResetElevatorCommand().start()
 
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
@@ -141,6 +145,8 @@ class Robot : IterativeRobot() {
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
     }
+
+    override fun teleopPeriodic() {}
 
     private fun pollForFMSData() {
         switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
