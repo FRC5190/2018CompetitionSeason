@@ -1,8 +1,6 @@
 package frc.team5190.robot.util
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.CommandGroup
 import frc.team5190.robot.drive.DriveSubsystem
@@ -50,6 +48,10 @@ fun TalonSRX.configPeakOutput(percentForward: Double, percentReverse: Double, ti
 fun TalonSRX.configLimitSwitchSource(type: LimitSwitchSource, normalOpenOrClose: LimitSwitchNormal, timeoutMs: Int) {
     configForwardLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
     configReverseLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
+}
+
+fun limitCurrent(buffer: CircularBuffer): MotorState {
+    return buffer.motorState
 }
 
 /**

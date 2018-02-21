@@ -16,4 +16,5 @@ object NavX : AHRS(I2C.Port.kMXP) {
     init {
         zeroYaw()
     }
+
 }

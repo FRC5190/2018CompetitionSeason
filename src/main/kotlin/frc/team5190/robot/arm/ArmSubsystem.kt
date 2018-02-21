@@ -50,7 +50,7 @@ object ArmSubsystem : Subsystem() {
 
     private fun currentLimiting() {
         currentBuffer.add(masterArmMotor.outputCurrent)
-        state = masterArmMotor.limitCurrent(currentBuffer)
+        state = limitCurrent(currentBuffer)
 
         when (state) {
             MotorState.OK -> {
@@ -81,8 +81,8 @@ object ArmSubsystem : Subsystem() {
 }
 
 enum class ArmPosition (val ticks: Int) {
-    BEHIND(ArmConstants.DOWN_TICKS + 1300),
+    BEHIND(ArmConstants.DOWN_TICKS + 1450),
     UP(ArmConstants.DOWN_TICKS + 800),
-    MIDDLE(ArmConstants.DOWN_TICKS + 150),
+    MIDDLE(ArmConstants.DOWN_TICKS + 400),
     DOWN(ArmConstants.DOWN_TICKS);
 }

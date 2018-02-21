@@ -10,7 +10,7 @@ import frc.team5190.robot.vision.VisionSubsystem
  * Command that turns the robot to a certain angle
  * @param angle Angle to turn to in degrees
  */
-class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.075, 0.00, 0.1) {
+class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.08, 0.001, 0.1) {
 
     init {
         requires(DriveSubsystem)
@@ -19,7 +19,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
 
     override fun initialize() {
         // Only execute the command for a total of a max of 5 seconds (should be close enough to target by then)
-        setTimeout(3.0)
+        setTimeout(2.5)
         setName("DriveSystem", "RotateController")
 
         when (visionCheck) {
@@ -32,7 +32,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
                     }
                     true -> {
                         val x = NavX.pidGet()                   // current absolute angle
-                        val y = x + VisionSubsystem.tgtAngle    // Vision absolute angle
+                        val y = x + (VisionSubsystem.tgtAngle + VisionSubsystem.rawAngle) / 2.0    // Vision absolute angle
                         // (y - angle) is correction and it should be less than tolerance
                         setpoint = if (Math.abs(y - angle) < tolerance) {
                             println("Vision subsystem corrected $angle to $y")

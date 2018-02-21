@@ -4,14 +4,16 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.SerialPort
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import kotlin.math.pow
+import kotlin.math.sign
 
 object VisionSubsystem : Subsystem() {
 
     private var visionPort: SerialPort? = null
-    private val camDisplacement = 10
+    private val camDisplacement = 11.25
 
     /**
      * Returns true when the JeVois sees a target and is tracking it, false otherwise.
@@ -29,7 +31,7 @@ object VisionSubsystem : Subsystem() {
      * Returns the most recently seen target's angle relative to the camera in degrees
      * Positive means to the Right of center, negative means to the left
      */
-    private var rawAngle = 0.0
+    var rawAngle = 0.0
     /**
      * Returns the most recently seen target's range from the camera in inches
      * Range means distance along the ground from camera mount point to observed target
@@ -81,10 +83,19 @@ object VisionSubsystem : Subsystem() {
         }
 
         //Test to make sure we are actually talking to the JeVois
+        sendCmd("streamoff")
+
+        sleep(100)
+        retryCounter = 0
+        while (visionPort!!.bytesReceived > 0 && retryCounter++ < 10) {
+            visionPort!!.readString()
+        }
+
         if (sendPing() != 0) {
             println("Vision: JeVois ping test failed. Not starting vision system.")
             return
         }
+        sendCmd("streamon")
     }
 
     override fun initDefaultCommand() {}
@@ -173,7 +184,7 @@ object VisionSubsystem : Subsystem() {
         try {
             if (visionPort!!.bytesReceived > 0) {
                 val string = visionPort!!.readString()
-                //println(string)
+//                println(string)
                 val parser = JSONParser()
                 val obj = parser.parse(string)
                 val jsonObject = obj as JSONObject
@@ -181,6 +192,13 @@ object VisionSubsystem : Subsystem() {
                 if (isTgtVisible == 1L) {
                     rawAngle = jsonObject["Angle"] as Double
                     rawDistance = jsonObject["Range"] as Double
+
+                    SmartDashboard.putNumber("Raw Angle", rawAngle)
+                    SmartDashboard.putNumber("Raw Distance", rawDistance)
+
+                    SmartDashboard.putNumber("Corrected Angle", correctedAngle())
+                    SmartDashboard.putNumber("Corrected Distance", correctedDistance())
+
                 } else {
                     rawAngle = 0.0
                     rawDistance = 0.0
@@ -206,7 +224,10 @@ object VisionSubsystem : Subsystem() {
 
     private fun correctedAngle() : Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
+
         val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
+
+
         return Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
     }
 

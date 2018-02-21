@@ -23,6 +23,7 @@ class ManualElevatorCommand : Command() {
                 triggerState = true
             }
             triggerState -> {
+
                 ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
                 triggerState = false
             }

@@ -7,9 +7,7 @@ import edu.wpi.first.wpilibj.tables.ITable
 import edu.wpi.first.wpilibj.tables.ITableListener
 import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
-import java.io.ByteArrayInputStream
-import java.io.InputStreamReader
-import java.io.ObjectInputStream
+import java.io.*
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -38,7 +36,7 @@ object Pathreader : ITableListener {
         return id
     }
 
-    fun getLeftPath(id: Int, localFilesOnly: Boolean = false): MotionProfileTrajectory? {
+    fun getLeftPath(id: Int, localFilesOnly: Boolean = true): MotionProfileTrajectory? {
         var retryCounter = 0
         while (!localFilesOnly && leftTrajectories[id] == null && retryCounter++ < 40) {
             Thread.sleep(100)
@@ -51,7 +49,7 @@ object Pathreader : ITableListener {
         return leftTrajectories[id]
     }
 
-    fun getRightPath(id: Int, localFilesOnly: Boolean = false): MotionProfileTrajectory? {
+    fun getRightPath(id: Int, localFilesOnly: Boolean = true): MotionProfileTrajectory? {
         var retryCounter = 0
         while (!localFilesOnly && rightTrajectories[id] == null && retryCounter++ < 40) {
             Thread.sleep(100)

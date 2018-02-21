@@ -21,6 +21,9 @@ object MotorIDs {
 
     const val INTAKE_LEFT = 7
     const val INTAKE_RIGHT = 9
+
+    const val BACK_WINCH_MASTER = 0 // 10
+    const val BACK_WINCH_SLAVE  = 0 // 11
 }
 
 object SolenoidIDs {
@@ -55,14 +58,14 @@ object DriveConstants {
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 
-    const val IS_RACE_ROBOT = true
+    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
     // robot settings for elevator
-    const val SENSOR_UNITS_PER_ROTATION = 1440
+    const val SENSOR_UNITS_PER_ROTATION = 1410      // 4096 for falcon heacy, 1440 for falcon 9
 
-    const val P = 0.6
+    const val P = 0.5
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
@@ -75,7 +78,7 @@ object ElevatorConstants {
 
     // nominal and peak currents
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.3
+    const val PEAK_OUT = 0.75
     const val TOLERANCE_INCHES = 0.25
 
     // motion magic
@@ -85,15 +88,15 @@ object ElevatorConstants {
 
 object ArmConstants {
     // robot settings for arm
-    const val INVERTED = true
-    const val SENSOR_PHASE = true
+    const val INVERTED = true                  // true for falcon heavy, false for falcon  9
+    const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
 
-    const val P = 1.5
+    const val P = 2.5
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1100
+    const val DOWN_TICKS = 1400                 // 1470 for falcon heavy, 1840 for falcon 9
 
     // current limiting
     const val LOW_PEAK = 5
@@ -103,7 +106,7 @@ object ArmConstants {
 
     // nominal and peak currents
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.20
+    const val PEAK_OUT = 0.4
     const val TOLERANCE = 0
 
     // motion magic
@@ -112,6 +115,6 @@ object ArmConstants {
 }
 
 object IntakeConstants {
-    const val DEFAULT_SPEED = 0.8
+    const val DEFAULT_SPEED = 0.65
     const val AMP_THRESHOLD = 15
 }

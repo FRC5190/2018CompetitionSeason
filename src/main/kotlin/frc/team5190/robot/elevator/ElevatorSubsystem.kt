@@ -5,10 +5,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
@@ -22,6 +21,9 @@ object ElevatorSubsystem : Subsystem() {
 
     val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition
+
+    val motorCurrent
+        get() = masterElevatorMotor.outputCurrent
 
 
     internal var hasReset = false
@@ -45,18 +47,21 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.setNeutralMode(NeutralMode.Brake)
         slaveElevatorMotor.setNeutralMode(NeutralMode.Brake)
 
+        // current limiting
+        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
+
         // Closed loop operation and output shaping
         masterElevatorMotor.configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, 10)
         masterElevatorMotor.configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), 10)
-
         masterElevatorMotor.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
         masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+
+        masterElevatorMotor.configForwardSoftLimitThreshold(22500, 10)
+        masterElevatorMotor.configForwardSoftLimitEnable(true, 10)
 
         // motion magic settings
         masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
         masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
-
-        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
 
         // more settings
         reset()
@@ -73,11 +78,12 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.set(controlMode, output)
     }
 
-    private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
+    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
 
     private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
-        state = masterElevatorMotor.limitCurrent(currentBuffer)
+        state = limitCurrent(currentBuffer)
+
 
         when (state) {
             MotorState.OK -> {
@@ -103,12 +109,14 @@ object ElevatorSubsystem : Subsystem() {
     }
 
     override fun periodic() {
+        if (ElevatorSubsystem.isElevatorAtBottom) {
+            this.resetEncoders()
+        }
+
+        SmartDashboard.putBoolean("Reset Limit Switch", this.isElevatorAtBottom)
 
         currentLimiting()
 
-        if (this.isElevatorAtBottom) {
-            this.resetEncoders()
-        }
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
@@ -116,7 +124,7 @@ object ElevatorSubsystem : Subsystem() {
         // Up - Scale
             0 -> commandGroup {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
             }
         // Right - Switch
             90 -> commandGroup {
@@ -155,12 +163,13 @@ object ElevatorSubsystem : Subsystem() {
         }
     }
 
-    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.3 / 2.0) * 12.0
-    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.3 / 2.0)
+    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0) * 12.0
+    fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0)
 }
 
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
-    INTAKE((0.35 * ElevatorConstants.SENSOR_UNITS_PER_ROTATION).toInt())
+    SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
+    INTAKE(500);
 }

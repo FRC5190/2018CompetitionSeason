@@ -42,7 +42,6 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
         motionProfile.control()
         DriveSubsystem.falconDrive.leftMaster.set(ControlMode.MotionProfile, motionProfile.getSetValue().value.toDouble())
         DriveSubsystem.falconDrive.rightMaster.set(ControlMode.MotionProfile, motionProfile.getSetValue().value.toDouble())
-        DriveSubsystem.falconDrive.feedSafety()
     }
 
     /**
