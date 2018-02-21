@@ -33,6 +33,20 @@ object ElevatorSubsystem : Subsystem() {
     private var stalled = false
 
     init {
+        masterElevatorMotor.apply {
+            this.inverted = false
+
+            this.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
+            this.setSensorPhase(false)
+            this.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
+            this.overrideLimitSwitchesEnable(true)
+        }
+
+
+
+
+
+
         masterElevatorMotor.inverted = false
         masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
         masterElevatorMotor.setSensorPhase(false)

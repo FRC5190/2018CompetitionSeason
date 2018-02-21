@@ -63,7 +63,7 @@ object DriveConstants {
 
 object ElevatorConstants {
     // robot settings for elevator
-    const val SENSOR_UNITS_PER_ROTATION = 1410      // 4096 for falcon heacy, 1440 for falcon 9
+    const val SENSOR_UNITS_PER_ROTATION = 1440      // 4096 for falcon heacy, 1440 for falcon 9
 
     const val P = 0.5
     const val I = 0.0

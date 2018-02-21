@@ -5,6 +5,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.util.*
 
+/**
+ * Subsystem for controlling the arm mechanism
+ */
 object ArmSubsystem : Subsystem() {
 
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
@@ -13,35 +16,38 @@ object ArmSubsystem : Subsystem() {
     private var stalled = false
     private var state = MotorState.OK
 
-    val motorAmps
+    val amperage
         get() = masterArmMotor.outputCurrent
 
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
 
     init {
-        // hardware for this subsystem includes one motor and an absolute encoder
-        masterArmMotor.inverted = ArmConstants.INVERTED
-        masterArmMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
-        masterArmMotor.setSensorPhase(ArmConstants.SENSOR_PHASE)
-        masterArmMotor.configReverseSoftLimitEnable(false, 10)
-        masterArmMotor.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks, 10)
+        masterArmMotor.apply {
+            // Invert the motor
+            this.inverted = ArmConstants.INVERTED
 
-        // break mode
-        masterArmMotor.setNeutralMode(NeutralMode.Brake)
+            // Sensors and Safety
+            this.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
+            this.setSensorPhase(ArmConstants.SENSOR_PHASE)
+            this.configReverseSoftLimitEnable(true, 10)
+            this.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks - 100, 10)
 
-        // current limiting
+            // Brake Mode
+            this.setNeutralMode(NeutralMode.Brake)
+
+            // Closed Loop Control
+            this.configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
+            this.configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
+            this.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+            this.configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
+
+            // Motion Magic Control
+            this.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
+            this.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
+        }
+
         currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
-
-        // closed loop configuration
-        masterArmMotor.configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
-        masterArmMotor.configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
-        masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
-        masterArmMotor.configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
-
-        // motion magic settings
-        masterArmMotor.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
-        masterArmMotor.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
     }
 
     fun set(controlMode: ControlMode, output: Double) {
@@ -80,7 +86,7 @@ object ArmSubsystem : Subsystem() {
     }
 }
 
-enum class ArmPosition (val ticks: Int) {
+enum class ArmPosition(val ticks: Int) {
     BEHIND(ArmConstants.DOWN_TICKS + 1450),
     UP(ArmConstants.DOWN_TICKS + 800),
     MIDDLE(ArmConstants.DOWN_TICKS + 400),

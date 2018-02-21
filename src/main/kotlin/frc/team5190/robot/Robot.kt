@@ -93,7 +93,7 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
-        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.motorAmps)
+        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.amperage)
         SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.motorCurrent)
 
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)

@@ -20,17 +20,17 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
-    val leftSlaves = leftMotors.subList(1, leftMotors.size)
+    private val leftSlaves = leftMotors.subList(1, leftMotors.size)
 
     // Values for the right side of the DriveTrain
     val rightMaster = rightMotors[0]
-    val rightSlaves = rightMotors.subList(1, rightMotors.size)
+    private val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
     // Values for all the master motors of the DriveTrain
     val allMasters = listOf(leftMaster, rightMaster)
 
     // Values for all the motors of the Drive Train
-    val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
+    private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
     /**
      * Sets some initial values when the FalconDrive object is initialized.
@@ -60,7 +60,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.setNeutralMode(NeutralMode.Brake)
             it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, 10)
-            // TODO: Need to configure current limits
         }
 
 
