@@ -8,14 +8,11 @@ import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.Robot
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.util.*
 
 object IntakeSubsystem : Subsystem() {
 
-    private val intakeTalon = TalonSRX(MotorIDs.INTAKE_LEFT)
+    private val masterIntakeMotor = TalonSRX(MotorIDs.INTAKE_LEFT)
     private val currentBuffer = CircularBuffer(25)
 
     val outputCurrent
@@ -26,24 +23,26 @@ object IntakeSubsystem : Subsystem() {
     private var teleIntake = false
 
     init {
-        intakeTalon.inverted = false
-
-        val intakeTalonSlave = TalonSRX(MotorIDs.INTAKE_RIGHT)
-        intakeTalonSlave.follow(intakeTalon)
-        intakeTalonSlave.inverted = true
+        with(masterIntakeMotor) {
+            inverted = false
+        }
+        with(TalonSRX(MotorIDs.INTAKE_RIGHT)) {
+            follow(masterIntakeMotor)
+            inverted = true
+        }
     }
 
     fun set(controlMode: ControlMode, motorOutput: Double) {
-        intakeTalon.set(controlMode, motorOutput)
+        masterIntakeMotor.set(controlMode, motorOutput)
     }
 
     override fun initDefaultCommand() {
-        this.defaultCommand = IntakeHoldCommand()
+        defaultCommand = IntakeHoldCommand()
     }
 
     override fun periodic() {
 
-        currentBuffer.add(intakeTalon.outputCurrent)
+        currentBuffer.add(masterIntakeMotor.outputCurrent)
 
         if (!Robot.INSTANCE!!.isOperatorControl) return
 

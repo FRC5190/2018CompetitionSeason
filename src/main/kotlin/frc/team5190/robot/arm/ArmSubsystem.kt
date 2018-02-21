@@ -23,28 +23,30 @@ object ArmSubsystem : Subsystem() {
         get() = masterArmMotor.getSelectedSensorPosition(0)
 
     init {
-        masterArmMotor.apply {
-            // Invert the motor
-            this.inverted = ArmConstants.INVERTED
+        with(masterArmMotor) {
+            // Motor Inversion
+            inverted = ArmConstants.INVERTED
 
             // Sensors and Safety
-            this.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
-            this.setSensorPhase(ArmConstants.SENSOR_PHASE)
-            this.configReverseSoftLimitEnable(true, 10)
-            this.configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks - 100, 10)
+            configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
+            setSensorPhase(ArmConstants.SENSOR_PHASE)
+            configReverseSoftLimitEnable(true, 10)
+            configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks - 100, 10)
 
             // Brake Mode
-            this.setNeutralMode(NeutralMode.Brake)
+            setNeutralMode(NeutralMode.Brake)
 
             // Closed Loop Control
-            this.configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
-            this.configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
-            this.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
-            this.configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
+            configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
+            configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
+            configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+            configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
 
             // Motion Magic Control
-            this.configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
-            this.configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
+            configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
+            configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
         }
 
         currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
@@ -78,11 +80,11 @@ object ArmSubsystem : Subsystem() {
     }
 
     override fun initDefaultCommand() {
-        this.defaultCommand = ManualArmCommand()
+        defaultCommand = ManualArmCommand()
     }
 
     override fun periodic() {
-        this.currentLimiting()
+        currentLimiting()
     }
 }
 

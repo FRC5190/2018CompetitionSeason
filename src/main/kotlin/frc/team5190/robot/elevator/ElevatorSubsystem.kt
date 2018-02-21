@@ -33,58 +33,43 @@ object ElevatorSubsystem : Subsystem() {
     private var stalled = false
 
     init {
-        masterElevatorMotor.apply {
-            this.inverted = false
+        with(masterElevatorMotor) {
+            // Motor Inversion
+            inverted = false
 
-            this.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
-            this.setSensorPhase(false)
-            this.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
-            this.overrideLimitSwitchesEnable(true)
+            // Sensors and Safety
+            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
+            setSensorPhase(false)
+            configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
+            overrideLimitSwitchesEnable(true)
+            configForwardSoftLimitThreshold(ElevatorConstants.SOFT_LIMIT_FWD, 10)
+            configForwardSoftLimitEnable(true, 10)
+
+            // Brake Mode
+            setNeutralMode(NeutralMode.Brake)
+
+            // Closed Loop Control
+            configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, 10)
+            configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), 10)
+            configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
+            configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+
+            // Motion Magic Control
+            configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
+            configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
         }
 
+        // Configure Slave Motor
+        with(TalonSRX(MotorIDs.ELEVATOR_SLAVE)) {
+            inverted = true
+            follow(masterElevatorMotor)
+            setNeutralMode(NeutralMode.Brake)
+        }
 
-
-
-
-
-        masterElevatorMotor.inverted = false
-        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
-        masterElevatorMotor.setSensorPhase(false)
-        masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
-        masterElevatorMotor.overrideLimitSwitchesEnable(true)
-
-        val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
-        slaveElevatorMotor.inverted = true
-        slaveElevatorMotor.follow(masterElevatorMotor)
-
-        // brake mode
-        masterElevatorMotor.setNeutralMode(NeutralMode.Brake)
-        slaveElevatorMotor.setNeutralMode(NeutralMode.Brake)
-
-        // current limiting
+        // Current Limiting
         currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
-
-        // Closed loop operation and output shaping
-        masterElevatorMotor.configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, 10)
-        masterElevatorMotor.configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), 10)
-        masterElevatorMotor.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
-        masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
-
-        masterElevatorMotor.configForwardSoftLimitThreshold(22500, 10)
-        masterElevatorMotor.configForwardSoftLimitEnable(true, 10)
-
-        // motion magic settings
-        masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
-        masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
-
-        // more settings
-        reset()
-    }
-
-    private fun reset() {
-        // these cannot be in the constructor since the status frame periods are reset every time the talon is reset
-        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
-        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
     }
 
 
@@ -92,12 +77,11 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.set(controlMode, output)
     }
 
-    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
+    private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)!!
 
     private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
         state = limitCurrent(currentBuffer)
-
 
         when (state) {
             MotorState.OK -> {
@@ -119,7 +103,7 @@ object ElevatorSubsystem : Subsystem() {
     }
 
     override fun initDefaultCommand() {
-        this.defaultCommand = ManualElevatorCommand()
+        defaultCommand = ManualElevatorCommand()
     }
 
     override fun periodic() {
@@ -127,7 +111,7 @@ object ElevatorSubsystem : Subsystem() {
             this.resetEncoders()
         }
 
-        SmartDashboard.putBoolean("Reset Limit Switch", this.isElevatorAtBottom)
+        SmartDashboard.putBoolean("Reset Limit Switch", isElevatorAtBottom)
 
         currentLimiting()
 
@@ -177,7 +161,6 @@ object ElevatorSubsystem : Subsystem() {
         }
     }
 
-    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0) * 12.0
     fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0)
 }
 
