@@ -56,7 +56,7 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
         masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
 
-        masterElevatorMotor.configForwardSoftLimitThreshold(55000, 10)
+        masterElevatorMotor.configForwardSoftLimitThreshold(22500, 10)
         masterElevatorMotor.configForwardSoftLimitEnable(true, 10)
 
         // motion magic settings
@@ -171,5 +171,5 @@ enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
-    INTAKE(1001);
+    INTAKE(500);
 }

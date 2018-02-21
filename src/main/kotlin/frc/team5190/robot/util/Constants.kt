@@ -96,7 +96,7 @@ object ArmConstants {
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1470                 // 1470 for falcon heavy, 1840 for falcon 9
+    const val DOWN_TICKS = 1400                 // 1470 for falcon heavy, 1840 for falcon 9
 
     // current limiting
     const val LOW_PEAK = 5
@@ -115,6 +115,6 @@ object ArmConstants {
 }
 
 object IntakeConstants {
-    const val DEFAULT_SPEED = 0.8
+    const val DEFAULT_SPEED = 0.65
     const val AMP_THRESHOLD = 15
 }

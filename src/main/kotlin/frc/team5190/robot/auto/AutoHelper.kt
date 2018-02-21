@@ -113,7 +113,6 @@ class AutoHelper {
 
         }
 
-
         private fun pickupCube(leftTurn: Boolean): CommandGroup {
             return commandGroup {
                 this.addParallel(commandGroup {
@@ -121,7 +120,7 @@ class AutoHelper {
                     this.addParallel(AutoArmCommand(ArmPosition.DOWN))
                 })
                 this.addParallel(commandGroup {
-                    this.addSequential(TurnCommand(if (leftTurn) -10.0 else 10.0, visionCheck = true, tolerance = 15.0))
+                    this.addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 10.0))
                     this.addSequential(commandGroup {
                         this.addParallel(MotionMagicCommand(5.0, cruiseVel = 5.0))
                         this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
