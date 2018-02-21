@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.arm.*
 import frc.team5190.robot.getTriggerPressed
@@ -30,11 +31,10 @@ object ElevatorSubsystem : Subsystem() {
     private var state = MotorState.OK
     private var currentCommandGroup: CommandGroup? = null
     private var stalled = false
-    private var hasResetEndoder = false
 
     init {
         masterElevatorMotor.inverted = false
-        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, ElevatorConstants.PID_SLOT, 10)
+        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
         masterElevatorMotor.setSensorPhase(false)
         masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
         masterElevatorMotor.overrideLimitSwitchesEnable(true)
@@ -113,6 +113,8 @@ object ElevatorSubsystem : Subsystem() {
             this.resetEncoders()
         }
 
+        SmartDashboard.putBoolean("Reset Limit Switch", this.isElevatorAtBottom)
+
         currentLimiting()
 
         when {
@@ -122,7 +124,7 @@ object ElevatorSubsystem : Subsystem() {
         // Up - Scale
             0 -> commandGroup {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
             }
         // Right - Switch
             90 -> commandGroup {
@@ -167,6 +169,7 @@ object ElevatorSubsystem : Subsystem() {
 
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
-    SCALE(ElevatorSubsystem.inchesToNativeUnits(45.0)),
-    INTAKE(2656);
+    SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
+    SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
+    INTAKE(1001);
 }

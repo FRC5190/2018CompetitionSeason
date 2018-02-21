@@ -40,13 +40,7 @@ class AutoHelper {
                     return commandGroup {
                         this.addSequential(dropCubeOnScale(scale1Id, folder == "RS-LR", false))
                         this.addSequential(pickupCube(folder == "LS-RL"))
-                        this.addSequential(commandGroup {
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                            this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
-                            this.addParallel(MotionMagicCommand(-4.5))
-                        })
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.8, timeout = 0.65))
-                        this.addSequential(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
+                        this.addSequential(switchToScale())
                     }
                 }
                 "LS-LR", "RS-RL" -> {
@@ -102,6 +96,24 @@ class AutoHelper {
             }
         }
 
+        private fun switchToScale(): CommandGroup {
+            return commandGroup {
+                this.addSequential(commandGroup {
+                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                    this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                    this.addParallel(commandGroup {
+                        this.addSequential(MotionMagicCommand(-4.5))
+                        this.addSequential(TurnCommand(12.5))
+                    })
+                })
+
+                this.addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
+                this.addSequential(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
+            }
+
+        }
+
+
         private fun pickupCube(leftTurn: Boolean): CommandGroup {
             return commandGroup {
                 this.addParallel(commandGroup {
@@ -137,7 +149,7 @@ class AutoHelper {
                             })
                         })
 //                        this.addSequential(TimedCommand(0.25))    // IS THIS NEEDED?
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 1.0, outSpeed = 1.0))
+                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 0.65))
                     })
                 })
                 this.addSequential(IntakeHoldCommand(), 0.001)
