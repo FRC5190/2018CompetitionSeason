@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan S, Prateek M
+ */
+
 package frc.team5190.robot.arm
 
 import com.ctre.phoenix.motorcontrol.*
@@ -52,10 +57,18 @@ object ArmSubsystem : Subsystem() {
         currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
     }
 
+    /**
+     * Sets the motor output.
+     * @param controlMode Control Mode for the Talon
+     * @param output Output to the motor
+     */
     fun set(controlMode: ControlMode, output: Double) {
         masterArmMotor.set(controlMode, output)
     }
 
+    /**
+     * Enables current limiting on the motor so we don't stall it
+     */
     private fun currentLimiting() {
         currentBuffer.add(masterArmMotor.outputCurrent)
         state = limitCurrent(currentBuffer)
@@ -79,15 +92,24 @@ object ArmSubsystem : Subsystem() {
         }
     }
 
+    /**
+     * Sets the default command for the subsytem
+     */
     override fun initDefaultCommand() {
         defaultCommand = ManualArmCommand()
     }
 
+    /**
+     * Runs periodically
+     */
     override fun periodic() {
         currentLimiting()
     }
 }
 
+/**
+ * Enum class that holds the different arm positions.
+ */
 enum class ArmPosition(val ticks: Int) {
     BEHIND(ArmConstants.DOWN_TICKS + 1450),
     UP(ArmConstants.DOWN_TICKS + 800),

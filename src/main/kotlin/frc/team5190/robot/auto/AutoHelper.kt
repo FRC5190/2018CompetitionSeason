@@ -1,6 +1,6 @@
-/**
- * FRC Team 5190
- * Programming Team
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan S, Prateek M
  */
 
 package frc.team5190.robot.auto
@@ -21,8 +21,15 @@ import openrio.powerup.MatchData
  */
 class AutoHelper {
     companion object {
+        /**
+         * Returns an autonomous command pertaining to the FMS data
+         * @param startingPositions Starting Position
+         * @param switchOwnedSide The owned side of the switch
+         * @param scaleOwnedSide The owned side of the scale
+         */
         fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
+            // Get the folder that the paths are contained within
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
@@ -96,6 +103,9 @@ class AutoHelper {
             }
         }
 
+        /**
+         * Goes from switch to scale.
+         */
         private fun switchToScale(): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
@@ -113,6 +123,9 @@ class AutoHelper {
 
         }
 
+        /**
+         * Picks up a cube using Vision
+         */
         private fun pickupCube(leftTurn: Boolean): CommandGroup {
             return commandGroup {
                 addParallel(commandGroup {
@@ -130,6 +143,9 @@ class AutoHelper {
             }
         }
 
+        /**
+         * Drops the cube on the scale
+         */
         private fun dropCubeOnScale(scaleId: Int, isMirrored: Boolean, isOpposite: Boolean): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
@@ -154,6 +170,9 @@ class AutoHelper {
             }
         }
 
+        /**
+         * Drops the cube on the switch
+         */
         private fun dropCubeOnSwitch(): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
@@ -169,6 +188,9 @@ class AutoHelper {
             }
         }
 
+        /**
+         * Drops the cube from the center
+         */
         private fun dropCubeFromCenter(switchId: Int): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
@@ -182,6 +204,9 @@ class AutoHelper {
             }
         }
 
+        /**
+         * Goes from the switch to the center position
+         */
         private fun getBackToCenter(centerId: Int): CommandGroup {
             return commandGroup {
                 addSequential(MotionProfileCommand(centerId, true))
@@ -193,6 +218,9 @@ class AutoHelper {
             }
         }
 
+        /**
+         * Picks up a cube from the center pyramid
+         */
         private fun pickupCubeFromCenter(): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {

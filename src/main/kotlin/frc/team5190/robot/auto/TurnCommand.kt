@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan S, Prateek M
+ */
+
 package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
