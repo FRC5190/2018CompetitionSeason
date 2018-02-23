@@ -34,6 +34,9 @@ class AutoHelper {
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
             when (folder) {
+                /*
+                 2 Cube Autonomous -- Scale, then Switch
+                 * */
                 "LS-LL", "RS-RR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
@@ -42,6 +45,10 @@ class AutoHelper {
                         addSequential(dropCubeOnSwitch())
                     }
                 }
+
+                /*
+                2 Cube Autonomous -- Scale, then Scale
+                 */
                 "LS-RL", "RS-LR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
@@ -50,6 +57,10 @@ class AutoHelper {
                         addSequential(switchToScale())
                     }
                 }
+
+                /*
+                1 Cube Autonomous -- Switch
+                 */
                 "LS-LR", "RS-RL" -> {
                     val switchId = Pathreader.requestPath("LS-LR", "Switch")
                     return commandGroup {
@@ -67,6 +78,10 @@ class AutoHelper {
                         addSequential(IntakeHoldCommand(), 0.001)
                     }
                 }
+
+                /*
+                2 Cube Autonomous -- Scale, then Switch
+                 */
                 "LS-RR", "RS-LL" -> {
                     val scaleId = Pathreader.requestPath("LS-RR", "Scale")
                     return commandGroup {
@@ -75,6 +90,10 @@ class AutoHelper {
                         addSequential(dropCubeOnSwitch())
                     }
                 }
+
+                /*
+                2 Cube Autonomous -- Switch, then Switch
+                 */
                 "CS-L" -> {
                     val switchId = Pathreader.requestPath("CS-L", "Switch")
                     val centerId = Pathreader.requestPath("CS-L", "Center")
@@ -87,6 +106,10 @@ class AutoHelper {
                         addSequential((MotionMagicCommand(-2.00)))
                     }
                 }
+
+                /*
+                2 Cube Autonomous -- Switch, then Switch
+                 */
                 "CS-R" -> {
                     val switchId = Pathreader.requestPath("CS-R", "Switch")
                     val centerId = Pathreader.requestPath("CS-R", "Center")
@@ -99,7 +122,7 @@ class AutoHelper {
                         addSequential((MotionMagicCommand(-2.00)))
                     }
                 }
-                else -> TODO("Does not exist.")
+                else -> throw IllegalArgumentException("Scenario does not exist.")
             }
         }
 
@@ -162,12 +185,12 @@ class AutoHelper {
                         addSequential(TimedCommand(if (isOpposite) 5.0 else 2.25))
                         addSequential(commandGroup {
                             addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                            addParallel(AutoArmCommand(ArmPosition.BEHIND))
                             addParallel(commandGroup {
-                                addSequential(TimedCommand(0.25))
-                                addSequential(AutoArmCommand(ArmPosition.BEHIND))
+                                addSequential(TimedCommand(0.75))
+                                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 0.65))
                             })
                         })
-                        addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 0.65))
                     })
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
@@ -183,8 +206,11 @@ class AutoHelper {
                     addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                     addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                     addParallel(commandGroup {
-                        addSequential(TimedCommand(0.75))
-                        addSequential(MotionMagicCommand(1.1), 1.0)
+                        addParallel(MotionMagicCommand(1.1), 1.0)
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(0.5))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                        })
                     })
                 })
                 addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
@@ -234,7 +260,7 @@ class AutoHelper {
                     addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
-                addSequential(MotionMagicCommand(-4.50))
+                addSequential(MotionMagicCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
             }
         }
     }
