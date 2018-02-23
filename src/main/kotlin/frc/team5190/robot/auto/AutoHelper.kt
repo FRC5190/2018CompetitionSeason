@@ -43,6 +43,22 @@ class AutoHelper {
                         addSequential(dropCubeOnScale(scale1Id, folder == "RS-RR", false))
                         addSequential(pickupCube(folder == "LS-LL"))
                         addSequential(dropCubeOnSwitch())
+
+                        // TESTING
+                        addSequential(commandGroup {
+                            addParallel(commandGroup {
+                                addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                addParallel(AutoArmCommand(ArmPosition.DOWN))
+                            })
+                            addParallel(commandGroup {
+                                addSequential(TurnCommand(if (folder == "LS-LL") -10.0 else 5.0, visionCheck = true, tolerance = 10.0))
+                                addSequential(commandGroup {
+                                    addParallel(MotionMagicCommand(5.0, cruiseVel = 5.0))
+                                    addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
+                                })
+                                addSequential(IntakeHoldCommand(), 0.001)
+                            })
+                        })
                     }
                 }
 
