@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.getTriggerPressed
+import frc.team5190.robot.util.ElevatorConstants
 
 /**
  * Command that operates elevator based on controller input
@@ -30,21 +31,26 @@ class ManualElevatorCommand : Command() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) -> {
                 val motorOut =  0.5
+                ElevatorSubsystem.setPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT)
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
                 triggerState = true
             }
             triggerState -> {
-
+                ElevatorSubsystem.setPeakOutput(ElevatorConstants.IDLE_PEAK_OUT)
                 ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
                 triggerState = false
             }
         }
         when {
             MainXbox.getBumper(GenericHID.Hand.kRight) -> {
+                ElevatorSubsystem.setPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT)
                 val motorOut = -0.1
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
             }
-            MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
+            MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> {
+                ElevatorSubsystem.setPeakOutput(ElevatorConstants.IDLE_PEAK_OUT)
+                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
+            }
         }
     }
 

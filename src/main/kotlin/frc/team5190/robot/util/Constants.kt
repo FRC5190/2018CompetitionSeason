@@ -76,7 +76,8 @@ object ElevatorConstants {
     const val LIMITING_REDUCTION_FACTOR = 0.3
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.75
+    const val IDLE_PEAK_OUT = 0.2
+    const val ACTIVE_PEAK_OUT = 1.0
     const val TOLERANCE_INCHES = 0.25
 
     const val SOFT_LIMIT_FWD = 22500

@@ -7,6 +7,7 @@ package frc.team5190.robot.elevator
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
+import frc.team5190.robot.util.ElevatorConstants
 import kotlin.math.absoluteValue
 
 /**
@@ -23,7 +24,15 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
      * Initializes the command
      */
     override fun initialize() {
+        ElevatorSubsystem.setPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT)
         ElevatorSubsystem.set(ControlMode.MotionMagic, position.ticks.toDouble())
+    }
+
+    /**
+     * Executed when the command ends.
+     */
+    override fun end() {
+        ElevatorSubsystem.setPeakOutput(ElevatorConstants.IDLE_PEAK_OUT)
     }
 
     /**
