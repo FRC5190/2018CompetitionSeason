@@ -1,11 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
- */
-
-/**
- * FRC Team 5190
- * Programming Team
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.util

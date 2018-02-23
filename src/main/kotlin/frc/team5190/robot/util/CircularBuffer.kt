@@ -1,12 +1,15 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.util
 
 import java.util.*
 
+/**
+ * Class that manages current limiting while acting as an Evicting Queue
+ */
 class CircularBuffer(private val size: Int) {
 
     private val buffer: ArrayList<Double> = ArrayList(size)

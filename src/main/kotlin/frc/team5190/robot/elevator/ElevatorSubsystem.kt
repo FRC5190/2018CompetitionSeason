@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.elevator
@@ -18,21 +18,26 @@ import frc.team5190.robot.util.*
 
 object ElevatorSubsystem : Subsystem() {
 
-    private val currentBuffer = CircularBuffer(50)
+    // Master elevator talon
     private val masterElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_MASTER)
 
-    val isElevatorAtBottom
+    // Buffer used to hold amperage values for current limiing
+    private val currentBuffer = CircularBuffer(25)
+
+    // Returns if the elevator is hitting the limit switch
+    private val isElevatorAtBottom
         get() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
 
+    // Returns the current encoder position of the elevator
     val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition
 
-    val motorCurrent
+    // Returns the amperage of the motor
+    val amperage
         get() = masterElevatorMotor.outputCurrent
 
 
-    internal var hasReset = false
-
+    // Variables used for current limiting
     private var state = MotorState.OK
     private var currentCommandGroup: CommandGroup? = null
     private var stalled = false
@@ -73,17 +78,27 @@ object ElevatorSubsystem : Subsystem() {
             setNeutralMode(NeutralMode.Brake)
         }
 
-        // Current Limiting
+        // Configure current limiting
         currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
     }
 
-
+    /**
+     * Sets the motor output
+     * @param controlMode Control Mode for the Talon
+     * @param output Output to the motor
+     */
     fun set(controlMode: ControlMode, output: Double) {
         masterElevatorMotor.set(controlMode, output)
     }
 
+    /**
+     * Resets encoders on the elevator
+     */
     private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)!!
 
+    /**
+     * Enables current limiting on the motor so we don't stall it
+     */
     private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
         state = limitCurrent(currentBuffer)
@@ -107,10 +122,16 @@ object ElevatorSubsystem : Subsystem() {
         }
     }
 
+    /**
+     * Sets the default command for the subsystem
+     */
     override fun initDefaultCommand() {
         defaultCommand = ManualElevatorCommand()
     }
 
+    /**
+     * Executed periodically
+     */
     override fun periodic() {
         if (ElevatorSubsystem.isElevatorAtBottom) {
             this.resetEncoders()
@@ -169,6 +190,9 @@ object ElevatorSubsystem : Subsystem() {
     fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0)
 }
 
+/**
+ * Enum that contains elevator positions
+ */
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),

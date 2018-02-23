@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.arm
@@ -15,15 +15,21 @@ import frc.team5190.robot.util.*
  */
 object ArmSubsystem : Subsystem() {
 
+    // Master arm talon
     private val masterArmMotor = TalonSRX(MotorIDs.ARM)
+
+    // Buffer to hold amperage values for current limiting
     private val currentBuffer = CircularBuffer(25)
 
+    // Variables for current limiting
     private var stalled = false
     private var state = MotorState.OK
 
+    // Returns the amperage of the motor
     val amperage
         get() = masterArmMotor.outputCurrent
 
+    // Returns the current encoder position of the motor
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
 
@@ -54,6 +60,7 @@ object ArmSubsystem : Subsystem() {
             setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
         }
 
+        // Configure current limiting
         currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
     }
 

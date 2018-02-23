@@ -1,11 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
- */
-
-/**
- * FRC Team 5190
- * Programming Team
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot
@@ -99,7 +94,7 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
         SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.amperage)
-        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.motorCurrent)
+        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.amperage)
 
         SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)

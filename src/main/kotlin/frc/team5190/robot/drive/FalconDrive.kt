@@ -1,11 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
- */
-
-/**
- * FRC Team 5190
- * Programming Team
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.drive
@@ -77,12 +72,17 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
     }
 
+    /**
+     * Resets FalconDrive in Autonomous mode
+     */
     internal fun autoReset() {
         this.reset()
         allMasters.forEach { it.configPeakOutput(1.0, -1.0, 10) }
     }
 
-
+    /**
+     * Resets FalconDrive in Teleop mode
+     */
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
@@ -92,6 +92,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
     }
 
+    // Used to set high and low gear of the DriveTrain
     var gear
         get() = Gear.getGear(gearSolenoid.get())
         set(value) {
@@ -108,12 +109,15 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             gearSolenoid.set(value.state)
         }
 
+    // Returns left motor encoder position
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)
 
+    // Returns right motor encoder position
     val rightEncoderPosition
         get() = rightMaster.getSelectedSensorPosition(0)
 
+    // Feeds motor safety
     fun feedSafety() {
         m_safetyHelper.feed()
     }
@@ -221,6 +225,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     }
 }
 
+// Enum that contains the gear states
 enum class Gear(val state: Boolean) {
     HIGH(false), LOW(true);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.auto
@@ -12,16 +12,26 @@ import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 import kotlin.math.absoluteValue
 
+/**
+ * Command that drives to distance
+ * @param feet Distance to go forward
+ * @param cruiseVel Cruise velocity
+ * @param accel Acceleration
+ */
 class MotionMagicCommand(feet: Double,
                          private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
                          private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
 
+    // Setpoint in Native Units
     private val setPoint = Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
 
     init {
         requires(DriveSubsystem)
     }
 
+    /**
+     * Initializes the command
+     */
     override fun initialize() {
         DriveSubsystem.falconDrive.allMasters.forEach {
             it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(cruiseVel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
@@ -32,6 +42,9 @@ class MotionMagicCommand(feet: Double,
         }
     }
 
+    /**
+     * Ends the command
+     */
     override fun end() {
         DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
         DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
@@ -39,6 +52,9 @@ class MotionMagicCommand(feet: Double,
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
+    /**
+     * Checks if the DriveTrain has reached the setpoint
+     */
     override fun isFinished() = DriveSubsystem.falconDrive.allMasters.any {
         (it.sensorCollection.quadraturePosition - setPoint).absoluteValue < Maths.feetToNativeUnits(0.1, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble() &&
                 it.sensorCollection.quadratureVelocity < 100

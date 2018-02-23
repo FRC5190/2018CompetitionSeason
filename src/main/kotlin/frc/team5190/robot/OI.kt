@@ -1,19 +1,13 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 @file:Suppress("unused")
 
-/**
- * FRC Team 5190
- * Programming Team
- */
-
 package frc.team5190.robot
 
 import edu.wpi.first.wpilibj.*
-import edu.wpi.first.wpilibj.buttons.JoystickButton
 
 object Bongos : Joystick(0) {
     fun getLeftBongoSpeed() = when {

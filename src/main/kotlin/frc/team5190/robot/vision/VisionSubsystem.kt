@@ -1,19 +1,16 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.vision
 
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.SerialPort
-import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import kotlin.math.pow
-import kotlin.math.sign
 
 object VisionSubsystem : Subsystem() {
 

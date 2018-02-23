@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.auto
@@ -125,6 +125,7 @@ class AutoHelper {
 
         /**
          * Picks up a cube using Vision
+         * @param leftTurn Whether the turn is to the left
          */
         private fun pickupCube(leftTurn: Boolean): CommandGroup {
             return commandGroup {
@@ -145,6 +146,9 @@ class AutoHelper {
 
         /**
          * Drops the cube on the scale
+         * @param scaleId ID of the scale MP
+         * @param isMirrored Whether the MP is mirrored
+         * @param isOpposite whether the scale is on the opposite side of the starting position
          */
         private fun dropCubeOnScale(scaleId: Int, isMirrored: Boolean, isOpposite: Boolean): CommandGroup {
             return commandGroup {
@@ -190,6 +194,7 @@ class AutoHelper {
 
         /**
          * Drops the cube from the center
+         * @param switchId ID of the switch MP
          */
         private fun dropCubeFromCenter(switchId: Int): CommandGroup {
             return commandGroup {
@@ -206,6 +211,7 @@ class AutoHelper {
 
         /**
          * Goes from the switch to the center position
+         * @param centerId ID of the center MP
          */
         private fun getBackToCenter(centerId: Int): CommandGroup {
             return commandGroup {

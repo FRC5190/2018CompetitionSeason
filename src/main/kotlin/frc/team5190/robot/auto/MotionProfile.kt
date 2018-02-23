@@ -1,18 +1,11 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
- */
-
-/**
- * FRC Team 5190
- * Programming Team
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.auto
 
-import com.ctre.phoenix.motion.MotionProfileStatus
-import com.ctre.phoenix.motion.SetValueMotionProfile
-import com.ctre.phoenix.motion.TrajectoryPoint
+import com.ctre.phoenix.motion.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier

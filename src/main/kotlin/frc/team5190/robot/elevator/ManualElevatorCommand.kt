@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.elevator
@@ -11,15 +11,21 @@ import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.getTriggerPressed
 
+/**
+ * Command that operates elevator based on controller input
+ */
 class ManualElevatorCommand : Command() {
 
     init {
         requires(ElevatorSubsystem)
     }
 
+    // Latch boolean
     var triggerState = false
 
-
+    /**
+     * Executed periodically
+     */
     override fun execute() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) -> {
@@ -42,5 +48,8 @@ class ManualElevatorCommand : Command() {
         }
     }
 
+    /**
+     * Never finishes because it is the default command
+     */
     override fun isFinished() = false
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.intake
@@ -17,14 +17,20 @@ import frc.team5190.robot.util.*
 
 object IntakeSubsystem : Subsystem() {
 
+    // Master intake talon
     private val masterIntakeMotor = TalonSRX(MotorIDs.INTAKE_LEFT)
+    
+    // Buffer to hold amperage values for current limiting
     private val currentBuffer = CircularBuffer(25)
 
-    val outputCurrent
+    // Returns the amperage of the motor
+    val amperage
         get() = currentBuffer.average
 
+    // Solenoid
     val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
+    // Latch Boolean
     private var teleIntake = false
 
     init {
@@ -37,21 +43,32 @@ object IntakeSubsystem : Subsystem() {
         }
     }
 
+    /**
+     * Sets motor output
+     * @param controlMode Control Mode of the Talon
+     * @param motorOutput Output to the talon
+     */
     fun set(controlMode: ControlMode, motorOutput: Double) {
         masterIntakeMotor.set(controlMode, motorOutput)
     }
 
+    /**
+     * Sets the default command
+     */
     override fun initDefaultCommand() {
         defaultCommand = IntakeHoldCommand()
     }
 
+    /**
+     * Executed periodcally
+     */
     override fun periodic() {
 
         currentBuffer.add(masterIntakeMotor.outputCurrent)
 
         if (!Robot.INSTANCE!!.isOperatorControl) return
 
-        SmartDashboard.putNumber("Intake Motor Amps", this.outputCurrent)
+        SmartDashboard.putNumber("Intake Motor Amps", this.amperage)
 
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) -> {
@@ -70,6 +87,9 @@ object IntakeSubsystem : Subsystem() {
     }
 }
 
+/**
+ * Enum that holds intake directions
+ */
 enum class IntakeDirection {
     IN, OUT
 }

@@ -1,12 +1,8 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
-/**
- * FRC Team 5190
- * Programming Team
- */
 package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -14,6 +10,12 @@ import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.pathreader.Pathreader
 
+/**
+ * Command that executes a Motion Profile
+ * @param requestId Request ID of the MP
+ * @param isReversed If the MP should run in reverse
+ * @param isMirrored IF the MP should be mirrored
+ */
 class MotionProfileCommand(private val requestId: Int, private val isReversed: Boolean = false, private val isMirrored: Boolean = false) : Command() {
     private lateinit var motionProfile: MotionProfile
 

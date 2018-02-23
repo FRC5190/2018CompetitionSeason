@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2018 FRC Team 5190
- * Ryan S, Prateek M
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 @file:Suppress("DEPRECATION")
@@ -16,6 +16,9 @@ import java.io.*
 import java.util.*
 import kotlin.collections.HashMap
 
+/**
+ * Class that loads files from local resources or from Network Tables
+ */
 object Pathreader : ITableListener {
 
     private var pathfinderOutputTable: NetworkTable = NetworkTable.getTable("pathfinderOutput")
@@ -29,6 +32,9 @@ object Pathreader : ITableListener {
         pathfinderOutputTable.addTableListener(this, true)
     }
 
+    /**
+     * Requests a path ID
+     */
     fun requestPath(folder: String, path: String, obstructed: Boolean = false, index: Double = 0.0): Int {
         val id = this.requestId++
         localFiles.put(id, folder + "/" + path)
@@ -41,6 +47,9 @@ object Pathreader : ITableListener {
         return id
     }
 
+    /**
+     * Returns a path for the left side of the DriveTrain
+     */
     fun getLeftPath(id: Int, localFilesOnly: Boolean = true): MotionProfileTrajectory? {
         var retryCounter = 0
         while (!localFilesOnly && leftTrajectories[id] == null && retryCounter++ < 40) {
@@ -54,6 +63,9 @@ object Pathreader : ITableListener {
         return leftTrajectories[id]
     }
 
+    /**
+     * Returns a path for the right side of the DriveTrain
+     */
     fun getRightPath(id: Int, localFilesOnly: Boolean = true): MotionProfileTrajectory? {
         var retryCounter = 0
         while (!localFilesOnly && rightTrajectories[id] == null && retryCounter++ < 40) {
@@ -67,6 +79,9 @@ object Pathreader : ITableListener {
         return rightTrajectories[id]
     }
 
+    /**
+     * Method that manages trajectories when received from NetworkTables
+     */
     override fun valueChanged(iTable: ITable, string: String, receivedObject: Any, newValue: Boolean) {
         if (string.startsWith("response_") && newValue) {
             val id:Int = ((receivedObject as Double).toInt())
@@ -84,6 +99,9 @@ object Pathreader : ITableListener {
         }
     }
 
+    /**
+     * Deserializes the trajectory array from Network Tables
+     */
     private fun deserializeTrajectoryArray(id: Int, serializedTrajectoryArray: String) {
         val b = Base64.getDecoder().decode(serializedTrajectoryArray.toByteArray())
         val bi = ByteArrayInputStream(b)
@@ -92,6 +110,7 @@ object Pathreader : ITableListener {
         leftTrajectories.put(id, deserializeTrajectory(s[0]))
         rightTrajectories.put(id, deserializeTrajectory(s[1]))
     }
+
 
     private fun deserializeTrajectory(s: Array<Array<Double>>) : MotionProfileTrajectory {
         val motionArray = mutableListOf<MotionProfileSegment>()
