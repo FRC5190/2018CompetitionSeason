@@ -8,7 +8,7 @@ Some features of this robot include
  * Path generation on a laptop via Network Tables (2018Feeder repository)
  * Elevator and Arm that can lock in place
  
-This project uses IntelliJ, GradleRIO, and the Kotlin JVM Language
+This project uses IntelliJ, GradleRIO, and the Kotlin JVM Language.
 Simply clone this project in IntelliJ and click on the Gradle file to get you up and running.
 
 Happy coding!
