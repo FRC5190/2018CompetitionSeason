@@ -216,7 +216,7 @@ class AutoHelper {
         }
 
         /**
-         * Drops cube on the switch
+         * Goes to the switch
          * @param scaleID ID of the scale MP
          * @param isMirrored Whether the MP is mirrored
          */
@@ -235,7 +235,6 @@ class AutoHelper {
                         })
                     })
                 })
-                addSequential(IntakeHoldCommand(), 0.001)
             }
         }
 
