@@ -35,7 +35,7 @@ class AutoHelper {
 
             when (folder) {
             /*
-             2 Cube Autonomous -- Scale, then Switch
+             3 Cube Autonomous -- Scale, then Switch, then Switch
              * */
                 "LS-LL", "RS-RR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
@@ -141,6 +141,7 @@ class AutoHelper {
                         addSequential((MotionMagicCommand(-2.00)))
                     }
                 }
+
                 else -> throw IllegalArgumentException("Scenario does not exist.")
             }
         }
