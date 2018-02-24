@@ -34,9 +34,9 @@ class AutoHelper {
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
             when (folder) {
-                /*
-                 2 Cube Autonomous -- Scale, then Switch
-                 * */
+            /*
+             2 Cube Autonomous -- Scale, then Switch
+             * */
                 "LS-LL", "RS-RR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
@@ -59,12 +59,15 @@ class AutoHelper {
                                 addSequential(IntakeHoldCommand(), 0.001)
                             })
                         })
+
+                        addSequential(TurnCommand(3.0), 0.75)
+                        addSequential(dropCubeOnSwitch())
                     }
                 }
 
-                /*
-                2 Cube Autonomous -- Scale, then Scale
-                 */
+            /*
+            2 Cube Autonomous -- Scale, then Scale
+             */
                 "LS-RL", "RS-LR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
@@ -74,9 +77,9 @@ class AutoHelper {
                     }
                 }
 
-                /*
-                1 Cube Autonomous -- Switch
-                 */
+            /*
+            1 Cube Autonomous -- Switch
+             */
                 "LS-LR", "RS-RL" -> {
                     val switchId = Pathreader.requestPath("LS-LR", "Switch")
                     return commandGroup {
@@ -95,9 +98,9 @@ class AutoHelper {
                     }
                 }
 
-                /*
-                2 Cube Autonomous -- Scale, then Switch
-                 */
+            /*
+            2 Cube Autonomous -- Scale, then Switch
+             */
                 "LS-RR", "RS-LL" -> {
                     val scaleId = Pathreader.requestPath("LS-RR", "Scale")
                     return commandGroup {
@@ -107,9 +110,9 @@ class AutoHelper {
                     }
                 }
 
-                /*
-                2 Cube Autonomous -- Switch, then Switch
-                 */
+            /*
+            2 Cube Autonomous -- Switch, then Switch
+             */
                 "CS-L" -> {
                     val switchId = Pathreader.requestPath("CS-L", "Switch")
                     val centerId = Pathreader.requestPath("CS-L", "Center")
@@ -123,9 +126,9 @@ class AutoHelper {
                     }
                 }
 
-                /*
-                2 Cube Autonomous -- Switch, then Switch
-                 */
+            /*
+            2 Cube Autonomous -- Switch, then Switch
+             */
                 "CS-R" -> {
                     val switchId = Pathreader.requestPath("CS-R", "Switch")
                     val centerId = Pathreader.requestPath("CS-R", "Center")
@@ -168,10 +171,8 @@ class AutoHelper {
          */
         private fun pickupCube(leftTurn: Boolean): CommandGroup {
             return commandGroup {
-                addParallel(commandGroup {
-                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                    addParallel(AutoArmCommand(ArmPosition.DOWN))
-                })
+                addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                addParallel(AutoArmCommand(ArmPosition.DOWN))
                 addParallel(commandGroup {
                     addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 10.0))
                     addSequential(commandGroup {
