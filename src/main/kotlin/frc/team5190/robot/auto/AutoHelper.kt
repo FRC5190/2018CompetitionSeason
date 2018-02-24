@@ -93,7 +93,7 @@ class AutoHelper {
                             })
                             addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
-                        addSequential(pickupCube(folder == "LS-LR"))
+                        addSequential(pickupCube(folder == "LS-LR", 1.5))
                         addSequential(dropCubeOnSwitch())
                     }
                 }
@@ -169,14 +169,14 @@ class AutoHelper {
          * Picks up a cube using Vision
          * @param leftTurn Whether the turn is to the left
          */
-        private fun pickupCube(leftTurn: Boolean): CommandGroup {
+        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 5.0): CommandGroup {
             return commandGroup {
                 addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                 addParallel(AutoArmCommand(ArmPosition.DOWN))
                 addParallel(commandGroup {
                     addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 10.0))
                     addSequential(commandGroup {
-                        addParallel(MotionMagicCommand(5.0, cruiseVel = 5.0))
+                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 5.0), 1.2)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
