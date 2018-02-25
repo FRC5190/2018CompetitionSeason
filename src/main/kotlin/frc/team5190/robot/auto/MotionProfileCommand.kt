@@ -37,12 +37,8 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
     }
 
     fun getMPTime(): Double {
-
         var sum = 0.0
-        leftTrajectory.forEach {
-            sum += it.duration
-        }
-
+        leftTrajectory.forEach { sum += it.duration }
         return sum / 1000
     }
 
@@ -50,11 +46,6 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
      * Runs once whenever the command is started.
      */
     override fun initialize() {
-        // Precautionary Measures
-        if (leftTrajectory.size < 2 || rightTrajectory.size < 2) {
-            getMPTime()
-        }
-
         motionProfile = MotionProfile(DriveSubsystem.falconDrive.leftMaster, leftTrajectory, DriveSubsystem.falconDrive.rightMaster, rightTrajectory, isReversed)
         motionProfile.startMotionProfile()
     }
