@@ -40,7 +40,7 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
 
         var sum = 0.0
         leftTrajectory.forEach {
-            sum += it.dt
+            sum += it.duration
         }
 
         return sum / 1000
