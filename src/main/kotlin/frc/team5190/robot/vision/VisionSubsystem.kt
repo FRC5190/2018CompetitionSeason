@@ -5,15 +5,16 @@
 
 package frc.team5190.robot.vision
 
-import edu.wpi.first.wpilibj.*
-import edu.wpi.first.wpilibj.command.Subsystem
+import com.google.gson.Gson
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.SerialPort
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import org.json.simple.JSONObject
-import org.json.simple.parser.JSONParser
+import java.lang.Thread.sleep
 import kotlin.concurrent.thread
 import kotlin.math.pow
 
-object VisionSubsystem : Subsystem() {
+object VisionSubsystem {
 
     private var visionPort: SerialPort? = null
     private val camDisplacement = 11.25
@@ -42,22 +43,31 @@ object VisionSubsystem : Subsystem() {
      */
     private var rawDistance = 0.0
 
+    private var connectionFailedCounter = 0
+    private var lastDataReceived: Long = 0
+
     /**
      * Constructor (more complex). Opens a USB serial port to the camera, sends a few test commands checking for error,
      * then fires up the user's program and begins listening for target info packets in the background.
      * Pass TRUE to additionally enable a USB camera stream of what the vision camera is seeing.
      */
     init {
-        thread {
-            reset()
+        thread(name = "Vision") {
+            while (true) {
+                reset()
+                // Only run the loop when the vision port was created and it has processed data in the past 1000 ms
+                while (visionPort != null && System.currentTimeMillis() - lastDataReceived < 1000) {
+                    periodic()
+                    sleep(5)
+                }
+            }
         }
     }
 
     private fun reset() {
-
-        if (visionPort != null) {
-            visionPort!!.reset()
-            visionPort!!.free()
+        visionPort?.apply {
+            reset()
+            free()
             visionPort = null
         }
 
@@ -72,20 +82,18 @@ object VisionSubsystem : Subsystem() {
         // but you never know.
         while (visionPort == null && retryCounter++ < 10) {
             try {
-                print("Vision: Creating JeVois SerialPort...")
+                println("[Vision] Creating JeVois SerialPort...")
                 visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
-                println("SUCCESS!!")
+                println("[Vision] Success!")
             } catch (e: Exception) {
-                println("FAILED!!")
-                sleep(500)
+                connectionFailedCounter++
+                val wait = (connectionFailedCounter * 500).coerceAtMost(5000)
+                println("[Vision] Failed! Retrying in ${wait / 1000.0} seconds...")
+                sleep(wait.toLong())
+                return
             }
         }
-
-        //Report an error if we didn't get to open the serial port
-        if (visionPort == null) {
-            println("Vision: Cannot open serial port to JeVois. Not starting vision system.")
-            return
-        }
+        connectionFailedCounter = 0
 
         //Test to make sure we are actually talking to the JeVois
         sendCmd("streamoff")
@@ -96,45 +104,18 @@ object VisionSubsystem : Subsystem() {
             visionPort!!.readString()
         }
 
-        if (sendPing() != 0) {
-            println("Vision: JeVois ping test failed. Not starting vision system.")
-        }
+        val pingResult = sendPing()
         sendCmd("streamon")
 
-        while (true) {
-            if (visionPort == null)
-                return
-
-            try {
-                if (visionPort!!.bytesReceived > 0) {
-                    val string = visionPort!!.readString()
-//                    println(string)
-                    val parser = JSONParser()
-                    val obj = parser.parse(string)
-                    val jsonObject = obj as JSONObject
-                    isTgtVisible = jsonObject["Track"] as Long
-                    if (isTgtVisible == 1L) {
-                        rawAngle = jsonObject["Angle"] as Double
-                        rawDistance = jsonObject["Range"] as Double
-
-                        SmartDashboard.putNumber("Raw Angle", rawAngle)
-                        SmartDashboard.putNumber("Raw Distance", rawDistance)
-
-                        SmartDashboard.putNumber("Corrected Angle", correctedAngle())
-                        SmartDashboard.putNumber("Corrected Distance", correctedDistance())
-
-                    } else {
-                        rawAngle = 0.0
-                        rawDistance = 0.0
-                    }
-                }
-                sleep(5)
-            } catch (e: Exception) {
-            }
+        if (pingResult != 0) {
+            println("[Vision] JeVois ping test failed! Retrying in 5 seconds...")
+            visionPort = null
+            sleep(5000)
+        } else {
+            println("[Vision] JeVois ping test completed! :)")
+            lastDataReceived = System.currentTimeMillis()
         }
     }
-
-    override fun initDefaultCommand() {}
 
     /**
      * Send the ping command to the JeVois to verify it is connected
@@ -158,12 +139,12 @@ object VisionSubsystem : Subsystem() {
      * @return 0 if OK detected, -1 if ERR detected, -2 if timeout waiting for response
      */
     private fun sendCmdAndCheck(cmd: String): Int {
-        val retval: Int = blockAndCheckForOK(1.0)
         sendCmd(cmd)
+        val retval = blockAndCheckForOK(1.0)
         when (retval) {
-            0 -> println("Vision: $cmd OK")
-            -1 -> println("Vision: $cmd produced an error")
-            -2 -> println("Vision: $cmd timed out")
+            0 -> println("[Vision] $cmd OK")
+            -1 -> println("[Vision] $cmd produced an error")
+            -2 -> println("[Vision] $cmd timed out")
         }
         return retval
     }
@@ -175,7 +156,7 @@ object VisionSubsystem : Subsystem() {
      */
     private fun sendCmd(cmd: String) {
         val bytes: Int = visionPort!!.writeString(cmd + "\n")
-        println("Vision: Wrote " + bytes + "/" + (cmd.length + 1) + " bytes, cmd: " + cmd)
+        println("[Vision] Wrote $bytes/${cmd.length + 1} bytes, cmd: $cmd")
     }
 
 
@@ -194,6 +175,7 @@ object VisionSubsystem : Subsystem() {
         if (visionPort != null) {
             while (Timer.getFPGATimestamp() - startTime < timeout_s) {
                 if (visionPort!!.bytesReceived > 0) {
+                    lastDataReceived = System.currentTimeMillis()
                     testStr += visionPort!!.readString()
                     if (testStr.contains("OK")) {
                         retval = 0
@@ -212,30 +194,48 @@ object VisionSubsystem : Subsystem() {
         return retval
     }
 
-    /**
-     * Private wrapper around the Thread.sleep method, to catch that interrupted error.
-     *
-     * @param time_ms
-     */
-    private fun sleep(time_ms: Int) {
-        try {
-            Thread.sleep(time_ms.toLong())
-        } catch (e: InterruptedException) {
-            println("DO NOT WAKE THE SLEEPY BEAST")
-        }
+    private val gson = Gson()
 
+    data class VisionTemplate(
+            val Track: Long,
+            val Angle: Double,
+            val Range: Double)
+
+    private fun periodic() {
+        if (visionPort == null) return
+
+        try {
+            if (visionPort!!.bytesReceived > 0) {
+                lastDataReceived = System.currentTimeMillis()
+                val string = visionPort!!.readString()
+                println(string)
+                val obj = gson.fromJson(string, VisionTemplate::class.java)
+                isTgtVisible = obj.Track
+                if (isTgtVisible == 1L) {
+                    rawAngle = obj.Angle
+                    rawDistance = obj.Range
+
+                    SmartDashboard.putNumber("Raw Angle", rawAngle)
+                    SmartDashboard.putNumber("Raw Distance", rawDistance)
+
+                    SmartDashboard.putNumber("Corrected Angle", correctedAngle())
+                    SmartDashboard.putNumber("Corrected Distance", correctedDistance())
+                } else {
+                    rawAngle = 0.0
+                    rawDistance = 0.0
+                }
+            }
+        } catch (e: Exception) {
+        }
     }
 
-    private fun correctedAngle() : Double {
+    private fun correctedAngle(): Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
-
         val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
-
-
         return Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
     }
 
-    private fun correctedDistance() : Double {
+    private fun correctedDistance(): Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
         val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
         return Math.sqrt(adjacentDistance.pow(2.0) + oppositeDistance.pow(2.0))

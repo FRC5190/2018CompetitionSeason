@@ -30,13 +30,13 @@ repositories {
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
 // and NavX.
 dependencies {
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
     compile wpilib()
     compile ctre()
     compile navx()
     compile openrio.powerup.matchData()
     compile pathfinder()
 
+    compile 'com.google.code.gson:gson:2.8.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
