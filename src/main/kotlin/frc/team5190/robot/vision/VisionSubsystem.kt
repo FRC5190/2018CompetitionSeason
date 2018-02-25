@@ -126,9 +126,8 @@ object VisionSubsystem : Subsystem() {
      * @return 0 if OK detected, -1 if ERR detected, -2 if timeout waiting for response
      */
     private fun sendCmdAndCheck(cmd: String): Int {
-        var retval = 0
+        val retval: Int = blockAndCheckForOK(1.0)
         sendCmd(cmd)
-        retval = blockAndCheckForOK(1.0)
         when (retval) {
             0 -> println("Vision: $cmd OK")
             -1 -> println("Vision: $cmd produced an error")

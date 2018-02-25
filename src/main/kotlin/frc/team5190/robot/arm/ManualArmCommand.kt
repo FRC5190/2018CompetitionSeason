@@ -23,8 +23,8 @@ class ManualArmCommand : Command() {
      */
     override fun execute() {
         when {
-            MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.7)
-            MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.4)
+            MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.3)
+            MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
 
             MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() + 50)
             MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() - 50)

@@ -22,9 +22,6 @@ object MotorIDs {
 
     const val INTAKE_LEFT = 7
     const val INTAKE_RIGHT = 9
-
-    const val BACK_WINCH_MASTER = 0 // 10
-    const val BACK_WINCH_SLAVE  = 0 // 11
 }
 
 object SolenoidIDs {
@@ -104,7 +101,7 @@ object ArmConstants {
     const val LIMITING_REDUCTION_FACTOR = 0.3
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.4
+    const val PEAK_OUT = 0.5
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000

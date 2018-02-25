@@ -34,6 +34,11 @@ class ManualDriveCommand : Command() {
                 else -> DriveSubsystem.falconDrive.tankDrive(mode, -MainXbox.getLeftY(), -MainXbox.getRightY())
             }
         }
+
+        DriveSubsystem.falconDrive.gear = when {
+            MainXbox.aButtonPressed -> Gear.LOW
+            else -> Gear.HIGH
+        }
     }
 
     override fun isFinished() = false

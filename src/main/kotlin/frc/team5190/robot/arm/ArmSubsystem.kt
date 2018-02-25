@@ -58,6 +58,8 @@ object ArmSubsystem : Subsystem() {
             configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
             setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
             setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+
+            configClosedloopRamp(0.3, 10)
         }
 
         // Configure current limiting

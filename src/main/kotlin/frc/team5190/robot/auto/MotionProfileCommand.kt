@@ -36,7 +36,11 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
         requires(DriveSubsystem)
     }
 
-    fun getMPTime() = leftTrajectory.map { it.duration }.sum() / 1000.0
+    fun getMPTime(): Double {
+        return if (rightTrajectory.map { it.dt }.sum() == leftTrajectory.map { it.dt }.sum())
+            leftTrajectory.map { it.dt }.sum()
+        else 0.0
+    }
 
     /**
      * Runs once whenever the command is started.

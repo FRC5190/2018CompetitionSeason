@@ -41,7 +41,7 @@ class AutoHelper {
                 "LS-LL", "RS-RR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
-                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-RR", false))
+                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-RR"))
                         addSequential(pickupCube(folder == "LS-LL"))
                         addSequential(dropCubeOnSwitch())
 
@@ -78,7 +78,7 @@ class AutoHelper {
                 "LS-RL", "RS-LR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
-                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR", false))
+                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
                         addSequential(pickupCube(folder == "LS-RL"))
                         addSequential(switchToScale())
                     }
@@ -111,7 +111,7 @@ class AutoHelper {
                 "LS-RR", "RS-LL" -> {
                     val scaleId = Pathreader.requestPath("LS-RR", "Scale")
                     return commandGroup {
-                        addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-LL", true))
+                        addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-LL"))
                         addSequential(pickupCube(folder == "RS-LL"))
                         addSequential(dropCubeOnSwitch())
                     }
@@ -198,7 +198,7 @@ class AutoHelper {
          * @param isMirrored Whether the MP is mirrored
          * @param isOpposite whether the scale is on the opposite side of the starting position
          */
-        private fun goToAndDropCubeOnScale(scaleId: Int, isMirrored: Boolean, isOpposite: Boolean): CommandGroup {
+        private fun goToAndDropCubeOnScale(scaleId: Int, isMirrored: Boolean): CommandGroup {
 
             val mpCommand = MotionProfileCommand(scaleId, true, isMirrored)
             val mpDuration = mpCommand.getMPTime()
@@ -211,22 +211,19 @@ class AutoHelper {
                         addSequential(commandGroup {
                             addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                             addParallel(AutoArmCommand(ArmPosition.UP))
-                        }, 1.0)
-                    })
-                    addParallel(commandGroup {
-                        addSequential(TimedCommand(mpDuration - 2.5))
+                        })
+                        addSequential(TimedCommand(mpDuration - 3.5))
                         addSequential(commandGroup {
                             addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
                             addParallel(AutoArmCommand(ArmPosition.BEHIND))
                             addParallel(commandGroup {
-                                addSequential(TimedCommand(0.5)) // TODO Check this value
+                                addSequential(TimedCommand(1.15))
                                 addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 0.85))
                                 addSequential(IntakeHoldCommand(), 0.001)
                             })
                         })
                     })
                 })
-
             }
         }
 

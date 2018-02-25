@@ -125,7 +125,7 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         this.pollForFMSData()
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
 //        TurnCommand(12.3).start()
     }
 
