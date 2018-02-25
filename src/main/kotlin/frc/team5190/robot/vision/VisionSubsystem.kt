@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import kotlin.concurrent.thread
 import kotlin.math.pow
 
 object VisionSubsystem : Subsystem() {
@@ -47,7 +48,9 @@ object VisionSubsystem : Subsystem() {
      * Pass TRUE to additionally enable a USB camera stream of what the vision camera is seeing.
      */
     init {
-        reset()
+        thread {
+            reset()
+        }
     }
 
     private fun reset() {
@@ -95,7 +98,6 @@ object VisionSubsystem : Subsystem() {
 
         if (sendPing() != 0) {
             println("Vision: JeVois ping test failed. Not starting vision system.")
-            return
         }
         sendCmd("streamon")
     }
@@ -186,7 +188,7 @@ object VisionSubsystem : Subsystem() {
         try {
             if (visionPort!!.bytesReceived > 0) {
                 val string = visionPort!!.readString()
-//                println(string)
+                println(string)
                 val parser = JSONParser()
                 val obj = parser.parse(string)
                 val jsonObject = obj as JSONObject

@@ -17,7 +17,7 @@ import frc.team5190.robot.vision.VisionSubsystem
  * @param visionCheck Whether to use vision for cube detection
  * @param tolerance Tolerance
  */
-class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.08, 0.001, 0.1) {
+class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.08, 0.003, 0.1) {
 
     init {
         requires(DriveSubsystem)

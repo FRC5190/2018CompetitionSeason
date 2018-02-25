@@ -42,6 +42,8 @@ object ElevatorSubsystem : Subsystem() {
     private var currentCommandGroup: CommandGroup? = null
     private var stalled = false
 
+    var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
+
     init {
         with(masterElevatorMotor) {
             // Motor Inversion
@@ -91,10 +93,6 @@ object ElevatorSubsystem : Subsystem() {
         masterElevatorMotor.set(controlMode, output)
     }
 
-    /**
-     * Changes the peak output of the elevator motors
-     */
-    fun setPeakOutput(output: Double) = masterElevatorMotor.configPeakOutput(output, -output, 10)
 
     /**
      * Resets encoders on the elevator
@@ -111,17 +109,17 @@ object ElevatorSubsystem : Subsystem() {
         when (state) {
             MotorState.OK -> {
                 if (stalled) {
-                    masterElevatorMotor.configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -ElevatorConstants.IDLE_PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                    masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
                 } else {
-                    masterElevatorMotor.configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, 10)
+                    masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, 10)
                 }
             }
             MotorState.STALL -> {
-                masterElevatorMotor.configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -ElevatorConstants.IDLE_PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
                 stalled = true
             }
             MotorState.GOOD -> {
-                masterElevatorMotor.configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, 10)
+                masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, 10)
                 stalled = false
             }
         }

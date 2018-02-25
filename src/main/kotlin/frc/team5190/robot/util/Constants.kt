@@ -41,7 +41,7 @@ object DriveConstants {
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 2.0
+    const val P_HIGH = 2.3
     const val I_HIGH = 0.0
     const val D_HIGH = 20.0
 
@@ -59,7 +59,7 @@ object DriveConstants {
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 
-    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -77,7 +77,7 @@ object ElevatorConstants {
 
     const val NOMINAL_OUT = 0.0
     const val IDLE_PEAK_OUT = 0.2
-    const val ACTIVE_PEAK_OUT = 1.0
+    const val ACTIVE_PEAK_OUT = 0.8
     const val TOLERANCE_INCHES = 0.25
 
     const val SOFT_LIMIT_FWD = 22500
@@ -88,15 +88,15 @@ object ElevatorConstants {
 }
 
 object ArmConstants {
-    const val INVERTED = true                  // true for falcon heavy, false for falcon 9
-    const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
+    const val INVERTED = false                  // true for falcon heavy, false for falcon 9
+    const val SENSOR_PHASE = false              // true for falcon heavy, false for falcon 9
 
     const val P = 2.5
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1400                 // 1470 for falcon heavy, 1770 for falcon 9
+    const val DOWN_TICKS = 1830                 // 1470 for falcon heavy, 1770 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30

@@ -30,25 +30,25 @@ class ManualElevatorCommand : Command() {
     override fun execute() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) -> {
-                val motorOut =  0.5
-                ElevatorSubsystem.setPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT)
+                val motorOut = 0.5
+                ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
                 triggerState = true
             }
             triggerState -> {
-                ElevatorSubsystem.setPeakOutput(ElevatorConstants.IDLE_PEAK_OUT)
+                ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
                 triggerState = false
             }
         }
         when {
             MainXbox.getBumper(GenericHID.Hand.kRight) -> {
-                ElevatorSubsystem.setPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT)
+                ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 val motorOut = -0.1
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
             }
             MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> {
-                ElevatorSubsystem.setPeakOutput(ElevatorConstants.IDLE_PEAK_OUT)
+                ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
             }
         }

@@ -24,7 +24,8 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
      * Initializes the command
      */
     override fun initialize() {
-        ElevatorSubsystem.setPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT)
+        println("Set peak to 1.0")
+        ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
         ElevatorSubsystem.set(ControlMode.MotionMagic, position.ticks.toDouble())
     }
 
@@ -32,7 +33,8 @@ class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
      * Executed when the command ends.
      */
     override fun end() {
-        ElevatorSubsystem.setPeakOutput(ElevatorConstants.IDLE_PEAK_OUT)
+        println("Set peak to 0.2")
+        ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
     }
 
     /**

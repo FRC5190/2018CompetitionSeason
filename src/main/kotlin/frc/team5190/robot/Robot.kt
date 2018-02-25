@@ -6,6 +6,7 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -72,6 +73,12 @@ class Robot : IterativeRobot() {
         controllerChooser.addDefault("Xbox", "Xbox")
 
         SmartDashboard.putData("Controller", controllerChooser)
+
+        CameraServer.getInstance().startAutomaticCapture(0).apply {
+            setFPS(30)
+            setResolution(640, 480)
+
+        }
     }
 
     /**
@@ -103,6 +110,8 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Gyro", NavX)
 
+        SmartDashboard.putNumber("Angle", NavX.angle)
+
         Scheduler.getInstance().run()
     }
 
@@ -117,6 +126,7 @@ class Robot : IterativeRobot() {
 
         this.pollForFMSData()
         AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+//        TurnCommand(12.3).start()
     }
 
 
