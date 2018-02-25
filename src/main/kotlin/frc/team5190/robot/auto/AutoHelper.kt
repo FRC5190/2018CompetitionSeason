@@ -34,8 +34,9 @@ class AutoHelper {
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
             when (folder) {
+
             /*
-             3 Cube Autonomous -- Scale, then Switch, then Switch
+             2 Cube Autonomous -- Scale, then Switch
              * */
                 "LS-LL", "RS-RR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
@@ -44,7 +45,7 @@ class AutoHelper {
                         addSequential(pickupCube(folder == "LS-LL"))
                         addSequential(dropCubeOnSwitch())
 
-                        // TESTING
+                        /* TESTING
                         addSequential(commandGroup {
                             addParallel(MotionMagicCommand(-4.0), 0.7)
                             addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
@@ -66,6 +67,8 @@ class AutoHelper {
 
                         addSequential(TurnCommand(3.0), 0.75)
                         addSequential(dropCubeOnSwitch())
+
+                        */
                     }
                 }
 
@@ -196,22 +199,31 @@ class AutoHelper {
          * @param isOpposite whether the scale is on the opposite side of the starting position
          */
         private fun goToAndDropCubeOnScale(scaleId: Int, isMirrored: Boolean, isOpposite: Boolean): CommandGroup {
+
+            val mpCommand = MotionProfileCommand(scaleId, true, isMirrored)
+            val mpDuration = mpCommand.getMPTime()
+
             return commandGroup {
                 addSequential(commandGroup {
-                    addParallel(MotionProfileCommand(scaleId, true, isMirrored))
+                    addParallel(mpCommand)
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.5))
                         addSequential(commandGroup {
                             addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                             addParallel(AutoArmCommand(ArmPosition.UP))
                         }, 1.0)
-                        addSequential(TimedCommand(if (isOpposite) 5.0 else 0.5))
+                    })
+                    addParallel(commandGroup {
+                        addSequential(TimedCommand(mpDuration - 2.5))
                         addSequential(commandGroup {
                             addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
                             addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                            addParallel(commandGroup {
+                                addSequential(TimedCommand(0.5)) // TODO Check this value
+                                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 0.85))
+                                addSequential(IntakeHoldCommand(), 0.001)
+                            })
                         })
-                        addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 1.0))
-                        addSequential(IntakeHoldCommand(), 0.001)
                     })
                 })
 
