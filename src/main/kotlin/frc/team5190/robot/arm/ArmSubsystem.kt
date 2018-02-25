@@ -60,6 +60,7 @@ object ArmSubsystem : Subsystem() {
             setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
 
             configClosedloopRamp(0.3, 10)
+            configOpenloopRamp(0.5, 10)
         }
 
         // Configure current limiting

@@ -71,6 +71,10 @@ object ElevatorSubsystem : Subsystem() {
             configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
             setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
             setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+
+            configClosedloopRamp(0.3, 10)
+            configOpenloopRamp(0.5, 10)
+
         }
 
         // Configure Slave Motor
