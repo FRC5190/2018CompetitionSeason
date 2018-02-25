@@ -100,6 +100,38 @@ object VisionSubsystem : Subsystem() {
             println("Vision: JeVois ping test failed. Not starting vision system.")
         }
         sendCmd("streamon")
+
+        while (true) {
+            if (visionPort == null)
+                return
+
+            try {
+                if (visionPort!!.bytesReceived > 0) {
+                    val string = visionPort!!.readString()
+//                    println(string)
+                    val parser = JSONParser()
+                    val obj = parser.parse(string)
+                    val jsonObject = obj as JSONObject
+                    isTgtVisible = jsonObject["Track"] as Long
+                    if (isTgtVisible == 1L) {
+                        rawAngle = jsonObject["Angle"] as Double
+                        rawDistance = jsonObject["Range"] as Double
+
+                        SmartDashboard.putNumber("Raw Angle", rawAngle)
+                        SmartDashboard.putNumber("Raw Distance", rawDistance)
+
+                        SmartDashboard.putNumber("Corrected Angle", correctedAngle())
+                        SmartDashboard.putNumber("Corrected Distance", correctedDistance())
+
+                    } else {
+                        rawAngle = 0.0
+                        rawDistance = 0.0
+                    }
+                }
+                sleep(5)
+            } catch (e: Exception) {
+            }
+        }
     }
 
     override fun initDefaultCommand() {}
@@ -178,37 +210,6 @@ object VisionSubsystem : Subsystem() {
             }
         }
         return retval
-    }
-
-    override fun periodic() {
-        if (visionPort == null)
-            return
-
-        try {
-            if (visionPort!!.bytesReceived > 0) {
-                val string = visionPort!!.readString()
-                println(string)
-                val parser = JSONParser()
-                val obj = parser.parse(string)
-                val jsonObject = obj as JSONObject
-                isTgtVisible = jsonObject["Track"] as Long
-                if (isTgtVisible == 1L) {
-                    rawAngle = jsonObject["Angle"] as Double
-                    rawDistance = jsonObject["Range"] as Double
-
-                    SmartDashboard.putNumber("Raw Angle", rawAngle)
-                    SmartDashboard.putNumber("Raw Distance", rawDistance)
-
-                    SmartDashboard.putNumber("Corrected Angle", correctedAngle())
-                    SmartDashboard.putNumber("Corrected Distance", correctedDistance())
-
-                } else {
-                    rawAngle = 0.0
-                    rawDistance = 0.0
-                }
-            }
-        } catch (e: Exception) {
-        }
     }
 
     /**

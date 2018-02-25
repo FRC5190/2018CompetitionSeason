@@ -5,12 +5,9 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.CommandGroup
-import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.AutoArmCommand
-import frc.team5190.robot.elevator.AutoElevatorCommand
-import frc.team5190.robot.elevator.ElevatorPosition
+import edu.wpi.first.wpilibj.command.*
+import frc.team5190.robot.arm.*
+import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
 import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.util.commandGroup
@@ -45,30 +42,26 @@ class AutoHelper {
                         addSequential(pickupCube(folder == "LS-LL"))
                         addSequential(dropCubeOnSwitch())
 
-                        /* TESTING
                         addSequential(commandGroup {
-                            addParallel(MotionMagicCommand(-4.0), 0.7)
+                            addParallel(MotionMagicCommand(-2.0), 1.2)
                             addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                             addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
                         addSequential(commandGroup {
-                            addSequential(TurnCommand(if (folder == "LS-LL") -31.0 else 5.0, visionCheck = true, tolerance = 10.0))
+                            addSequential(TurnCommand(if (folder == "LS-LL") -50.0 else 37.5, visionCheck = true, tolerance = 10.0))
                             addSequential(commandGroup {
-                                addParallel(MotionMagicCommand(4.0, cruiseVel = 5.0))
+                                addParallel(MotionMagicCommand(4.0, cruiseVel = 5.0), 1.2)
                                 addParallel(commandGroup {
                                     addSequential(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
                                     addSequential(IntakeHoldCommand(), 0.001)
 
                                 })
                             })
-
                         })
 
 
                         addSequential(TurnCommand(3.0), 0.75)
                         addSequential(dropCubeOnSwitch())
-
-                        */
                     }
                 }
 
@@ -162,6 +155,7 @@ class AutoHelper {
                     addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
                     addParallel(AutoArmCommand(ArmPosition.BEHIND))
                     addParallel(commandGroup {
+                        addSequential(TimedCommand(0.01))
                         addSequential(MotionMagicCommand(-4.5))
                         addSequential(TurnCommand(12.5))
                     })
@@ -184,7 +178,7 @@ class AutoHelper {
                 addParallel(commandGroup {
                     addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 12.0))
                     addSequential(commandGroup {
-                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 4.0), 1.2)
+                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 5.0), 1.2)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 1.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
@@ -218,7 +212,7 @@ class AutoHelper {
                             addParallel(AutoArmCommand(ArmPosition.BEHIND))
                             addParallel(commandGroup {
                                 addSequential(TimedCommand(1.15))
-                                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 0.85))
+                                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.325, outSpeed = 0.45))
                                 addSequential(IntakeHoldCommand(), 0.001)
                             })
                         })
@@ -259,9 +253,12 @@ class AutoHelper {
                 addSequential(commandGroup {
                     addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                     addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                    addParallel(MotionMagicCommand(-0.2), 0.4)
                     addParallel(commandGroup {
-                        addSequential(TimedCommand(0.75))
+                        addSequential(MotionMagicCommand(-0.2))
+                        addSequential(object : Command() {
+                            override fun isFinished() =
+                                    ElevatorSubsystem.currentPosition > ElevatorPosition.SWITCH.ticks - 1440 && ArmSubsystem.currentPosition > ArmPosition.MIDDLE.ticks - 400
+                        })
                         addSequential(commandGroup {
                             addParallel(MotionMagicCommand(mmDistanceFeet), mTimeout)
                             addParallel(commandGroup {
@@ -299,11 +296,19 @@ class AutoHelper {
          */
         private fun getBackToCenter(centerId: Int): CommandGroup {
             return commandGroup {
-                addSequential(MotionProfileCommand(centerId, true))
+                addSequential(commandGroup {
+                    addParallel(MotionProfileCommand(centerId, true))
+                    addParallel(commandGroup {
+                        addSequential(TimedCommand(0.5))
+                        addSequential(commandGroup {
+                            addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                            addParallel(AutoArmCommand(ArmPosition.DOWN))
+                        })
+                    })
+                })
                 addSequential(commandGroup {
                     addParallel(TurnCommand(0.0, false, 0.0))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                    addParallel(AutoArmCommand(ArmPosition.DOWN))
+
                 })
             }
         }
