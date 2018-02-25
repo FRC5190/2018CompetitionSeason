@@ -21,7 +21,6 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
 
     init {
         requires(DriveSubsystem)
-        requires(VisionSubsystem)
     }
 
     /**
