@@ -17,6 +17,15 @@ import kotlin.math.pow
 object VisionSubsystem {
 
     private var visionPort: SerialPort? = null
+        set(value) {
+            if (value == null)
+                field?.apply {
+                    this.reset()
+                    this.free()
+                }
+            field = value
+        }
+
     private val camDisplacement = 11.25
 
     /**
@@ -65,11 +74,7 @@ object VisionSubsystem {
     }
 
     private fun reset() {
-        visionPort?.apply {
-            reset()
-            free()
-            visionPort = null
-        }
+        visionPort = null
 
         isTgtVisible = 0L
         rawAngle = 0.0
