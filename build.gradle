@@ -36,7 +36,7 @@ dependencies {
     compile openrio.powerup.matchData()
     compile pathfinder()
 
-    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.github.salomonbrys.kotson:kotson:2.5.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 

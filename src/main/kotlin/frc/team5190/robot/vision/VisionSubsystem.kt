@@ -5,6 +5,7 @@
 
 package frc.team5190.robot.vision
 
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.SerialPort
@@ -214,7 +215,7 @@ object VisionSubsystem {
                 lastDataReceived = System.currentTimeMillis()
                 val string = visionPort!!.readString()
                 println(string)
-                val obj = gson.fromJson(string, VisionTemplate::class.java)
+                val obj = gson.fromJson<VisionTemplate>(string)
                 isTgtVisible = obj.Track
                 if (isTgtVisible == 1L) {
                     rawAngle = obj.Angle
