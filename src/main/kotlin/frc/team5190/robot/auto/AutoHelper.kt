@@ -24,7 +24,7 @@ class AutoHelper {
          * @param switchOwnedSide The owned side of the switch
          * @param scaleOwnedSide The owned side of the scale
          */
-        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, lslr: String): CommandGroup {
 
             // Get the folder that the paths are contained within
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
@@ -73,7 +73,7 @@ class AutoHelper {
                     return commandGroup {
                         addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
                         addSequential(pickupCube(folder == "LS-RL"))
-                        addSequential(switchToScale())
+                        addSequential(switchToScale(folder == "RS-LR"))
                     }
                 }
 
@@ -81,20 +81,40 @@ class AutoHelper {
             2 Cube Autonomous -- Switch, then Switch
              */
                 "LS-LR", "RS-RL" -> {
-                    val switchId = Pathreader.requestPath("LS-LL", "Scale")
-                    return commandGroup {
-                        addSequential(goToSwitch(switchId, folder == "RS-RL"))
-                        addSequential(dropCubeOnSwitch(6.0), 1.7)
-                        addSequential(commandGroup {
-                            addParallel(MotionMagicCommand(-1.5), 1.0)
-                            addParallel(commandGroup {
-                                addSequential(TimedCommand(0.25))
-                                addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                            })
-                            addParallel(AutoArmCommand(ArmPosition.DOWN))
-                        })
-                        addSequential(pickupCube(folder == "LS-LR", 1.5))
-                        addSequential(dropCubeOnSwitch())
+                    when (lslr) {
+                        "2 Switch" -> {
+                            val switchId = Pathreader.requestPath("LS-LR", "Switch")
+                            return commandGroup {
+                                addSequential(goToSwitch(switchId, folder == "RS-RL"))
+                                addSequential(TurnCommand(-10.0, visionCheck = true, tolerance = 12.0))
+
+                                addSequential(MotionMagicCommand(6.0), 1.5)
+                                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.5, outSpeed = 0.4))
+                                addSequential(IntakeHoldCommand(), 0.001)
+
+                                addSequential(commandGroup {
+                                    addParallel(MotionMagicCommand(-1.5), 1.0)
+                                    addParallel(commandGroup {
+                                        addSequential(TimedCommand(0.5))
+                                        addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                    })
+                                    addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                })
+
+                                addSequential(pickupCube(folder == "LS-LR", 1.5))
+                                addSequential(dropCubeOnSwitch())
+                            }
+                        }
+                        "2 Scale" -> {
+                            val scaleId = Pathreader.requestPath("LS-RR", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-RL"))
+                                addSequential(pickupCube(folder == "RS-RL"))
+                                addSequential(switchToScale(folder == "RS-RL"))
+                            }
+                        }
+
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
                 }
 
@@ -149,7 +169,7 @@ class AutoHelper {
         /**
          * Goes from switch to scale.
          */
-        private fun switchToScale(): CommandGroup {
+        private fun switchToScale(isLeft: Boolean): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
                     addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
@@ -157,12 +177,12 @@ class AutoHelper {
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.01))
                         addSequential(MotionMagicCommand(-4.5))
-                        addSequential(TurnCommand(12.5))
+                        addSequential(TurnCommand(if (isLeft) 12.5 else -12.5))
                     })
                 })
 
                 addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
-                addSequential(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
+                addSequential(AutoArmCommand(ArmPosition.MIDDLE))
             }
 
         }

@@ -48,6 +48,9 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
+    // Variable that stores LS-LR / RS-RL profile setting
+    private var lslr = SendableChooser<String>()
+
     /**
      * Executed when robot code first launches and is ready to be initialized.
      */
@@ -66,6 +69,12 @@ class Robot : IterativeRobot() {
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
         SmartDashboard.putData("Starting Position", sideChooser)
+
+        lslr.addObject("2 Switch", "2 Switch")
+        lslr.addObject("2 Scale", "2 Scale")
+        lslr.addDefault("2 Scale", "2 Scale")
+
+        SmartDashboard.putData("LS-LR / RS-RL Preference", lslr)
 
         controllerChooser.addObject("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
@@ -124,7 +133,7 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         this.pollForFMSData()
-        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
+        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, lslr.selected).start()
 //        TurnCommand(12.3).start()
     }
 
