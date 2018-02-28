@@ -92,6 +92,7 @@ object VisionSubsystem {
                 visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
                 println("[Vision] Success!")
             } catch (e: Exception) {
+                visionPort = null
                 connectionFailedCounter++
                 val wait = (connectionFailedCounter * 500).coerceAtMost(5000)
                 println("[Vision] Failed! Retrying in ${wait / 1000.0} seconds...")
