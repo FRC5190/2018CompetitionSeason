@@ -31,10 +31,6 @@ class AutoHelper {
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
             when (folder) {
-
-            /*
-             2 Cube Autonomous -- Scale, then Switch
-             * */
                 "LS-LL", "RS-RR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
@@ -65,9 +61,6 @@ class AutoHelper {
                     }
                 }
 
-            /*
-            2 Cube Autonomous -- Scale, then Scale
-             */
                 "LS-RL", "RS-LR" -> {
                     val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
                     return commandGroup {
@@ -77,9 +70,6 @@ class AutoHelper {
                     }
                 }
 
-            /*
-            2 Cube Autonomous -- Switch, then Switch
-             */
                 "LS-LR", "RS-RL" -> {
                     when (lslr) {
                         "2 Switch" -> {
@@ -118,9 +108,6 @@ class AutoHelper {
                     }
                 }
 
-            /*
-            2 Cube Autonomous -- Scale, then Switch
-             */
                 "LS-RR", "RS-LL" -> {
                     val scaleId = Pathreader.requestPath("LS-RR", "Scale")
                     return commandGroup {
@@ -130,9 +117,6 @@ class AutoHelper {
                     }
                 }
 
-            /*
-            2 Cube Autonomous -- Switch, then Switch
-             */
                 "CS-L" -> {
                     val switchId = Pathreader.requestPath("CS-L", "Switch")
                     val centerId = Pathreader.requestPath("CS-L", "Center")
@@ -146,9 +130,6 @@ class AutoHelper {
                     }
                 }
 
-            /*
-            2 Cube Autonomous -- Switch, then Switch
-             */
                 "CS-R" -> {
                     val switchId = Pathreader.requestPath("CS-R", "Switch")
                     val centerId = Pathreader.requestPath("CS-R", "Center")

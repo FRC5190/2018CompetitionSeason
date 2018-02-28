@@ -73,6 +73,5 @@ class MotionProfileCommand(private val requestId: Int, private val isReversed: B
     /**
      * Ends the command when both sides of the DriveTrain have triggerState executing the motion profile.
      */
-    override fun isFinished() = leftTrajectory.indexOf(leftTrajectory.find { it.nativeUnits.toInt() == DriveSubsystem.falconDrive.leftMaster.activeTrajectoryPosition }) >
-            leftTrajectory.size - 15
+    override fun isFinished() = motionProfile.hasFinished()
 }

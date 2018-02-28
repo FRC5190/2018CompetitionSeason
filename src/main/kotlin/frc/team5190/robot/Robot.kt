@@ -6,7 +6,6 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -82,11 +81,7 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Controller", controllerChooser)
 
-        CameraServer.getInstance().startAutomaticCapture(0).apply {
-            setFPS(30)
-            setResolution(640, 480)
-
-        }
+//        CameraServer.getInstance().startAutomaticCapture(0)
     }
 
     /**
