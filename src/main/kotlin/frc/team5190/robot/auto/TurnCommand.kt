@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.vision.VisionSubsystem
 
 /**
@@ -17,7 +18,7 @@ import frc.team5190.robot.vision.VisionSubsystem
  * @param visionCheck Whether to use vision for cube detection
  * @param tolerance Tolerance
  */
-class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.08, 0.002, 0.1) {
+class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
 
     init {
         requires(DriveSubsystem)

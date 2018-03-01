@@ -53,6 +53,10 @@ object DriveConstants {
 
     const val PID_SLOT_LOW = 1
 
+    const val TURN_P = 0.08
+    const val TURN_I = 0.002
+    const val TURN_D = 0.1
+
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 

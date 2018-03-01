@@ -142,8 +142,8 @@ typealias MotionProfileTrajectory = List<MotionProfileSegment>
 /**
  * Stores trajectory data for each point along the trajectory.
  */
-data class MotionProfileSegment(val dt: Double, val x: Double, val y: Double, private val position: Double,
-                                private val velocity: Double, val acceleration: Double,
+data class MotionProfileSegment(val dt: Double, val x: Double, val y: Double, val position: Double,
+                                val velocity: Double, val acceleration: Double,
                                 val jerk: Double, val heading: Double) {
     // Converts feet and feet/sec into rotations and rotations/sec.
     private val rotations = Maths.feetToRotations(position, DriveConstants.WHEEL_RADIUS)
