@@ -20,6 +20,7 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
+import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
 /**
@@ -58,7 +59,7 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-//        VisionSubsystem
+        VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
         ArmSubsystem
@@ -68,6 +69,7 @@ class Robot : IterativeRobot() {
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
         SmartDashboard.putData("Starting Position", sideChooser)
+
 
         lslr.addObject("2 Switch", "2 Switch")
         lslr.addObject("2 Scale", "2 Scale")
@@ -128,7 +130,7 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         this.pollForFMSData()
-        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, lslr.selected).start()
+        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, "2 Switch").start()
 //        TurnCommand(12.3).start()
     }
 

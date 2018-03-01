@@ -66,7 +66,7 @@ class AutoHelper {
                     return commandGroup {
                         addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
                         addSequential(pickupCube(folder == "LS-RL"))
-                        addSequential(switchToScale(folder == "RS-LR"))
+                        addSequential(switchToScale(folder == "LS-RL"))
                     }
                 }
 
@@ -157,7 +157,7 @@ class AutoHelper {
                     addParallel(AutoArmCommand(ArmPosition.BEHIND))
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.01))
-                        addSequential(MotionMagicCommand(-4.5))
+                        addSequential(MotionMagicCommand(-5.0))
                         addSequential(TurnCommand(if (isLeft) 12.5 else -12.5))
                     })
                 })
@@ -179,7 +179,7 @@ class AutoHelper {
                 addParallel(commandGroup {
                     addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 12.0))
                     addSequential(commandGroup {
-                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 5.0), 1.2)
+                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 4.0), 1.2)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 1.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)

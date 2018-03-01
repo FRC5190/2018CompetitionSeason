@@ -7,9 +7,7 @@ package frc.team5190.robot.vision
 
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.SerialPort
-import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import java.lang.Thread.sleep
 import kotlin.concurrent.thread
@@ -89,7 +87,7 @@ object VisionSubsystem {
         while (visionPort == null && retryCounter++ < 10) {
             try {
                 println("[Vision] Creating JeVois SerialPort...")
-                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
+                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB)
                 println("[Vision] Success!")
             } catch (e: Exception) {
                 visionPort = null
@@ -215,7 +213,7 @@ object VisionSubsystem {
             if (visionPort!!.bytesReceived > 0) {
                 lastDataReceived = System.currentTimeMillis()
                 val string = visionPort!!.readString()
-                println(string)
+//                println(string)
                 val obj = gson.fromJson<VisionTemplate>(string)
                 isTgtVisible = obj.Track
                 if (isTgtVisible == 1L) {
