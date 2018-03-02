@@ -35,24 +35,42 @@ class PathfinderCommand(requestId: Int,
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn)
     })
 
-    private val leftFollower by lazy { convertToFollower(leftTrajectory) }
+    private val leftFollower by lazy { convertToFollower(if (isReversed) rightTrajectory else leftTrajectory) }
 
-    private val rightFollower by lazy { convertToFollower(rightTrajectory) }
+    private val rightFollower by lazy { convertToFollower(if (isReversed) leftTrajectory else rightTrajectory) }
 
     private fun convertToFollower(motionProfileTrajectory: MotionProfileTrajectory) = EncoderFollower(Trajectory(motionProfileTrajectory.map {
         Trajectory.Segment(it.dt, it.x, it.y, it.position, it.velocity, it.acceleration, it.jerk, it.heading)
     }.toTypedArray())).apply {
-        configureEncoder(0, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-        configurePIDVA(DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, 1.0 / 9.0, 0.0)
+        configureEncoder(0, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS * 2.0 / 12.0)
+        configurePIDVA(DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, 1.0 / DriveConstants.MAX_STU_HIGH * 100.0, 0.0)
     }
 
     override fun initialize() {
         DriveSubsystem.autoReset()
+
+        DriveSubsystem.falconDrive.leftMotors.forEach {
+            it.inverted = isReversed
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+        }
+        DriveSubsystem.falconDrive.rightMotors.forEach {
+            it.inverted = !isReversed
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+        }
+
         profileThread.startPeriodic(leftTrajectory[0].dt)
+    }
+
+    override fun execute() {
+        DriveSubsystem.falconDrive.feedSafety()
     }
 
     override fun end() {
         profileThread.stop()
+        DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
+        DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
+
+        DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
     override fun isFinished() = leftFollower.isFinished || rightFollower.isFinished
