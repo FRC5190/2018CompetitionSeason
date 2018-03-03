@@ -201,7 +201,16 @@ class AutoHelper {
          */
         private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.0): CommandGroup {
             return commandGroup {
-                addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                addParallel(commandGroup {
+                    addSequential(commandGroup {
+                        addParallel(AutoElevatorCommand(ElevatorPosition.FIRST_STAGE))
+                        addParallel(AutoArmCommand(ArmPosition.DOWN))
+                    })
+                    addSequential(object : Command() {
+                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 50
+                    })
+                    addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                })
                 addParallel(AutoArmCommand(ArmPosition.DOWN))
                 addParallel(commandGroup {
                     addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 12.0))
