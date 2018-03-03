@@ -6,6 +6,7 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -14,6 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.climb.DeployHookCommand
+import frc.team5190.robot.climb.HookSubsystem
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
@@ -62,6 +65,7 @@ class Robot : IterativeRobot() {
         VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
+        HookSubsystem
         ArmSubsystem
         NavX
 
@@ -83,7 +87,7 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Controller", controllerChooser)
 
-//        CameraServer.getInstance().startAutomaticCapture(0)
+        //CameraServer.getInstance().startAutomaticCapture()
     }
 
     /**

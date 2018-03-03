@@ -29,6 +29,7 @@ object SolenoidIDs {
 
     const val DRIVE = 3
     const val INTAKE = 2
+    const val HOOK = 0
 }
 
 object DriveConstants {

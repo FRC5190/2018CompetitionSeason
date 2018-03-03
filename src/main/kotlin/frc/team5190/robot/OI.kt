@@ -8,6 +8,8 @@
 package frc.team5190.robot
 
 import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.buttons.JoystickButton
+import frc.team5190.robot.climb.DeployHookCommand
 
 object Bongos : Joystick(0) {
     fun getLeftBongoSpeed() = when {
@@ -27,11 +29,7 @@ object Bongos : Joystick(0) {
 /**
  * Xbox Controller object
  */
-object MainXbox : XboxController(0) {
-    init {
-//        JoystickButton(this, 1).whenPressed(GetPathCommand("LLX"))
-    }
-}
+object MainXbox : XboxController(0)
 
 fun XboxController.getLeftX() = getX(GenericHID.Hand.kLeft)
 fun XboxController.getLeftY() = getY(GenericHID.Hand.kLeft)

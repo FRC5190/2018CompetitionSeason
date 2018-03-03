@@ -62,12 +62,19 @@ object VisionSubsystem {
     init {
         thread(name = "Vision") {
             while (true) {
-                reset()
-                // Only run the loop when the vision port was created and it has processed data in the past 1000 ms
-                while (visionPort != null && System.currentTimeMillis() - lastDataReceived < 1000) {
-                    periodic()
-                    sleep(5)
+                try{
+                    reset()
+                    // Only run the loop when the vision port was created and it has processed data in the past 1000 ms
+                    while (visionPort != null && System.currentTimeMillis() - lastDataReceived < 1000) {
+                        periodic()
+                        sleep(5)
+                    }
                 }
+                catch (e: Exception) {
+                    e.printStackTrace()
+                    sleep(50)
+                }
+
             }
         }
     }
@@ -87,7 +94,7 @@ object VisionSubsystem {
         while (visionPort == null && retryCounter++ < 10) {
             try {
                 println("[Vision] Creating JeVois SerialPort...")
-                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB)
+                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
                 println("[Vision] Success!")
             } catch (e: Exception) {
                 visionPort = null
