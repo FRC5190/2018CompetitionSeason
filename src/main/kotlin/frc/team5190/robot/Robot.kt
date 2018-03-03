@@ -15,14 +15,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
-import frc.team5190.robot.climb.DeployHookCommand
 import frc.team5190.robot.climb.HookSubsystem
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
@@ -51,8 +48,18 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
+    // Variable that stores LS-LL / RS-RR profile setting
+    private var lsll = SendableChooser<String>()
+
     // Variable that stores LS-LR / RS-RL profile setting
     private var lslr = SendableChooser<String>()
+
+    // Variable that stores LS-RL / RS-LR profile setting
+    private var lsrl = SendableChooser<String>()
+
+    // Variable that stores LS-RR / RS-LL profile setting
+    private var lsrr = SendableChooser<String>()
+
 
     /**
      * Executed when robot code first launches and is ready to be initialized.
@@ -69,17 +76,21 @@ class Robot : IterativeRobot() {
         ArmSubsystem
         NavX
 
+
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
-        SmartDashboard.putData("Starting Position", sideChooser)
+        lsll.addDefault("Mixed", "Mixed")
+        lsll.addObject("2 Scale", "2 Scale")
 
-
-        lslr.addObject("2 Switch", "2 Switch")
+        lslr.addDefault("2 Switch", "2 Switch")
         lslr.addObject("2 Scale", "2 Scale")
-        lslr.addDefault("2 Scale", "2 Scale")
 
-        SmartDashboard.putData("LS-LR / RS-RL Preference", lslr)
+        lsrl.addDefault("2 Scale", "2 Scale")
+
+        lsrr.addDefault("Mixed", "Mixed")
+
+
 
         controllerChooser.addObject("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
@@ -87,7 +98,13 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Controller", controllerChooser)
 
-        //CameraServer.getInstance().startAutomaticCapture()
+        SmartDashboard.putData("LS-LL / RS-RR", lsll)
+        SmartDashboard.putData("LS-LR / RS-RL", lslr)
+        SmartDashboard.putData("LS-RL / RS-LR", lsrl)
+        SmartDashboard.putData("LS-RR / RS-LL", lsrr)
+
+        SmartDashboard.putData("Starting Position", sideChooser)
+
     }
 
     /**
@@ -95,7 +112,7 @@ class Robot : IterativeRobot() {
      */
     override fun robotPeriodic() {
 
-        // Debug information
+        /* DEBUG INNFORMATION
         SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
         SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
@@ -116,10 +133,9 @@ class Robot : IterativeRobot() {
         SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
         SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
         SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
+        */
 
         SmartDashboard.putData("Gyro", NavX)
-
-        SmartDashboard.putNumber("Angle", NavX.angle)
 
         Scheduler.getInstance().run()
     }
@@ -129,13 +145,12 @@ class Robot : IterativeRobot() {
      */
     override fun autonomousInit() {
 
+        pollForFMSData()
+
         DriveSubsystem.autoReset()
-        DriveSubsystem.falconDrive.gear = Gear.HIGH
         NavX.reset()
 
-        this.pollForFMSData()
-        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, "2 Switch").start()
-//        TurnCommand(12.3).start()
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
     }
 
 
@@ -152,6 +167,9 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+
+        VisionSubsystem.stop()
+        CameraServer.getInstance().startAutomaticCapture()
 
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())

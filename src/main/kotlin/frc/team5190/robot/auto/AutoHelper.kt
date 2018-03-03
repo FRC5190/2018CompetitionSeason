@@ -24,11 +24,18 @@ class AutoHelper {
          * @param switchOwnedSide The owned side of the switch
          * @param scaleOwnedSide The owned side of the scale
          */
-        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, lslr: String): CommandGroup {
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, settings: Array<String>): CommandGroup {
 
             // Get the folder that the paths are contained within
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
+
+            val lsll = settings[0]
+            val lslr = settings[1]
+            val lsrl = settings[2]
+            val lsrr = settings[3]
+
+
 
             when (folder) {
                 "LS-LL", "RS-RR" -> {
@@ -61,15 +68,6 @@ class AutoHelper {
                     }
                 }
 
-                "LS-RL", "RS-LR" -> {
-                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
-                    return commandGroup {
-                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
-                        addSequential(pickupCube(folder == "LS-RL"))
-                        addSequential(switchToScale(folder == "LS-RL"))
-                    }
-                }
-
                 "LS-LR", "RS-RL" -> {
                     when (lslr) {
                         "2 Switch" -> {
@@ -78,7 +76,7 @@ class AutoHelper {
                                 addSequential(goToSwitch(switchId, folder == "RS-RL"))
                                 addSequential(TurnCommand(-10.0, visionCheck = true, tolerance = 12.0))
 
-                                addSequential(MotionMagicCommand(6.0), 1.5)
+                                addSequential(MotionMagicCommand(4.5), 1.5)
                                 addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.5, outSpeed = 0.4))
                                 addSequential(IntakeHoldCommand(), 0.001)
 
@@ -105,6 +103,15 @@ class AutoHelper {
                         }
 
                         else -> throw IllegalArgumentException("Scenario does not exist.")
+                    }
+                }
+
+                "LS-RL", "RS-LR" -> {
+                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                    return commandGroup {
+                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
+                        addSequential(pickupCube(folder == "LS-RL"))
+                        addSequential(switchToScale(folder == "LS-RL"))
                     }
                 }
 

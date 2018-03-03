@@ -39,6 +39,8 @@ object VisionSubsystem {
     var tgtDistance: Double = 0.0
         get() = correctedDistance()
 
+    var forceStopped = false
+
     /**
      * Returns the most recently seen target's angle relative to the camera in degrees
      * Positive means to the Right of center, negative means to the left
@@ -63,6 +65,9 @@ object VisionSubsystem {
         thread(name = "Vision") {
             while (true) {
                 try{
+
+                    if (forceStopped) this.stop()
+
                     reset()
                     // Only run the loop when the vision port was created and it has processed data in the past 1000 ms
                     while (visionPort != null && System.currentTimeMillis() - lastDataReceived < 1000) {
@@ -77,6 +82,11 @@ object VisionSubsystem {
 
             }
         }
+    }
+
+    fun stop() {
+        visionPort = null
+        forceStopped = true
     }
 
     private fun reset() {
