@@ -35,36 +35,45 @@ class AutoHelper {
             val lsrl = settings[2]
             val lsrr = settings[3]
 
-
-
             when (folder) {
                 "LS-LL", "RS-RR" -> {
-                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
-                    return commandGroup {
-                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-RR"))
-                        addSequential(pickupCube(folder == "LS-LL"))
-                        addSequential(dropCubeOnSwitch())
+                    when (lsll) {
+                        "Mixed" -> {
+                            val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-RR"))
+                                addSequential(pickupCube(folder == "LS-LL"))
+                                addSequential(dropCubeOnSwitch())
 
-                        addSequential(commandGroup {
-                            addParallel(MotionMagicCommand(-2.0), 1.2)
-                            addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                            addParallel(AutoArmCommand(ArmPosition.DOWN))
-                        })
-                        addSequential(commandGroup {
-                            addSequential(TurnCommand(if (folder == "LS-LL") -50.0 else 37.5, visionCheck = true, tolerance = 10.0))
-                            addSequential(commandGroup {
-                                addParallel(MotionMagicCommand(4.0, cruiseVel = 5.0), 1.2)
-                                addParallel(commandGroup {
-                                    addSequential(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
-                                    addSequential(IntakeHoldCommand(), 0.001)
-
+                                addSequential(commandGroup {
+                                    addParallel(MotionMagicCommand(-2.0), 1.2)
+                                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                                    addParallel(AutoArmCommand(ArmPosition.DOWN))
                                 })
-                            })
-                        })
+                                addSequential(commandGroup {
+                                    addSequential(TurnCommand(if (folder == "LS-LL") -50.0 else 37.5, visionCheck = true, tolerance = 10.0))
+                                    addSequential(commandGroup {
+                                        addParallel(MotionMagicCommand(4.0, cruiseVel = 5.0), 1.2)
+                                        addParallel(commandGroup {
+                                            addSequential(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
+                                            addSequential(IntakeHoldCommand(), 0.001)
 
-
-                        addSequential(TurnCommand(3.0), 0.75)
-                        addSequential(dropCubeOnSwitch())
+                                        })
+                                    })
+                                })
+                                addSequential(TurnCommand(3.0), 0.75)
+                                addSequential(dropCubeOnSwitch())
+                            }
+                        }
+                        "2 Scale" -> {
+                            val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
+                                addSequential(pickupCube(folder == "LS-RL"))
+                                addSequential(switchToScale(folder == "LS-RL"))
+                            }
+                        }
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
                 }
 
@@ -107,21 +116,32 @@ class AutoHelper {
                 }
 
                 "LS-RL", "RS-LR" -> {
-                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
-                    return commandGroup {
-                        addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
-                        addSequential(pickupCube(folder == "LS-RL"))
-                        addSequential(switchToScale(folder == "LS-RL"))
+                    when (lsrl) {
+                        "2 Scale" -> {
+                            val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
+                                addSequential(pickupCube(folder == "LS-RL"))
+                                addSequential(switchToScale(folder == "LS-RL"))
+                            }
+                        }
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
                 }
 
                 "LS-RR", "RS-LL" -> {
-                    val scaleId = Pathreader.requestPath("LS-RR", "Scale")
-                    return commandGroup {
-                        addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-LL"))
-                        addSequential(pickupCube(folder == "RS-LL"))
-                        addSequential(dropCubeOnSwitch())
+                    when (lsrr) {
+                        "Mixed" -> {
+                            val scaleId = Pathreader.requestPath("LS-RR", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-LL"))
+                                addSequential(pickupCube(folder == "RS-LL"))
+                                addSequential(dropCubeOnSwitch())
+                            }
+                        }
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
+
                 }
 
                 "CS-L" -> {
