@@ -360,7 +360,7 @@ class AutoHelper {
                     addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
-                addSequential(MotionMagicCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
+                addSequential(MotionMagicCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.7)
             }
         }
     }
