@@ -13,7 +13,7 @@ import kotlin.math.absoluteValue
  * Command that moves the arm to the desired location using Motion Magic
  * @param armPosition Arm position
  */
-class AutoArmCommand(armPosition: ArmPosition) : Command() {
+open class AutoArmCommand(armPosition: ArmPosition) : Command() {
 
     // Arm position in Native Units
     private val armPosition = armPosition.ticks

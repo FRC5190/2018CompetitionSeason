@@ -90,6 +90,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(0, 0)
         }
+        gear = Gear.LOW
     }
 
     // Used to set high and low gear of the DriveTrain

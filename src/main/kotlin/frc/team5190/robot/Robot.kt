@@ -6,7 +6,6 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -16,6 +15,7 @@ import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.HookSubsystem
+import frc.team5190.robot.climb.WinchSubsystem
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
@@ -76,6 +76,8 @@ class Robot : IterativeRobot() {
         ArmSubsystem
         NavX
 
+        WinchSubsystem
+
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
@@ -105,35 +107,38 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Starting Position", sideChooser)
 
+        /*CameraServer.getInstance().startAutomaticCapture(0).apply {
+            setResolution(640, 480)
+            setFPS(30)
+        }*/
     }
 
     /**
      * Executed periodically.
      */
     override fun robotPeriodic() {
-
-        /* DEBUG INNFORMATION
-        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
-        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
+//
+//        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
+//        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
         SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
         SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
-
-        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
-        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
-
-        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
-
+//
+//        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
+//        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
+//
+//        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
+//
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
+//
+//        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.amperage)
+//        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.amperage)
+//
+//        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
+//        SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
+//        SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
+//        SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
 
-        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.amperage)
-        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.amperage)
-
-        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
-        SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
-        SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
-        SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
-        */
 
         SmartDashboard.putData("Gyro", NavX)
 
@@ -151,6 +156,7 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
+//        IntakeCommand(IntakeDirection.IN, timeout = 10.0).start()
     }
 
 
@@ -159,7 +165,9 @@ class Robot : IterativeRobot() {
     /**
      * Executed once when robot is disabled.
      */
-    override fun disabledInit() {}
+    override fun disabledInit() {
+        WinchSubsystem.winchState = false
+    }
 
     override fun disabledPeriodic() {}
 
@@ -169,7 +177,7 @@ class Robot : IterativeRobot() {
     override fun teleopInit() {
 
         VisionSubsystem.stop()
-        CameraServer.getInstance().startAutomaticCapture()
+//        CameraServer.getInstance().startAutomaticCapture()
 
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())

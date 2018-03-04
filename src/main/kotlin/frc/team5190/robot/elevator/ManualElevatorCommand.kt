@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.MainXbox
+import frc.team5190.robot.climb.WinchSubsystem
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.ElevatorConstants
 
@@ -28,8 +29,10 @@ class ManualElevatorCommand : Command() {
      * Executed periodically
      */
     override fun execute() {
+        val winchState = WinchSubsystem.winchState
+
         when {
-            MainXbox.getTriggerPressed(GenericHID.Hand.kRight) -> {
+            MainXbox.getTriggerPressed(GenericHID.Hand.kRight) && !winchState-> {
                 val motorOut = 0.5
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
@@ -42,12 +45,12 @@ class ManualElevatorCommand : Command() {
             }
         }
         when {
-            MainXbox.getBumper(GenericHID.Hand.kRight) -> {
+            MainXbox.getBumper(GenericHID.Hand.kRight) && !winchState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 val motorOut = -0.1
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
             }
-            MainXbox.getBumperReleased(GenericHID.Hand.kRight) -> {
+            MainXbox.getBumperReleased(GenericHID.Hand.kRight) && !winchState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
             }

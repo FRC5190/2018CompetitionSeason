@@ -10,9 +10,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
 import frc.team5190.robot.Robot
+import frc.team5190.robot.climb.WinchSubsystem
 import frc.team5190.robot.util.*
 
 object IntakeSubsystem : Subsystem() {
@@ -68,14 +68,14 @@ object IntakeSubsystem : Subsystem() {
 
         if (!Robot.INSTANCE!!.isOperatorControl) return
 
-        SmartDashboard.putNumber("Intake Motor Amps", this.amperage)
+        val winchState = WinchSubsystem.winchState
 
         when {
-            MainXbox.getBumper(GenericHID.Hand.kLeft) -> {
+            MainXbox.getBumper(GenericHID.Hand.kLeft) && !winchState -> {
                 IntakeCommand(IntakeDirection.IN).start()
                 teleIntake = true
             }
-            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 -> {
+            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 && !winchState-> {
                 IntakeCommand(IntakeDirection.OUT).start()
                 teleIntake = true
             }

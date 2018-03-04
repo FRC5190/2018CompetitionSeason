@@ -5,10 +5,18 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.*
-import frc.team5190.robot.arm.*
-import frc.team5190.robot.elevator.*
-import frc.team5190.robot.intake.*
+import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.CommandGroup
+import edu.wpi.first.wpilibj.command.TimedCommand
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.elevator.AutoElevatorCommand
+import frc.team5190.robot.elevator.ElevatorPosition
+import frc.team5190.robot.elevator.ElevatorSubsystem
+import frc.team5190.robot.intake.IntakeCommand
+import frc.team5190.robot.intake.IntakeDirection
+import frc.team5190.robot.intake.IntakeHoldCommand
 import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
@@ -53,7 +61,7 @@ class AutoHelper {
                                 addSequential(commandGroup {
                                     addSequential(TurnCommand(if (folder == "LS-LL") -50.0 else 37.5, visionCheck = true, tolerance = 10.0))
                                     addSequential(commandGroup {
-                                        addParallel(MotionMagicCommand(4.0, cruiseVel = 5.0), 1.2)
+                                        addParallel(MotionMagicCommand(5.0, cruiseVel = 5.0), 1.3)
                                         addParallel(commandGroup {
                                             addSequential(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
                                             addSequential(IntakeHoldCommand(), 0.001)
@@ -83,9 +91,9 @@ class AutoHelper {
                             val switchId = Pathreader.requestPath("LS-LR", "Switch")
                             return commandGroup {
                                 addSequential(goToSwitch(switchId, folder == "RS-RL"))
-                                addSequential(TurnCommand(-10.0, visionCheck = true, tolerance = 12.0))
+                                addSequential(TurnCommand(-17.5, visionCheck = false, tolerance = 12.0))
 
-                                addSequential(MotionMagicCommand(4.5), 1.5)
+                                addSequential(MotionMagicCommand(2.220), 1.5)
                                 addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.5, outSpeed = 0.4))
                                 addSequential(IntakeHoldCommand(), 0.001)
 
@@ -98,7 +106,7 @@ class AutoHelper {
                                     addParallel(AutoArmCommand(ArmPosition.DOWN))
                                 })
 
-                                addSequential(pickupCube(folder == "LS-LR", 1.5))
+                                addSequential(pickupCube(folder == "LS-LR", 2.5, false))
                                 addSequential(dropCubeOnSwitch())
                             }
                         }
@@ -199,24 +207,21 @@ class AutoHelper {
          * Picks up a cube using Vision
          * @param leftTurn Whether the turn is to the left
          */
-        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.0): CommandGroup {
-            val elevatorCommand = AutoElevatorCommand(ElevatorPosition.FIRST_STAGE)
-
+        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.0, turnCommand: Boolean = true): CommandGroup {
             return commandGroup {
-                addParallel(elevatorCommand)
                 addParallel(AutoArmCommand(ArmPosition.DOWN))
                 addParallel(commandGroup {
-                    addSequential(object : Command() {
-                        override fun end() = elevatorCommand.cancel()
-                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 50
+                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
+                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
                     })
                     addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
                 })
                 addParallel(commandGroup {
-                    addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 12.0))
+                    if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = false, tolerance = 12.0))
+                    addSequential(TimedCommand(0.5))
                     addSequential(commandGroup {
                         addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 4.0), 1.2)
-                        addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 1.0))
+                        addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
                 })
@@ -235,23 +240,20 @@ class AutoHelper {
             val mpDuration = mpCommand.getMPTime()
 
             return commandGroup {
-                addSequential(commandGroup {
-                    addParallel(mpCommand)
-                    addParallel(commandGroup {
-                        addSequential(TimedCommand(0.5))
-                        addSequential(commandGroup {
-                            addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            addParallel(AutoArmCommand(ArmPosition.UP))
-                        })
-                        addSequential(TimedCommand(mpDuration - 3.5))
-                        addSequential(commandGroup {
-                            addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                            addParallel(AutoArmCommand(ArmPosition.BEHIND))
-                            addParallel(commandGroup {
-                                addSequential(TimedCommand(1.15))
-                                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.325, outSpeed = 0.45))
-                                addSequential(IntakeHoldCommand(), 0.001)
-                            })
+                addParallel(mpCommand)
+                addParallel(commandGroup {
+                    addSequential(commandGroup {
+                        addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                        addParallel(AutoArmCommand(ArmPosition.UP))
+                    })
+                    addSequential(TimedCommand(mpDuration - 3.5))
+                    addSequential(commandGroup {
+                        addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                        addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(1.15))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.325, outSpeed = 0.45))
+                            addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
                 })
@@ -264,6 +266,11 @@ class AutoHelper {
          * @param isMirrored Whether the MP is mirrored
          */
         private fun goToSwitch(scaleId: Int, isMirrored: Boolean): CommandGroup {
+
+            val mpCommand = MotionProfileCommand(scaleId, true, isMirrored)
+            val mpDuration = mpCommand.getMPTime()
+
+
             return commandGroup {
                 addSequential(commandGroup {
                     addParallel(MotionProfileCommand(scaleId, true, isMirrored))
@@ -273,9 +280,9 @@ class AutoHelper {
                             addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                             addParallel(AutoArmCommand(ArmPosition.UP))
                         }, 1.0)
-                        addSequential(TimedCommand(3.0))
+                        addSequential(TimedCommand(mpDuration - 2.5))
                         addSequential(commandGroup {
-                            addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                            addParallel(AutoArmCommand(ArmPosition.DOWN))
                         })
                     })
                 })

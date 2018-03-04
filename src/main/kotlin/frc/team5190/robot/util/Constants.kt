@@ -22,6 +22,12 @@ object MotorIDs {
 
     const val INTAKE_LEFT = 7
     const val INTAKE_RIGHT = 9
+
+    const val FRONT_WINCH_MASTER = 10
+
+    const val BACK_WINCH_MASTER = 11
+    const val BACK_WINCH_SLAVE = 12
+
 }
 
 object SolenoidIDs {
@@ -39,7 +45,7 @@ object DriveConstants {
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 2.3
+    const val P_HIGH = 2.0
     const val I_HIGH = 0.0
     const val D_HIGH = 20.0
 
@@ -94,7 +100,7 @@ object ArmConstants {
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1830                 // 1470 for falcon heavy, 1770 for falcon 9
+    const val DOWN_TICKS = 1750                 // 1470 for falcon heavy, 1750 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
@@ -111,6 +117,6 @@ object ArmConstants {
 
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.65
-    const val AMP_THRESHOLD = 15
+    const val AMP_THRESHOLD = 6
 }
 

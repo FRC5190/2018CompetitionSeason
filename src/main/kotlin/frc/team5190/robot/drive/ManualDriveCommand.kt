@@ -13,6 +13,7 @@ package frc.team5190.robot.drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.*
+import frc.team5190.robot.climb.WinchSubsystem
 
 class ManualDriveCommand : Command() {
 
@@ -36,7 +37,7 @@ class ManualDriveCommand : Command() {
         }
 
         DriveSubsystem.falconDrive.gear = when {
-            MainXbox.aButtonPressed -> Gear.LOW
+            MainXbox.aButton -> Gear.LOW
             else -> Gear.HIGH
         }
     }

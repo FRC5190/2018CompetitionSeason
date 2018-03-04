@@ -62,17 +62,17 @@ object VisionSubsystem {
      * Pass TRUE to additionally enable a USB camera stream of what the vision camera is seeing.
      */
     init {
-        thread(name = "Vision") {
-            while (true) {
+        /*thread(name = "Vision") {
+            outer@ while (true) {
                 try{
-
                     if (forceStopped) this.stop()
-
                     reset()
                     // Only run the loop when the vision port was created and it has processed data in the past 1000 ms
                     while (visionPort != null && System.currentTimeMillis() - lastDataReceived < 1000) {
                         periodic()
                         sleep(5)
+
+                        if (forceStopped) break@outer
                     }
                 }
                 catch (e: Exception) {
@@ -81,7 +81,7 @@ object VisionSubsystem {
                 }
 
             }
-        }
+        }*/
     }
 
     fun stop() {
@@ -230,7 +230,7 @@ object VisionSubsystem {
             if (visionPort!!.bytesReceived > 0) {
                 lastDataReceived = System.currentTimeMillis()
                 val string = visionPort!!.readString()
-//                println(string)
+                println(string)
                 val obj = gson.fromJson<VisionTemplate>(string)
                 isTgtVisible = obj.Track
                 if (isTgtVisible == 1L) {

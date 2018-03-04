@@ -8,6 +8,7 @@ package frc.team5190.robot.elevator
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
+import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
@@ -151,40 +152,47 @@ object ElevatorSubsystem : Subsystem() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
         }
-        when (MainXbox.pov) {
+        val pov = MainXbox.pov
+        when {
         // Up - Scale
-            0 -> commandGroup {
+            pov == 0 -> commandGroup {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                 addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
             }
         // Right - Switch
-            90 -> commandGroup {
-                // Just incase its in the behind position
-                if (ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
-                    addSequential(AutoArmCommand(ArmPosition.MIDDLE))
-                addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+            pov == 90 -> commandGroup {
+                //
+                addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                addParallel(commandGroup {
+                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
+                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
+                    })
+                    addSequential(AutoElevatorCommand(ElevatorPosition.SWITCH))
                 })
             }
         // Down - Intake
-            180 -> commandGroup {
-                // Just incase its in the behind position
-                if (ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
-                    addSequential(AutoArmCommand(ArmPosition.MIDDLE))
-                addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.DOWN))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+            pov == 180 -> commandGroup {
+                addParallel(AutoArmCommand(ArmPosition.DOWN))
+                addParallel(commandGroup {
+                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
+                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
+                    })
+                    addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
                 })
             }
         // Left - Scale Backwards
-            270 -> commandGroup {
-                addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.UP))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+            pov == 270 -> commandGroup {
+                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+                addParallel(commandGroup {
+                    addSequential(object : AutoArmCommand(ArmPosition.UP) {
+                        override fun isFinished() = ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks + 100
+                    })
+                    addSequential(AutoArmCommand(ArmPosition.BEHIND))
                 })
-                // Go behind once we know its all the way up
-                addSequential(AutoArmCommand(ArmPosition.BEHIND))
+            }
+            MainXbox.getStickButtonPressed(GenericHID.Hand.kRight) -> commandGroup {
+                addParallel(AutoArmCommand(ArmPosition.ALL_UP))
+                addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
             }
             else -> null
         }?.let {
@@ -202,7 +210,7 @@ object ElevatorSubsystem : Subsystem() {
  */
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
-    FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(34.0)),
+    FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
     INTAKE(500);
