@@ -151,6 +151,8 @@ class Robot : IterativeRobot() {
 
         pollForFMSData()
 
+        ClimbSubsystem.gyropitch = NavX.pitch.toDouble()
+
         DriveSubsystem.autoReset()
         NavX.reset()
 
