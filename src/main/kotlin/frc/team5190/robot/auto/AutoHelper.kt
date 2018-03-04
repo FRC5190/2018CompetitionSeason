@@ -5,18 +5,10 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.command.CommandGroup
-import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.AutoArmCommand
-import frc.team5190.robot.elevator.AutoElevatorCommand
-import frc.team5190.robot.elevator.ElevatorPosition
-import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.intake.IntakeCommand
-import frc.team5190.robot.intake.IntakeDirection
-import frc.team5190.robot.intake.IntakeHoldCommand
+import edu.wpi.first.wpilibj.command.*
+import frc.team5190.robot.arm.*
+import frc.team5190.robot.elevator.*
+import frc.team5190.robot.intake.*
 import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
@@ -242,6 +234,7 @@ class AutoHelper {
             return commandGroup {
                 addParallel(mpCommand)
                 addParallel(commandGroup {
+                    addSequential(TimedCommand(0.5))
                     addSequential(commandGroup {
                         addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                         addParallel(AutoArmCommand(ArmPosition.UP))
