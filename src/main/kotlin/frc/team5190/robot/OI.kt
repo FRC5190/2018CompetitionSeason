@@ -8,8 +8,6 @@
 package frc.team5190.robot
 
 import edu.wpi.first.wpilibj.*
-import edu.wpi.first.wpilibj.buttons.JoystickButton
-import frc.team5190.robot.climb.DeployHookCommand
 
 object Bongos : Joystick(0) {
     fun getLeftBongoSpeed() = when {

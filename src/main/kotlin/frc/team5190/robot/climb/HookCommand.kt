@@ -1,9 +1,8 @@
 package frc.team5190.robot.climb
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team5190.robot.climb.ClimbSubsystem.hookSolenoid
-
 
 class DeployHookCommand : TimedCommand(0.5) {
     init {
@@ -11,17 +10,20 @@ class DeployHookCommand : TimedCommand(0.5) {
     }
 
     override fun initialize() {
-        hookSolenoid.set(true)
+        ClimbSubsystem.hookSolenoid.set(true)
     }
 }
 
-class DefaultHookCommand : Command() {
+class IdleClimbCommand : Command() {
     init {
         requires(ClimbSubsystem)
     }
 
     override fun initialize() {
-        hookSolenoid.set(false)
+        ClimbSubsystem.hookSolenoid.set(false)
+
+        ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, 0.0)
+        ClimbSubsystem.frontWinchMotor.set(ControlMode.PercentOutput, 0.0)
     }
 
     override fun isFinished() = false

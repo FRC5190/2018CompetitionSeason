@@ -14,8 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
-import frc.team5190.robot.climb.HookSubsystem
-import frc.team5190.robot.climb.WinchSubsystem
+import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
@@ -72,11 +71,11 @@ class Robot : IterativeRobot() {
         VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
-        HookSubsystem
+        ClimbSubsystem
         ArmSubsystem
         NavX
 
-        WinchSubsystem
+
 
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
@@ -166,7 +165,7 @@ class Robot : IterativeRobot() {
      * Executed once when robot is disabled.
      */
     override fun disabledInit() {
-        WinchSubsystem.winchState = false
+        ClimbSubsystem.climbState = false
     }
 
     override fun disabledPeriodic() {}

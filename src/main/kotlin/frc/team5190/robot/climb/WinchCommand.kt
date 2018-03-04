@@ -20,6 +20,5 @@ class WinchCommand : Command() {
         if (MainXbox.getBumper(GenericHID.Hand.kRight)) ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, -0.3)
     }
 
-
     override fun isFinished() = false
 }

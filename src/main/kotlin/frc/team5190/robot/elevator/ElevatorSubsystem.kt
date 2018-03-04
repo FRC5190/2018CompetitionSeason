@@ -8,12 +8,10 @@ package frc.team5190.robot.elevator
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.arm.*
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
@@ -37,10 +35,12 @@ object ElevatorSubsystem : Subsystem() {
     val amperage
         get() = masterElevatorMotor.outputCurrent
 
+    // Variable used to reset encoder position
+    private var hasBeenReset = false
 
     // Variables used for current limiting
     private var state = MotorState.OK
-    private var currentCommandGroup: CommandGroup? = null
+    var currentCommandGroup: CommandGroup? = null
     private var stalled = false
 
     var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
@@ -141,8 +141,12 @@ object ElevatorSubsystem : Subsystem() {
      * Executed periodically
      */
     override fun periodic() {
-        if (ElevatorSubsystem.isElevatorAtBottom) {
+        if (ElevatorSubsystem.isElevatorAtBottom && !hasBeenReset) {
             this.resetEncoders()
+            hasBeenReset = true
+        }
+        if (hasBeenReset && !ElevatorSubsystem.isElevatorAtBottom) {
+            hasBeenReset = false
         }
 
         SmartDashboard.putBoolean("Reset Limit Switch", isElevatorAtBottom)
@@ -150,55 +154,7 @@ object ElevatorSubsystem : Subsystem() {
         currentLimiting()
 
         when {
-            MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
-        }
-        val pov = MainXbox.pov
-        when {
-        // Up - Scale
-            pov == 0 -> commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
-            }
-        // Right - Switch
-            pov == 90 -> commandGroup {
-                //
-                addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                addParallel(commandGroup {
-                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
-                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
-                    })
-                    addSequential(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                })
-            }
-        // Down - Intake
-            pov == 180 -> commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.DOWN))
-                addParallel(commandGroup {
-                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
-                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
-                    })
-                    addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                })
-            }
-        // Left - Scale Backwards
-            pov == 270 -> commandGroup {
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                addParallel(commandGroup {
-                    addSequential(object : AutoArmCommand(ArmPosition.UP) {
-                        override fun isFinished() = ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks + 100
-                    })
-                    addSequential(AutoArmCommand(ArmPosition.BEHIND))
-                })
-            }
-            MainXbox.getStickButtonPressed(GenericHID.Hand.kRight) -> commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.ALL_UP))
-                addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-            }
-            else -> null
-        }?.let {
-            currentCommandGroup?.cancel()
-            currentCommandGroup = it
-            it.start()
+            MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorSubsystem.defaultCommand.start()
         }
     }
 
