@@ -142,7 +142,7 @@ object Controls {
     fun climbSubsystem() {
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
-            if (ClimbSubsystem.currentCommand is WinchCommand) {
+            if (ClimbSubsystem.currentCommand !is WinchCommand) {
                 commandGroup {
                     addSequential(commandGroup {
                         addParallel(AutoArmCommand(ArmPosition.ALL_UP))
