@@ -120,3 +120,7 @@ object IntakeConstants {
     const val AMP_THRESHOLD = 6
 }
 
+object ClimbConstants {
+    const val PEAK_OUTPUT = 0.6
+}
+
