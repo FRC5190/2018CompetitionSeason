@@ -14,14 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.MotionMagicCommand
-import frc.team5190.robot.auto.MotionProfileCommand
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.VisionSubsystem
@@ -78,29 +75,26 @@ class Robot : IterativeRobot() {
         ElevatorSubsystem
         ClimbSubsystem
         ArmSubsystem
+
         NavX
-
-
-
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
         lsll.addDefault("Mixed", "Mixed")
         lsll.addObject("2 Scale", "2 Scale")
+        lsll.addObject("Straight", "Straight")
 
-        lslr.addDefault("2 Switch", "2 Switch")
+        lslr.addDefault("1 Switch", "1 Switch")
         lslr.addObject("2 Scale", "2 Scale")
 
         lsrl.addDefault("2 Scale", "2 Scale")
 
         lsrr.addDefault("Mixed", "Mixed")
 
-
-
-        controllerChooser.addObject("Xbox", "Xbox")
-        controllerChooser.addObject("Bongo", "Bongo")
         controllerChooser.addDefault("Xbox", "Xbox")
+        controllerChooser.addObject("Bongo", "Bongo")
+
 
         SmartDashboard.putData("Controller", controllerChooser)
 
@@ -163,12 +157,7 @@ class Robot : IterativeRobot() {
         DriveSubsystem.autoReset()
         NavX.reset()
 
-//        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
-//        MotionMagicCommand(-5.0).start()
-//        IntakeCommand(IntakeDirection.IN, timeout = 10.0).start()
-
-        val switchId = Pathreader.requestPath("LS-LL", "Scale")
-        MotionProfileCommand(switchId, true, false).start()
+        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
     }
 
 
@@ -189,7 +178,6 @@ class Robot : IterativeRobot() {
     override fun teleopInit() {
 
         VisionSubsystem.stop()
-//        CameraServer.getInstance().startAutomaticCapture()
 
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
