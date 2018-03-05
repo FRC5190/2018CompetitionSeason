@@ -12,8 +12,6 @@ import frc.team5190.robot.util.*
 
 object ClimbSubsystem : Subsystem() {
 
-    var gyropitch = 0.0
-
     val hookSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.HOOK)
 
     internal val frontWinchMotor = TalonSRX(MotorIDs.FRONT_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }

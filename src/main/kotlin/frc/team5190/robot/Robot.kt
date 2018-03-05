@@ -16,11 +16,11 @@ import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.ClimbSubsystem
+import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
@@ -119,15 +119,15 @@ class Robot : IterativeRobot() {
 //        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
 //        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
-        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
-        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
+//        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
+//        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
 //
-        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
-        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
+//        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
+//        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
 //
 //        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
 //
-        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
+//        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 //
 //        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.amperage)
 //        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.amperage)
@@ -152,12 +152,10 @@ class Robot : IterativeRobot() {
 
         pollForFMSData()
 
-        ClimbSubsystem.gyropitch = NavX.pitch.toDouble()
-
         DriveSubsystem.autoReset()
         NavX.reset()
 
-        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
     }
 
 
@@ -167,6 +165,7 @@ class Robot : IterativeRobot() {
      * Executed once when robot is disabled.
      */
     override fun disabledInit() {
+        IdleClimbCommand().start()
         ClimbSubsystem.climbState = false
     }
 
