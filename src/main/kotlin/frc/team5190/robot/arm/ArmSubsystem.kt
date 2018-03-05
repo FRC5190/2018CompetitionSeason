@@ -39,28 +39,28 @@ object ArmSubsystem : Subsystem() {
             inverted = ArmConstants.INVERTED
 
             // Sensors and Safety
-            configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10)
+            configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, TIMEOUT)
             setSensorPhase(ArmConstants.SENSOR_PHASE)
-            configReverseSoftLimitEnable(true, 10)
-            configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks - 100, 10)
+            configReverseSoftLimitEnable(true, TIMEOUT)
+            configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks - 100, TIMEOUT)
 
             // Brake Mode
             setNeutralMode(NeutralMode.Brake)
 
             // Closed Loop Control
-            configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, 10)
-            configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, 10)
-            configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
-            configAllowableClosedloopError(0, ArmConstants.TOLERANCE, 10)
+            configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, TIMEOUT)
+            configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, TIMEOUT)
+            configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, TIMEOUT)
+            configAllowableClosedloopError(0, ArmConstants.TOLERANCE, TIMEOUT)
 
             // Motion Magic Control
-            configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, 10)
-            configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, 10)
-            setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
-            setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+            configMotionCruiseVelocity(ArmConstants.MOTION_VELOCITY, TIMEOUT)
+            configMotionAcceleration(ArmConstants.MOTION_ACCELERATION, TIMEOUT)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
 
-            configClosedloopRamp(0.3, 10)
-            configOpenloopRamp(0.5, 10)
+            configClosedloopRamp(0.3, TIMEOUT)
+            configOpenloopRamp(0.5, TIMEOUT)
         }
 
         // Configure current limiting
@@ -86,17 +86,17 @@ object ArmSubsystem : Subsystem() {
         when (state) {
             MotorState.OK -> {
                 if (stalled) {
-                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
+                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
                 } else {
-                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+                    masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, TIMEOUT)
                 }
             }
             MotorState.STALL -> {
-                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, 10)
+                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, -ArmConstants.PEAK_OUT * ArmConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
                 stalled = true
             }
             MotorState.GOOD -> {
-                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, 10)
+                masterArmMotor.configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, TIMEOUT)
                 stalled = false
             }
         }

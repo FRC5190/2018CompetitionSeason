@@ -117,7 +117,7 @@ object ArmConstants {
 
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.65
-    const val AMP_THRESHOLD = 6
+    const val AMP_THRESHOLD = 6.5
 }
 
 object ClimbConstants {
@@ -126,4 +126,6 @@ object ClimbConstants {
     const val CORRECTION_OUTPUT = 0.2
     const val BALANCE_OUTPUT = ClimbConstants.PEAK_OUTPUT - ClimbConstants.CORRECTION_OUTPUT
 }
+
+const val TIMEOUT = 20
 

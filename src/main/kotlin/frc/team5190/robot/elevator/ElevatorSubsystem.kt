@@ -52,30 +52,30 @@ object ElevatorSubsystem : Subsystem() {
             inverted = false
 
             // Sensors and Safety
-            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
+            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, TIMEOUT)
             setSensorPhase(false)
-            configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
+            configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, TIMEOUT)
             overrideLimitSwitchesEnable(true)
-            configForwardSoftLimitThreshold(ElevatorConstants.SOFT_LIMIT_FWD, 10)
-            configForwardSoftLimitEnable(true, 10)
+            configForwardSoftLimitThreshold(ElevatorConstants.SOFT_LIMIT_FWD, TIMEOUT)
+            configForwardSoftLimitEnable(true, TIMEOUT)
 
             // Brake Mode
             setNeutralMode(NeutralMode.Brake)
 
             // Closed Loop Control
-            configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, 10)
-            configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), 10)
-            configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
-            configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, 10)
+            configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, TIMEOUT)
+            configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), TIMEOUT)
+            configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, TIMEOUT)
+            configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
 
             // Motion Magic Control
             configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
-            configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
-            setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
-            setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+            configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, TIMEOUT)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
 
-            configClosedloopRamp(0.3, 10)
-            configOpenloopRamp(0.5, 10)
+            configClosedloopRamp(0.3, TIMEOUT)
+            configOpenloopRamp(0.5, TIMEOUT)
 
         }
 
@@ -103,7 +103,7 @@ object ElevatorSubsystem : Subsystem() {
     /**
      * Resets encoders on the elevator
      */
-    private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)!!
+    private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, TIMEOUT)!!
 
     /**
      * Enables current limiting on the motor so we don't stall it
@@ -115,17 +115,17 @@ object ElevatorSubsystem : Subsystem() {
         when (state) {
             MotorState.OK -> {
                 if (stalled) {
-                    masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                    masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
                 } else {
-                    masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, 10)
+                    masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, TIMEOUT)
                 }
             }
             MotorState.STALL -> {
-                masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
                 stalled = true
             }
             MotorState.GOOD -> {
-                masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, 10)
+                masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, TIMEOUT)
                 stalled = false
             }
         }
