@@ -27,8 +27,8 @@ class BalanceWinchCommand : PIDCommand(0.2, 0.0, 0.0) {
     override fun returnPIDInput() = NavX.roll.toDouble()
 
     override fun usePIDOutput(output: Double) {
-        ClimbSubsystem.frontWinchMotor.set(ControlMode.PercentOutput, (ClimbConstants.BALANCE_OUTPUT - output).coerceAtLeast(0.0))
-        ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, (ClimbConstants.BALANCE_OUTPUT + output).coerceAtLeast(0.0))
+        ClimbSubsystem.frontWinchMotor.set(ControlMode.PercentOutput, (ClimbConstants.PEAK_OUTPUT - output * 2.0).coerceIn(0.0, ClimbConstants.PEAK_OUTPUT))
+        ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, (ClimbConstants.PEAK_OUTPUT + output * 2.0).coerceIn(0.0, ClimbConstants.PEAK_OUTPUT))
     }
 
     override fun isFinished() = false
