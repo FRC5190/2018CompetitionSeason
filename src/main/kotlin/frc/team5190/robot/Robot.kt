@@ -6,6 +6,7 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -13,12 +14,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.MotionMagicCommand
+import frc.team5190.robot.auto.MotionProfileCommand
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
@@ -106,10 +111,10 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Starting Position", sideChooser)
 
-        /*CameraServer.getInstance().startAutomaticCapture(0).apply {
-            setResolution(640, 480)
-            setFPS(30)
-        }*/
+        CameraServer.getInstance().startAutomaticCapture(0).apply {
+            setResolution(100, 100)
+            setFPS(15)
+        }
     }
 
     /**
@@ -123,8 +128,8 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
         SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
 //
-//        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
-//        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
+        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
+        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
 //
 //        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
 //
@@ -140,6 +145,8 @@ class Robot : IterativeRobot() {
 
 
         SmartDashboard.putData("Gyro", NavX)
+        SmartDashboard.putNumber("Pitch", NavX.pitch.toDouble())
+        SmartDashboard.putNumber("Roll", NavX.roll.toDouble())
 
         Scheduler.getInstance().run()
     }
@@ -156,8 +163,12 @@ class Robot : IterativeRobot() {
         DriveSubsystem.autoReset()
         NavX.reset()
 
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
+//        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
+//        MotionMagicCommand(-5.0).start()
 //        IntakeCommand(IntakeDirection.IN, timeout = 10.0).start()
+
+        val switchId = Pathreader.requestPath("LS-LL", "Scale")
+        MotionProfileCommand(switchId, true, false).start()
     }
 
 
