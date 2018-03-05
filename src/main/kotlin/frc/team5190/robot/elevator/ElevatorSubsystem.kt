@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
+import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
@@ -154,7 +155,7 @@ object ElevatorSubsystem : Subsystem() {
         currentLimiting()
 
         when {
-            MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> ElevatorSubsystem.defaultCommand.start()
+            (MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight)) && !ClimbSubsystem.climbState -> ElevatorSubsystem.defaultCommand.start()
         }
     }
 
@@ -169,5 +170,5 @@ enum class ElevatorPosition(var ticks: Int) {
     FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
-    INTAKE(500);
+    INTAKE(1200);
 }

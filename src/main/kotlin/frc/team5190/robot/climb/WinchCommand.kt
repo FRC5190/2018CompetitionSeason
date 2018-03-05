@@ -10,7 +10,7 @@ class WinchCommand : Command() {
         requires(ClimbSubsystem)
     }
 
-    override fun execute()  = Controls.winchSubsystem()
+    override fun execute() = Controls.winchSubsystem()
 
     override fun isFinished() = false
 }

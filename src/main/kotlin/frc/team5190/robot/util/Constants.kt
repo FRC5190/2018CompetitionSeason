@@ -100,7 +100,7 @@ object ArmConstants {
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1750                 // 1470 for falcon heavy, 1750 for falcon 9
+    const val DOWN_TICKS = 1600                 // 1470 for falcon heavy, 1750 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
@@ -118,5 +118,12 @@ object ArmConstants {
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.65
     const val AMP_THRESHOLD = 6
+}
+
+object ClimbConstants {
+    const val PEAK_OUTPUT = 1.0
+
+    const val CORRECTION_OUTPUT = 0.2
+    const val BALANCE_OUTPUT = ClimbConstants.PEAK_OUTPUT - ClimbConstants.CORRECTION_OUTPUT
 }
 

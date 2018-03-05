@@ -12,12 +12,12 @@ import frc.team5190.robot.util.*
 
 object ClimbSubsystem : Subsystem() {
 
-    var gyropitch: Double? = null
+    var gyropitch = 0.0
 
     val hookSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.HOOK)
 
-    internal val frontWinchMotor = TalonSRX(MotorIDs.FRONT_WINCH_MASTER).apply { configPeakOutput(0.6, -0.6, 10) }
-    internal val backWinchMotor = TalonSRX(MotorIDs.BACK_WINCH_MASTER).apply { configPeakOutput(0.6, -0.6, 10) }
+    internal val frontWinchMotor = TalonSRX(MotorIDs.FRONT_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, 10) }
+    internal val backWinchMotor = TalonSRX(MotorIDs.BACK_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, 10) }
 
     init {
         with(TalonSRX(MotorIDs.BACK_WINCH_SLAVE)) {
