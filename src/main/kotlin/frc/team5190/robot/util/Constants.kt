@@ -47,7 +47,7 @@ object DriveConstants {
 
     const val P_HIGH = 2.0
     const val I_HIGH = 0.0
-    const val D_HIGH = 20.0
+    const val D_HIGH = 10.0
 
     const val PID_SLOT_HIGH = 0
 
@@ -117,7 +117,7 @@ object ArmConstants {
 
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.65
-    const val AMP_THRESHOLD = 6.5
+    const val AMP_THRESHOLD = 5.5
 }
 
 object ClimbConstants {

@@ -308,11 +308,11 @@ class AutoHelper {
         private fun pickupCubeFromCenter(): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
-                    addParallel(MotionMagicCommand(4.10))
+                    addParallel(MotionMagicCommand(4.50))
                     addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
-                addSequential(MotionMagicCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.7)
+                addSequential(MotionMagicCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
             }
         }
     }
