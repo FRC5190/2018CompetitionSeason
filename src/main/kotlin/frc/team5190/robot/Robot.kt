@@ -20,6 +20,7 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.VisionSubsystem
@@ -105,6 +106,8 @@ class Robot : IterativeRobot() {
         SmartDashboard.putData("LS-RR / RS-LL", lsrr)
 
         SmartDashboard.putData("Starting Position", sideChooser)
+
+        Pathreader.loadIntoMemory()
 
         CameraServer.getInstance().startAutomaticCapture(0).apply {
             setResolution(100, 100)

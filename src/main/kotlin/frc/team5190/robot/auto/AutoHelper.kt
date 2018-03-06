@@ -18,6 +18,7 @@ import openrio.powerup.MatchData
  */
 class AutoHelper {
     companion object {
+
         /**
          * Returns an autonomous command pertaining to the FMS data
          * @param startingPositions Starting Position

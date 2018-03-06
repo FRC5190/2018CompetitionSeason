@@ -23,13 +23,31 @@ object Pathreader : ITableListener {
 
     private var pathfinderOutputTable: NetworkTable = NetworkTable.getTable("pathfinderOutput")
     private var pathfinderInputTable: NetworkTable = NetworkTable.getTable("pathfinderInput")
-    private val leftTrajectories = HashMap<Int, MotionProfileTrajectory>()
-    private val rightTrajectories = HashMap<Int, MotionProfileTrajectory>()
+    private val leftTrajectories = HashMap<Int, MotionProfileTrajectory?>()
+    private val rightTrajectories = HashMap<Int, MotionProfileTrajectory?>()
     private val localFiles = HashMap<Int, String>()
     private var requestId = 0
 
+    private var allPaths = HashMap<String, MotionProfileTrajectory>()
+
+
     init {
         pathfinderOutputTable.addTableListener(this, true)
+    }
+
+    fun loadIntoMemory() {
+
+        val directories = File("/home/lvuser/paths/").list { dir, name -> File(dir, name).isDirectory }
+
+        directories.forEach { directory ->
+            File(directory).listFiles().forEach { file ->
+                if (file.isFile) {
+                    val filePath = PathLocation(directory, file.name).filePath
+                    allPaths[filePath] = loadFromFileInit(filePath)
+                }
+            }
+        }
+
     }
 
     /**
@@ -123,20 +141,26 @@ object Pathreader : ITableListener {
 
     private fun loadFromFiles(id: Int) {
         println("Reading $id from backup store")
-        leftTrajectories[id] = loadFromFile(localFiles[id] + " Left Detailed.csv", true)
-        rightTrajectories[id] = loadFromFile(localFiles[id] + " Right Detailed.csv", true)
+        leftTrajectories[id] = loadFromFile(localFiles[id] + " Left Detailed.csv")
+        rightTrajectories[id] = loadFromFile(localFiles[id] + " Right Detailed.csv")
     }
 
-    private fun loadFromFile(file: String, skipFirst: Boolean = false): MotionProfileTrajectory {
+    private fun loadFromFileInit(file: String, skipFirst: Boolean = true): MotionProfileTrajectory {
 
-        // TODO Look at where the files are on the RIO
-        val filePath = "home/lvuser/paths/$file"
+        val filePath = "/home/lvuser/paths/$file"
 
         return File(filePath).readLines().mapIndexedNotNull { index, string ->
             if (skipFirst && index == 0) return@mapIndexedNotNull null
             val pointData = string.split(",").map { it.trim() }
-            return@mapIndexedNotNull MotionProfileSegment(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toDouble(), pointData[3].toDouble(), pointData[4].toDouble(), pointData[5].toDouble(), pointData[6].toDouble(), pointData[7].toDouble())
+            return@mapIndexedNotNull MotionProfileSegment(pointData[0].toDouble(),
+                    pointData[1].toDouble(), pointData[2].toDouble(), pointData[3].toDouble(), pointData[4].toDouble(),
+                    pointData[5].toDouble(), pointData[6].toDouble(), pointData[7].toDouble())
         }
+    }
+
+
+    private fun loadFromFile(file: String): MotionProfileTrajectory? {
+        return allPaths[file]
     }
 
 }
@@ -154,7 +178,11 @@ data class MotionProfileSegment(val dt: Double, val x: Double, val y: Double, pr
     private val rpm = Maths.feetPerSecondToRPM(velocity, DriveConstants.WHEEL_RADIUS)
 
     // Converts rotations and rotations/sec to native units and native units/100 ms.
-    var nativeUnits = Maths.rotationsToNativeUnits(rotations, DriveConstants.SENSOR_UNITS_PER_ROTATION)
+    val nativeUnits = Maths.rotationsToNativeUnits(rotations, DriveConstants.SENSOR_UNITS_PER_ROTATION)
     val nativeUnitsPer100Ms = Maths.rpmToNativeUnitsPer100Ms(rpm, DriveConstants.SENSOR_UNITS_PER_ROTATION)
     val duration: Int = (dt * 1000).toInt()
+}
+
+data class PathLocation(val folder: String, val file: String) {
+    val filePath = "$folder/$file"
 }
