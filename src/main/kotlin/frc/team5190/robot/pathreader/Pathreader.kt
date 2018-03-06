@@ -84,7 +84,7 @@ object Pathreader : ITableListener {
      */
     override fun valueChanged(iTable: ITable, string: String, receivedObject: Any, newValue: Boolean) {
         if (string.startsWith("response_") && newValue) {
-            val id:Int = ((receivedObject as Double).toInt())
+            val id: Int = ((receivedObject as Double).toInt())
             val folder = pathfinderOutputTable.getString("folder_" + id, "")
             val path = pathfinderOutputTable.getString("path_" + id, "")
             deserializeTrajectoryArray(id, pathfinderOutputTable.getString("trajectories_" + id, "") as String)
@@ -112,7 +112,7 @@ object Pathreader : ITableListener {
     }
 
 
-    private fun deserializeTrajectory(s: Array<Array<Double>>) : MotionProfileTrajectory {
+    private fun deserializeTrajectory(s: Array<Array<Double>>): MotionProfileTrajectory {
         val motionArray = mutableListOf<MotionProfileSegment>()
         s.indices.mapTo(motionArray) {
             MotionProfileSegment(s[it][0], s[it][1], s[it][2], s[it][3], s[it][4], s[it][5], s[it][6], s[it][7])
@@ -127,9 +127,13 @@ object Pathreader : ITableListener {
     }
 
     private fun loadFromFile(file: String, skipFirst: Boolean = false): MotionProfileTrajectory {
-        javaClass.classLoader.getResourceAsStream(file).use { stream ->
+
+        // TODO Look at where the files are on the RIO
+        val filePath = "home/lvuser/resources/$file"
+
+        FileInputStream(File(filePath)).use { stream ->
             return InputStreamReader(stream).readLines().mapIndexedNotNull { index, string ->
-                if(skipFirst && index == 0) return@mapIndexedNotNull null
+                if (skipFirst && index == 0) return@mapIndexedNotNull null
                 val pointData = string.split(",").map { it.trim() }
                 return@mapIndexedNotNull MotionProfileSegment(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toDouble(), pointData[3].toDouble(), pointData[4].toDouble(), pointData[5].toDouble(), pointData[6].toDouble(), pointData[7].toDouble())
             }
