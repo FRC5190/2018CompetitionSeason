@@ -215,7 +215,6 @@ class AutoHelper {
             return commandGroup {
                 addParallel(mpCommand)
                 addParallel(commandGroup {
-                    addSequential(TimedCommand(0.5))
                     addSequential(commandGroup {
                         addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                         addParallel(AutoArmCommand(ArmPosition.UP))
