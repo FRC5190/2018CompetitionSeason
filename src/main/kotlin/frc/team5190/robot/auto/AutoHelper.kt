@@ -161,8 +161,7 @@ class AutoHelper {
         private fun switchToScale(isLeft: Boolean): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
-                    addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                    addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                    addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.01))
                         addSequential(MotionMagicCommand(-5.0))
@@ -182,13 +181,7 @@ class AutoHelper {
          */
         private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.0, turnCommand: Boolean = true): CommandGroup {
             return commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.DOWN))
-                addParallel(commandGroup {
-                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
-                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
-                    })
-                    addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                })
+                addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                 addParallel(commandGroup {
                     if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = false, tolerance = 12.0))
                     addSequential(TimedCommand(0.5))
@@ -221,8 +214,7 @@ class AutoHelper {
                     }, 0.1)
                     addSequential(TimedCommand(mpDuration - 3.5))
                     addSequential(commandGroup {
-                        addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                        addParallel(AutoArmCommand(ArmPosition.BEHIND))
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(1.15))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.325, outSpeed = 0.45))
@@ -239,8 +231,7 @@ class AutoHelper {
         private fun dropCubeOnSwitch(mmDistanceFeet: Double = 1.1, mTimeout: Double = 1.0): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
-                    addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                    addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                    addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                     addParallel(commandGroup {
                         addSequential(MotionMagicCommand(-0.2))
                         addSequential(object : Command() {
@@ -269,8 +260,7 @@ class AutoHelper {
             return commandGroup {
                 addSequential(commandGroup {
                     addParallel(MotionProfileCommand(switchId))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                    addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                    addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                 })
 
                 addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
@@ -289,8 +279,7 @@ class AutoHelper {
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.5))
                         addSequential(commandGroup {
-                            addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                            addParallel(AutoArmCommand(ArmPosition.DOWN))
+                            addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
                     })
                 })
