@@ -129,16 +129,15 @@ object Pathreader : ITableListener {
     private fun loadFromFile(file: String, skipFirst: Boolean = false): MotionProfileTrajectory {
 
         // TODO Look at where the files are on the RIO
-        val filePath = "home/lvuser/resources/$file"
+        val filePath = "home/lvuser/paths/$file"
 
-        FileInputStream(File(filePath)).use { stream ->
-            return InputStreamReader(stream).readLines().mapIndexedNotNull { index, string ->
-                if (skipFirst && index == 0) return@mapIndexedNotNull null
-                val pointData = string.split(",").map { it.trim() }
-                return@mapIndexedNotNull MotionProfileSegment(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toDouble(), pointData[3].toDouble(), pointData[4].toDouble(), pointData[5].toDouble(), pointData[6].toDouble(), pointData[7].toDouble())
-            }
+        return File(filePath).readLines().mapIndexedNotNull { index, string ->
+            if (skipFirst && index == 0) return@mapIndexedNotNull null
+            val pointData = string.split(",").map { it.trim() }
+            return@mapIndexedNotNull MotionProfileSegment(pointData[0].toDouble(), pointData[1].toDouble(), pointData[2].toDouble(), pointData[3].toDouble(), pointData[4].toDouble(), pointData[5].toDouble(), pointData[6].toDouble(), pointData[7].toDouble())
         }
     }
+
 }
 
 typealias MotionProfileTrajectory = List<MotionProfileSegment>

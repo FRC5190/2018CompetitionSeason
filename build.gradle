@@ -1,3 +1,5 @@
+import jaci.gradle.deploy.artifact.FileCollectionArtifact
+
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.21"
     id "java"
@@ -15,10 +17,48 @@ deploy {
     targets {
         target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
             team = TEAM
+            user = 'admin'
+            password = ''
         }
     }
     artifacts {
         artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+            targets << "roborio"
+        }
+
+        artifact('LS-LL', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/LS-LL', include: '*.csv')
+            directory = '/home/lvuser/paths/LS-LL/'
+            targets << "roborio"
+        }
+
+        artifact('LS-LR', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/LS-LR', include: '*.csv')
+            directory = '/home/lvuser/paths/LS-LR/'
+            targets << "roborio"
+        }
+
+        artifact('LS-RL', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/LS-RL', include: '*.csv')
+            directory = '/home/lvuser/paths/LS-RL/'
+            targets << "roborio"
+        }
+
+        artifact('LS-RR', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/LS-RR', include: '*.csv')
+            directory = '/home/lvuser/paths/LS-RR/'
+            targets << "roborio"
+        }
+
+        artifact('CS-L', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/CS-L', include: '*.csv')
+            directory = '/home/lvuser/paths/CS-L/'
+            targets << "roborio"
+        }
+
+        artifact('CS-R', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/CS-R', include: '*.csv')
+            directory = '/home/lvuser/paths/CS-R/'
             targets << "roborio"
         }
     }
