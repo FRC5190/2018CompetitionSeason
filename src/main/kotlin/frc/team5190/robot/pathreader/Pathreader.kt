@@ -37,12 +37,12 @@ object Pathreader : ITableListener {
      */
     fun requestPath(folder: String, path: String, obstructed: Boolean = false, index: Double = 0.0): Int {
         val id = this.requestId++
-        localFiles.put(id, folder + "/" + path)
-        pathfinderInputTable.putString("folder_" + id, folder)
-        pathfinderInputTable.putString("path_" + id, path)
-        pathfinderInputTable.putBoolean("obstructed_" + id, obstructed)
-        pathfinderInputTable.putNumber("index_" + id, index)
-        pathfinderInputTable.putNumber("request_" + id, id.toDouble())
+        localFiles[id] = "$folder/$path"
+        pathfinderInputTable.putString("folder_$id", folder)
+        pathfinderInputTable.putString("path_$id", path)
+        pathfinderInputTable.putBoolean("obstructed_$id", obstructed)
+        pathfinderInputTable.putNumber("index_$id", index)
+        pathfinderInputTable.putNumber("request_$id", id.toDouble())
         NetworkTable.flush()
         return id
     }
@@ -85,17 +85,17 @@ object Pathreader : ITableListener {
     override fun valueChanged(iTable: ITable, string: String, receivedObject: Any, newValue: Boolean) {
         if (string.startsWith("response_") && newValue) {
             val id: Int = ((receivedObject as Double).toInt())
-            val folder = pathfinderOutputTable.getString("folder_" + id, "")
-            val path = pathfinderOutputTable.getString("path_" + id, "")
-            deserializeTrajectoryArray(id, pathfinderOutputTable.getString("trajectories_" + id, "") as String)
+            val folder = pathfinderOutputTable.getString("folder_$id", "")
+            val path = pathfinderOutputTable.getString("path_$id", "")
+            deserializeTrajectoryArray(id, pathfinderOutputTable.getString("trajectories_$id", "") as String)
 
             println("Got path: $id, $folder/$path")
 
             // clean up the response keys
-            pathfinderOutputTable.delete("response_" + id)
-            pathfinderOutputTable.delete("folder_" + id)
-            pathfinderOutputTable.delete("path_" + id)
-            pathfinderOutputTable.delete("trajectories_" + id)
+            pathfinderOutputTable.delete("response_$id")
+            pathfinderOutputTable.delete("folder_$id")
+            pathfinderOutputTable.delete("path_$id")
+            pathfinderOutputTable.delete("trajectories_$id")
         }
     }
 
@@ -106,9 +106,10 @@ object Pathreader : ITableListener {
         val b = Base64.getDecoder().decode(serializedTrajectoryArray.toByteArray())
         val bi = ByteArrayInputStream(b)
         val si = ObjectInputStream(bi)
+        @Suppress("UNCHECKED_CAST")
         val s = si.readObject() as Array<Array<Array<Double>>>
-        leftTrajectories.put(id, deserializeTrajectory(s[0]))
-        rightTrajectories.put(id, deserializeTrajectory(s[1]))
+        leftTrajectories[id] = deserializeTrajectory(s[0])
+        rightTrajectories[id] = deserializeTrajectory(s[1])
     }
 
 
@@ -122,8 +123,8 @@ object Pathreader : ITableListener {
 
     private fun loadFromFiles(id: Int) {
         println("Reading $id from backup store")
-        leftTrajectories.put(id, loadFromFile(localFiles[id] + " Left Detailed.csv", true))
-        rightTrajectories.put(id, loadFromFile(localFiles[id] + " Right Detailed.csv", true))
+        leftTrajectories[id] = loadFromFile(localFiles[id] + " Left Detailed.csv", true)
+        rightTrajectories[id] = loadFromFile(localFiles[id] + " Right Detailed.csv", true)
     }
 
     private fun loadFromFile(file: String, skipFirst: Boolean = false): MotionProfileTrajectory {
