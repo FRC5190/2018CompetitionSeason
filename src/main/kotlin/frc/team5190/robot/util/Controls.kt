@@ -101,41 +101,13 @@ object Controls {
         val pov = MainXbox.pov
         when (pov) {
         // Up - Scale
-            0 -> commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
-            }
+            0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)
         // Right - Switch
-            90 -> commandGroup {
-                //
-                addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                addParallel(commandGroup {
-                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
-                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
-                    })
-                    addSequential(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                })
-            }
+            90 -> ElevatorPresetCommand(ElevatorPreset.SWITCH)
         // Down - Intake
-            180 -> commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.DOWN))
-                addParallel(commandGroup {
-                    addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
-                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
-                    })
-                    addSequential(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                })
-            }
+            180 -> ElevatorPresetCommand(ElevatorPreset.INTAKE)
         // Left - Scale Backwards
-            270 -> commandGroup {
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                addParallel(commandGroup {
-                    addSequential(object : AutoArmCommand(ArmPosition.UP) {
-                        override fun isFinished() = ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks + 100
-                    })
-                    addSequential(AutoArmCommand(ArmPosition.BEHIND))
-                })
-            }
+            270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND)
             else -> null
         }?.let {
             ElevatorSubsystem.currentCommandGroup?.cancel()
