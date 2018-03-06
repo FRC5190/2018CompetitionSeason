@@ -10,10 +10,10 @@ package frc.team5190.robot.util
  * Contains Motor IDs.
  */
 object MotorIDs {
-    const val FRONT_LEFT = 1
-    const val FRONT_RIGHT = 3
-    const val REAR_LEFT = 2
-    const val REAR_RIGHT = 4
+    const val FRONT_LEFT = 2
+    const val FRONT_RIGHT = 4
+    const val REAR_LEFT = 1
+    const val REAR_RIGHT = 3
 
     const val ELEVATOR_MASTER = 5
     const val ELEVATOR_SLAVE = 6
@@ -47,7 +47,7 @@ object DriveConstants {
 
     const val P_HIGH = 2.0
     const val I_HIGH = 0.0
-    const val D_HIGH = 10.0
+    const val D_HIGH = 20.0
 
     const val PID_SLOT_HIGH = 0
 
