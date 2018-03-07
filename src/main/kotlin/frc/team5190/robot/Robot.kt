@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.Pathreader
 import frc.team5190.robot.auto.AutoHelper
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.ClimbSubsystem
@@ -20,7 +21,6 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData

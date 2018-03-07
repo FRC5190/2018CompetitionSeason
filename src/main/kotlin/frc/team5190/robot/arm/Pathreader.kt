@@ -5,7 +5,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package frc.team5190.robot.pathreader
+package frc.team5190.robot.arm
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable
 import edu.wpi.first.wpilibj.tables.ITable
@@ -48,7 +48,7 @@ object Pathreader : ITableListener {
      * Requests a path ID
      */
     fun requestPath(folder: String, path: String, obstructed: Boolean = false, index: Double = 0.0): Int {
-        val id = this.requestId++
+        val id = requestId++
         localFiles[id] = "$folder/$path"
         pathfinderInputTable.putString("folder_$id", folder)
         pathfinderInputTable.putString("path_$id", path)

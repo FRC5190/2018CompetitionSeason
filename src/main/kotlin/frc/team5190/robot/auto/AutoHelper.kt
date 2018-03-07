@@ -7,9 +7,11 @@ package frc.team5190.robot.auto
 
 import edu.wpi.first.wpilibj.command.*
 import frc.team5190.robot.arm.*
+import frc.team5190.robot.drive.AutoDriveCommand
+import frc.team5190.robot.drive.TurnCommand
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
-import frc.team5190.robot.pathreader.Pathreader
+import frc.team5190.robot.arm.Pathreader
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
@@ -57,7 +59,7 @@ class AutoHelper {
                         }
                         "Straight" -> {
                             return commandGroup {
-                                addSequential(MotionMagicCommand(-8.0))
+                                addSequential(AutoDriveCommand(-8.0))
                             }
                         }
                         else -> throw IllegalArgumentException("Scenario does not exist.")
@@ -78,11 +80,11 @@ class AutoHelper {
                                 addSequential(TurnCommand(-90.0, false))
                                 addSequential(commandGroup {
                                     addParallel(AutoArmCommand(ArmPosition.DOWN))
-                                    addParallel(MotionMagicCommand(2.5), 1.0)
+                                    addParallel(AutoDriveCommand(2.5), 1.0)
                                 })
                                 addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.4, timeout = 0.2))
                                 addSequential(IntakeHoldCommand(), 0.001)
-                                addSequential(MotionMagicCommand(-2.0))
+                                addSequential(AutoDriveCommand(-2.0))
                                 addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                             }
                         }
@@ -96,7 +98,7 @@ class AutoHelper {
                         }
                         "Straight" -> {
                             return commandGroup {
-                                addSequential(MotionMagicCommand(-8.0))
+                                addSequential(AutoDriveCommand(-8.0))
                             }
                         }
 
@@ -116,7 +118,7 @@ class AutoHelper {
                         }
                         "Straight" -> {
                             return commandGroup {
-                                addSequential(MotionMagicCommand(-8.0))
+                                addSequential(AutoDriveCommand(-8.0))
                             }
                         }
                         else -> throw IllegalArgumentException("Scenario does not exist.")
@@ -135,7 +137,7 @@ class AutoHelper {
                         }
                         "Straight" -> {
                             return commandGroup {
-                                addSequential(MotionMagicCommand(-8.0))
+                                addSequential(AutoDriveCommand(-8.0))
                             }
                         }
                         else -> throw IllegalArgumentException("Scenario does not exist.")
@@ -152,7 +154,7 @@ class AutoHelper {
                         addSequential(getBackToCenter(centerId))
                         addSequential(pickupCubeFromCenter())
                         addSequential(dropCubeFromCenter(switch2Id))
-                        addSequential((MotionMagicCommand(-2.00)))
+                        addSequential((AutoDriveCommand(-2.00)))
                     }
                 }
 
@@ -165,7 +167,7 @@ class AutoHelper {
                         addSequential(getBackToCenter(centerId))
                         addSequential(pickupCubeFromCenter())
                         addSequential(dropCubeFromCenter(switch2Id))
-                        addSequential((MotionMagicCommand(-2.00)))
+                        addSequential((AutoDriveCommand(-2.00)))
                     }
                 }
 
@@ -182,7 +184,7 @@ class AutoHelper {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.01))
-                        addSequential(MotionMagicCommand(-5.0))
+                        addSequential(AutoDriveCommand(-5.0))
                         addSequential(TurnCommand((if (isLeft) 1 else -1) * 7.5))
                     })
                 })
@@ -203,7 +205,7 @@ class AutoHelper {
                 addParallel(commandGroup {
                     if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = false, tolerance = 12.0))
                     addSequential(commandGroup {
-                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 5.0), 1.2)
+                        addParallel(AutoDriveCommand(mmDistanceFeet, cruiseVel = 5.0), 1.2)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
@@ -251,13 +253,13 @@ class AutoHelper {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                     addParallel(commandGroup {
-                        addSequential(MotionMagicCommand(-0.2))
+                        addSequential(AutoDriveCommand(-0.2))
                         addSequential(object : Command() {
                             override fun isFinished() =
                                     ElevatorSubsystem.currentPosition > ElevatorPosition.SWITCH.ticks - 1440 && ArmSubsystem.currentPosition > ArmPosition.MIDDLE.ticks - 400
                         })
                         addSequential(commandGroup {
-                            addParallel(MotionMagicCommand(mmDistanceFeet), mTimeout)
+                            addParallel(AutoDriveCommand(mmDistanceFeet), mTimeout)
                             addParallel(commandGroup {
                                 addSequential(TimedCommand(0.5))
                                 addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.37))
@@ -314,11 +316,11 @@ class AutoHelper {
         private fun pickupCubeFromCenter(): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
-                    addParallel(MotionMagicCommand(4.50))
+                    addParallel(AutoDriveCommand(4.50))
                     addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
-                addSequential(MotionMagicCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
+                addSequential(AutoDriveCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
             }
         }
     }

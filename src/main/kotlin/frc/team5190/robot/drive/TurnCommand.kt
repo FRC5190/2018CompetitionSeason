@@ -3,7 +3,7 @@
  * Ryan Segerstrom, Prateek Machiraju
  */
 
-package frc.team5190.robot.auto
+package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
