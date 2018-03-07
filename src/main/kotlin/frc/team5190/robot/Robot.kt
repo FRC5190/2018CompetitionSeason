@@ -160,10 +160,6 @@ class Robot : IterativeRobot() {
         NavX.reset()
 
         AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
-//        MotionMagicCommand(-20.0).start()
-
-//        val scaleID = Pathreader.requestPath("LS-LL", "Scale")
-//        MotionProfileCommand(scaleID, isReversed = true, isMirrored = false).start()
     }
 
 
@@ -183,9 +179,6 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-
-        VisionSubsystem.stop()
-
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
 
