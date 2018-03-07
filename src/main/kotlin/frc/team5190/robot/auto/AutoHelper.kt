@@ -11,7 +11,6 @@ import frc.team5190.robot.drive.AutoDriveCommand
 import frc.team5190.robot.drive.TurnCommand
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
-import frc.team5190.robot.arm.Pathreader
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 

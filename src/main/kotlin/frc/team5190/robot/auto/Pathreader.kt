@@ -5,7 +5,7 @@
 
 @file:Suppress("DEPRECATION")
 
-package frc.team5190.robot.arm
+package frc.team5190.robot.auto
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable
 import edu.wpi.first.wpilibj.tables.ITable

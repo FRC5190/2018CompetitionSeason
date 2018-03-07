@@ -8,7 +8,6 @@ package frc.team5190.robot.auto
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.arm.Pathreader
 
 /**
  * Command that executes a Motion Profile
