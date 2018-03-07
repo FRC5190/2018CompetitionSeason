@@ -1,9 +1,7 @@
 package frc.team5190.robot.elevator
 
 import edu.wpi.first.wpilibj.command.CommandGroup
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.util.commandGroup
 
 class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
@@ -13,7 +11,7 @@ class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                 addParallel(commandGroup {
                     addSequential(object : AutoElevatorCommand(ElevatorPosition.FIRST_STAGE) {
-                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100
+                        override fun isFinished() = ArmSubsystem.currentPosition < ArmPosition.UP.ticks + 100 || ElevatorSubsystem.currentPosition < ElevatorPosition.SWITCH.ticks
                     })
                     addSequential(AutoElevatorCommand(ElevatorPosition.SWITCH))
                 })

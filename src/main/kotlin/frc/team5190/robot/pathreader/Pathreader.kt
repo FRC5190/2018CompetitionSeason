@@ -28,26 +28,20 @@ object Pathreader : ITableListener {
     private val localFiles = HashMap<Int, String>()
     private var requestId = 0
 
-    private var allPaths = HashMap<String, MotionProfileTrajectory>()
+    private var allPaths: Map<String, MotionProfileTrajectory>
 
 
     init {
         pathfinderOutputTable.addTableListener(this, true)
-    }
 
-    fun loadIntoMemory() {
-
-        val directories = File("/home/lvuser/paths/").list { dir, name -> File(dir, name).isDirectory }
-
-        directories.forEach { directory ->
-            File(directory).listFiles().forEach { file ->
-                if (file.isFile) {
-                    val filePath = PathLocation(directory, file.name).filePath
-                    allPaths[filePath] = loadFromFileInit(filePath)
-                }
+        allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
+            folder.listFiles().filter { it.isFile }.map { file ->
+                val filePath = PathLocation(folder.name, file.name).filePath
+                Pair(filePath, loadFromFileInit(filePath))
             }
-        }
+        }.flatten().toMap()
 
+        println("Paths Initialized")
     }
 
     /**

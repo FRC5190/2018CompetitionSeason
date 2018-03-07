@@ -82,6 +82,8 @@ class AutoHelper {
                                 })
                                 addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.4, timeout = 0.2))
                                 addSequential(IntakeHoldCommand(), 0.001)
+                                addSequential(MotionMagicCommand(-2.0))
+                                addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                             }
                         }
                         "2 Scale" -> {
@@ -166,7 +168,7 @@ class AutoHelper {
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.01))
                         addSequential(MotionMagicCommand(-5.0))
-                        addSequential(TurnCommand(if (isLeft) 12.5 else -12.5))
+                        addSequential(TurnCommand((if (isLeft) 1 else -1) * 7.5))
                     })
                 })
 
@@ -185,9 +187,8 @@ class AutoHelper {
                 addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                 addParallel(commandGroup {
                     if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = false, tolerance = 12.0))
-                    addSequential(TimedCommand(0.5))
                     addSequential(commandGroup {
-                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 4.0), 1.2)
+                        addParallel(MotionMagicCommand(mmDistanceFeet, cruiseVel = 5.0), 1.2)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
@@ -218,8 +219,8 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(1.15))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.325, outSpeed = 0.45))
+                            addSequential(TimedCommand(1.75))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.75, outSpeed = 0.45))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })

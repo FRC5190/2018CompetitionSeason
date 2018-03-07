@@ -7,14 +7,12 @@ package frc.team5190.robot.util
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.*
 import frc.team5190.robot.arm.*
 import frc.team5190.robot.climb.*
 import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
-import sun.applet.Main
 
 object Controls {
 
@@ -73,7 +71,7 @@ object Controls {
     fun elevatorSubsystem() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
-                val motorOut = 0.5
+                val motorOut = 0.55
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
                 triggerState = true
@@ -87,7 +85,7 @@ object Controls {
         when {
             MainXbox.getBumper(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
-                val motorOut = -0.1
+                val motorOut = -0.3
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
             }
             MainXbox.getBumperReleased(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {

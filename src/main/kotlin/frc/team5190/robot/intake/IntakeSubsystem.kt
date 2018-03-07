@@ -7,8 +7,10 @@ package frc.team5190.robot.intake
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
+import frc.team5190.robot.MainXbox
 import frc.team5190.robot.Robot
 import frc.team5190.robot.util.*
 
@@ -18,7 +20,7 @@ object IntakeSubsystem : Subsystem() {
     private val masterIntakeMotor = TalonSRX(MotorIDs.INTAKE_LEFT)
     
     // Buffer to hold amperage values for current limiting
-    private val currentBuffer = CircularBuffer(25)
+    private val currentBuffer = CircularBuffer(37)
 
     // Returns the amperage of the motor
     val amperage
@@ -58,8 +60,12 @@ object IntakeSubsystem : Subsystem() {
      */
     override fun periodic() {
         currentBuffer.add(masterIntakeMotor.outputCurrent)
-
         if (!Robot.INSTANCE!!.isOperatorControl) return
+
+        if (currentBuffer.average > IntakeConstants.AMP_THRESHOLD) {
+            MainXbox.setRumble(GenericHID.RumbleType.kLeftRumble, 1.0)
+            MainXbox.setRumble(GenericHID.RumbleType.kRightRumble, 1.0)
+        }
 
         Controls.intakeSubsystem()
 

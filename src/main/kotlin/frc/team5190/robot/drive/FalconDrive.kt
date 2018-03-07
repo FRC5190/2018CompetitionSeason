@@ -89,6 +89,11 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configPeakOutput(0.8, -0.8, TIMEOUT)
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(0, 0)
+
+            it.configPeakCurrentLimit(60, TIMEOUT)
+            it.configPeakCurrentDuration(1000, TIMEOUT)
+            it.configContinuousCurrentLimit(30, TIMEOUT)
+            it.enableCurrentLimit(true)
         }
         gear = Gear.LOW
     }

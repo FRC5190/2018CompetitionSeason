@@ -78,6 +78,8 @@ class Robot : IterativeRobot() {
         ClimbSubsystem
         ArmSubsystem
 
+        Pathreader
+
         NavX
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
@@ -106,8 +108,6 @@ class Robot : IterativeRobot() {
         SmartDashboard.putData("LS-RR / RS-LL", lsrr)
 
         SmartDashboard.putData("Starting Position", sideChooser)
-
-        Pathreader.loadIntoMemory()
 
         CameraServer.getInstance().startAutomaticCapture(0).apply {
             setResolution(100, 100)
