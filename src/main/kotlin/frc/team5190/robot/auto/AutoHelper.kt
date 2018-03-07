@@ -57,7 +57,7 @@ class AutoHelper {
                         }
                         "Straight" -> {
                             return commandGroup {
-                                addSequential(MotionMagicCommand(8.0))
+                                addSequential(MotionMagicCommand(-8.0))
                             }
                         }
                         else -> throw IllegalArgumentException("Scenario does not exist.")
@@ -94,6 +94,11 @@ class AutoHelper {
                                 addSequential(switchToScale(folder == "RS-RL"))
                             }
                         }
+                        "Straight" -> {
+                            return commandGroup {
+                                addSequential(MotionMagicCommand(-8.0))
+                            }
+                        }
 
                         else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
@@ -109,6 +114,11 @@ class AutoHelper {
                                 addSequential(switchToScale(folder == "LS-RL"))
                             }
                         }
+                        "Straight" -> {
+                            return commandGroup {
+                                addSequential(MotionMagicCommand(-8.0))
+                            }
+                        }
                         else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
                 }
@@ -121,6 +131,11 @@ class AutoHelper {
                                 addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-LL"))
                                 addSequential(pickupCube(folder == "RS-LL"))
                                 addSequential(dropCubeOnSwitch())
+                            }
+                        }
+                        "Straight" -> {
+                            return commandGroup {
+                                addSequential(MotionMagicCommand(-8.0))
                             }
                         }
                         else -> throw IllegalArgumentException("Scenario does not exist.")
@@ -210,12 +225,12 @@ class AutoHelper {
             return commandGroup {
                 addParallel(mpCommand)
                 addParallel(commandGroup {
-                    addSequential(TimedCommand(0.5))
+                    addSequential(TimedCommand(0.2))
                     addSequential(commandGroup {
                         addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                         addParallel(AutoArmCommand(ArmPosition.UP))
                     })
-                    addSequential(TimedCommand(mpDuration - 3.5))
+                    addSequential(TimedCommand((mpDuration - 3.5).coerceAtLeast(0.001)))
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {

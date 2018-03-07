@@ -22,7 +22,6 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
@@ -91,10 +90,13 @@ class Robot : IterativeRobot() {
 
         lslr.addDefault("1 Switch", "1 Switch")
         lslr.addObject("2 Scale", "2 Scale")
+        lslr.addObject("Straight", "Straight")
 
         lsrl.addDefault("2 Scale", "2 Scale")
+        lsrl.addObject("Straight", "Straight")
 
         lsrr.addDefault("Mixed", "Mixed")
+        lsrr.addObject("Straight", "Straight")
 
         controllerChooser.addDefault("Xbox", "Xbox")
         controllerChooser.addObject("Bongo", "Bongo")
@@ -123,11 +125,11 @@ class Robot : IterativeRobot() {
 //        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
 //        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
-        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
-        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
+//        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
+//        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
 //
-        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
-        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
+//        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
+//        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
 //
 //        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
 //

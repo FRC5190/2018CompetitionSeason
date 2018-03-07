@@ -24,7 +24,7 @@ class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
                 addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
                 addParallel(commandGroup {
                     addSequential(object : AutoArmCommand(ArmPosition.UP) {
-                        override fun isFinished() = ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks + 100
+                        override fun isFinished() = ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks
                     })
                     addSequential(AutoArmCommand(ArmPosition.BEHIND))
                 })
