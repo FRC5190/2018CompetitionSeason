@@ -65,6 +65,9 @@ object IntakeSubsystem : Subsystem() {
         if (currentBuffer.average > IntakeConstants.AMP_THRESHOLD) {
             MainXbox.setRumble(GenericHID.RumbleType.kLeftRumble, 1.0)
             MainXbox.setRumble(GenericHID.RumbleType.kRightRumble, 1.0)
+        } else {
+            MainXbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0.0)
+            MainXbox.setRumble(GenericHID.RumbleType.kRightRumble, 0.0)
         }
 
         Controls.intakeSubsystem()

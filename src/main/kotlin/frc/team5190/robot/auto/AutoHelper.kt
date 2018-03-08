@@ -202,10 +202,10 @@ class AutoHelper {
             return commandGroup {
                 addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                 addParallel(commandGroup {
-                    if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = false, tolerance = 12.0))
+                    if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 6.0))
                     addSequential(commandGroup {
-                        addParallel(AutoDriveCommand(mmDistanceFeet, cruiseVel = 5.0), 1.2)
-                        addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
+                        addParallel(AutoDriveCommand(mmDistanceFeet), 1.2)
+                        addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
                 })
@@ -235,8 +235,8 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(1.75))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.75, outSpeed = 0.45))
+                            addSequential(TimedCommand(1.95))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.6, outSpeed = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })

@@ -41,6 +41,7 @@ object SolenoidIDs {
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
     const val WHEEL_RADIUS = 3.0
+    const val DRIVE_BASE_WIDTH = 29.5
 
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
@@ -100,7 +101,7 @@ object ArmConstants {
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1470                 // 1470 for falcon heavy, 1750 for falcon 9
+    const val DOWN_TICKS = 1425                 // 1470 for falcon heavy, 1330 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
