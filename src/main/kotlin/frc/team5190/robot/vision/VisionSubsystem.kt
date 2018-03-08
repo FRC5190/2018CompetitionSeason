@@ -39,6 +39,8 @@ object VisionSubsystem {
     var tgtDistance: Double = 0.0
         get() = correctedDistance()
 
+    var forceStopped = false
+
     /**
      * Returns the most recently seen target's angle relative to the camera in degrees
      * Positive means to the Right of center, negative means to the left
@@ -60,16 +62,31 @@ object VisionSubsystem {
      * Pass TRUE to additionally enable a USB camera stream of what the vision camera is seeing.
      */
     init {
-        thread(name = "Vision") {
-            while (true) {
-                reset()
-                // Only run the loop when the vision port was created and it has processed data in the past 1000 ms
-                while (visionPort != null && System.currentTimeMillis() - lastDataReceived < 1000) {
-                    periodic()
-                    sleep(5)
+        /*thread(name = "Vision") {
+            outer@ while (true) {
+                try{
+                    if (forceStopped) this.stop()
+                    reset()
+                    // Only run the loop when the vision port was created and it has processed data in the past 1000 ms
+                    while (visionPort != null && System.currentTimeMillis() - lastDataReceived < 1000) {
+                        periodic()
+                        sleep(5)
+
+                        if (forceStopped) break@outer
+                    }
                 }
+                catch (e: Exception) {
+                    e.printStackTrace()
+                    sleep(50)
+                }
+
             }
-        }
+        }*/
+    }
+
+    fun stop() {
+        visionPort = null
+        forceStopped = true
     }
 
     private fun reset() {
@@ -87,7 +104,7 @@ object VisionSubsystem {
         while (visionPort == null && retryCounter++ < 10) {
             try {
                 println("[Vision] Creating JeVois SerialPort...")
-                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB)
+                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
                 println("[Vision] Success!")
             } catch (e: Exception) {
                 visionPort = null
@@ -213,7 +230,7 @@ object VisionSubsystem {
             if (visionPort!!.bytesReceived > 0) {
                 lastDataReceived = System.currentTimeMillis()
                 val string = visionPort!!.readString()
-//                println(string)
+                println(string)
                 val obj = gson.fromJson<VisionTemplate>(string)
                 isTgtVisible = obj.Track
                 if (isTgtVisible == 1L) {

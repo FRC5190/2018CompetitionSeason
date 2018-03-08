@@ -52,23 +52,23 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         rightSlaves.forEach { it.follow(rightMaster) }
 
         allMasters.forEach {
-            it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
-            it.setSelectedSensorPosition(0, 0, 10)
+            it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, TIMEOUT)
+            it.setSelectedSensorPosition(0, 0, TIMEOUT)
         }
 
         allMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
             it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
-            it.configOpenloopRamp(0.0, 10)
+            it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
 
         gear = Gear.HIGH
 
         allMasters.forEach {
-            it.configMotionProfileTrajectoryPeriod(10, 10)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+            it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
         }
     }
 
@@ -77,7 +77,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      */
     internal fun autoReset() {
         this.reset()
-        allMasters.forEach { it.configPeakOutput(1.0, -1.0, 10) }
+        allMasters.forEach { it.configPeakOutput(1.0, -1.0, TIMEOUT) }
     }
 
     /**
@@ -86,10 +86,16 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
-            it.configPeakOutput(0.8, -0.8, 10)
+            it.configPeakOutput(0.8, -0.8, TIMEOUT)
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(0, 0)
+
+            it.configPeakCurrentLimit(60, TIMEOUT)
+            it.configPeakCurrentDuration(1000, TIMEOUT)
+            it.configContinuousCurrentLimit(30, TIMEOUT)
+            it.enableCurrentLimit(true)
         }
+        gear = Gear.LOW
     }
 
     // Used to set high and low gear of the DriveTrain

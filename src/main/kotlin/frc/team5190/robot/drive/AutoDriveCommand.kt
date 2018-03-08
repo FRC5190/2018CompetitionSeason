@@ -3,13 +3,11 @@
  * Ryan Segerstrom, Prateek Machiraju
  */
 
-package frc.team5190.robot.auto
+package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.util.DriveConstants
-import frc.team5190.robot.util.Maths
+import frc.team5190.robot.util.*
 import kotlin.math.absoluteValue
 
 /**
@@ -18,9 +16,9 @@ import kotlin.math.absoluteValue
  * @param cruiseVel Cruise velocity
  * @param accel Acceleration
  */
-class MotionMagicCommand(feet: Double,
-                         private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
-                         private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
+class AutoDriveCommand(feet: Double,
+                       private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
+                       private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
 
     // Setpoint in Native Units
     private val setPoint = Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
@@ -34,10 +32,10 @@ class MotionMagicCommand(feet: Double,
      */
     override fun initialize() {
         DriveSubsystem.falconDrive.allMasters.forEach {
-            it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(cruiseVel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
-            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(accel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
+            it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(cruiseVel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), TIMEOUT)
+            it.configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(accel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), TIMEOUT)
 
-            it.sensorCollection.setQuadraturePosition(0, 10)
+            it.sensorCollection.setQuadraturePosition(0, TIMEOUT)
             it.set(ControlMode.MotionMagic, setPoint)
         }
     }

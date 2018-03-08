@@ -22,6 +22,12 @@ object MotorIDs {
 
     const val INTAKE_LEFT = 7
     const val INTAKE_RIGHT = 9
+
+    const val FRONT_WINCH_MASTER = 10
+
+    const val BACK_WINCH_MASTER = 11
+    const val BACK_WINCH_SLAVE = 12
+
 }
 
 object SolenoidIDs {
@@ -29,18 +35,20 @@ object SolenoidIDs {
 
     const val DRIVE = 3
     const val INTAKE = 2
+    const val HOOK = 0
 }
 
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
     const val WHEEL_RADIUS = 3.0
+    const val DRIVE_BASE_WIDTH = 29.5
 
     const val DRIVE_BASE_WIDTH = 29.5
 
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 2.3
+    const val P_HIGH = 2.0
     const val I_HIGH = 0.0
     const val D_HIGH = 20.0
 
@@ -62,7 +70,7 @@ object DriveConstants {
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 
-    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -91,15 +99,15 @@ object ElevatorConstants {
 }
 
 object ArmConstants {
-    const val INVERTED = false                  // true for falcon heavy, false for falcon 9
-    const val SENSOR_PHASE = false              // true for falcon heavy, false for falcon 9
+    const val INVERTED = true                  // true for falcon heavy, false for falcon 9
+    const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
 
     const val P = 2.5
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
 
-    const val DOWN_TICKS = 1830                 // 1470 for falcon heavy, 1770 for falcon 9
+    const val DOWN_TICKS = 1425                 // 1470 for falcon heavy, 1330 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
@@ -116,6 +124,14 @@ object ArmConstants {
 
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.65
-    const val AMP_THRESHOLD = 15
+    const val AMP_THRESHOLD = 6.0
 }
+
+object ClimbConstants {
+    const val PEAK_OUTPUT = 1.0
+
+    const val CORRECTION_OUTPUT = 0.2
+}
+
+const val TIMEOUT = 20
 
