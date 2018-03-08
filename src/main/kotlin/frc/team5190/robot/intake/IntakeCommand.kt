@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
+ */
+
 package frc.team5190.robot.intake
 
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -15,7 +20,9 @@ class IntakeCommand(private val direction: IntakeDirection, private val timeout:
         requires(IntakeSubsystem)
     }
 
-
+    /**
+     * Initializes the command
+     */
     override fun initialize() {
         IntakeSubsystem.intakeSolenoid.set(false)
 
@@ -29,6 +36,9 @@ class IntakeCommand(private val direction: IntakeDirection, private val timeout:
         IntakeSubsystem.set(ControlMode.PercentOutput, motorOutput)
     }
 
+    /**
+     * Checks if the intake has finished outtaking or intaking based on amperage values and timeouts
+     */
     override fun isFinished() = (timeout > 0 && isTimedOut) ||
-            (direction == IntakeDirection.IN && IntakeSubsystem.outputCurrent > IntakeConstants.AMP_THRESHOLD)
+            (direction == IntakeDirection.IN && IntakeSubsystem.amperage > IntakeConstants.AMP_THRESHOLD)
 }

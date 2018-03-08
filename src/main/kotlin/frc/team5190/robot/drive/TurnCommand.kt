@@ -1,4 +1,9 @@
-package frc.team5190.robot.auto
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
+ */
+
+package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
@@ -9,18 +14,20 @@ import frc.team5190.robot.vision.VisionSubsystem
 /**
  * Command that turns the robot to a certain angle
  * @param angle Angle to turn to in degrees
+ * @param visionCheck Whether to use vision for cube detection
+ * @param tolerance Tolerance
  */
-class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.08, 0.001, 0.1) {
+class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.08, 0.002, 0.1) {
 
     init {
         requires(DriveSubsystem)
-        requires(VisionSubsystem)
     }
 
+    /**
+     * Initializes the command
+     */
     override fun initialize() {
-        // Only execute the command for a total of a max of 5 seconds (should be close enough to target by then)
         setTimeout(2.5)
-        setName("DriveSystem", "RotateController")
 
         when (visionCheck) {
             false -> setpoint = angle
@@ -47,23 +54,33 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
         }
 
         setInputRange(-180.0, 180.0)
-        pidController.setOutputRange(-0.8, 0.8)
+        pidController.setOutputRange(-1.0, 1.0)
         pidController.setAbsoluteTolerance(5.0)
         pidController.setContinuous(true)
     }
 
+    /**
+     * Uses the output of the PID controller to control the DriveTrain
+     */
     override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
 
+    /**
+     * Input from the PID comes from the NavX
+     */
     override fun returnPIDInput(): Double = NavX.pidGet()
 
+    // Time variable for isFinished method
     private var time = 0
 
+    /**
+     * Checks if the robot is at the specified angle
+     */
     override fun isFinished(): Boolean {
         if (pidController.onTarget()) {
             time++
         } else {
             time = 0
         }
-        return (time > 500 / 20) || isTimedOut
+        return (time > 300 / 20) || isTimedOut
     }
 }

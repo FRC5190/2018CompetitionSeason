@@ -1,19 +1,17 @@
-/**
- * FRC Team 5190
- * Programming Team
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.auto
 
-import com.ctre.phoenix.motion.MotionProfileStatus
-import com.ctre.phoenix.motion.SetValueMotionProfile
-import com.ctre.phoenix.motion.TrajectoryPoint
+import com.ctre.phoenix.motion.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Notifier
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.pathreader.MotionProfileTrajectory
 import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.util.TIMEOUT
 
 /**
  * Class that feeds the talon trajectory values to follow.
@@ -163,8 +161,8 @@ class MotionProfile(private var leftTalon: TalonSRX, leftTrajectory: MotionProfi
         leftTalon.clearMotionProfileTrajectories()
         rightTalon.clearMotionProfileTrajectories()
 
-        leftTalon.configMotionProfileTrajectoryPeriod(0, 10)
-        rightTalon.configMotionProfileTrajectoryPeriod(0, 10)
+        leftTalon.configMotionProfileTrajectoryPeriod(0, TIMEOUT)
+        rightTalon.configMotionProfileTrajectoryPeriod(0, TIMEOUT)
 
         leftTrajectory.forEachIndexed { index, tPoint ->
             leftPoint.position = tPoint.nativeUnits

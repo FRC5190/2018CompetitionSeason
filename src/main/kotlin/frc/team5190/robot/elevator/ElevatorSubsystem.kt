@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
+ */
+
 package frc.team5190.robot.elevator
 
 import com.ctre.phoenix.motorcontrol.*
@@ -7,168 +12,162 @@ import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.MainXbox
-import frc.team5190.robot.arm.*
+import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
 object ElevatorSubsystem : Subsystem() {
 
-    private val currentBuffer = CircularBuffer(50)
+    // Master elevator talon
     private val masterElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_MASTER)
 
-    val isElevatorAtBottom
+    // Buffer used to hold amperage values for current limiing
+    private val currentBuffer = CircularBuffer(25)
+
+    // Returns if the elevator is hitting the limit switch
+    private val isElevatorAtBottom
         get() = masterElevatorMotor.sensorCollection.isRevLimitSwitchClosed
 
+    // Returns the current encoder position of the elevator
     val currentPosition
         get() = masterElevatorMotor.sensorCollection.quadraturePosition
 
-    val motorCurrent
+    // Returns the amperage of the motor
+    val amperage
         get() = masterElevatorMotor.outputCurrent
 
+    // Variable used to reset encoder position
+    private var hasBeenReset = false
 
-    internal var hasReset = false
-
+    // Variables used for current limiting
     private var state = MotorState.OK
-    private var currentCommandGroup: CommandGroup? = null
+    var currentCommandGroup: CommandGroup? = null
     private var stalled = false
 
+    var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
+
     init {
-        masterElevatorMotor.inverted = false
-        masterElevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, 10)
-        masterElevatorMotor.setSensorPhase(false)
-        masterElevatorMotor.configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10)
-        masterElevatorMotor.overrideLimitSwitchesEnable(true)
+        with(masterElevatorMotor) {
+            // Motor Inversion
+            inverted = false
 
-        val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE)
-        slaveElevatorMotor.inverted = true
-        slaveElevatorMotor.follow(masterElevatorMotor)
+            // Sensors and Safety
+            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, ElevatorConstants.PID_SLOT, TIMEOUT)
+            setSensorPhase(false)
+            configLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, TIMEOUT)
+            overrideLimitSwitchesEnable(true)
+            configForwardSoftLimitThreshold(ElevatorConstants.SOFT_LIMIT_FWD, TIMEOUT)
+            configForwardSoftLimitEnable(true, TIMEOUT)
 
-        // brake mode
-        masterElevatorMotor.setNeutralMode(NeutralMode.Brake)
-        slaveElevatorMotor.setNeutralMode(NeutralMode.Brake)
+            // Brake Mode
+            setNeutralMode(NeutralMode.Brake)
 
-        // current limiting
+            // Closed Loop Control
+            configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, TIMEOUT)
+            configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), TIMEOUT)
+            configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, TIMEOUT)
+            configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
+
+            // Motion Magic Control
+            configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
+            configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, TIMEOUT)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
+            setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
+
+            configClosedloopRamp(0.3, TIMEOUT)
+            configOpenloopRamp(0.5, TIMEOUT)
+
+        }
+
+        // Configure Slave Motor
+        with(TalonSRX(MotorIDs.ELEVATOR_SLAVE)) {
+            inverted = true
+            follow(masterElevatorMotor)
+            setNeutralMode(NeutralMode.Brake)
+        }
+
+        // Configure current limiting
         currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
-
-        // Closed loop operation and output shaping
-        masterElevatorMotor.configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, 10)
-        masterElevatorMotor.configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), 10)
-        masterElevatorMotor.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, 10)
-        masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
-
-        masterElevatorMotor.configForwardSoftLimitThreshold(22500, 10)
-        masterElevatorMotor.configForwardSoftLimitEnable(true, 10)
-
-        // motion magic settings
-        masterElevatorMotor.configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
-        masterElevatorMotor.configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, 10)
-
-        // more settings
-        reset()
     }
 
-    private fun reset() {
-        // these cannot be in the constructor since the status frame periods are reset every time the talon is reset
-        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
-        masterElevatorMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
-    }
-
-
+    /**
+     * Sets the motor output
+     * @param controlMode Control Mode for the Talon
+     * @param output Output to the motor
+     */
     fun set(controlMode: ControlMode, output: Double) {
         masterElevatorMotor.set(controlMode, output)
     }
 
-    fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, 10)
 
+    /**
+     * Resets encoders on the elevator
+     */
+    private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, TIMEOUT)!!
+
+    /**
+     * Enables current limiting on the motor so we don't stall it
+     */
     private fun currentLimiting() {
         currentBuffer.add(masterElevatorMotor.outputCurrent)
         state = limitCurrent(currentBuffer)
 
-
         when (state) {
             MotorState.OK -> {
                 if (stalled) {
-                    masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                    masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
                 } else {
-                    masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+                    masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, TIMEOUT)
                 }
             }
             MotorState.STALL -> {
-                masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -ElevatorConstants.PEAK_OUT * ElevatorConstants.LIMITING_REDUCTION_FACTOR, 10)
+                masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
                 stalled = true
             }
             MotorState.GOOD -> {
-                masterElevatorMotor.configPeakOutput(ElevatorConstants.PEAK_OUT, -ElevatorConstants.PEAK_OUT, 10)
+                masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, TIMEOUT)
                 stalled = false
             }
         }
     }
 
+    /**
+     * Sets the default command for the subsystem
+     */
     override fun initDefaultCommand() {
-        this.defaultCommand = ManualElevatorCommand()
+        defaultCommand = ManualElevatorCommand()
     }
 
+    /**
+     * Executed periodically
+     */
     override fun periodic() {
-        if (ElevatorSubsystem.isElevatorAtBottom) {
+        if (ElevatorSubsystem.isElevatorAtBottom && !hasBeenReset) {
             this.resetEncoders()
+            hasBeenReset = true
+        }
+        if (hasBeenReset && !ElevatorSubsystem.isElevatorAtBottom) {
+            hasBeenReset = false
         }
 
-        SmartDashboard.putBoolean("Reset Limit Switch", this.isElevatorAtBottom)
+        SmartDashboard.putBoolean("Reset Limit Switch", isElevatorAtBottom)
 
         currentLimiting()
 
         when {
-            MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight) -> this.defaultCommand.start()
-        }
-        when (MainXbox.pov) {
-        // Up - Scale
-            0 -> commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
-            }
-        // Right - Switch
-            90 -> commandGroup {
-                // Just incase its in the behind position
-                if (ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
-                    addSequential(AutoArmCommand(ArmPosition.MIDDLE))
-                addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                })
-            }
-        // Down - Intake
-            180 -> commandGroup {
-                // Just incase its in the behind position
-                if (ArmSubsystem.currentPosition > ArmPosition.UP.ticks - 100)
-                    addSequential(AutoArmCommand(ArmPosition.MIDDLE))
-                addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.DOWN))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                })
-            }
-        // Left - Scale Backwards
-            270 -> commandGroup {
-                addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.UP))
-                    addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                })
-                // Go behind once we know its all the way up
-                addSequential(AutoArmCommand(ArmPosition.BEHIND))
-            }
-            else -> null
-        }?.let {
-            currentCommandGroup?.cancel()
-            currentCommandGroup = it
-            it.start()
+            (MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight)) && !ClimbSubsystem.climbState -> ElevatorSubsystem.defaultCommand.start()
         }
     }
 
-    fun nativeUnitsToInches(nativeUnits: Int) = Maths.nativeUnitsToFeet(nativeUnits, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0) * 12.0
     fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0)
 }
 
+/**
+ * Enum that contains elevator positions
+ */
 enum class ElevatorPosition(var ticks: Int) {
-    SWITCH(ElevatorSubsystem.inchesToNativeUnits(17.0)),
+    SWITCH(ElevatorSubsystem.inchesToNativeUnits(20.0)),
+    FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
     SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
     INTAKE(500);

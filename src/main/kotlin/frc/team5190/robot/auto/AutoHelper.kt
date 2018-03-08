@@ -1,18 +1,16 @@
-/**
- * FRC Team 5190
- * Programming Team
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.CommandGroup
-import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.AutoArmCommand
-import frc.team5190.robot.elevator.AutoElevatorCommand
-import frc.team5190.robot.elevator.ElevatorPosition
+import edu.wpi.first.wpilibj.command.*
+import frc.team5190.robot.arm.*
+import frc.team5190.robot.drive.AutoDriveCommand
+import frc.team5190.robot.drive.TurnCommand
+import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
-import frc.team5190.robot.pathreader.Pathreader
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
@@ -21,187 +19,307 @@ import openrio.powerup.MatchData
  */
 class AutoHelper {
     companion object {
-        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
+        /**
+         * Returns an autonomous command pertaining to the FMS data
+         * @param startingPositions Starting Position
+         * @param switchOwnedSide The owned side of the switch
+         * @param scaleOwnedSide The owned side of the scale
+         */
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, settings: Array<String>): CommandGroup {
+
+            // Get the folder that the paths are contained within
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
+            val lsll = settings[0]
+            val lslr = settings[1]
+            val lsrl = settings[2]
+            val lsrr = settings[3]
+
             when (folder) {
                 "LS-LL", "RS-RR" -> {
-                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
-                    return commandGroup {
-                        this.addSequential(dropCubeOnScale(scale1Id, folder == "RS-RR", false))
-                        this.addSequential(pickupCube(folder == "LS-LL"))
-                        this.addSequential(dropCubeOnSwitch())
+                    when (lsll) {
+                        "Mixed" -> {
+                            val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-RR"))
+                                addSequential(pickupCube(folder == "LS-LL"))
+                                addSequential(dropCubeOnSwitch())
+                            }
+                        }
+                        "2 Scale" -> {
+                            val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-RR"))
+                                addSequential(pickupCube(folder == "LS-LL"))
+                                addSequential(switchToScale(folder == "LS-LL"))
+                            }
+                        }
+                        "Straight" -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
                 }
-                "LS-RL", "RS-LR" -> {
-                    val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
-                    return commandGroup {
-                        this.addSequential(dropCubeOnScale(scale1Id, folder == "RS-LR", false))
-                        this.addSequential(pickupCube(folder == "LS-RL"))
-                        this.addSequential(switchToScale())
-                    }
-                }
+
                 "LS-LR", "RS-RL" -> {
-                    val switchId = Pathreader.requestPath("LS-LR", "Switch")
-                    return commandGroup {
-                        this.addSequential(commandGroup {
-                            this.addParallel(MotionProfileCommand(switchId, true, folder == "RS-RL"))
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            this.addParallel(AutoArmCommand(ArmPosition.UP))
-                        })
-                        this.addSequential(TurnCommand(-90.0, false))
-                        this.addSequential(frc.team5190.robot.util.commandGroup {
-                            this.addParallel(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.DOWN))
-                            this.addParallel(MotionMagicCommand(2.5), 1.0)
-                        })
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.4))
-                        this.addSequential(IntakeHoldCommand(), 0.001)
+                    when (lslr) {
+                        "1 Switch" -> {
+                            val switchId = Pathreader.requestPath("LS-LR", "Switch")
+
+                            return commandGroup {
+                                addSequential(commandGroup {
+                                    addParallel(MotionProfileCommand(switchId, true, folder == "RS-RL"))
+                                    addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                    addParallel(AutoArmCommand(ArmPosition.UP))
+                                })
+                                addSequential(TurnCommand(-90.0, false))
+                                addSequential(commandGroup {
+                                    addParallel(AutoArmCommand(ArmPosition.DOWN))
+                                    addParallel(AutoDriveCommand(2.5), 1.0)
+                                })
+                                addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.4, timeout = 0.2))
+                                addSequential(IntakeHoldCommand(), 0.001)
+                                addSequential(AutoDriveCommand(-2.0))
+                                addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                            }
+                        }
+                        "2 Scale" -> {
+                            val scaleId = Pathreader.requestPath("LS-RR", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-RL"))
+                                addSequential(pickupCube(folder == "RS-RL"))
+                                addSequential(switchToScale(folder == "RS-RL"))
+                            }
+                        }
+                        "Straight" -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
+
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
                 }
+
+                "LS-RL", "RS-LR" -> {
+                    when (lsrl) {
+                        "2 Scale" -> {
+                            val scale1Id = Pathreader.requestPath("LS-LL", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scale1Id, folder == "RS-LR"))
+                                addSequential(pickupCube(folder == "LS-RL"))
+                                addSequential(switchToScale(folder == "LS-RL"))
+                            }
+                        }
+                        "Straight" -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                    }
+                }
+
                 "LS-RR", "RS-LL" -> {
-                    val scaleId = Pathreader.requestPath("LS-RR", "Scale")
-                    return commandGroup {
-                        this.addSequential(dropCubeOnScale(scaleId, folder == "RS-LL", true))
-                        this.addSequential(pickupCube(folder == "RS-LL"))
-                        this.addSequential(dropCubeOnSwitch())
+                    when (lsrr) {
+                        "Mixed" -> {
+                            val scaleId = Pathreader.requestPath("LS-RR", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-LL"))
+                                addSequential(pickupCube(folder == "RS-LL"))
+                                addSequential(dropCubeOnSwitch())
+                            }
+                        }
+                        "Straight" -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
+                        else -> throw IllegalArgumentException("Scenario does not exist.")
                     }
+
                 }
+
                 "CS-L" -> {
                     val switchId = Pathreader.requestPath("CS-L", "Switch")
                     val centerId = Pathreader.requestPath("CS-L", "Center")
                     val switch2Id = Pathreader.requestPath("CS-L", "Switch 2")
                     return commandGroup {
-                        this.addSequential(dropCubeFromCenter(switchId))
-                        this.addSequential(getBackToCenter(centerId))
-                        this.addSequential(pickupCubeFromCenter())
-                        this.addSequential(dropCubeFromCenter(switch2Id))
-                        this.addSequential((MotionMagicCommand(-2.00)))
+                        addSequential(dropCubeFromCenter(switchId))
+                        addSequential(getBackToCenter(centerId))
+                        addSequential(pickupCubeFromCenter())
+                        addSequential(dropCubeFromCenter(switch2Id))
+                        addSequential((AutoDriveCommand(-2.00)))
                     }
                 }
+
                 "CS-R" -> {
                     val switchId = Pathreader.requestPath("CS-R", "Switch")
                     val centerId = Pathreader.requestPath("CS-R", "Center")
                     val switch2Id = Pathreader.requestPath("CS-R", "Switch 2")
                     return commandGroup {
-                        this.addSequential(dropCubeFromCenter(switchId))
-                        this.addSequential(getBackToCenter(centerId))
-                        this.addSequential(pickupCubeFromCenter())
-                        this.addSequential(dropCubeFromCenter(switch2Id))
-                        this.addSequential((MotionMagicCommand(-2.00)))
+                        addSequential(dropCubeFromCenter(switchId))
+                        addSequential(getBackToCenter(centerId))
+                        addSequential(pickupCubeFromCenter())
+                        addSequential(dropCubeFromCenter(switch2Id))
+                        addSequential((AutoDriveCommand(-2.00)))
                     }
                 }
-                else -> TODO("Does not exist.")
+
+                else -> throw IllegalArgumentException("Scenario does not exist.")
             }
         }
 
-        private fun switchToScale(): CommandGroup {
-            return commandGroup {
-                this.addSequential(commandGroup {
-                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                    this.addParallel(AutoArmCommand(ArmPosition.BEHIND))
-                    this.addParallel(commandGroup {
-                        this.addSequential(MotionMagicCommand(-4.5))
-                        this.addSequential(TurnCommand(12.5))
-                    })
-                })
-
-                this.addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
-                this.addSequential(AutoArmCommand(frc.team5190.robot.arm.ArmPosition.MIDDLE))
-            }
-
-        }
-
-        private fun pickupCube(leftTurn: Boolean): CommandGroup {
-            return commandGroup {
-                this.addParallel(commandGroup {
-                    this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                    this.addParallel(AutoArmCommand(ArmPosition.DOWN))
-                })
-                this.addParallel(commandGroup {
-                    this.addSequential(TurnCommand(if (leftTurn) -10.0 else 5.0, visionCheck = true, tolerance = 10.0))
-                    this.addSequential(commandGroup {
-                        this.addParallel(MotionMagicCommand(5.0, cruiseVel = 5.0))
-                        this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.25, inSpeed = 0.75))
-                    })
-                    this.addSequential(IntakeHoldCommand(), 0.001)
-                })
-            }
-        }
-
-        private fun dropCubeOnScale(scaleId: Int, isMirrored: Boolean, isOpposite: Boolean): CommandGroup {
+        /**
+         * Goes from switch to scale.
+         */
+        private fun switchToScale(isLeft: Boolean): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
-                    this.addParallel(MotionProfileCommand(scaleId, true, isMirrored))
-                    this.addParallel(commandGroup {
-                        this.addSequential(commandGroup {
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                            this.addParallel(AutoArmCommand(ArmPosition.UP))
-                        }, 0.1)
-                        this.addSequential(TimedCommand(if (isOpposite) 5.0 else 2.25))
-                        this.addSequential(commandGroup {
-                            this.addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
-                            this.addParallel(commandGroup {
-                                this.addSequential(TimedCommand(0.25))
-                                this.addSequential(AutoArmCommand(ArmPosition.BEHIND))
+                    addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
+                    addParallel(commandGroup {
+                        addSequential(TimedCommand(0.01))
+                        addSequential(AutoDriveCommand(-5.0))
+                        addSequential(TurnCommand((if (isLeft) 1 else -1) * 7.5))
+                    })
+                })
+
+                addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
+                addSequential(AutoArmCommand(ArmPosition.MIDDLE))
+            }
+
+        }
+
+        /**
+         * Picks up a cube using Vision
+         * @param leftTurn Whether the turn is to the left
+         */
+        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.0, turnCommand: Boolean = true): CommandGroup {
+            return commandGroup {
+                addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                addParallel(commandGroup {
+                    if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 6.0))
+                    addSequential(commandGroup {
+                        addParallel(AutoDriveCommand(mmDistanceFeet), 1.2)
+                        addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
+                    })
+                    addSequential(IntakeHoldCommand(), 0.001)
+                })
+            }
+        }
+
+        /**
+         * Drops the cube on the scale
+         * @param scaleId ID of the scale MP
+         * @param isMirrored Whether the MP is mirrored
+         * @param isOpposite whether the scale is on the opposite side of the starting position
+         */
+        private fun goToAndDropCubeOnScale(scaleId: Int, isMirrored: Boolean): CommandGroup {
+
+            val mpCommand = MotionProfileCommand(scaleId, true, isMirrored)
+            val mpDuration = mpCommand.getMPTime()
+
+            return commandGroup {
+                addParallel(mpCommand)
+                addParallel(commandGroup {
+                    addSequential(TimedCommand(0.2))
+                    addSequential(commandGroup {
+                        addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                        addParallel(AutoArmCommand(ArmPosition.UP))
+                    })
+                    addSequential(TimedCommand((mpDuration - 3.5).coerceAtLeast(0.001)))
+                    addSequential(commandGroup {
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(1.95))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.6, outSpeed = 0.5))
+                            addSequential(IntakeHoldCommand(), 0.001)
+                        })
+                    })
+                })
+            }
+        }
+
+        /**
+         * Drops the cube on the switch
+         */
+        private fun dropCubeOnSwitch(mmDistanceFeet: Double = 1.1, mTimeout: Double = 1.0): CommandGroup {
+            return commandGroup {
+                addSequential(commandGroup {
+                    addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
+                    addParallel(commandGroup {
+                        addSequential(AutoDriveCommand(-0.2))
+                        addSequential(object : Command() {
+                            override fun isFinished() =
+                                    ElevatorSubsystem.currentPosition > ElevatorPosition.SWITCH.ticks - 1440 && ArmSubsystem.currentPosition > ArmPosition.MIDDLE.ticks - 400
+                        })
+                        addSequential(commandGroup {
+                            addParallel(AutoDriveCommand(mmDistanceFeet), mTimeout)
+                            addParallel(commandGroup {
+                                addSequential(TimedCommand(0.5))
+                                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.37))
                             })
                         })
-//                        this.addSequential(TimedCommand(0.25))    // IS THIS NEEDED?
-                        this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.65, outSpeed = 0.65))
                     })
                 })
-                this.addSequential(IntakeHoldCommand(), 0.001)
+                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                addSequential(IntakeHoldCommand(), 0.001)
             }
         }
 
-        private fun dropCubeOnSwitch(): CommandGroup {
-            return commandGroup {
-                this.addSequential(commandGroup {
-                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
-                    this.addParallel(commandGroup {
-                        this.addSequential(TimedCommand(0.75))
-                        this.addSequential(MotionMagicCommand(1.1), 1.0)
-                    })
-                })
-                this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                this.addSequential(IntakeHoldCommand(), 0.001)
-            }
-        }
-
+        /**
+         * Drops the cube from the center
+         * @param switchId ID of the switch MP
+         */
         private fun dropCubeFromCenter(switchId: Int): CommandGroup {
             return commandGroup {
-                this.addSequential(commandGroup {
-                    this.addParallel(MotionProfileCommand(switchId))
-                    this.addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                    this.addParallel(AutoArmCommand(ArmPosition.MIDDLE))
+                addSequential(commandGroup {
+                    addParallel(MotionProfileCommand(switchId))
+                    addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                 })
 
-                this.addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
-                this.addSequential(IntakeHoldCommand(), 0.001)
+                addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, outSpeed = 0.5))
+                addSequential(IntakeHoldCommand(), 0.001)
             }
         }
 
+        /**
+         * Goes from the switch to the center position
+         * @param centerId ID of the center MP
+         */
         private fun getBackToCenter(centerId: Int): CommandGroup {
             return commandGroup {
-                this.addSequential(MotionProfileCommand(centerId, true))
-                this.addSequential(commandGroup {
-                    this.addParallel(TurnCommand(0.0, false, 0.0))
-                    this.addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                    this.addParallel(AutoArmCommand(ArmPosition.DOWN))
+                addSequential(commandGroup {
+                    addParallel(MotionProfileCommand(centerId, true))
+                    addParallel(commandGroup {
+                        addSequential(TimedCommand(0.5))
+                        addSequential(commandGroup {
+                            addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                        })
+                    })
+                })
+                addSequential(commandGroup {
+                    addParallel(TurnCommand(0.0, false, 0.0))
+
                 })
             }
         }
 
+        /**
+         * Picks up a cube from the center pyramid
+         */
         private fun pickupCubeFromCenter(): CommandGroup {
             return commandGroup {
-                this.addSequential(commandGroup {
-                    this.addParallel(MotionMagicCommand(4.00))
-                    this.addParallel(IntakeCommand(IntakeDirection.IN, timeout = 2.0))
+                addSequential(commandGroup {
+                    addParallel(AutoDriveCommand(4.50))
+                    addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
                 })
-                this.addSequential(IntakeHoldCommand(), 0.001)
-                this.addSequential(MotionMagicCommand(-4.50))
+                addSequential(IntakeHoldCommand(), 0.001)
+                addSequential(AutoDriveCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
             }
         }
     }

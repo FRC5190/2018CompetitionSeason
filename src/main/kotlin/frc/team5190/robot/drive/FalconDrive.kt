@@ -1,6 +1,6 @@
-/**
- * FRC Team 5190
- * Programming Team
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
  */
 
 package frc.team5190.robot.drive
@@ -20,17 +20,17 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     // Values for the left side of the DriveTrain
     val leftMaster = leftMotors[0]
-    val leftSlaves = leftMotors.subList(1, leftMotors.size)
+    private val leftSlaves = leftMotors.subList(1, leftMotors.size)
 
     // Values for the right side of the DriveTrain
     val rightMaster = rightMotors[0]
-    val rightSlaves = rightMotors.subList(1, rightMotors.size)
+    private val rightSlaves = rightMotors.subList(1, rightMotors.size)
 
     // Values for all the master motors of the DriveTrain
     val allMasters = listOf(leftMaster, rightMaster)
 
     // Values for all the motors of the Drive Train
-    val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
+    private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
     /**
      * Sets some initial values when the FalconDrive object is initialized.
@@ -52,42 +52,53 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         rightSlaves.forEach { it.follow(rightMaster) }
 
         allMasters.forEach {
-            it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10)
-            it.setSelectedSensorPosition(0, 0, 10)
+            it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, TIMEOUT)
+            it.setSelectedSensorPosition(0, 0, TIMEOUT)
         }
 
         allMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
             it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
-            it.configOpenloopRamp(0.0, 10)
-            // TODO: Need to configure current limits
+            it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
 
         gear = Gear.HIGH
 
         allMasters.forEach {
-            it.configMotionProfileTrajectoryPeriod(10, 10)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10)
+            it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
         }
     }
 
+    /**
+     * Resets FalconDrive in Autonomous mode
+     */
     internal fun autoReset() {
         this.reset()
-        allMasters.forEach { it.configPeakOutput(1.0, -1.0, 10) }
+        allMasters.forEach { it.configPeakOutput(1.0, -1.0, TIMEOUT) }
     }
 
-
+    /**
+     * Resets FalconDrive in Teleop mode
+     */
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
-            it.configPeakOutput(0.8, -0.8, 10)
+            it.configPeakOutput(0.8, -0.8, TIMEOUT)
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(0, 0)
+
+            it.configPeakCurrentLimit(60, TIMEOUT)
+            it.configPeakCurrentDuration(1000, TIMEOUT)
+            it.configContinuousCurrentLimit(30, TIMEOUT)
+            it.enableCurrentLimit(true)
         }
+        gear = Gear.LOW
     }
 
+    // Used to set high and low gear of the DriveTrain
     var gear
         get() = Gear.getGear(gearSolenoid.get())
         set(value) {
@@ -104,12 +115,15 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             gearSolenoid.set(value.state)
         }
 
+    // Returns left motor encoder position
     val leftEncoderPosition
         get() = leftMaster.getSelectedSensorPosition(0)
 
+    // Returns right motor encoder position
     val rightEncoderPosition
         get() = rightMaster.getSelectedSensorPosition(0)
 
+    // Feeds motor safety
     fun feedSafety() {
         m_safetyHelper.feed()
     }
@@ -217,6 +231,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     }
 }
 
+// Enum that contains the gear states
 enum class Gear(val state: Boolean) {
     HIGH(false), LOW(true);
 

@@ -1,33 +1,35 @@
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
+ */
+
 package frc.team5190.robot.climb
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team5190.robot.util.MotorIDs
+import frc.team5190.robot.util.*
 
 object ClimbSubsystem : Subsystem() {
 
-    private val backWinchMaster = TalonSRX(MotorIDs.BACK_WINCH_MASTER)
+    val hookSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.HOOK)
+
+    internal val frontWinchMotor = TalonSRX(MotorIDs.FRONT_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
+    internal val backWinchMotor = TalonSRX(MotorIDs.BACK_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
 
     init {
-        val backWinchSlave = TalonSRX(MotorIDs.BACK_WINCH_SLAVE)
-        backWinchSlave.follow(backWinchMaster)
+        with(TalonSRX(MotorIDs.BACK_WINCH_SLAVE)) {
+            follow(backWinchMotor)
+        }
     }
+
+    var climbState = false
 
     override fun initDefaultCommand() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        defaultCommand = IdleClimbCommand()
     }
 
-}
-
-class WinchCommand : Command() {
-
-    init {
-        requires(ClimbSubsystem)
+    override fun periodic() {
+        Controls.climbSubsystem()
     }
-
-    override fun isFinished(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 }

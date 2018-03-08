@@ -1,37 +1,51 @@
-/**
- * FRC Team 5190
- * Programming Team
+/*
+ * Copyright (c) 2018 FRC Team 5190
+ * Ryan Segerstrom, Prateek Machiraju
  */
+
 package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.pathreader.Pathreader
 
+/**
+ * Command that executes a Motion Profile
+ * @param requestId Request ID of the MP
+ * @param isReversed If the MP should run in reverse
+ * @param isMirrored IF the MP should be mirrored
+ */
 class MotionProfileCommand(private val requestId: Int, private val isReversed: Boolean = false, private val isMirrored: Boolean = false) : Command() {
     private lateinit var motionProfile: MotionProfile
 
+    private val leftTrajectory by lazy {
+        when (isMirrored) {
+            false -> Pathreader.getLeftPath(requestId)!!
+            true -> Pathreader.getRightPath(requestId)!!
+        }
+    }
+    private val rightTrajectory by lazy {
+        when (isMirrored) {
+            false -> Pathreader.getRightPath(requestId)!!
+            true -> Pathreader.getLeftPath(requestId)!!
+        }
+    }
+
     init {
         requires(DriveSubsystem)
+    }
+
+    fun getMPTime(): Double {
+        return if (rightTrajectory.map { it.dt }.sum() == leftTrajectory.map { it.dt }.sum())
+            leftTrajectory.map { it.dt }.sum()
+        else 0.0
     }
 
     /**
      * Runs once whenever the command is started.
      */
     override fun initialize() {
-        motionProfile = MotionProfile(
-                DriveSubsystem.falconDrive.leftMaster,
-                when (isMirrored) {
-                    false -> Pathreader.getLeftPath(requestId)!!
-                    true -> Pathreader.getRightPath(requestId)!!
-                },
-                DriveSubsystem.falconDrive.rightMaster,
-                when (isMirrored) {
-                    false -> Pathreader.getRightPath(requestId)!!
-                    true -> Pathreader.getLeftPath(requestId)!!
-                },
-                isReversed)
+        motionProfile = MotionProfile(DriveSubsystem.falconDrive.leftMaster, leftTrajectory, DriveSubsystem.falconDrive.rightMaster, rightTrajectory, isReversed)
         motionProfile.startMotionProfile()
     }
 
