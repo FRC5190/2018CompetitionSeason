@@ -3,7 +3,6 @@ package frc.team5190.robot.auto
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Notifier
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.pathreader.MotionProfileTrajectory
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.DriveConstants
 import jaci.pathfinder.Pathfinder
@@ -21,16 +20,17 @@ class PathfinderCommand(requestId: Int,
                         isMirrored: Boolean = false) : MotionCommand(requestId, isReversed, isMirrored) {
 
     private val profileThread = Notifier({
-        val encoderPosition = with(DriveSubsystem.falconDrive) { leftEncoderPosition + rightEncoderPosition } / 2
 
-        val leftOutput = leftFollower.calculate(encoderPosition)
-        val rightOutput = rightFollower.calculate(encoderPosition)
+        val leftOutput = leftFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
+        val rightOutput = rightFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
 
         val gyroHeading = NavX.angle
         val desiredHeading = Pathfinder.r2d((Pathfinder.r2d(leftFollower.heading) + Pathfinder.r2d(rightFollower.heading)) / 2.0)
 
         val angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading)
         val turn = 0.8 * (-1.0 / 80.0) * angleDifference
+
+        println("Left Out: ${leftOutput + turn}, Right Out: ${rightOutput - turn}")
 
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn)
     })
