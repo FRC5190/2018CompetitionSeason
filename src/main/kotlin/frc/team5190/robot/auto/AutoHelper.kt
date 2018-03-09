@@ -183,8 +183,7 @@ class AutoHelper {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.01))
-                        addSequential(AutoDriveCommand(-5.0))
-                        addSequential(TurnCommand((if (isLeft) 1 else -1) * 7.5))
+                        addSequential(ArcPathCommand(feet = -5.0, angle = if (isLeft) 12.5 else -12.5), 1.5)
                     })
                 })
 
