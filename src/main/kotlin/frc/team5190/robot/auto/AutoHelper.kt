@@ -61,7 +61,11 @@ class AutoHelper {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
                 }
 
@@ -100,8 +104,11 @@ class AutoHelper {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
                 }
 
@@ -120,7 +127,11 @@ class AutoHelper {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
                 }
 
@@ -139,7 +150,11 @@ class AutoHelper {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
 
                 }
@@ -187,7 +202,7 @@ class AutoHelper {
                     })
                 })
 
-                addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
+                addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.6, timeout = 1.0))
                 addSequential(AutoArmCommand(ArmPosition.MIDDLE))
             }
 
@@ -203,7 +218,7 @@ class AutoHelper {
                 addParallel(commandGroup {
                     if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 6.0))
                     addSequential(commandGroup {
-                        addParallel(AutoDriveCommand(mmDistanceFeet), 1.2)
+                        addParallel(AutoDriveCommand(mmDistanceFeet, cruiseVel = 4.0, accel = 3.0), 1.2)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
@@ -234,7 +249,7 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(1.95))
+                            addSequential(TimedCommand(2.15))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.6, outSpeed = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
@@ -315,7 +330,7 @@ class AutoHelper {
             return commandGroup {
                 addSequential(commandGroup {
                     addParallel(AutoDriveCommand(4.50))
-                    addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
+                    addParallel(IntakeCommand(IntakeDirection.IN, timeout = 4.0))
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
                 addSequential(AutoDriveCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
