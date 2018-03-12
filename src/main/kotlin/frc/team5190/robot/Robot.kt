@@ -7,6 +7,7 @@ package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.CameraServer
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
@@ -20,6 +21,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.VisionSubsystem
 import openrio.powerup.MatchData
 
@@ -86,14 +88,15 @@ class Robot : IterativeRobot() {
         lsll.addObject("2 Scale", "2 Scale")
         lsll.addObject("Straight", "Straight")
 
-        lslr.addDefault("1 Switch", "1 Switch")
-        lslr.addObject("2 Scale", "2 Scale")
+        lslr.addDefault("2 Scale", "2 Scale")
+        lslr.addObject("1 Switch", "1 Switch")
         lslr.addObject("Straight", "Straight")
 
         lsrl.addDefault("2 Scale", "2 Scale")
         lsrl.addObject("Straight", "Straight")
 
         lsrr.addDefault("Mixed", "Mixed")
+        lsrr.addObject("2 Scale", "2 Scale")
         lsrr.addObject("Straight", "Straight")
 
         controllerChooser.addDefault("Xbox", "Xbox")
@@ -109,10 +112,10 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Starting Position", sideChooser)
 
-        CameraServer.getInstance().startAutomaticCapture(0).apply {
-            setResolution(100, 100)
-            setFPS(15)
-        }
+//        CameraServer.getInstance().startAutomaticCapture(0).apply {
+//            setResolution(100, 100)
+//            setFPS(15)
+//        }
     }
 
     /**
@@ -120,16 +123,16 @@ class Robot : IterativeRobot() {
      */
     override fun robotPeriodic() {
 //
-//        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
-//        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
+        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
+        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
-//        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
-//        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
-//
-//        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
-//        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
-//
-//        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
+        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
+        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
+
+        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
+        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
+
+        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
 //
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 //
@@ -155,6 +158,9 @@ class Robot : IterativeRobot() {
     override fun autonomousInit() {
 
         pollForFMSData()
+
+
+        println(DriverStation.getInstance().gameSpecificMessage)
 
         DriveSubsystem.autoReset()
         NavX.reset()

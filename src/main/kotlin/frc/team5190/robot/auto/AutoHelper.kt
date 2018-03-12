@@ -61,7 +61,11 @@ class AutoHelper {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
                 }
 
@@ -100,8 +104,11 @@ class AutoHelper {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
                 }
 
@@ -120,7 +127,11 @@ class AutoHelper {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
                 }
 
@@ -134,12 +145,24 @@ class AutoHelper {
                                 addSequential(dropCubeOnSwitch())
                             }
                         }
+                        "2 Scale" -> {
+                            val scaleId = Pathreader.requestPath("LS-RR", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-RL"))
+                                addSequential(pickupCube(folder == "RS-RL"))
+                                addSequential(switchToScale(folder == "RS-RL"))
+                            }
+                        }
                         "Straight" -> {
                             return commandGroup {
                                 addSequential(AutoDriveCommand(-8.0))
                             }
                         }
-                        else -> throw IllegalArgumentException("Scenario does not exist.")
+                        else -> {
+                            return commandGroup {
+                                addSequential(AutoDriveCommand(-8.0))
+                            }
+                        }
                     }
 
                 }
@@ -183,12 +206,11 @@ class AutoHelper {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                     addParallel(commandGroup {
                         addSequential(TimedCommand(0.01))
-                        addSequential(AutoDriveCommand(-5.0))
-                        addSequential(TurnCommand((if (isLeft) 1 else -1) * 7.5))
+                        addSequential(ArcPathCommand(feet = -5.0, angle = if (isLeft) 12.5 else -12.5), 1.5)
                     })
                 })
 
-                addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
+                addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.6, timeout = 1.0))
                 addSequential(AutoArmCommand(ArmPosition.MIDDLE))
             }
 
@@ -198,13 +220,13 @@ class AutoHelper {
          * Picks up a cube using Vision
          * @param leftTurn Whether the turn is to the left
          */
-        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.0, turnCommand: Boolean = true): CommandGroup {
+        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.25, turnCommand: Boolean = true): CommandGroup {
             return commandGroup {
                 addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                 addParallel(commandGroup {
                     if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 6.0))
                     addSequential(commandGroup {
-                        addParallel(AutoDriveCommand(mmDistanceFeet), 1.2)
+                        addParallel(AutoDriveCommand(if (leftTurn) mmDistanceFeet else mmDistanceFeet + 0.5), 1.85)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
@@ -235,7 +257,7 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(1.95))
+                            addSequential(TimedCommand(2.15))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.6, outSpeed = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
@@ -247,12 +269,12 @@ class AutoHelper {
         /**
          * Drops the cube on the switch
          */
-        private fun dropCubeOnSwitch(mmDistanceFeet: Double = 1.1, mTimeout: Double = 1.0): CommandGroup {
+        private fun dropCubeOnSwitch(mmDistanceFeet: Double = 1.3, mTimeout: Double = 1.0): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                     addParallel(commandGroup {
-                        addSequential(AutoDriveCommand(-0.2))
+                        addSequential(AutoDriveCommand(-1.0), 0.75)
                         addSequential(object : Command() {
                             override fun isFinished() =
                                     ElevatorSubsystem.currentPosition > ElevatorPosition.SWITCH.ticks - 1440 && ArmSubsystem.currentPosition > ArmPosition.MIDDLE.ticks - 400
@@ -316,7 +338,7 @@ class AutoHelper {
             return commandGroup {
                 addSequential(commandGroup {
                     addParallel(AutoDriveCommand(4.50))
-                    addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
+                    addParallel(IntakeCommand(IntakeDirection.IN, timeout = 4.0))
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
                 addSequential(AutoDriveCommand(-4.25, cruiseVel = 5.0, accel = 4.0), 1.2)
