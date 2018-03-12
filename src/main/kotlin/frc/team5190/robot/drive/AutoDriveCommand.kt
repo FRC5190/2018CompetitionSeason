@@ -16,7 +16,7 @@ import kotlin.math.absoluteValue
  * @param cruiseVel Cruise velocity
  * @param accel Acceleration
  */
-class AutoDriveCommand(feet: Double,
+open class AutoDriveCommand(feet: Double,
                        private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
                        private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
 
@@ -24,7 +24,7 @@ class AutoDriveCommand(feet: Double,
     private val setPoint = Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
 
     init {
-        requires(DriveSubsystem)
+        this.requires(DriveSubsystem)
     }
 
     /**

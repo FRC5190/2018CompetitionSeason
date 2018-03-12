@@ -43,8 +43,6 @@ object DriveConstants {
     const val WHEEL_RADIUS = 3.0
     const val DRIVE_BASE_WIDTH = 29.5
 
-    const val DRIVE_BASE_WIDTH = 29.5
-
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
@@ -69,6 +67,8 @@ object DriveConstants {
 
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
+
+    const val MOTION_DT = 0.02
 
     const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
