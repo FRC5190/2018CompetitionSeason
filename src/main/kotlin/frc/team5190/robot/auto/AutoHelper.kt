@@ -145,6 +145,14 @@ class AutoHelper {
                                 addSequential(dropCubeOnSwitch())
                             }
                         }
+                        "2 Scale" -> {
+                            val scaleId = Pathreader.requestPath("LS-RR", "Scale")
+                            return commandGroup {
+                                addSequential(goToAndDropCubeOnScale(scaleId, folder == "RS-RL"))
+                                addSequential(pickupCube(folder == "RS-RL"))
+                                addSequential(switchToScale(folder == "RS-RL"))
+                            }
+                        }
                         "Straight" -> {
                             return commandGroup {
                                 addSequential(AutoDriveCommand(-8.0))
@@ -212,13 +220,13 @@ class AutoHelper {
          * Picks up a cube using Vision
          * @param leftTurn Whether the turn is to the left
          */
-        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.0, turnCommand: Boolean = true): CommandGroup {
+        private fun pickupCube(leftTurn: Boolean, mmDistanceFeet: Double = 6.25, turnCommand: Boolean = true): CommandGroup {
             return commandGroup {
                 addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                 addParallel(commandGroup {
                     if (turnCommand) addSequential(TurnCommand(if (leftTurn) -10.0 else 6.0))
                     addSequential(commandGroup {
-                        addParallel(AutoDriveCommand(mmDistanceFeet, cruiseVel = 4.0, accel = 3.0), 1.2)
+                        addParallel(AutoDriveCommand(if (leftTurn) mmDistanceFeet else mmDistanceFeet + 0.5), 1.85)
                         addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
                     })
                     addSequential(IntakeHoldCommand(), 0.001)
@@ -261,12 +269,12 @@ class AutoHelper {
         /**
          * Drops the cube on the switch
          */
-        private fun dropCubeOnSwitch(mmDistanceFeet: Double = 1.1, mTimeout: Double = 1.0): CommandGroup {
+        private fun dropCubeOnSwitch(mmDistanceFeet: Double = 1.3, mTimeout: Double = 1.0): CommandGroup {
             return commandGroup {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                     addParallel(commandGroup {
-                        addSequential(AutoDriveCommand(-0.2))
+                        addSequential(AutoDriveCommand(-1.0), 0.75)
                         addSequential(object : Command() {
                             override fun isFinished() =
                                     ElevatorSubsystem.currentPosition > ElevatorPosition.SWITCH.ticks - 1440 && ArmSubsystem.currentPosition > ArmPosition.MIDDLE.ticks - 400

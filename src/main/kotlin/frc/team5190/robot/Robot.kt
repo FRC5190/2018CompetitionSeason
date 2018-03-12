@@ -96,6 +96,7 @@ class Robot : IterativeRobot() {
         lsrl.addObject("Straight", "Straight")
 
         lsrr.addDefault("Mixed", "Mixed")
+        lsrr.addObject("2 Scale", "2 Scale")
         lsrr.addObject("Straight", "Straight")
 
         controllerChooser.addDefault("Xbox", "Xbox")
