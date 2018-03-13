@@ -252,13 +252,13 @@ object Vision {
 
     private fun correctedAngle(): Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
-        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + CAM_DISPLACEMENT
+        val oppositeDistance = rawDistance * Math.sin(Math.toRadians(rawAngle)) + CAM_DISPLACEMENT
         return Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
     }
 
     private fun correctedDistance(): Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
-        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + CAM_DISPLACEMENT
+        val oppositeDistance = rawDistance * Math.sin(Math.toRadians(rawAngle)) + CAM_DISPLACEMENT
         return Math.sqrt(adjacentDistance.pow(2.0) + oppositeDistance.pow(2.0))
     }
 
