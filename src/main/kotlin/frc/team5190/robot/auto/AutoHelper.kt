@@ -70,6 +70,7 @@ class AutoHelper {
                 "LS-RR", "RS-LL", "LS-LR", "RS-RL"-> commandGroup {
 
                     val mpCommand = MotionProfileCommand(folder, "Scale", true, folder.first() == 'R')
+                    val thirdcube = MotionProfileCommand(folder, "3rd Cube", true, folder.first() == 'R')
 
                     // DROP CUBE ON SCALE
                     addSequential(commandGroup {
@@ -97,9 +98,9 @@ class AutoHelper {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.SWITCH.ticks + 100.0
+                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0
                             })
-                            addSequential(PickupCubeCommand(angle = if (folder.first() == 'R') 7.5 else -7.5))
+                            addSequential(PickupCubeCommand())
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -120,14 +121,26 @@ class AutoHelper {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.SWITCH.ticks + 100.0
+                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0
                             })
-                            addSequential(PickupCubeCommand(angle = if (folder.first() == 'R') 45.0 else -45.0))
+                            addSequential(PickupCubeCommand())
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
 
-                    // TODO Drop 3rd Cube in Scale
+                    // DROP THIRD CUBE IN SCALE
+                    addSequential(commandGroup {
+                        addParallel(thirdcube)
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(0.5))
+                            addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND))
+                        })
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(2.25))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 0.5))
+                            addSequential(IntakeHoldCommand(), 0.001)
+                        })
+                    })
                 }
 
                 else -> throw IllegalArgumentException("Scenario does not exist.")

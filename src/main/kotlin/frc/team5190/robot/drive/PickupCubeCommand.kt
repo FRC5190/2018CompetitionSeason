@@ -8,12 +8,11 @@ package frc.team5190.robot.drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.DriveConstants
-import frc.team5190.robot.util.IntakeConstants
+import frc.team5190.robot.util.*
 import frc.team5190.robot.vision.Vision
 
-class PickupCubeCommand(val angle: Double = 0.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
+class PickupCubeCommand(private val outSpeed: Double = IntakeConstants.DEFAULT_SPEED,
+                        private val maxDist: Double = 7.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
 
     init {
         requires(DriveSubsystem)
@@ -28,18 +27,16 @@ class PickupCubeCommand(val angle: Double = 0.0) : PIDCommand(DriveConstants.TUR
         pidController.setAbsoluteTolerance(5.0)
         pidController.setContinuous(true)
 
-        setpoint = if (Vision.isTgtVisible == 1L) Vision.tgtAngle else angle
+        setpoint = 0.0
+
+        IntakeSubsystem.set(ControlMode.PercentOutput, outSpeed)
     }
 
-    override fun execute() {
-        if (Vision.isTgtVisible == 1L) {
-            setpoint = Vision.tgtAngle
-        }
+    override fun returnPIDInput() = -Vision.tgtAngle
+
+    override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.3 + output, 0.3 - output, false)
+
+    override fun isFinished() = IntakeSubsystem.amperage > IntakeConstants.AMP_THRESHOLD || DriveSubsystem.falconDrive.allMasters.any {
+        Maths.nativeUnitsToFeet(it.sensorCollection.quadraturePosition) > maxDist
     }
-
-    override fun returnPIDInput() = NavX.angle
-
-    override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.5 + output, 0.5 - output, false)
-
-    override fun isFinished() = IntakeSubsystem.amperage > IntakeConstants.AMP_THRESHOLD
 }
