@@ -6,7 +6,6 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
@@ -22,7 +21,7 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.Maths
-import frc.team5190.robot.vision.VisionSubsystem
+import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
 /**
@@ -71,7 +70,7 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-        VisionSubsystem
+        Vision
         IntakeSubsystem
         ElevatorSubsystem
         ClimbSubsystem

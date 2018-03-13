@@ -7,10 +7,9 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
-import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.DriveConstants
-import frc.team5190.robot.vision.VisionSubsystem
+import frc.team5190.robot.vision.Vision
 
 /**
  * Command that turns the robot to a certain angle
@@ -33,14 +32,14 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
         when (visionCheck) {
             false -> setpoint = angle
             true -> {
-                when (VisionSubsystem.isTgtVisible == 1L) {
+                when (Vision.isTgtVisible == 1L) {
                     false -> {
                         println("Vision subsystem did not find any target object")
                         setpoint = angle
                     }
                     true -> {
                         val x = NavX.pidGet()                   // current absolute angle
-                        val y = x + (VisionSubsystem.tgtAngle + VisionSubsystem.rawAngle) / 2.0    // Vision absolute angle
+                        val y = x + (Vision.tgtAngle + Vision.rawAngle) / 2.0    // Vision absolute angle
                         // (y - angle) is correction and it should be less than tolerance
                         setpoint = if (Math.abs(y - angle) < tolerance) {
                             println("Vision subsystem corrected $angle to $y")

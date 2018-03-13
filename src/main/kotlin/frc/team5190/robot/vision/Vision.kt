@@ -10,10 +10,9 @@ import com.google.gson.Gson
 import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import java.lang.Thread.sleep
-import kotlin.concurrent.thread
 import kotlin.math.pow
 
-object VisionSubsystem {
+object Vision {
 
     private var visionPort: SerialPort? = null
         set(value) {
@@ -25,7 +24,7 @@ object VisionSubsystem {
             field = value
         }
 
-    private val camDisplacement = 11.25
+    private const val CAM_DISPLACEMENT = 11.25
 
     /**
      * Returns true when the JeVois sees a target and is tracking it, false otherwise.
@@ -253,13 +252,13 @@ object VisionSubsystem {
 
     private fun correctedAngle(): Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
-        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
+        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + CAM_DISPLACEMENT
         return Math.toDegrees(Math.atan2(oppositeDistance, adjacentDistance))
     }
 
     private fun correctedDistance(): Double {
         val adjacentDistance = rawDistance * Math.cos(Math.toRadians(rawAngle))
-        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + camDisplacement
+        val oppositeDistance = adjacentDistance * Math.sin(Math.toRadians(rawAngle)) + CAM_DISPLACEMENT
         return Math.sqrt(adjacentDistance.pow(2.0) + oppositeDistance.pow(2.0))
     }
 
