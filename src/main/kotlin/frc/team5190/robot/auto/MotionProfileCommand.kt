@@ -61,7 +61,9 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
             val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
             val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
 
-            val actualHeading = if (isReversed) Pathfinder.boundHalfDegrees(NavX.angle + 180.0) else NavX.angle
+            var actualHeading = if (isReversed) Pathfinder.boundHalfDegrees(NavX.angle + 180.0) else NavX.angle
+            actualHeading = if (isMirrored) -actualHeading else actualHeading
+
             val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
             val angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - actualHeading)

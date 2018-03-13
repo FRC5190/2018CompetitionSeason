@@ -88,14 +88,14 @@ object ElevatorConstants {
 
     const val NOMINAL_OUT = 0.0
     const val IDLE_PEAK_OUT = 0.2
-    const val ACTIVE_PEAK_OUT = 0.8
+    const val ACTIVE_PEAK_OUT = 1.0
     const val TOLERANCE_INCHES = 0.25
 
     const val SOFT_LIMIT_FWD = 22500
 
     // motion magic
     const val MOTION_VELOCITY = 1000000000
-    const val MOTION_ACCELERATION_INCHES = 50.0
+    const val MOTION_ACCELERATION_INCHES = 75.0
 }
 
 object ArmConstants {

@@ -49,7 +49,7 @@ class AutoHelper {
                     addSequential(StraightDriveCommand(-1.0), 0.7)
 
                     addSequential(commandGroup {
-                        addParallel(TurnCommand(if (folder[folder.length - 1] == 'L') 90.0 else -90.0))
+                        addParallel(TurnCommand(if (folder.last() == 'L') 90.0 else -90.0))
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                     })
 
