@@ -9,8 +9,12 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
+import frc.team5190.robot.Robot
+import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.util.Maths
 import frc.team5190.robot.util.MotorIDs
 import frc.team5190.robot.util.SolenoidIDs
+import kotlin.math.absoluteValue
 
 object DriveSubsystem : Subsystem() {
 
@@ -19,6 +23,8 @@ object DriveSubsystem : Subsystem() {
 
     var controller = "Xbox"
     var compressor = Compressor(SolenoidIDs.PCM)
+
+    var autoShift = true
 
     init {
         compressor.start()
@@ -41,6 +47,15 @@ object DriveSubsystem : Subsystem() {
      */
     override fun periodic() {
         falconDrive.feedSafety()
+
+        // Auto Shift Logic
+        if (Robot.INSTANCE!!.isOperatorControl && autoShift) {
+            val speed = falconDrive.allMasters.map { Maths.nativeUnitsPer100MsToFeetPerSecond(it.getSelectedSensorVelocity(0).absoluteValue) }.average()
+            when {
+                speed > DriveConstants.AUTO_SHIFT_HIGH_THRESHOLD -> falconDrive.gear = Gear.HIGH
+                speed < DriveConstants.AUTO_SHIFT_LOW_THRESHOLD -> falconDrive.gear = Gear.LOW
+            }
+        }
     }
 
     /**

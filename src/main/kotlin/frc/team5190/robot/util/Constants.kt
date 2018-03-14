@@ -64,6 +64,9 @@ object DriveConstants {
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 
+    const val AUTO_SHIFT_LOW_THRESHOLD = 4.0
+    const val AUTO_SHIFT_HIGH_THRESHOLD = 5.5
+
     const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
