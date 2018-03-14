@@ -26,7 +26,7 @@ class AutoHelper {
          * @param switchOwnedSide The owned side of the switch
          * @param scaleOwnedSide The owned side of the scale
          */
-        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, settings: Array<String>): CommandGroup {
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
             // Get the folder that the paths are contained within
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
@@ -96,6 +96,7 @@ class AutoHelper {
                     // PICKUP SECOND CUBE
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                        addParallel(TurnCommand(if (folder.first() == 'R') 10.0 else -10.0), 0.7)
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0
@@ -119,6 +120,7 @@ class AutoHelper {
                     // PICKUP THIRD CUBE
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                        addParallel(TurnCommand(if (folder.first() == 'R') 45.0 else -45.0), 0.7)
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0

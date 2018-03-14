@@ -49,18 +49,6 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
-    // Variable that stores LS-LL / RS-RR profile setting
-    private var lsll = SendableChooser<String>()
-
-    // Variable that stores LS-LR / RS-RL profile setting
-    private var lslr = SendableChooser<String>()
-
-    // Variable that stores LS-RL / RS-LR profile setting
-    private var lsrl = SendableChooser<String>()
-
-    // Variable that stores LS-RR / RS-LL profile setting
-    private var lsrr = SendableChooser<String>()
-
 
     /**
      * Executed when robot code first launches and is ready to be initialized.
@@ -82,32 +70,6 @@ class Robot : IterativeRobot() {
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
-
-        lsll.addDefault("Mixed", "Mixed")
-        lsll.addObject("2 Scale", "2 Scale")
-        lsll.addObject("Straight", "Straight")
-
-        lslr.addDefault("2 Scale", "2 Scale")
-        lslr.addObject("1 Switch", "1 Switch")
-        lslr.addObject("Straight", "Straight")
-
-        lsrl.addDefault("2 Scale", "2 Scale")
-        lsrl.addObject("Straight", "Straight")
-
-        lsrr.addDefault("Mixed", "Mixed")
-        lsrr.addObject("2 Scale", "2 Scale")
-        lsrr.addObject("Straight", "Straight")
-
-        controllerChooser.addDefault("Xbox", "Xbox")
-        controllerChooser.addObject("Bongo", "Bongo")
-
-
-        SmartDashboard.putData("Controller", controllerChooser)
-
-        SmartDashboard.putData("LS-LL / RS-RR", lsll)
-        SmartDashboard.putData("LS-LR / RS-RL", lslr)
-        SmartDashboard.putData("LS-RL / RS-LR", lsrl)
-        SmartDashboard.putData("LS-RR / RS-LL", lsrr)
 
         SmartDashboard.putData("Starting Position", sideChooser)
 
@@ -158,13 +120,12 @@ class Robot : IterativeRobot() {
 
         pollForFMSData()
 
-
         println(DriverStation.getInstance().gameSpecificMessage)
 
         DriveSubsystem.autoReset()
         NavX.reset()
 
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
 //        val id = Pathreader.requestPath("LS-LL", "Scale")
 //        MotionProfileCommand(id, true, false).start()
     }
