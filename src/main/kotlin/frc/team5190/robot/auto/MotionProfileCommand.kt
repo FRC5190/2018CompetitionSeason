@@ -49,27 +49,27 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
 
         leftEncoderFollower = EncoderFollower(if (isReversed) rightTrajectory else leftTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(1.2, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         rightEncoderFollower = EncoderFollower(if (isReversed) leftTrajectory else rightTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.rightEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(1.2, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         notifier = Notifier({
             val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
             val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
 
-            var actualHeading = if (isReversed) Pathfinder.boundHalfDegrees(NavX.angle + 180.0) else NavX.angle
-            actualHeading = if (isMirrored) -actualHeading else actualHeading
+            var actualHeading = NavX.angle
+            actualHeading = if (isMirrored) actualHeading else -actualHeading
 
             val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
             val angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - actualHeading)
-            val turn = 0.8 * (-1 / 80.0) * angleDifference
+            val turn = 1.0 * (-1 / 80.0) * angleDifference
 
-            println("Left Output: ${leftOutput + turn}, Right Output: ${rightOutput - turn}")
+            println(angleDifference)
             DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
         })
     }

@@ -96,10 +96,11 @@ class AutoHelper {
                     // PICKUP SECOND CUBE
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(TurnCommand(if (folder.first() == 'R') 10.0 else -10.0), 0.7)
+                        addParallel(TurnCommand(if (folder.first() == 'R') 10.0 else -10.0), 0.5)
                         addParallel(commandGroup {
                             addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0
+                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0 &&
+                                        DriveSubsystem.currentCommand !is TurnCommand
                             })
                             addSequential(PickupCubeCommand())
                             addSequential(IntakeHoldCommand(), 0.001)
@@ -120,10 +121,11 @@ class AutoHelper {
                     // PICKUP THIRD CUBE
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(TurnCommand(if (folder.first() == 'R') 45.0 else -45.0), 0.7)
+                        addParallel(TurnCommand(if (folder.first() == 'R') 45.0 else -45.0), 0.5)
                         addParallel(commandGroup {
                             addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0
+                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0 &&
+                                        DriveSubsystem.currentCommand !is TurnCommand
                             })
                             addSequential(PickupCubeCommand())
                             addSequential(IntakeHoldCommand(), 0.001)
