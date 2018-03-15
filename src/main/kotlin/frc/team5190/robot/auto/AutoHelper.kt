@@ -69,8 +69,10 @@ class AutoHelper {
                 "LS-LL", "RS-RR", "LS-RL", "RS-LR",
                 "LS-RR", "RS-LL", "LS-LR", "RS-RL"-> commandGroup {
 
-                    val mpCommand = MotionProfileCommand(folder, "Scale", true, folder.first() == 'R')
-                    val thirdcube = MotionProfileCommand(folder, "3rd Cube", true, folder.first() == 'R')
+                    val folderIn = if (folder[4] == folder[0]) "LS-LL" else "LS-RR"
+
+                    val mpCommand = MotionProfileCommand(folderIn, "Scale", true, folder.first() == 'R')
+                    val thirdcube = MotionProfileCommand(folderIn, "3rd Cube", true, folder.first() == 'R')
 
                     // DROP CUBE ON SCALE
                     addSequential(commandGroup {
