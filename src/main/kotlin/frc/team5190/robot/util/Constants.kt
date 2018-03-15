@@ -117,7 +117,7 @@ object ArmConstants {
     const val LIMITING_REDUCTION_FACTOR = 0.3
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.5
+    const val PEAK_OUT = 0.9
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000

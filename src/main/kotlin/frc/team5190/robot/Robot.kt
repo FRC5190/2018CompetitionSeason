@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.MotionProfileCommand
+import frc.team5190.robot.auto.Pathreader
 import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
@@ -65,7 +66,7 @@ class Robot : IterativeRobot() {
         ClimbSubsystem
         ArmSubsystem
 
-//        Pathreader
+        Pathreader
 
         NavX
 

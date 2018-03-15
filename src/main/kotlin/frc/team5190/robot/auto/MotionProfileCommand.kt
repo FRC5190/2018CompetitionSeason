@@ -15,24 +15,28 @@ import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.followers.EncoderFollower
-import java.io.File
 
 class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, isMirrored: Boolean) : Command() {
 
-    private val leftPath = Pathfinder.readFromCSV(File("/home/lvuser/paths/$folder/$file Left Detailed.csv"))
-    private val rightPath = Pathfinder.readFromCSV(File("/home/lvuser/paths/$folder/$file Right Detailed.csv"))
+    private val leftPath = Pathreader.getPath(folder, file + " Left Detailed")
+    private val rightPath = Pathreader.getPath(folder, file + " Right Detailed")
 
     private val leftEncoderFollower: EncoderFollower
     private val rightEncoderFollower: EncoderFollower
 
     val mpTime
-        get() = leftPath.length() * DriveConstants.MOTION_DT
+        get() = leftPath!!.length() * DriveConstants.MOTION_DT
 
     private val notifier: Notifier
 
     private var startTime: Double? = null
 
     init {
+        if (leftPath == null || rightPath == null)
+            throw NullPointerException("Paths were not received from Pathreader.").apply {
+                printStackTrace()
+            }
+
         requires(DriveSubsystem)
 
         val leftTrajectory = if (isMirrored) rightPath else leftPath
@@ -61,10 +65,9 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
             val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
             val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
 
-            var actualHeading = NavX.angle
-            actualHeading = if (isMirrored) actualHeading else -actualHeading
+            val actualHeading = if (isMirrored) NavX.angle else -NavX.angle
 
-            val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
+            val desiredHeading = Pathfinder.r2d((leftEncoderFollower.heading + rightEncoderFollower.heading) / 2.0)
 
             val angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - actualHeading)
             val turn = 1.0 * (-1 / 80.0) * angleDifference
