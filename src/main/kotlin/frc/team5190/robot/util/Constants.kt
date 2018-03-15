@@ -10,10 +10,10 @@ package frc.team5190.robot.util
  * Contains Motor IDs.robot
  */
 object MotorIDs {
-    const val FRONT_LEFT = 1
-    const val FRONT_RIGHT = 3
-    const val REAR_LEFT = 2
-    const val REAR_RIGHT = 4
+    const val FRONT_LEFT = 2
+    const val FRONT_RIGHT = 4
+    const val REAR_LEFT = 1
+    const val REAR_RIGHT = 3
 
     const val ELEVATOR_MASTER = 5
     const val ELEVATOR_SLAVE = 6
@@ -69,6 +69,8 @@ object DriveConstants {
     const val MOTION_MAGIC_ACCEL = 4.5
 
     const val MOTION_DT = 0.02
+    const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
+    const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
     const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
 }
@@ -106,8 +108,8 @@ object ArmConstants {
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
-
-    const val DOWN_TICKS = 1330                 // 1470 for falcon heavy, 1330 for falcon 9
+    
+    const val DOWN_TICKS = 1330                 // 1000 for falcon heavy, 1330 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30

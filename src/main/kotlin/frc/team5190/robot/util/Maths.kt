@@ -78,6 +78,15 @@ class Maths {
         }
 
         /**
+         * Converts native units per 100 ms to Feet Per Second
+         * @param nativeUnitsPer100Ms Native units per 100 ms
+         * @return Feet Per Second
+         */
+        fun nativeUnitsPer100MsToFeetPerSecond(nativeUnitsPer100Ms: Int): Double {
+            return nativeUnitsToFeet(nativeUnitsPer100Ms * 10)
+        }
+
+        /**
          * Converts native units to feet
          * @param nativeUnits Native units
          * @return Feet

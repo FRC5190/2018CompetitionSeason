@@ -8,11 +8,21 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team5190.robot.*
-import frc.team5190.robot.arm.*
-import frc.team5190.robot.climb.*
-import frc.team5190.robot.drive.*
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.climb.BalanceWinchCommand
+import frc.team5190.robot.climb.ClimbSubsystem
+import frc.team5190.robot.climb.DeployHookCommand
+import frc.team5190.robot.climb.WinchCommand
+import frc.team5190.robot.drive.DriveMode
+import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.drive.Gear
 import frc.team5190.robot.elevator.*
-import frc.team5190.robot.intake.*
+import frc.team5190.robot.intake.IntakeCommand
+import frc.team5190.robot.intake.IntakeDirection
+import frc.team5190.robot.intake.IntakeSubsystem
+import kotlin.math.absoluteValue
 
 object Controls {
 
@@ -31,10 +41,20 @@ object Controls {
             }
         }
 
-        DriveSubsystem.falconDrive.gear = when {
-            MainXbox.aButton -> Gear.LOW
-            else -> Gear.HIGH
+        if (Robot.INSTANCE!!.isOperatorControl) {
+            if (MainXbox.aButton)
+                DriveSubsystem.falconDrive.gear = Gear.LOW
+            else {
+                // Auto Shift Logic
+
+                val speed = DriveSubsystem.falconDrive.allMasters.map { Maths.nativeUnitsPer100MsToFeetPerSecond(it.getSelectedSensorVelocity(0).absoluteValue) }.average()
+                when {
+                    speed > DriveConstants.AUTO_SHIFT_HIGH_THRESHOLD -> DriveSubsystem.falconDrive.gear = Gear.HIGH
+                    speed < DriveConstants.AUTO_SHIFT_LOW_THRESHOLD -> DriveSubsystem.falconDrive.gear = Gear.LOW
+                }
+            }
         }
+
     }
 
     fun intakeSubsystem() {
