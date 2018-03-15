@@ -18,8 +18,8 @@ import jaci.pathfinder.followers.EncoderFollower
 
 class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, isMirrored: Boolean) : Command() {
 
-    private val leftPath = Pathreader.getPath(folder, file + " Left Detailed")
-    private val rightPath = Pathreader.getPath(folder, file + " Right Detailed")
+    private val leftPath = Pathreader.getPath(folder, "$file Left Detailed")
+    private val rightPath = Pathreader.getPath(folder, "$file Right Detailed")
 
     private val leftEncoderFollower: EncoderFollower
     private val rightEncoderFollower: EncoderFollower
@@ -65,9 +65,8 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
             val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
             val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
 
-            val actualHeading = if (isMirrored) NavX.angle else -NavX.angle
-
-            val desiredHeading = Pathfinder.r2d((leftEncoderFollower.heading + rightEncoderFollower.heading) / 2.0)
+            val actualHeading = (if (isMirrored) -1 else 1) * NavX.angle
+            val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
             val angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - actualHeading)
             val turn = 1.0 * (-1 / 80.0) * angleDifference

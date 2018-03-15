@@ -22,12 +22,12 @@ object Pathreader {
         allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
             folder.listFiles().filter { it.isFile }.map { file ->
                 Pair("${folder.name}/${file.nameWithoutExtension}",
-                        Pathfinder.readFromCSV(File("/home/lvuser/paths/${folder.name}/${file.name}")))
+                        Pathfinder.readFromCSV(file))
             }
         }.flatten().toMap()
     }
 
-    fun getPath(folder: String, file: String): Trajectory? {
-        return allPaths["$folder/$file"]
+    fun getPath(folderName: String, fileName: String): Trajectory? {
+        return allPaths["$folderName/$fileName"]
     }
 }
