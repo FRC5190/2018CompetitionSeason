@@ -57,14 +57,13 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-        Vision
         IntakeSubsystem
         ElevatorSubsystem
         ClimbSubsystem
         ArmSubsystem
 
+        Vision
         Pathreader
-
         NavX
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }

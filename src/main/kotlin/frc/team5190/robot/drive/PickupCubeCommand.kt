@@ -36,7 +36,7 @@ class PickupCubeCommand(private val outSpeed: Double = IntakeConstants.DEFAULT_S
 
     override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.3 + output, 0.3 - output, false)
 
-    override fun isFinished() = IntakeSubsystem.amperage > IntakeConstants.AMP_THRESHOLD || DriveSubsystem.falconDrive.allMasters.any {
+    override fun isFinished() = IntakeSubsystem.isCubeIn || DriveSubsystem.falconDrive.allMasters.any {
         Maths.nativeUnitsToFeet(it.sensorCollection.quadraturePosition) > maxDist
     }
 }

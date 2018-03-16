@@ -30,6 +30,11 @@ object MotorIDs {
 
 }
 
+object ChannelIDs {
+    const val LEFT_CUBE_SENSOR = 0
+    const val RIGHT_CUBE_SENSOR = 1
+}
+
 object SolenoidIDs {
     const val PCM = 41
 
@@ -126,7 +131,6 @@ object ArmConstants {
 
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.65
-    const val AMP_THRESHOLD = 6.0
 }
 
 object ClimbConstants {

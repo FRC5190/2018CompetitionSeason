@@ -5,6 +5,7 @@
 
 package frc.team5190.robot.util
 
+import com.ctre.phoenix.CANifier
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.CommandGroup
@@ -57,6 +58,12 @@ fun TalonSRX.configLimitSwitchSource(type: LimitSwitchSource, normalOpenOrClose:
 
 fun limitCurrent(buffer: CircularBuffer): MotorState {
     return buffer.motorState
+}
+
+fun CANifier.setLEDOutput(r: Int, g: Int, b: Int) {
+    setLEDOutput(r * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelA)
+    setLEDOutput(g * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelB)
+    setLEDOutput(b * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelC)
 }
 
 /**
