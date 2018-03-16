@@ -11,7 +11,7 @@ import frc.team5190.robot.util.*
 import kotlin.math.absoluteValue
 
 /**
- * Command that drives to distance
+ * Command that drives to tgtRange
  * @param feet Distance to go forward
  * @param cruiseVel Cruise velocity
  * @param accel Acceleration

@@ -12,7 +12,7 @@ import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.vision.Vision
 
 /**
- * Command that turns the robot to a certain angle
+ * Command that turns the robot to a certain tgtAngle
  * @param angle Angle to turn to in degrees
  * @param visionCheck Whether to use vision for cube detection
  * @param tolerance Tolerance
@@ -38,9 +38,9 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
                         setpoint = angle
                     }
                     true -> {
-                        val x = NavX.pidGet()                   // current absolute angle
-                        val y = x + (Vision.tgtAngle + Vision.rawAngle) / 2.0    // Vision absolute angle
-                        // (y - angle) is correction and it should be less than tolerance
+                        val x = NavX.pidGet()                   // current absolute tgtAngle
+                        val y = x + (Vision.tgtAngle)    // Vision absolute tgtAngle
+                        // (y - tgtAngle) is correction and it should be less than tolerance
                         setpoint = if (Math.abs(y - angle) < tolerance) {
                             println("Vision subsystem corrected $angle to $y")
                             y
@@ -73,7 +73,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
     private var time = 0
 
     /**
-     * Checks if the robot is at the specified angle
+     * Checks if the robot is at the specified tgtAngle
      */
     override fun isFinished(): Boolean {
         if (pidController.onTarget()) {
