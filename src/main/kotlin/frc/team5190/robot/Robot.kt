@@ -59,21 +59,18 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-        Vision
         IntakeSubsystem
         ElevatorSubsystem
         ClimbSubsystem
         ArmSubsystem
-
         Pathreader
-
         NavX
+        Vision
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
         SmartDashboard.putData("Starting Position", sideChooser)
-
     }
 
     /**
