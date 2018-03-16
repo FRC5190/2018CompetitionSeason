@@ -23,7 +23,7 @@ object LEDs : Subsystem() {
     override fun initDefaultCommand() {}
 
     override fun periodic() {
-        if (Robot.INSTANCE!!.isDisabled) {
+        if (!Robot.INSTANCE!!.dataRec) {
             leds.setLEDOutput(255, 255, 255)
         } else if (Robot.INSTANCE!!.isEnabled) {
 
@@ -44,7 +44,7 @@ object LEDs : Subsystem() {
                     leds.setLEDOutput(0, 255, 0)
                 }
             }
-            else if (DriverStation.getInstance().alliance == DriverStation.Alliance.Blue) {
+            else if (Robot.INSTANCE!!.alliance == DriverStation.Alliance.Blue) {
                 leds.setLEDOutput(0, 0, 255)
             } else {
                 leds.setLEDOutput(255, 0, 0)

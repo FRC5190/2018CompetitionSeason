@@ -50,6 +50,9 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
+    var alliance = DriverStation.Alliance.Invalid
+    var dataRec = false
+
 
     /**
      * Executed when robot code first launches and is ready to be initialized.
@@ -114,8 +117,6 @@ class Robot : IterativeRobot() {
 
         pollForFMSData()
 
-        println(DriverStation.getInstance().gameSpecificMessage)
-
         DriveSubsystem.autoReset()
         NavX.reset()
 
@@ -162,5 +163,8 @@ class Robot : IterativeRobot() {
     private fun pollForFMSData() {
         switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
         scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+
+        dataRec = true
+        alliance = DriverStation.getInstance().alliance
     }
 }
