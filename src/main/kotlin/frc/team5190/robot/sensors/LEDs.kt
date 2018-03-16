@@ -45,8 +45,10 @@ object LEDs : Subsystem() {
                 }
             }
             else if (Robot.INSTANCE!!.alliance == DriverStation.Alliance.Blue) {
+                if (iterator != 0) iterator = 0
                 leds.setLEDOutput(0, 0, 255)
             } else {
+                if (iterator != 0) iterator = 0
                 leds.setLEDOutput(255, 0, 0)
             }
         }
