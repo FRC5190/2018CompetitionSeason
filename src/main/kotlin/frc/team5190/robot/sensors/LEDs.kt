@@ -31,7 +31,7 @@ object LEDs : Subsystem() {
                 if (!intakeLEDSolid) {
                     if ((iterator % 5 == 0)) {
                         if (blinked) leds.setLEDOutput(0, 0, 0) else leds.setLEDOutput(0, 255, 0)
-                        blinked = true
+                        blinked = if (blinked) false else true
                     }
                     iterator++
 
