@@ -12,7 +12,7 @@ import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 
 /**
- * Command that drives to distance
+ * Command that drives to tgtRange
  * @param feet Distance to go forward
  * @param cruiseVel Cruise velocity
  * @param accel Acceleration
@@ -38,7 +38,7 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
 
         val radius = feet / Math.sin(angleDelta) * Math.sin((Math.PI - angleDelta) / 2.0)
         val arcLength = radius * angleDelta
-//        println("Current Angle: $currentAngle New Angle: $angle Distance: $distance")
+//        println("Current Angle: $currentAngle New Angle: $tgtAngle Distance: $tgtRange")
 //        println("Angle: ${Math.toDegrees(angleDelta)} Radius: $radius, Arc Length: $arcLength")
 
         val wheelBase = DriveConstants.DRIVE_BASE_WIDTH / 12.0 / 2.0

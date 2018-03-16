@@ -53,12 +53,12 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
 
         leftEncoderFollower = EncoderFollower(if (isReversed) rightTrajectory else leftTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(1.2, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(3.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         rightEncoderFollower = EncoderFollower(if (isReversed) leftTrajectory else rightTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.rightEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(1.2, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(3.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         notifier = Notifier({
@@ -68,10 +68,10 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
             val actualHeading = (if (isMirrored) 1 else -1) * NavX.angle
             val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
-            val angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - actualHeading)
-            val turn = 1.0 * (-1 / 80.0) * angleDifference
+            val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
+            val turn = 1.0 * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
 
-            println(angleDifference)
+//            println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn")
             DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
         })
     }
@@ -82,6 +82,8 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
     }
 
     override fun end() {
+
+        println("has ended")
 
         notifier.stop()
 

@@ -17,9 +17,11 @@ import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.drive.TurnCommand
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.util.commandGroup
 import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
@@ -62,15 +64,14 @@ class Robot : IterativeRobot() {
         ClimbSubsystem
         ArmSubsystem
 
-        Vision
         Pathreader
         NavX
+        Vision
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
         SmartDashboard.putData("Starting Position", sideChooser)
-
     }
 
     /**
@@ -118,10 +119,16 @@ class Robot : IterativeRobot() {
         DriveSubsystem.autoReset()
         NavX.reset()
 
-//        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+//        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
+
+        commandGroup {
+            addSequential(MotionProfileCommand("LS-RR", "Scale", true, false))
+            addSequential(TurnCommand(-10.0), 0.7)
+        }.start()
 
         // DEBUGGING
-        MotionProfileCommand("LS-LL", "Scale", true, false).start()
+//        MotionProfileCommand("CS-L", "Switch", false, false).start()
+//        TurnCommand(180.0).start()
     }
 
 

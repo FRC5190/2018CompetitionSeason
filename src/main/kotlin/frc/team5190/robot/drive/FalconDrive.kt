@@ -69,6 +69,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
+            //it.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, TIMEOUT)
         }
     }
 

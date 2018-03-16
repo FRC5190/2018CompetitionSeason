@@ -32,7 +32,7 @@ class PickupCubeCommand(private val outSpeed: Double = IntakeConstants.DEFAULT_S
         IntakeSubsystem.set(ControlMode.PercentOutput, outSpeed)
     }
 
-    override fun returnPIDInput() = -Vision.tgtAngle
+    override fun returnPIDInput() = -Vision.tgtAngle.toDouble()
 
     override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.3 + output, 0.3 - output, false)
 
