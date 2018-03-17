@@ -42,6 +42,11 @@ object Vision {
 
     fun stop() {
         stopped = true
+
+        if (visionPort != null) {
+            sendCmd("streamoff")
+            visionPort!!.free()
+        }
     }
 
     private fun sendPing(): Int {
@@ -125,7 +130,7 @@ object Vision {
 
             // Wait for the incoming stream to stop and read up all the incoming data
             sleep(100)
-            while (visionPort!!.bytesReceived > 0) {
+            if (visionPort!!.bytesReceived > 0) {
                 visionPort!!.readString()
             }
 
@@ -163,7 +168,7 @@ object Vision {
             return
         }
 
-        while (visionPort!!.bytesReceived > 0) {
+        if (visionPort!!.bytesReceived > 0) {
             // got data
             val string = visionPort!!.readString()
             val obj = gson.fromJson<VisionTemplate>(string)
@@ -177,8 +182,7 @@ object Vision {
                 tgtRange = obj.Range
             }
         }
-
-        if (System.currentTimeMillis() - lastDataUpdated > 200) {
+        else if (System.currentTimeMillis() - lastDataUpdated > 200) {
             // no data received for more than 200ms => not tracking any object
             isTgtVisible = 0
             tgtAngle = 0
