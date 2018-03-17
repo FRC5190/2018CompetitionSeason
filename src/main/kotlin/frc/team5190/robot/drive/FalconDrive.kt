@@ -79,7 +79,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     internal fun autoReset() {
         gear = Gear.LOW
         this.reset()
-        allMasters.forEach { it.configPeakOutput(1.0, -1.0, TIMEOUT) }
+        allMotors.forEach { it.configPeakOutput(1.0, -1.0, TIMEOUT) }
     }
 
     /**

@@ -29,9 +29,27 @@ deploy {
             targets << "roborio"
         }
 
-        artifact('Paths', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources')
-            directory = '/home/lvuser/paths/'
+        artifact('LS-LL', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/LS-LL')
+            directory = '/home/lvuser/paths/LS-LL'
+            targets << "roborio"
+        }
+
+        artifact('LS-RR', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/LS-RR')
+            directory = '/home/lvuser/paths/LS-RR'
+            targets << "roborio"
+        }
+
+        artifact('CS-L', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/CS-L')
+            directory = '/home/lvuser/paths/CS-L'
+            targets << "roborio"
+        }
+
+        artifact('CS-R', FileCollectionArtifact) {
+            files = project.fileTree(dir: 'src/main/resources/CS-R')
+            directory = '/home/lvuser/paths/CS-R'
             targets << "roborio"
         }
     }

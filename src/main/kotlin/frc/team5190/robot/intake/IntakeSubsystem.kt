@@ -21,8 +21,8 @@ object IntakeSubsystem : Subsystem() {
     private val leftCubeSensor = DigitalInput(ChannelIDs.LEFT_CUBE_SENSOR)
     private val rightCubeSensor = DigitalInput(ChannelIDs.RIGHT_CUBE_SENSOR)
 
-    val isCubeIn
-        get() = leftCubeSensor.get() && rightCubeSensor.get()
+    val isCubeIn = false
+//        get() = leftCubeSensor.get() && rightCubeSensor.get()
 
 
     // Solenoid

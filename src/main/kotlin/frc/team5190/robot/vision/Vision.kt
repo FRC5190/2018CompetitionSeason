@@ -3,7 +3,8 @@ package frc.team5190.robot.vision
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import edu.wpi.cscore.VideoMode
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.CameraServer
+import edu.wpi.first.wpilibj.SerialPort
 import java.lang.Thread.sleep
 import kotlin.concurrent.thread
 
@@ -18,6 +19,17 @@ object Vision {
     private const val BAUD_RATE = 115200
 
     init {
+        if (visionPort == null) {
+            try {
+                print("[Vision] Creating JeVois SerialPort...")
+                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
+                println(" success!")
+            } catch (e: Exception) {
+                visionPort = null
+                println(" failed!")
+            }
+        }
+
         thread(name = "Vision") {
             while (!stopped) {
                 try {
@@ -34,6 +46,8 @@ object Vision {
             print("[Vision] Starting stream capture...")
             CameraServer.getInstance().startAutomaticCapture(0).apply {
                 setPixelFormat(VideoMode.PixelFormat.kYUYV)
+                setResolution(320, 252)
+                setFPS(15)
             }
             println(" success!")
         } catch (e: Exception) {
@@ -53,18 +67,6 @@ object Vision {
             val Range: Long)
 
     private fun periodic() {
-        if (visionPort == null) {
-            try {
-                print("[Vision] Creating JeVois SerialPort...")
-                visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
-                println(" success!")
-            } catch (e: Exception) {
-                visionPort = null
-                println(" failed!")
-                return
-            }
-        }
-
         while (visionPort!!.bytesReceived > 0) {
             lastDataReceived = System.currentTimeMillis()
             val string = visionPort!!.readString()

@@ -53,12 +53,12 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
 
         leftEncoderFollower = EncoderFollower(if (isReversed) rightTrajectory else leftTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(3.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         rightEncoderFollower = EncoderFollower(if (isReversed) leftTrajectory else rightTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.rightEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(3.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         notifier = Notifier({
@@ -69,9 +69,11 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
             val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
             val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
-            val turn = 1.0 * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
+            var turn = 1.2 * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
+            turn *= (if (isMirrored) -1 else 1)
+            turn = turn.coerceIn(-1.0, 1.0)
 
-//            println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn")
+            println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn")
             DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
         })
     }
@@ -93,5 +95,5 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
         DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
     }
 
-    override fun isFinished() = (Timer.getFPGATimestamp() - startTime!!) > (mpTime - 0.1)
+        override fun isFinished() = (Timer.getFPGATimestamp() - startTime!!) > (mpTime - 0.1)
 }

@@ -17,12 +17,10 @@ import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.drive.TurnCommand
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.commandGroup
-import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
 /**
@@ -69,7 +67,7 @@ class Robot : IterativeRobot() {
 
         Pathreader
         NavX
-        Vision
+//        Vision
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
@@ -104,6 +102,7 @@ class Robot : IterativeRobot() {
 
 
         SmartDashboard.putData("Gyro", NavX)
+        SmartDashboard.putNumber("Free Ram", Runtime.getRuntime().freeMemory().toDouble() / 1e6)
 //        SmartDashboard.putNumber("Pitch", NavX.pitch.toDouble())
 //        SmartDashboard.putNumber("Roll", NavX.roll.toDouble())
 
@@ -124,7 +123,6 @@ class Robot : IterativeRobot() {
 
         commandGroup {
             addSequential(MotionProfileCommand("LS-RR", "Scale", true, false))
-            addSequential(TurnCommand(-10.0), 0.7)
         }.start()
 
         // DEBUGGING

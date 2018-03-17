@@ -12,7 +12,7 @@ import frc.team5190.robot.util.*
 import frc.team5190.robot.vision.Vision
 
 class PickupCubeCommand(private val outSpeed: Double = IntakeConstants.DEFAULT_SPEED,
-                        private val maxDist: Double = 7.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
+                        private val maxDist: Double = 100.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
 
     init {
         requires(DriveSubsystem)
