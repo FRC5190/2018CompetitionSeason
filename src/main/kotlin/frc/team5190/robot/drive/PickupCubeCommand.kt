@@ -13,7 +13,7 @@ import frc.team5190.robot.util.IntakeConstants
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.Vision
 
-class PickupCubeCommand(private val outSpeed: Double = -IntakeConstants.DEFAULT_SPEED,
+class PickupCubeCommand(private val inSpeed: Double = -IntakeConstants.DEFAULT_SPEED,
                         private val maxDist: Double = 100.0) : PIDCommand(0.01, 0.0, 0.0) {
 
     init {
@@ -31,7 +31,7 @@ class PickupCubeCommand(private val outSpeed: Double = -IntakeConstants.DEFAULT_
 
         setpoint = 0.0
 
-        IntakeSubsystem.set(ControlMode.PercentOutput, outSpeed)
+        IntakeSubsystem.set(ControlMode.PercentOutput, inSpeed)
     }
 
     override fun returnPIDInput() = if(Vision.isTgtVisible == 1L) Vision.tgtAngleAbsolute - NavX.angle else 0.0

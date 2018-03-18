@@ -72,7 +72,6 @@ class AutoHelper {
                 "LS-RR", "RS-LL", "LS-LR", "RS-RL" -> commandGroup {
 
                     val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
-
                     val mpCommand = MotionProfileCommand(folderIn, "Scale", true, folder.first() == 'R')
 
                     // DROP CUBE ON SCALE
@@ -110,26 +109,12 @@ class AutoHelper {
 
                     // PICKUP SECOND CUBE
                     addSequential(commandGroup {
-                        addSequential(object : CommandGroup() {
-                            var turnCommand = TurnCommand(if (folder.last() == 'R') 7.5 else -7.5)
-                            var elevCommand = ElevatorPresetCommand(ElevatorPreset.INTAKE)
-
-                            init {
-                                addParallel(elevCommand)
-                                addParallel(turnCommand)
-                            }
-
-                            override fun end() {
-                                if (!turnCommand.isCompleted) turnCommand.cancel()
-                            }
-
-                            override fun isFinished() = elevCommand.isFinished
-                        })
-
                         addSequential(commandGroup {
-                            addSequential(PickupCubeCommand())
-                            addSequential(IntakeHoldCommand(), 0.001)
+                            addParallel(TurnCommand(if (folder.last() == 'R') 7.5 else -7.5))
+                            addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
+                        addSequential(PickupCubeCommand(inSpeed = 1.0))
+                        addSequential(IntakeHoldCommand(), 0.001)
                     })
 
 
