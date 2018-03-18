@@ -5,7 +5,8 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.*
+import edu.wpi.first.wpilibj.command.CommandGroup
+import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.drive.*
@@ -73,7 +74,6 @@ class AutoHelper {
                     val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
 
                     val mpCommand = MotionProfileCommand(folderIn, "Scale", true, folder.first() == 'R')
-//                    val thirdcube = MotionProfileCommand(folderIn, "3rd Cube", false, folder.first() == 'R')
 
                     // DROP CUBE ON SCALE
                     addSequential(commandGroup {
@@ -82,12 +82,13 @@ class AutoHelper {
                             addSequential(TimedCommand(0.2))
                             addSequential(commandGroup {
                                 addSequential(object : CommandGroup() {
+                                    var startTime: Long = 0
+
                                     init {
                                         addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
                                         addParallel(AutoArmCommand(ArmPosition.UP))
                                     }
 
-                                    var startTime: Long = 0
                                     override fun initialize() {
                                         super.initialize()
                                         startTime = System.currentTimeMillis()
@@ -100,7 +101,7 @@ class AutoHelper {
                                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                                 addParallel(commandGroup {
                                     addSequential(TimedCommand(1.95))
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 1.0))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.75, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
                             })
@@ -109,9 +110,23 @@ class AutoHelper {
 
                     // PICKUP SECOND CUBE
                     addSequential(commandGroup {
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(commandGroup {
-                            addSequential(TurnCommand(-5.0))
+                        addSequential(object : CommandGroup() {
+                            var turnCommand = TurnCommand(if (folder.last() == 'R') 7.5 else -7.5)
+                            var elevCommand = ElevatorPresetCommand(ElevatorPreset.INTAKE)
+
+                            init {
+                                addParallel(elevCommand)
+                                addParallel(turnCommand)
+                            }
+
+                            override fun end() {
+                                if (!turnCommand.isCompleted) turnCommand.cancel()
+                            }
+
+                            override fun isFinished() = elevCommand.isFinished
+                        })
+
+                        addSequential(commandGroup {
                             addSequential(PickupCubeCommand())
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
@@ -133,37 +148,7 @@ class AutoHelper {
                         })
                     })
 
-
-                    // PICKUP THIRD CUBE
-                    addSequential(commandGroup {
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(TurnCommand(if (folder.first() == 'R') 45.0 else -45.0), 0.5)
-                        addParallel(commandGroup {
-                            addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0 &&
-                                        DriveSubsystem.currentCommand !is TurnCommand
-                            })
-                            addSequential(PickupCubeCommand())
-                            addSequential(IntakeHoldCommand(), 0.001)
-                        })
-                    })
-
-                    /*
-
-                    // DROP THIRD CUBE IN SCALE
-                    addSequential(commandGroup {
-                        addParallel(thirdcube)
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(0.5))
-                            addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND))
-                        })
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(2.25))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 0.5))
-                            addSequential(IntakeHoldCommand(), 0.001)
-                        })
-                    })
-                    */
+                    addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                 }
 
                 else -> throw IllegalArgumentException("Scenario does not exist.")
