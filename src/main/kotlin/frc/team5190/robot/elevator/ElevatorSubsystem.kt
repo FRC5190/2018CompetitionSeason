@@ -41,7 +41,6 @@ object ElevatorSubsystem : Subsystem() {
 
     // Variables used for current limiting
     private var state = MotorState.OK
-    var currentCommandGroup: CommandGroup? = null
     private var stalled = false
 
     var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT

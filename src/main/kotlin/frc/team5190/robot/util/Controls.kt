@@ -78,6 +78,8 @@ object Controls {
         }
     }
 
+    private var lastPov = -1
+
     fun elevatorSubsystem() {
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
@@ -107,21 +109,20 @@ object Controls {
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
-        when (pov) {
-        // Up - Scale
-            0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)
-        // Right - Switch
-            90 -> ElevatorPresetCommand(ElevatorPreset.SWITCH)
-        // Down - Intake
-            180 -> ElevatorPresetCommand(ElevatorPreset.INTAKE)
-        // Left - Scale Backwards
-            270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND)
-            else -> null
-        }?.let {
-            ElevatorSubsystem.currentCommandGroup?.cancel()
-            ElevatorSubsystem.currentCommandGroup = it
-            it.start()
+        if(lastPov != pov) {
+            when (pov) {
+            // Up - Scale
+                0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)
+            // Right - Switch
+                90 -> ElevatorPresetCommand(ElevatorPreset.SWITCH)
+            // Down - Intake
+                180 -> ElevatorPresetCommand(ElevatorPreset.INTAKE)
+            // Left - Scale Backwards
+                270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND)
+                else -> null
+            }?.start()
         }
+        lastPov = pov
     }
 
     fun climbSubsystem() {
