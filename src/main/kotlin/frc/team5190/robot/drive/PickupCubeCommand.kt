@@ -34,11 +34,11 @@ class PickupCubeCommand(private val inSpeed: Double = -IntakeConstants.DEFAULT_S
         IntakeSubsystem.set(ControlMode.PercentOutput, inSpeed)
     }
 
-    override fun returnPIDInput() = if(Vision.isTgtVisible == 1L) Vision.tgtAngleAbsolute - NavX.angle else 0.0
+    override fun returnPIDInput() = if (Vision.isTgtVisible == 1L) Vision.tgtAngleAbsolute - NavX.angle else 0.0
 
     override fun usePIDOutput(output: Double) {
 
-        println("Vision Angle: ${returnPIDInput()}, PID Output: $output")
+//        println("Vision Angle: ${returnPIDInput()}, PID Output: $output")
 
         val speed: Double = if (output < 0.05) 0.25 else 0.25
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, speed - output, speed + output, false)

@@ -20,6 +20,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
 /**
@@ -66,7 +67,7 @@ class Robot : IterativeRobot() {
 
         Pathreader
         NavX
-//        Vision
+        Vision
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
@@ -119,6 +120,7 @@ class Robot : IterativeRobot() {
 
         DriveSubsystem.autoReset()
         NavX.reset()
+        Vision.start()
 
         AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
 //        PickupCubeCommand().start()

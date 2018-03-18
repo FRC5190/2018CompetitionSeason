@@ -15,24 +15,46 @@ object Vision {
     var tgtAngleAbsolute = 0.0
     var tgtRange = 0L
     private var visionPort: SerialPort? = null
+    private var threadStarted: Long = 0
     private var lastDataUpdated: Long = 0
-    private var stopped = false
     private const val BAUD_RATE = 115200
 
     init {
-        Runtime.getRuntime().addShutdownHook(Thread {
-            println("Stopping Vision...")
-            Vision.stop()
-            println("Stopped Vision!")
-        })
+        connect()
+    }
+
+    fun start() {
         thread(name = "Vision") {
-            while (!stopped) {
-                try {
-                    processData()
-                    sleep(10)
-                } catch (e: Exception) {
-                    sleep(50)
+            if (visionPort == null) {
+                // try to connect one more time
+                connect()
+            }
+
+            if (visionPort != null) {
+                // start the stream
+                println("[Vision] Thread started")
+                sendCmd("streamon")
+                threadStarted = System.currentTimeMillis()
+
+                // run for 16s
+                while (System.currentTimeMillis() - threadStarted < 16000) {
+                    try {
+                        processData()
+                        sleep(10)
+                    } catch (e: Exception) {
+                        sleep(50)
+                    }
                 }
+
+                // stop the stream
+                sendCmd("streamoff")
+                // process any remaining data
+                processData()
+                // cleanup
+                visionPort!!.flush()
+                visionPort!!.free()
+                visionPort = null
+                println("[Vision] Thread ended")
             }
         }
 
@@ -47,13 +69,64 @@ object Vision {
 //        }
     }
 
-    fun stop() {
-        stopped = true
+    private fun connect() {
+        try {
+            visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB)
 
-        if (visionPort != null) {
+            // In case we start getting data immediately, turn it off
             sendCmd("streamoff")
-            visionPort!!.free()
+
+            // Wait for the incoming stream to stop and read up all the incoming data
+            sleep(100)
+            if (visionPort!!.bytesReceived > 0) {
+                visionPort!!.readString()
+            }
+
+            // test with a ping
+            val pingResult = sendPing()
+            if (pingResult != 0) {
+                visionPort!!.free()
+                visionPort = null
+            } else {
+                println("[Vision] JeVois connection successful :)")
+            }
+        } catch (e: Exception) {
+            visionPort = null
         }
+    }
+
+    private val gson = Gson()
+
+    data class VisionTemplate(
+            val Track: Long,
+            val Angle: Long,
+            val Range: Long)
+
+    private fun processData() {
+        if (visionPort!!.bytesReceived > 0) {
+            // got data
+            val string = visionPort!!.readString()
+            val obj = gson.fromJson<VisionTemplate>(string)
+//             (1) newly acquired target or (2) not too different from previous target or (3) have been getting different values for over 200ms
+//            if (isTgtVisible == 0L
+//                    || ((Math.abs(tgtAngle - obj.Angle) < 5 && Math.abs(tgtRange - obj.Range) < 10))
+//                    || (System.currentTimeMillis() - lastDataUpdated > 200)) {
+            lastDataUpdated = System.currentTimeMillis()
+            isTgtVisible = obj.Track
+            tgtAngle = obj.Angle
+            tgtAngleAbsolute = (NavX.angle + tgtAngle)
+            tgtRange = obj.Range
+//            }
+        } else if (System.currentTimeMillis() - lastDataUpdated > 200) {
+            // no data received for more than 200ms => not tracking any object
+            isTgtVisible = 0
+            tgtAngle = 0
+            tgtRange = 0
+        }
+
+        SmartDashboard.putNumber("Angle", tgtAngle.toDouble())
+        SmartDashboard.putNumber("Angle Absolute", tgtAngleAbsolute)
+        SmartDashboard.putNumber("Distance", tgtRange.toDouble())
     }
 
     private fun sendPing(): Int {
@@ -126,81 +199,5 @@ object Vision {
             }
         }
         return retval
-    }
-
-    private fun connect() {
-        try {
-            println("Connecting...")
-            visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB1)
-
-            // In case we start getting data immediately, turn it off
-            sendCmd("streamoff")
-
-            // Wait for the incoming stream to stop and read up all the incoming data
-            sleep(100)
-            if (visionPort!!.bytesReceived > 0) {
-                visionPort!!.readString()
-            }
-
-            // test with a ping
-            val pingResult = sendPing()
-            if (pingResult != 0) {
-                println("[Vision] JeVois ping test failed!")
-                visionPort = null
-            } else {
-                println("[Vision] JeVois ping test completed! :)")
-            }
-
-            // start the stream again
-            sendCmd("streamon")
-        } catch (e: Exception) {
-            visionPort = null
-            return
-        }
-    }
-
-    private val gson = Gson()
-
-    data class VisionTemplate(
-            val Track: Long,
-            val Angle: Long,
-            val Range: Long)
-
-    private fun processData() {
-//        println("Thread active...")
-        if (visionPort == null) {
-            connect()
-        }
-
-        // still not connected
-        if (visionPort == null) {
-            return
-        }
-
-        if (visionPort!!.bytesReceived > 0) {
-            // got data
-            val string = visionPort!!.readString()
-//            println(string)
-            val obj = gson.fromJson<VisionTemplate>(string)
-            // (1) newly acquired target or (2) not too different from previous target or (3) have been getting different values for over 200ms
-//            if (isTgtVisible == 0L
-//                    || ((Math.abs(tgtAngle - obj.Angle) < 5 && Math.abs(tgtRange - obj.Range) < 10))
-//                    || (System.currentTimeMillis() - lastDataUpdated > 200)) {
-            lastDataUpdated = System.currentTimeMillis()
-            isTgtVisible = obj.Track
-            tgtAngle = obj.Angle
-            tgtAngleAbsolute = (NavX.angle + tgtAngle)
-            tgtRange = obj.Range
-//            }
-        } else if (System.currentTimeMillis() - lastDataUpdated > 200) {
-            // no data received for more than 200ms => not tracking any object
-            isTgtVisible = 0
-            tgtAngle = 0
-            tgtRange = 0
-        }
-
-        SmartDashboard.putNumber("Angle", tgtAngle.toDouble())
-        SmartDashboard.putNumber("Angle Absolute", tgtAngleAbsolute)
-        SmartDashboard.putNumber("Distance", tgtRange.toDouble())
     }
 }
