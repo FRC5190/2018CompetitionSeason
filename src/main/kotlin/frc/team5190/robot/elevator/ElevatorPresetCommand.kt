@@ -6,6 +6,9 @@ import frc.team5190.robot.util.commandGroup
 
 class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
     init {
+        requires(ElevatorSubsystem)
+        requires(ArmSubsystem)
+
         when (elevatorPosition) {
             ElevatorPreset.SWITCH -> {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
@@ -39,6 +42,10 @@ class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
                 })
             }
         }
+    }
+
+    public override fun isFinished(): Boolean {
+        return super.isFinished()
     }
 }
 

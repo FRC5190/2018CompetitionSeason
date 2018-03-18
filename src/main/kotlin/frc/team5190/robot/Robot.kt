@@ -20,7 +20,6 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
 /**
@@ -103,6 +102,8 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Gyro", NavX)
         SmartDashboard.putNumber("Free Ram", Runtime.getRuntime().freeMemory().toDouble() / 1e6)
+
+        SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
 //        SmartDashboard.putNumber("Pitch", NavX.pitch.toDouble())
 //        SmartDashboard.putNumber("Roll", NavX.roll.toDouble())
 
@@ -119,15 +120,15 @@ class Robot : IterativeRobot() {
         DriveSubsystem.autoReset()
         NavX.reset()
 
-//        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
+        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
+//        PickupCubeCommand().start()
+//        TurnCommand(10.0, visionCheck = true, tolerance = 180.0).start()
 
-        commandGroup {
-            addSequential(MotionProfileCommand("LS-RR", "Scale", true, false))
-        }.start()
-
-        // DEBUGGING
-//        MotionProfileCommand("CS-L", "Switch", false, false).start()
-//        TurnCommand(180.0).start()
+//        commandGroup {
+//            addSequential(MotionProfileCommand("LS-LL", "Scale", true, false))
+//            addSequential(TurnCommand(-10.0), 0.7)
+//            addSequential(PickupCubeCommand())
+//        }.start()
     }
 
 
@@ -147,6 +148,7 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
 

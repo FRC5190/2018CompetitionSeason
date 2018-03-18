@@ -113,6 +113,11 @@ object ArmSubsystem : Subsystem() {
      * Runs periodically
      */
     override fun periodic() {
+
+        if (currentPosition > 4096 || currentPosition < 0) {
+            masterArmMotor.setSelectedSensorPosition(currentPosition % 4096, 0, TIMEOUT)
+        }
+
         currentLimiting()
     }
 }

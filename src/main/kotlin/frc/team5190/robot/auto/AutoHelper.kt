@@ -39,6 +39,7 @@ class AutoHelper {
 
                     addSequential(commandGroup {
                         addParallel(mpCommand)
+                        addParallel(AutoArmCommand(ArmPosition.UP))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(mpCommand.mpTime - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 0.65))
@@ -49,11 +50,11 @@ class AutoHelper {
                     addSequential(StraightDriveCommand(-1.0), 0.7)
 
                     addSequential(commandGroup {
-                        addParallel(TurnCommand(if (folder.last() == 'L') 90.0 else -90.0))
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                        addParallel(TurnCommand(if (folder.last() == 'L') 70.0 else -70.0))
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE), 2.0)
                     })
 
-                    addSequential(PickupCubeCommand())
+                    addSequential(PickupCubeCommand(), 2.0)
                     addSequential(IntakeHoldCommand(), 0.001)
 
                     addSequential(StraightDriveCommand(driveToZero = true))
@@ -67,12 +68,12 @@ class AutoHelper {
                 }
 
                 "LS-LL", "RS-RR", "LS-RL", "RS-LR",
-                "LS-RR", "RS-LL", "LS-LR", "RS-RL"-> commandGroup {
+                "LS-RR", "RS-LL", "LS-LR", "RS-RL" -> commandGroup {
 
-                    val folderIn = if (folder[4] == folder[0]) "LS-LL" else "LS-RR"
+                    val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
 
                     val mpCommand = MotionProfileCommand(folderIn, "Scale", true, folder.first() == 'R')
-                    val thirdcube = MotionProfileCommand(folderIn, "3rd Cube", false, folder.first() == 'R')
+//                    val thirdcube = MotionProfileCommand(folderIn, "3rd Cube", false, folder.first() == 'R')
 
                     // DROP CUBE ON SCALE
                     addSequential(commandGroup {
@@ -80,15 +81,26 @@ class AutoHelper {
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.2))
                             addSequential(commandGroup {
-                                addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                addParallel(AutoArmCommand(ArmPosition.UP))
+                                addSequential(object : CommandGroup() {
+                                    init {
+                                        addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                        addParallel(AutoArmCommand(ArmPosition.UP))
+                                    }
+
+                                    var startTime: Long = 0
+                                    override fun initialize() {
+                                        super.initialize()
+                                        startTime = System.currentTimeMillis()
+                                    }
+
+                                    override fun isFinished() = (System.currentTimeMillis() - startTime) > (mpCommand.mpTime - 2.50).coerceAtLeast(0.001) * 1000
+                                })
                             })
-                            addSequential(TimedCommand((mpCommand.mpTime - 3.75).coerceAtLeast(0.001)))
                             addSequential(commandGroup {
                                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                                 addParallel(commandGroup {
-                                    addSequential(TimedCommand(1.75))
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 0.5))
+                                    addSequential(TimedCommand(1.95))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
                             })
@@ -98,27 +110,29 @@ class AutoHelper {
                     // PICKUP SECOND CUBE
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(TurnCommand(if (folder.first() == 'R') 10.0 else -10.0), 0.5)
                         addParallel(commandGroup {
-                            addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.FIRST_STAGE.ticks + 100.0 &&
-                                        DriveSubsystem.currentCommand !is TurnCommand
-                            })
+                            addSequential(TurnCommand(-5.0))
                             addSequential(PickupCubeCommand())
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
 
+
                     // DROP SECOND CUBE IN SCALE
                     addSequential(commandGroup {
-                        addParallel(ArcDriveCommand(-5.0, if (folder.first() == 'R') -12.5 else 12.5))
+                        addParallel(ArcDriveCommand(-5.0, if (folder.first() == 'R') -12.5 else 12.5), 4.0)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(1.75))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 0.5))
+                            addSequential(TimedCommand(2.15))
+                            addSequential(object : IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 0.5) {
+                                override fun end() {
+                                    DriveSubsystem.currentCommand?.cancel()
+                                }
+                            })
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
+
 
                     // PICKUP THIRD CUBE
                     addSequential(commandGroup {
@@ -134,6 +148,8 @@ class AutoHelper {
                         })
                     })
 
+                    /*
+
                     // DROP THIRD CUBE IN SCALE
                     addSequential(commandGroup {
                         addParallel(thirdcube)
@@ -147,6 +163,7 @@ class AutoHelper {
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
+                    */
                 }
 
                 else -> throw IllegalArgumentException("Scenario does not exist.")

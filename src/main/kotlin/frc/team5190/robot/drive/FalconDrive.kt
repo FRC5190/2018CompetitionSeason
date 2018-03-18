@@ -103,10 +103,12 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
                 Gear.HIGH -> allMasters.forEach {
                     it.configPIDF(DriveConstants.PID_SLOT_HIGH, DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, DriveConstants.MAX_RPM_HIGH, DriveConstants.SENSOR_UNITS_PER_ROTATION)
                     it.selectProfileSlot(DriveConstants.PID_SLOT_HIGH, 0)
+                    it.configOpenloopRamp(0.0, TIMEOUT)
                 }
                 Gear.LOW -> allMasters.forEach {
                     it.configPIDF(DriveConstants.PID_SLOT_LOW, DriveConstants.P_LOW, DriveConstants.I_LOW, DriveConstants.D_LOW, DriveConstants.MAX_RPM_LOW, DriveConstants.SENSOR_UNITS_PER_ROTATION)
                     it.selectProfileSlot(DriveConstants.PID_SLOT_LOW, 0)
+                    it.configOpenloopRamp(0.2, TIMEOUT)
                 }
             }
             gearSolenoid.set(value.state)

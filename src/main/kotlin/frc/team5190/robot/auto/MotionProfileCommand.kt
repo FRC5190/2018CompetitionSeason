@@ -69,7 +69,7 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
             val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
             val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
-            var turn = 1.2 * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
+            var turn = 1.5 * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
             turn *= (if (isMirrored) -1 else 1)
             turn = turn.coerceIn(-1.0, 1.0)
 
