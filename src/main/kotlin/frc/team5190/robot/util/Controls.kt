@@ -57,9 +57,8 @@ object Controls {
                 IntakeCommand(IntakeDirection.IN).start()
                 teleIntake = true
             }
-            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 && !climbState -> {
-                IntakeCommand(IntakeDirection.OUT).start()
-                teleIntake = true
+            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) >= 0.0  -> {
+                IntakeCommand(IntakeDirection.OUT, outSpeed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft)).start()
             }
             teleIntake -> {
                 IntakeSubsystem.currentCommand?.cancel()

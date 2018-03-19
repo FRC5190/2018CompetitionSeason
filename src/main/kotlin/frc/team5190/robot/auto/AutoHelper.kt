@@ -40,7 +40,7 @@ class AutoHelper {
 
                     addSequential(commandGroup {
                         addParallel(mpCommand)
-                        addParallel(AutoArmCommand(ArmPosition.UP))
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(mpCommand.mpTime - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 0.65))
@@ -48,24 +48,28 @@ class AutoHelper {
                     })
 
                     addSequential(IntakeHoldCommand(), 0.001)
-                    addSequential(StraightDriveCommand(-1.0), 0.7)
 
                     addSequential(commandGroup {
-                        addParallel(TurnCommand(if (folder.last() == 'L') 70.0 else -70.0))
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE), 2.0)
+                        addParallel(MotionProfileCommand(folder, "Switch", true, false))
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(0.5))
+                            addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                        })
                     })
 
-                    addSequential(PickupCubeCommand(), 2.0)
+                    addSequential(PickupCubeCommand())
                     addSequential(IntakeHoldCommand(), 0.001)
 
-                    addSequential(StraightDriveCommand(driveToZero = true))
+                    addSequential(ArcDriveCommand(-4.0, 0.0), 1.0)
 
                     addSequential(commandGroup {
-                        addParallel(TurnCommand(0.0))
+                        addParallel(MotionProfileCommand(folder, "Switch", false, false))
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(mpCommand.mpTime - 0.2))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 0.65))
+                        })
                     })
-
-                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 0.65))
                 }
 
                 "LS-LL", "RS-RR", "LS-RL", "RS-LR",
@@ -74,9 +78,12 @@ class AutoHelper {
                     val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
                     val mpCommand = MotionProfileCommand(folderIn, "Scale", true, folder.first() == 'R')
 
+                    val before = if (folder.first() == folder.last()) 2.50 else 1.50
+
                     // DROP CUBE ON SCALE
                     addSequential(commandGroup {
                         addParallel(mpCommand)
+
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.2))
                             addSequential(commandGroup {
@@ -93,14 +100,14 @@ class AutoHelper {
                                         startTime = System.currentTimeMillis()
                                     }
 
-                                    override fun isFinished() = (System.currentTimeMillis() - startTime) > (mpCommand.mpTime - 2.50).coerceAtLeast(0.001) * 1000
+                                    override fun isFinished() = (System.currentTimeMillis() - startTime) > (mpCommand.mpTime - before).coerceAtLeast(0.001) * 1000
                                 })
                             })
                             addSequential(commandGroup {
                                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                                 addParallel(commandGroup {
                                     addSequential(TimedCommand(1.95))
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.75, timeout = 1.0))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
                             })
@@ -110,10 +117,13 @@ class AutoHelper {
                     // PICKUP SECOND CUBE
                     addSequential(commandGroup {
                         addSequential(commandGroup {
-                            addParallel(TurnCommand(if (folder.last() == 'R') 7.5 else -7.5))
+                            addParallel(commandGroup {
+                                addSequential(StraightDriveCommand(0.1), 0.01)
+                                addSequential(TurnCommand(if (folder.last() == 'R') 80.0 else -10.0))
+                            })
                             addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
-                        addSequential(PickupCubeCommand(inSpeed = 1.0))
+                        addSequential(PickupCubeCommand(inSpeed = -1.0), 5.0)
                         addSequential(IntakeHoldCommand(), 0.001)
                     })
 

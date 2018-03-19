@@ -24,6 +24,7 @@ object Vision {
     }
 
     fun start() {
+        println("STARTING")
         thread(name = "Vision") {
             if (visionPort == null) {
                 // try to connect one more time
@@ -37,7 +38,7 @@ object Vision {
                 threadStarted = System.currentTimeMillis()
 
                 // run for 16s
-                while (System.currentTimeMillis() - threadStarted < 16000) {
+                while (System.currentTimeMillis() - threadStarted < 3000) {
                     try {
                         processData()
                         sleep(10)
@@ -70,6 +71,7 @@ object Vision {
     }
 
     private fun connect() {
+        println("Connecting..")
         try {
             visionPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB)
 
@@ -113,7 +115,7 @@ object Vision {
 //                    || (System.currentTimeMillis() - lastDataUpdated > 200)) {
             lastDataUpdated = System.currentTimeMillis()
             isTgtVisible = obj.Track
-            tgtAngle = obj.Angle
+            tgtAngle = obj.Angle - 3
             tgtAngleAbsolute = (NavX.angle + tgtAngle)
             tgtRange = obj.Range
 //            }

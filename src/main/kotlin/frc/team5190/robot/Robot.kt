@@ -16,10 +16,11 @@ import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
-import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.util.commandGroup
 import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
@@ -79,34 +80,16 @@ class Robot : IterativeRobot() {
      * Executed periodically.
      */
     override fun robotPeriodic() {
-//
-//        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
-//        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
         SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
         SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
 
-//        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
-//        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
-
         SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
-//
-//        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.amperage)
-//        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.amperage)
-//
-//        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
-//        SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
-//        SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
-//        SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
 
-
-        SmartDashboard.putData("Gyro", NavX)
-        SmartDashboard.putNumber("Free Ram", Runtime.getRuntime().freeMemory().toDouble() / 1e6)
+        SmartDashboard.putNumber("Gyro", NavX.angle)
 
         SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
-//        SmartDashboard.putNumber("Pitch", NavX.pitch.toDouble())
-//        SmartDashboard.putNumber("Roll", NavX.roll.toDouble())
 
         Scheduler.getInstance().run()
     }
@@ -120,17 +103,16 @@ class Robot : IterativeRobot() {
 
         DriveSubsystem.autoReset()
         NavX.reset()
-        Vision.start()
 
-        AutoHelper.getAuto(StartingPositions.LEFT, switchSide, scaleSide).start()
-//        PickupCubeCommand().start()
-//        TurnCommand(10.0, visionCheck = true, tolerance = 180.0).start()
+//        StraightDriveCommand(-8.0).s4tart()
 
-//        commandGroup {
-//            addSequential(MotionProfileCommand("LS-LL", "Scale", true, false))
-//            addSequential(TurnCommand(-10.0), 0.7)
-//            addSequential(PickupCubeCommand())
-//        }.start()
+        commandGroup {
+            addSequential(MotionProfileCommand("LS-RR", "Scale", true, false))
+            addSequential(TurnCommand(10.0))
+            addSequential(PickupCubeCommand(), 5.0)
+        }.start()
+
+//        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide).start()
     }
 
 

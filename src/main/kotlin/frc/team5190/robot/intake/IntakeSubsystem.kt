@@ -34,6 +34,8 @@ object IntakeSubsystem : Subsystem() {
     init {
         with(masterIntakeMotor) {
             inverted = false
+            configVoltageCompSaturation(12.0, TIMEOUT)
+            enableVoltageCompensation(false)
         }
         with(TalonSRX(MotorIDs.INTAKE_RIGHT)) {
             follow(masterIntakeMotor)
