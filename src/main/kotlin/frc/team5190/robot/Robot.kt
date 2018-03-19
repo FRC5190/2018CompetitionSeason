@@ -16,11 +16,10 @@ import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
-import frc.team5190.robot.drive.*
+import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.commandGroup
 import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
@@ -104,15 +103,8 @@ class Robot : IterativeRobot() {
         DriveSubsystem.autoReset()
         NavX.reset()
 
-//        StraightDriveCommand(-8.0).s4tart()
-
-        commandGroup {
-            addSequential(MotionProfileCommand("LS-RR", "Scale", true, false))
-            addSequential(TurnCommand(10.0))
-            addSequential(PickupCubeCommand(), 5.0)
-        }.start()
-
-//        AutoHelper.getAuto(StartingPositions.CENTER, switchSide, scaleSide).start()
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+//        StraightDriveCommand(-8.0).start()
     }
 
 

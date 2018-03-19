@@ -16,7 +16,7 @@ import frc.team5190.robot.util.Maths
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.followers.EncoderFollower
 
-class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, isMirrored: Boolean) : Command() {
+class MotionProfileCommand(folder: String, file: String, val isReversed: Boolean, isMirrored: Boolean) : Command() {
 
     private val leftPath = Pathreader.getPath(folder, "$file Left Detailed")
     private val rightPath = Pathreader.getPath(folder, "$file Right Detailed")
@@ -41,15 +41,6 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
 
         val leftTrajectory = if (isMirrored) rightPath else leftPath
         val rightTrajectory = if (isMirrored) leftPath else rightPath
-
-        DriveSubsystem.falconDrive.leftMotors.forEach {
-            it.inverted = isReversed
-            it.setSensorPhase(!DriveConstants.IS_2018_BOT)
-        }
-        DriveSubsystem.falconDrive.rightMotors.forEach {
-            it.inverted = !isReversed
-            it.setSensorPhase(!DriveConstants.IS_2018_BOT)
-        }
 
         leftEncoderFollower = EncoderFollower(if (isReversed) rightTrajectory else leftTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
@@ -79,6 +70,18 @@ class MotionProfileCommand(folder: String, file: String, isReversed: Boolean, is
     }
 
     override fun initialize() {
+        DriveSubsystem.resetEncoders()
+
+
+        DriveSubsystem.falconDrive.leftMotors.forEach {
+            it.inverted = isReversed
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+        }
+        DriveSubsystem.falconDrive.rightMotors.forEach {
+            it.inverted = !isReversed
+            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+        }
+
         startTime = Timer.getFPGATimestamp()
         notifier.startPeriodic(DriveConstants.MOTION_DT)
     }

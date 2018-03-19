@@ -14,7 +14,7 @@ import frc.team5190.robot.util.*
 object DriveSubsystem : Subsystem() {
 
     // Establishes the drive mode for our different drivers.
-    var controlMode = DriveMode.TANK
+    var controlMode = DriveMode.CURVE
 
     var controller = "Xbox"
     var compressor = Compressor(SolenoidIDs.PCM)

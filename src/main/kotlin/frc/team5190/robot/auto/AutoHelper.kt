@@ -43,24 +43,25 @@ class AutoHelper {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(mpCommand.mpTime - 0.2))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 0.65))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.5, timeout = 0.65))
                         })
                     })
 
                     addSequential(IntakeHoldCommand(), 0.001)
 
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Switch", true, false))
+                        addParallel(MotionProfileCommand(folder, "Switch", true, false), mpCommand.mpTime - 0.4)
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.5))
                             addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
                     })
 
-                    addSequential(PickupCubeCommand())
+                    addSequential(TurnCommand(if (folder.last() == 'R') -10.0 else 10.0), 0.5)
+                    addSequential(PickupCubeCommand(inSpeed = -1.0), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
 
-                    addSequential(ArcDriveCommand(-4.0, 0.0), 1.0)
+                    addSequential(ArcDriveCommand(-4.0, 0.0))
 
                     addSequential(commandGroup {
                         addParallel(MotionProfileCommand(folder, "Switch", false, false))
@@ -104,7 +105,7 @@ class AutoHelper {
                                 })
                             })
                             addSequential(commandGroup {
-                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
+                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND), 1.95)
                                 addParallel(commandGroup {
                                     addSequential(TimedCommand(1.95))
                                     addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
@@ -119,7 +120,7 @@ class AutoHelper {
                         addSequential(commandGroup {
                             addParallel(commandGroup {
                                 addSequential(StraightDriveCommand(0.1), 0.01)
-                                addSequential(TurnCommand(if (folder.last() == 'R') 80.0 else -10.0))
+                                addSequential(TurnCommand(if (folder.last() == 'R') 8.0 else -10.0))
                             })
                             addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
