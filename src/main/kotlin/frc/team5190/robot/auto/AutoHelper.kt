@@ -5,10 +5,8 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.CommandGroup
-import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.AutoArmCommand
+import edu.wpi.first.wpilibj.command.*
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
@@ -45,23 +43,24 @@ class AutoHelper {
                             addSequential(TimedCommand(mpCommand.mpTime - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.5, timeout = 0.65))
                         })
+
                     })
 
                     addSequential(IntakeHoldCommand(), 0.001)
 
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Switch", true, false), mpCommand.mpTime - 0.4)
+                        addParallel(MotionProfileCommand(folder, "Switch", true, false), mpCommand.mpTime - 0.7)
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.5))
                             addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
                     })
 
-                    addSequential(TurnCommand(if (folder.last() == 'R') -10.0 else 10.0), 0.5)
+                    addSequential(TurnCommand(if (folder.last() == 'R') -10.0 else 0.0), 0.5)
                     addSequential(PickupCubeCommand(inSpeed = -1.0), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
 
-                    addSequential(ArcDriveCommand(-4.0, 0.0))
+                    addSequential(ArcDriveCommand(-5.0, 0.0), 1.5)
 
                     addSequential(commandGroup {
                         addParallel(MotionProfileCommand(folder, "Switch", false, false))
@@ -108,7 +107,7 @@ class AutoHelper {
                                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND), 1.95)
                                 addParallel(commandGroup {
                                     addSequential(TimedCommand(1.95))
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 1.0))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = if (folder.first() == folder.last()) 1.0 else 0.75, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
                             })
@@ -124,7 +123,7 @@ class AutoHelper {
                             })
                             addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
-                        addSequential(PickupCubeCommand(inSpeed = -1.0), 5.0)
+                        addSequential(PickupCubeCommand(inSpeed = -1.0), 4.0)
                         addSequential(IntakeHoldCommand(), 0.001)
                     })
 
@@ -134,8 +133,10 @@ class AutoHelper {
                         addParallel(ArcDriveCommand(-5.0, if (folder.first() == 'R') -12.5 else 12.5), 4.0)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(2.15))
-                            addSequential(object : IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 0.5) {
+                            addSequential(object : Command() {
+                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                            })
+                            addSequential(object : IntakeCommand(IntakeDirection.OUT, outSpeed = 0.65, timeout = 0.5) {
                                 override fun end() {
                                     DriveSubsystem.currentCommand?.cancel()
                                 }

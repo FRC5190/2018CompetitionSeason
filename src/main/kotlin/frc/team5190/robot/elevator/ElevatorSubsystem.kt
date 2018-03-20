@@ -163,5 +163,5 @@ enum class ElevatorPosition(var ticks: Int) {
     FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
     SCALE(17000),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
-    INTAKE(1400);
+    INTAKE(1100);
 }

@@ -102,19 +102,19 @@ object ElevatorConstants {
 
     // motion magic
     const val MOTION_VELOCITY = 1000000000
-    const val MOTION_ACCELERATION_INCHES = 75.0
+    const val MOTION_ACCELERATION_INCHES = 90.0
 }
 
 object ArmConstants {
-    const val INVERTED = false                  // true for falcon heavy, false for falcon 9
-    const val SENSOR_PHASE = false              // true for falcon heavy, false for falcon 9
+    const val INVERTED = true                  // true for falcon heavy, false for falcon 9
+    const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
 
     const val P = 2.5
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
     
-    const val DOWN_TICKS = 1300                 // 1000 for falcon heavy, 1330 for falcon 9
+    const val DOWN_TICKS = 1000                 // 1000 for falcon heavy, 1330 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
