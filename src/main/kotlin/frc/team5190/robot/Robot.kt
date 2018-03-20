@@ -97,14 +97,12 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-
         pollForFMSData()
 
         DriveSubsystem.autoReset()
         NavX.reset()
 
         AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
-//        StraightDriveCommand(-8.0).start()
     }
 
 
