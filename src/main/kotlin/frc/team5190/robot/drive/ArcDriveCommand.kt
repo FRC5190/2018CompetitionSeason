@@ -3,24 +3,23 @@
  * Ryan Segerstrom, Prateek Machiraju
  */
 
-package frc.team5190.robot.auto
+package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 
 /**
- * Command that drives to distance
+ * Command that drives to tgtRange
  * @param feet Distance to go forward
  * @param cruiseVel Cruise velocity
  * @param accel Acceleration
  */
-class ArcPathCommand(val feet: Double, val angle: Double,
-                     private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
-                     private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
+class ArcDriveCommand(val feet: Double, val angle: Double,
+                      private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
+                      private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
 
     // Setpoint in Native Units
     private var setPoint = Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
@@ -39,7 +38,7 @@ class ArcPathCommand(val feet: Double, val angle: Double,
 
         val radius = feet / Math.sin(angleDelta) * Math.sin((Math.PI - angleDelta) / 2.0)
         val arcLength = radius * angleDelta
-//        println("Current Angle: $currentAngle New Angle: $angle Distance: $distance")
+//        println("Current Angle: $currentAngle New Angle: $tgtAngle Distance: $tgtRange")
 //        println("Angle: ${Math.toDegrees(angleDelta)} Radius: $radius, Arc Length: $arcLength")
 
         val wheelBase = DriveConstants.DRIVE_BASE_WIDTH / 12.0 / 2.0

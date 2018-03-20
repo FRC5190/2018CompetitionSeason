@@ -12,7 +12,7 @@ import frc.team5190.robot.util.IntakeConstants
 /**
  *  Command that either intakes or outputs the cube
  */
-class IntakeCommand(private val direction: IntakeDirection, private val timeout: Double = -.1,
+open class IntakeCommand(private val direction: IntakeDirection, private val timeout: Double = -.1,
                     private val inSpeed: Double = IntakeConstants.DEFAULT_SPEED,
                     private val outSpeed: Double = IntakeConstants.DEFAULT_SPEED) : Command() {
 
@@ -40,5 +40,5 @@ class IntakeCommand(private val direction: IntakeDirection, private val timeout:
      * Checks if the intake has finished outtaking or intaking based on amperage values and timeouts
      */
     override fun isFinished() = (timeout > 0 && isTimedOut) ||
-            (direction == IntakeDirection.IN && IntakeSubsystem.amperage > IntakeConstants.AMP_THRESHOLD)
+            (direction == IntakeDirection.IN && IntakeSubsystem.isCubeIn)
 }

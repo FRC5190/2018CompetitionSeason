@@ -13,6 +13,7 @@ import frc.team5190.robot.climb.*
 import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
+import kotlin.math.absoluteValue
 
 object Controls {
 
@@ -31,10 +32,19 @@ object Controls {
             }
         }
 
-        DriveSubsystem.falconDrive.gear = when {
-            MainXbox.aButton -> Gear.LOW
-            else -> Gear.HIGH
+        if (Robot.INSTANCE!!.isOperatorControl) {
+            if (MainXbox.aButton) {
+                // Auto Shift Logic
+                val speed = DriveSubsystem.falconDrive.allMasters.map { Maths.nativeUnitsPer100MsToFeetPerSecond(it.getSelectedSensorVelocity(0).absoluteValue) }.average()
+                when {
+                    speed > DriveConstants.AUTO_SHIFT_HIGH_THRESHOLD -> DriveSubsystem.falconDrive.gear = Gear.HIGH
+                    speed < DriveConstants.AUTO_SHIFT_LOW_THRESHOLD -> DriveSubsystem.falconDrive.gear = Gear.LOW
+                }
+            } else {
+                DriveSubsystem.falconDrive.gear = Gear.HIGH
+            }
         }
+
     }
 
     fun intakeSubsystem() {
@@ -44,11 +54,11 @@ object Controls {
 
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) && !climbState -> {
-                IntakeCommand(IntakeDirection.IN).start()
+                IntakeCommand(IntakeDirection.IN, inSpeed = 1.0).start()
                 teleIntake = true
             }
-            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5 && !climbState -> {
-                IntakeCommand(IntakeDirection.OUT).start()
+            MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) >= 0.1 && !climbState -> {
+                IntakeCommand(IntakeDirection.OUT, outSpeed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) * 0.8).start()
                 teleIntake = true
             }
             teleIntake -> {
@@ -67,6 +77,8 @@ object Controls {
             MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() - 50)
         }
     }
+
+    private var lastPov = -1
 
     fun elevatorSubsystem() {
         when {
@@ -97,21 +109,20 @@ object Controls {
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
-        when (pov) {
-        // Up - Scale
-            0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)
-        // Right - Switch
-            90 -> ElevatorPresetCommand(ElevatorPreset.SWITCH)
-        // Down - Intake
-            180 -> ElevatorPresetCommand(ElevatorPreset.INTAKE)
-        // Left - Scale Backwards
-            270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND)
-            else -> null
-        }?.let {
-            ElevatorSubsystem.currentCommandGroup?.cancel()
-            ElevatorSubsystem.currentCommandGroup = it
-            it.start()
+        if(lastPov != pov) {
+            when (pov) {
+            // Up - Scale
+                0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)
+            // Right - Switch
+                90 -> ElevatorPresetCommand(ElevatorPreset.SWITCH)
+            // Down - Intake
+                180 -> ElevatorPresetCommand(ElevatorPreset.INTAKE)
+            // Left - Scale Backwards
+                270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND)
+                else -> null
+            }?.start()
         }
+        lastPov = pov
     }
 
     fun climbSubsystem() {

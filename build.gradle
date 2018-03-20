@@ -1,4 +1,7 @@
 import jaci.gradle.deploy.artifact.FileCollectionArtifact
+import jaci.openrio.gradle.GradleRIOPlugin
+import jaci.openrio.gradle.frc.FRCJavaArtifact
+import jaci.openrio.gradle.frc.RoboRIO
 
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.21"
@@ -15,50 +18,38 @@ def ROBOT_CLASS = "frc.team5190.robot.Robot"
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
     targets {
-        target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
+        target("roborio", RoboRIO) {
             team = TEAM
             user = 'admin'
             password = ''
         }
     }
     artifacts {
-        artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+        artifact('frcJava', FRCJavaArtifact) {
             targets << "roborio"
         }
 
         artifact('LS-LL', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/LS-LL', include: '*.csv')
-            directory = '/home/lvuser/paths/LS-LL/'
-            targets << "roborio"
-        }
-
-        artifact('LS-LR', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/LS-LR', include: '*.csv')
-            directory = '/home/lvuser/paths/LS-LR/'
-            targets << "roborio"
-        }
-
-        artifact('LS-RL', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/LS-RL', include: '*.csv')
-            directory = '/home/lvuser/paths/LS-RL/'
+            files = project.fileTree(dir: 'src/main/resources/LS-LL')
+            directory = '/home/lvuser/paths/LS-LL'
             targets << "roborio"
         }
 
         artifact('LS-RR', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/LS-RR', include: '*.csv')
-            directory = '/home/lvuser/paths/LS-RR/'
+            files = project.fileTree(dir: 'src/main/resources/LS-RR')
+            directory = '/home/lvuser/paths/LS-RR'
             targets << "roborio"
         }
 
         artifact('CS-L', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/CS-L', include: '*.csv')
-            directory = '/home/lvuser/paths/CS-L/'
+            files = project.fileTree(dir: 'src/main/resources/CS-L')
+            directory = '/home/lvuser/paths/CS-L'
             targets << "roborio"
         }
 
         artifact('CS-R', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/CS-R', include: '*.csv')
-            directory = '/home/lvuser/paths/CS-R/'
+            files = project.fileTree(dir: 'src/main/resources/CS-R')
+            directory = '/home/lvuser/paths/CS-R'
             targets << "roborio"
         }
     }
@@ -85,7 +76,7 @@ dependencies {
 // knows where to look for our Robot Class.
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
+    manifest GradleRIOPlugin.javaManifest(ROBOT_CLASS)
 }
 
 task wrapper(type: Wrapper) {

@@ -7,17 +7,17 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
-import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.vision.VisionSubsystem
+import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.vision.Vision
 
 /**
- * Command that turns the robot to a certain angle
+ * Command that turns the robot to a certain tgtAngle
  * @param angle Angle to turn to in degrees
  * @param visionCheck Whether to use vision for cube detection
  * @param tolerance Tolerance
  */
-class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(0.08, 0.002, 0.1) {
+class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
 
     init {
         requires(DriveSubsystem)
@@ -32,15 +32,15 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
         when (visionCheck) {
             false -> setpoint = angle
             true -> {
-                when (VisionSubsystem.isTgtVisible == 1L) {
+                when (Vision.isTgtVisible == 1L) {
                     false -> {
                         println("Vision subsystem did not find any target object")
                         setpoint = angle
                     }
                     true -> {
-                        val x = NavX.pidGet()                   // current absolute angle
-                        val y = x + (VisionSubsystem.tgtAngle + VisionSubsystem.rawAngle) / 2.0    // Vision absolute angle
-                        // (y - angle) is correction and it should be less than tolerance
+                        val x = NavX.pidGet()                   // current absolute tgtAngle
+                        val y = x + (Vision.tgtAngle)    // Vision absolute tgtAngle
+                        // (y - tgtAngle) is correction and it should be less than tolerance
                         setpoint = if (Math.abs(y - angle) < tolerance) {
                             println("Vision subsystem corrected $angle to $y")
                             y
@@ -73,7 +73,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
     private var time = 0
 
     /**
-     * Checks if the robot is at the specified angle
+     * Checks if the robot is at the specified tgtAngle
      */
     override fun isFinished(): Boolean {
         if (pidController.onTarget()) {

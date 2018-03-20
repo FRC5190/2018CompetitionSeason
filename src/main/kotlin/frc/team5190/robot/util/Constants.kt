@@ -7,7 +7,7 @@
 package frc.team5190.robot.util
 
 /**
- * Contains Motor IDs.
+ * Contains Motor IDs.robot
  */
 object MotorIDs {
     const val FRONT_LEFT = 1
@@ -28,6 +28,11 @@ object MotorIDs {
     const val BACK_WINCH_MASTER = 11
     const val BACK_WINCH_SLAVE = 12
 
+}
+
+object ChannelIDs {
+    const val LEFT_CUBE_SENSOR = 8
+    const val RIGHT_CUBE_SENSOR = 9
 }
 
 object SolenoidIDs {
@@ -61,10 +66,18 @@ object DriveConstants {
 
     const val PID_SLOT_LOW = 1
 
+    const val TURN_P = 0.08
+    const val TURN_I = 0.002
+    const val TURN_D = 0.1
+
     const val MOTION_MAGIC_CRUISE = 7.0
     const val MOTION_MAGIC_ACCEL = 4.5
 
-    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
+    const val MOTION_DT = 0.02
+    const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
+    const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
+
+    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -82,14 +95,14 @@ object ElevatorConstants {
 
     const val NOMINAL_OUT = 0.0
     const val IDLE_PEAK_OUT = 0.2
-    const val ACTIVE_PEAK_OUT = 0.8
+    const val ACTIVE_PEAK_OUT = 1.0
     const val TOLERANCE_INCHES = 0.25
 
     const val SOFT_LIMIT_FWD = 22500
 
     // motion magic
     const val MOTION_VELOCITY = 1000000000
-    const val MOTION_ACCELERATION_INCHES = 50.0
+    const val MOTION_ACCELERATION_INCHES = 90.0
 }
 
 object ArmConstants {
@@ -100,8 +113,8 @@ object ArmConstants {
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
-
-    const val DOWN_TICKS = 1000                 // 1470 for falcon heavy, 1330 for falcon 9
+    
+    const val DOWN_TICKS = 1000                 // 1000 for falcon heavy, 1330 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
@@ -109,7 +122,7 @@ object ArmConstants {
     const val LIMITING_REDUCTION_FACTOR = 0.3
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.5
+    const val PEAK_OUT = 0.75
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000
@@ -118,7 +131,6 @@ object ArmConstants {
 
 object IntakeConstants {
     const val DEFAULT_SPEED = 0.65
-    const val AMP_THRESHOLD = 6.0
 }
 
 object ClimbConstants {

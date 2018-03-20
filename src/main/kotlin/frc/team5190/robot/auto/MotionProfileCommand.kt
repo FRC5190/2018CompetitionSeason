@@ -6,71 +6,97 @@
 package frc.team5190.robot.auto
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.wpilibj.Notifier
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.util.DriveConstants
+import frc.team5190.robot.util.Maths
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.followers.EncoderFollower
 
-/**
- * Command that executes a Motion Profile
- * @param requestId Request ID of the MP
- * @param isReversed If the MP should run in reverse
- * @param isMirrored IF the MP should be mirrored
- */
-class MotionProfileCommand(private val requestId: Int, private val isReversed: Boolean = false, private val isMirrored: Boolean = false) : Command() {
-    private lateinit var motionProfile: MotionProfile
+class MotionProfileCommand(folder: String, file: String, val isReversed: Boolean, isMirrored: Boolean) : Command() {
 
-    private val leftTrajectory by lazy {
-        when (isMirrored) {
-            false -> Pathreader.getLeftPath(requestId)!!
-            true -> Pathreader.getRightPath(requestId)!!
-        }
-    }
-    private val rightTrajectory by lazy {
-        when (isMirrored) {
-            false -> Pathreader.getRightPath(requestId)!!
-            true -> Pathreader.getLeftPath(requestId)!!
-        }
-    }
+    private val leftPath = Pathreader.getPath(folder, "$file Left Detailed")
+    private val rightPath = Pathreader.getPath(folder, "$file Right Detailed")
+
+    private val leftEncoderFollower: EncoderFollower
+    private val rightEncoderFollower: EncoderFollower
+
+    val mpTime
+        get() = leftPath!!.length() * DriveConstants.MOTION_DT
+
+    private val notifier: Notifier
+
+    private var startTime: Double? = null
 
     init {
+        if (leftPath == null || rightPath == null)
+            throw NullPointerException("Paths were not received from Pathreader.").apply {
+                printStackTrace()
+            }
+
         requires(DriveSubsystem)
+
+        val leftTrajectory = if (isMirrored) rightPath else leftPath
+        val rightTrajectory = if (isMirrored) leftPath else rightPath
+
+        leftEncoderFollower = EncoderFollower(if (isReversed) rightTrajectory else leftTrajectory).apply {
+            configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
+            configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+        }
+
+        rightEncoderFollower = EncoderFollower(if (isReversed) leftTrajectory else rightTrajectory).apply {
+            configureEncoder(DriveSubsystem.falconDrive.rightEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
+            configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+        }
+
+        notifier = Notifier({
+            val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
+            val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
+
+            val actualHeading = (if (isMirrored) 1 else -1) * NavX.angle
+            val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
+
+            val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
+            var turn = 1.6 * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
+            turn *= (if (isMirrored) -1 else 1)
+            turn = turn.coerceIn(-1.0, 1.0)
+
+            println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn")
+            DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
+        })
     }
 
-    fun getMPTime(): Double {
-        return if (rightTrajectory.map { it.dt }.sum() == leftTrajectory.map { it.dt }.sum())
-            leftTrajectory.map { it.dt }.sum()
-        else 0.0
-    }
-
-    /**
-     * Runs once whenever the command is started.
-     */
     override fun initialize() {
-        motionProfile = MotionProfile(DriveSubsystem.falconDrive.leftMaster, leftTrajectory, DriveSubsystem.falconDrive.rightMaster, rightTrajectory, isReversed)
-        motionProfile.startMotionProfile()
+        DriveSubsystem.resetEncoders()
+
+
+        DriveSubsystem.falconDrive.leftMotors.forEach {
+            it.inverted = isReversed
+            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+        }
+        DriveSubsystem.falconDrive.rightMotors.forEach {
+            it.inverted = !isReversed
+            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+        }
+
+        startTime = Timer.getFPGATimestamp()
+        notifier.startPeriodic(DriveConstants.MOTION_DT)
     }
 
-    /**
-     * Called periodically until triggerState or until the command has been canceled.
-     */
-    override fun execute() {
-        motionProfile.control()
-        DriveSubsystem.falconDrive.leftMaster.set(ControlMode.MotionProfile, motionProfile.getSetValue().value.toDouble())
-        DriveSubsystem.falconDrive.rightMaster.set(ControlMode.MotionProfile, motionProfile.getSetValue().value.toDouble())
-    }
-
-    /**
-     * Called when the command has ended.
-     */
     override fun end() {
-        motionProfile.reset()
-        DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
-        DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
+
+        println("has ended")
+
+        notifier.stop()
 
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
+
+        DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
+        DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
     }
 
-    /**
-     * Ends the command when both sides of the DriveTrain have triggerState executing the motion profile.
-     */
-    override fun isFinished() = motionProfile.hasFinished()
+        override fun isFinished() = (Timer.getFPGATimestamp() - startTime!!) > (mpTime - 0.1)
 }

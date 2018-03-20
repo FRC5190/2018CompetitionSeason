@@ -9,8 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team5190.robot.util.MotorIDs
-import frc.team5190.robot.util.SolenoidIDs
+import frc.team5190.robot.util.*
 
 object DriveSubsystem : Subsystem() {
 
@@ -52,6 +51,8 @@ object DriveSubsystem : Subsystem() {
      * Resets the DriveTrain in Autonomous mode
      */
     fun autoReset() = falconDrive.autoReset()
+
+    fun resetEncoders() = falconDrive.allMasters.forEach {it.setSelectedSensorPosition(0, 0, TIMEOUT)}
 
 }
 

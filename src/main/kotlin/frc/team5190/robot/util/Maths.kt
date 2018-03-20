@@ -5,6 +5,7 @@
 
 package frc.team5190.robot.util
 
+import kotlin.math.PI
 import kotlin.math.roundToInt
 
 /**
@@ -77,6 +78,15 @@ class Maths {
         }
 
         /**
+         * Converts native units per 100 ms to Feet Per Second
+         * @param nativeUnitsPer100Ms Native units per 100 ms
+         * @return Feet Per Second
+         */
+        fun nativeUnitsPer100MsToFeetPerSecond(nativeUnitsPer100Ms: Int): Double {
+            return nativeUnitsToFeet(nativeUnitsPer100Ms * 10)
+        }
+
+        /**
          * Converts native units to feet
          * @param nativeUnits Native units
          * @return Feet
@@ -106,6 +116,10 @@ class Maths {
          */
         fun feetToNativeUnits(feet: Double, nativeUnitsPerRotation: Int, wheelRadius: Double): Int {
             return (feet * 12.0 / (2.0 * Math.PI * wheelRadius) * nativeUnitsPerRotation.toDouble()).roundToInt()
+        }
+
+        fun rpmToFeetPerSecond(rpm: Int, wheelRadius: Double): Double {
+            return ((wheelRadius / 6.0) * PI) * (rpm / 60.0)
         }
     }
 }

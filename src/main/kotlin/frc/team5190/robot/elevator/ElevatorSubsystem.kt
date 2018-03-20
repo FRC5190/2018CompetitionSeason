@@ -7,13 +7,8 @@ package frc.team5190.robot.elevator
 
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team5190.robot.MainXbox
-import frc.team5190.robot.climb.ClimbSubsystem
-import frc.team5190.robot.getTriggerPressed
 import frc.team5190.robot.util.*
 
 object ElevatorSubsystem : Subsystem() {
@@ -41,7 +36,6 @@ object ElevatorSubsystem : Subsystem() {
 
     // Variables used for current limiting
     private var state = MotorState.OK
-    var currentCommandGroup: CommandGroup? = null
     private var stalled = false
 
     var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
@@ -142,6 +136,7 @@ object ElevatorSubsystem : Subsystem() {
      * Executed periodically
      */
     override fun periodic() {
+        SmartDashboard.putNumber("Elevator Power", masterElevatorMotor.motorOutputPercent)
         if (ElevatorSubsystem.isElevatorAtBottom && !hasBeenReset) {
             this.resetEncoders()
             hasBeenReset = true
@@ -154,9 +149,7 @@ object ElevatorSubsystem : Subsystem() {
 
         currentLimiting()
 
-        when {
-            (MainXbox.getTriggerPressed(GenericHID.Hand.kRight) || MainXbox.getBumper(GenericHID.Hand.kRight)) && !ClimbSubsystem.climbState -> ElevatorSubsystem.defaultCommand.start()
-        }
+        Controls.elevatorSubsystem()
     }
 
     fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0)
@@ -168,7 +161,7 @@ object ElevatorSubsystem : Subsystem() {
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(20.0)),
     FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
-    SCALE(ElevatorSubsystem.inchesToNativeUnits(50.0)),
+    SCALE(17000),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
-    INTAKE(500);
+    INTAKE(1100);
 }

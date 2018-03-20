@@ -56,9 +56,15 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.setSelectedSensorPosition(0, 0, TIMEOUT)
         }
 
-        allMotors.forEach {
+        leftMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.configOpenloopRamp(0.0, TIMEOUT)
+        }
+
+        rightMotors.forEach {
+            it.setNeutralMode(NeutralMode.Brake)
+            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
@@ -69,6 +75,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
+            //it.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, TIMEOUT)
         }
     }
 
@@ -76,8 +83,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      * Resets FalconDrive in Autonomous mode
      */
     internal fun autoReset() {
+        gear = Gear.LOW
         this.reset()
-        allMasters.forEach { it.configPeakOutput(1.0, -1.0, TIMEOUT) }
+        allMotors.forEach { it.configPeakOutput(1.0, -1.0, TIMEOUT) }
     }
 
     /**
@@ -89,11 +97,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configPeakOutput(0.8, -0.8, TIMEOUT)
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(0, 0)
-
-            it.configPeakCurrentLimit(60, TIMEOUT)
-            it.configPeakCurrentDuration(1000, TIMEOUT)
-            it.configContinuousCurrentLimit(30, TIMEOUT)
-            it.enableCurrentLimit(true)
         }
         gear = Gear.LOW
     }
@@ -106,10 +109,12 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
                 Gear.HIGH -> allMasters.forEach {
                     it.configPIDF(DriveConstants.PID_SLOT_HIGH, DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, DriveConstants.MAX_RPM_HIGH, DriveConstants.SENSOR_UNITS_PER_ROTATION)
                     it.selectProfileSlot(DriveConstants.PID_SLOT_HIGH, 0)
+                    it.configOpenloopRamp(0.0, TIMEOUT)
                 }
                 Gear.LOW -> allMasters.forEach {
                     it.configPIDF(DriveConstants.PID_SLOT_LOW, DriveConstants.P_LOW, DriveConstants.I_LOW, DriveConstants.D_LOW, DriveConstants.MAX_RPM_LOW, DriveConstants.SENSOR_UNITS_PER_ROTATION)
                     it.selectProfileSlot(DriveConstants.PID_SLOT_LOW, 0)
+                    it.configOpenloopRamp(0.2, TIMEOUT)
                 }
             }
             gearSolenoid.set(value.state)

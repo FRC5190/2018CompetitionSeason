@@ -6,7 +6,6 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
@@ -21,8 +20,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.Maths
-import frc.team5190.robot.vision.VisionSubsystem
+import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
 /**
@@ -50,17 +48,8 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
-    // Variable that stores LS-LL / RS-RR profile setting
-    private var lsll = SendableChooser<String>()
-
-    // Variable that stores LS-LR / RS-RL profile setting
-    private var lslr = SendableChooser<String>()
-
-    // Variable that stores LS-RL / RS-LR profile setting
-    private var lsrl = SendableChooser<String>()
-
-    // Variable that stores LS-RR / RS-LL profile setting
-    private var lsrr = SendableChooser<String>()
+    var alliance = DriverStation.Alliance.Invalid
+    var dataRec = false
 
 
     /**
@@ -71,83 +60,35 @@ class Robot : IterativeRobot() {
         LiveWindow.disableAllTelemetry()
 
         DriveSubsystem
-        VisionSubsystem
         IntakeSubsystem
         ElevatorSubsystem
         ClimbSubsystem
         ArmSubsystem
 
         Pathreader
-
         NavX
+        Vision
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
-        lsll.addDefault("Mixed", "Mixed")
-        lsll.addObject("2 Scale", "2 Scale")
-        lsll.addObject("Straight", "Straight")
-
-        lslr.addDefault("2 Scale", "2 Scale")
-        lslr.addObject("1 Switch", "1 Switch")
-        lslr.addObject("Straight", "Straight")
-
-        lsrl.addDefault("2 Scale", "2 Scale")
-        lsrl.addObject("Straight", "Straight")
-
-        lsrr.addDefault("Mixed", "Mixed")
-        lsrr.addObject("2 Scale", "2 Scale")
-        lsrr.addObject("Straight", "Straight")
-
-        controllerChooser.addDefault("Xbox", "Xbox")
-        controllerChooser.addObject("Bongo", "Bongo")
-
-
-        SmartDashboard.putData("Controller", controllerChooser)
-
-        SmartDashboard.putData("LS-LL / RS-RR", lsll)
-        SmartDashboard.putData("LS-LR / RS-RL", lslr)
-        SmartDashboard.putData("LS-RL / RS-LR", lsrl)
-        SmartDashboard.putData("LS-RR / RS-LL", lsrr)
-
         SmartDashboard.putData("Starting Position", sideChooser)
-
-//        CameraServer.getInstance().startAutomaticCapture(0).apply {
-//            setResolution(100, 100)
-//            setFPS(15)
-//        }
     }
 
     /**
      * Executed periodically.
      */
     override fun robotPeriodic() {
-//
-        SmartDashboard.putNumber("Left Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
-        SmartDashboard.putNumber("Right Motor RPM", Maths.nativeUnitsPer100MsToRPM(DriveSubsystem.falconDrive.rightMaster.getSelectedSensorVelocity(0)))
 
         SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
         SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
 
-        SmartDashboard.putNumber("Left Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.leftEncoderPosition))
-        SmartDashboard.putNumber("Right Encoder to Feet", Maths.nativeUnitsToFeet(DriveSubsystem.falconDrive.rightEncoderPosition))
-
         SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
-//
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
-//
-//        SmartDashboard.putNumber("Arm Motor Amperage", ArmSubsystem.amperage)
-//        SmartDashboard.putNumber("Elevator Motor Amperage", ElevatorSubsystem.amperage)
-//
-//        SmartDashboard.putData("Elevator Subsystem", ElevatorSubsystem)
-//        SmartDashboard.putData("Drive Subsystem", DriveSubsystem)
-//        SmartDashboard.putData("Arm Subsystem", ArmSubsystem)
-//        SmartDashboard.putData("Intake Subsystem", IntakeSubsystem)
 
+        SmartDashboard.putNumber("Gyro", NavX.angle)
 
-        SmartDashboard.putData("Gyro", NavX)
-        SmartDashboard.putNumber("Pitch", NavX.pitch.toDouble())
-        SmartDashboard.putNumber("Roll", NavX.roll.toDouble())
+        SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
 
         Scheduler.getInstance().run()
     }
@@ -159,15 +100,11 @@ class Robot : IterativeRobot() {
 
         pollForFMSData()
 
-
-        println(DriverStation.getInstance().gameSpecificMessage)
-
         DriveSubsystem.autoReset()
         NavX.reset()
 
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide, arrayOf(lsll.selected, lslr.selected, lsrl.selected, lsrr.selected)).start()
-//        val id = Pathreader.requestPath("LS-LL", "Scale")
-//        MotionProfileCommand(id, true, false).start()
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+//        StraightDriveCommand(-8.0).start()
     }
 
 
@@ -187,6 +124,7 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
 
@@ -201,5 +139,8 @@ class Robot : IterativeRobot() {
     private fun pollForFMSData() {
         switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
         scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+
+        dataRec = true
+        alliance = DriverStation.getInstance().alliance
     }
 }
