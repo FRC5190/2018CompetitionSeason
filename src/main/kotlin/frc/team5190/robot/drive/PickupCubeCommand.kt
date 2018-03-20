@@ -12,12 +12,14 @@ import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.IntakeConstants
 import frc.team5190.robot.util.Maths
 import frc.team5190.robot.vision.Vision
+import kotlin.math.absoluteValue
 
-class PickupCubeCommand(private val inSpeed: Double = -IntakeConstants.DEFAULT_SPEED,
+class PickupCubeCommand(private val inSpeed: Double = IntakeConstants.DEFAULT_IN_SPEED,
                         private val maxDist: Double = 100.0) : PIDCommand(0.01, 0.0, 0.0) {
 
     init {
         requires(DriveSubsystem)
+        requires(IntakeSubsystem)
     }
 
     override fun initialize() {
@@ -32,7 +34,8 @@ class PickupCubeCommand(private val inSpeed: Double = -IntakeConstants.DEFAULT_S
 
         setpoint = 0.0
 
-        IntakeSubsystem.set(ControlMode.PercentOutput, inSpeed)
+        IntakeSubsystem.intakeSolenoid.set(false)
+        IntakeSubsystem.set(ControlMode.PercentOutput, -(inSpeed.absoluteValue))
     }
 
     override fun returnPIDInput() = if (Vision.isTgtVisible == 1L) Vision.tgtAngleAbsolute - NavX.angle else  0.0

@@ -118,6 +118,8 @@ object ArmSubsystem : Subsystem() {
             masterArmMotor.setSelectedSensorPosition(currentPosition % 4096, 0, TIMEOUT)
         }
 
+        Controls.armSubsystem()
+
         currentLimiting()
     }
 }

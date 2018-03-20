@@ -130,7 +130,8 @@ object ArmConstants {
 }
 
 object IntakeConstants {
-    const val DEFAULT_SPEED = 0.65
+    const val DEFAULT_IN_SPEED = 1.0
+    const val DEFAULT_OUT_SPEED = 0.65
 }
 
 object ClimbConstants {
