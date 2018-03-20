@@ -75,11 +75,11 @@ class MotionProfileCommand(folder: String, file: String, val isReversed: Boolean
 
         DriveSubsystem.falconDrive.leftMotors.forEach {
             it.inverted = isReversed
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
         DriveSubsystem.falconDrive.rightMotors.forEach {
             it.inverted = !isReversed
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
 
         startTime = Timer.getFPGATimestamp()

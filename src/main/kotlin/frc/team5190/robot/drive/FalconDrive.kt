@@ -58,13 +58,13 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         leftMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
         rightMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
