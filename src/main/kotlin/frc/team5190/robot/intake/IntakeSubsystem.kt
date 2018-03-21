@@ -7,7 +7,7 @@ package frc.team5190.robot.intake
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.Robot
@@ -18,11 +18,11 @@ object IntakeSubsystem : Subsystem() {
     // Master intake talon
     private val masterIntakeMotor = TalonSRX(MotorIDs.INTAKE_LEFT)
 
-    private val leftCubeSensor = DigitalInput(ChannelIDs.LEFT_CUBE_SENSOR)
-    private val rightCubeSensor = DigitalInput(ChannelIDs.RIGHT_CUBE_SENSOR)
+    private val leftCubeSensor = AnalogInput(ChannelIDs.LEFT_CUBE_SENSOR)
+    private val rightCubeSensor = AnalogInput(ChannelIDs.RIGHT_CUBE_SENSOR)
 
     val isCubeIn
-        get() = !leftCubeSensor.get() || !rightCubeSensor.get()
+        get() = leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
 
     val amperage
         get() = masterIntakeMotor.outputCurrent
