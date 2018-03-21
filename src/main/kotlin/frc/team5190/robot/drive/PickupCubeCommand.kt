@@ -44,7 +44,7 @@ class PickupCubeCommand(private val inSpeed: Double = IntakeConstants.DEFAULT_IN
 
         println("Vision Angle: ${returnPIDInput()}, PID Output: $output")
 
-        val speed = if (Vision.isTgtVisible == 1L) 0.35 else 0.25
+        val speed = if (Vision.isTgtVisible == 1L) 0.5 else 0.3
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, speed - output, speed + output, false)
     }
 

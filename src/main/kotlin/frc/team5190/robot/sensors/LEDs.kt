@@ -21,14 +21,18 @@ object LEDs : Subsystem() {
 
     override fun periodic() {
         if (!Robot.INSTANCE!!.dataRec || !Robot.INSTANCE!!.isEnabled) {
-            leds.setLEDOutput(64, 0, 64)
+            leds.setLEDOutput(0, 0, 0)
         } else {
             if (IntakeSubsystem.isCubeIn) {
                 if (blinkedFor == 0L) blinkedFor = System.currentTimeMillis()
                 if (System.currentTimeMillis() % 400 > 200 && System.currentTimeMillis() - blinkedFor < 2000)
                     leds.setLEDOutput(0, 0, 0)
-                else
-                    leds.setLEDOutput(0, 255, 0)
+                else {
+                    if (Robot.INSTANCE!!.isAutonomous)
+                        leds.setLEDOutput(128, 128, 0)
+                    else
+                        leds.setLEDOutput(0, 255, 0)
+                }
             } else {
                 blinkedFor = 0L
                 leds.setLEDOutput(0, 0, 0)
