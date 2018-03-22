@@ -31,8 +31,8 @@ object MotorIDs {
 }
 
 object ChannelIDs {
-    const val LEFT_CUBE_SENSOR = 1
-    const val RIGHT_CUBE_SENSOR = 0
+    const val LEFT_CUBE_SENSOR = 2
+    const val RIGHT_CUBE_SENSOR = 3
 }
 
 object SolenoidIDs {

@@ -8,6 +8,7 @@ package frc.team5190.robot.sensors
 import com.ctre.phoenix.CANifier
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.Robot
+import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.util.setLEDOutput
 
@@ -23,7 +24,12 @@ object LEDs : Subsystem() {
         if (!Robot.INSTANCE!!.dataRec || !Robot.INSTANCE!!.isEnabled) {
             leds.setLEDOutput(0, 0, 0)
         } else {
-            if (IntakeSubsystem.isCubeIn) {
+            if (ClimbSubsystem.climbState) {
+                if (System.currentTimeMillis() % 600 > 300)
+                    leds.setLEDOutput(0, 0, 0)
+                else
+                    leds.setLEDOutput(255, 200, 0)
+            } else if (IntakeSubsystem.isCubeIn) {
                 if (blinkedFor == 0L) blinkedFor = System.currentTimeMillis()
                 if (System.currentTimeMillis() % 400 > 200 && System.currentTimeMillis() - blinkedFor < 2000)
                     leds.setLEDOutput(0, 0, 0)
