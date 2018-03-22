@@ -58,13 +58,13 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         leftMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
         rightMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
@@ -83,7 +83,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      * Resets FalconDrive in Autonomous mode
      */
     internal fun autoReset() {
-        gear = Gear.LOW
         this.reset()
         allMotors.forEach { it.configPeakOutput(1.0, -1.0, TIMEOUT) }
     }
@@ -98,7 +97,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(0, 0)
         }
-        gear = Gear.LOW
     }
 
     // Used to set high and low gear of the DriveTrain

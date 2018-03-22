@@ -6,50 +6,42 @@
 package frc.team5190.robot.sensors
 
 import com.ctre.phoenix.CANifier
-import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.Robot
+import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.util.setLEDOutput
 
 object LEDs : Subsystem() {
 
-    private val leds = CANifier(0)
+    private val leds = CANifier(16)
 
-    private var intakeLEDSolid = false
-    private var blinked = false
-    private var iterator = 0
+    private var blinkedFor = 0L
 
     override fun initDefaultCommand() {}
 
     override fun periodic() {
-        if (!Robot.INSTANCE!!.dataRec) {
-            leds.setLEDOutput(255, 255, 255)
-        } else if (Robot.INSTANCE!!.isEnabled) {
-
-            if (IntakeSubsystem.isCubeIn) {
-                if (!intakeLEDSolid) {
-                    if ((iterator % 5 == 0)) {
-                        if (blinked) leds.setLEDOutput(0, 0, 0) else leds.setLEDOutput(0, 255, 0)
-                        blinked = if (blinked) false else true
-                    }
-                    iterator++
-
-                    // 4 seconds have passed
-                    if (iterator > 200)  {
-                       intakeLEDSolid = true
-                    }
-                }
+        if (!Robot.INSTANCE!!.dataRec || !Robot.INSTANCE!!.isEnabled) {
+            leds.setLEDOutput(0, 0, 0)
+        } else {
+            if (ClimbSubsystem.climbState) {
+                if (System.currentTimeMillis() % 600 > 300)
+                    leds.setLEDOutput(0, 0, 0)
+                else
+                    leds.setLEDOutput(255, 200, 0)
+            } else if (IntakeSubsystem.isCubeIn) {
+                if (blinkedFor == 0L) blinkedFor = System.currentTimeMillis()
+                if (System.currentTimeMillis() % 400 > 200 && System.currentTimeMillis() - blinkedFor < 2000)
+                    leds.setLEDOutput(0, 0, 0)
                 else {
-                    leds.setLEDOutput(0, 255, 0)
+                    if (Robot.INSTANCE!!.isAutonomous)
+                        leds.setLEDOutput(128, 128, 0)
+                    else
+                        leds.setLEDOutput(0, 255, 0)
                 }
-            }
-            else if (Robot.INSTANCE!!.alliance == DriverStation.Alliance.Blue) {
-                if (iterator != 0) iterator = 0
-                leds.setLEDOutput(0, 0, 255)
             } else {
-                if (iterator != 0) iterator = 0
-                leds.setLEDOutput(255, 0, 0)
+                blinkedFor = 0L
+                leds.setLEDOutput(0, 0, 0)
             }
         }
     }

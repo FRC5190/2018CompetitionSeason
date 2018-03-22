@@ -18,11 +18,6 @@ class ManualArmCommand : Command() {
     }
 
     /**
-     * Executes periodically
-     */
-    override fun execute() = Controls.armSubsystem()
-
-    /**
      * Command never finishes because it's the default command
      */
     override fun isFinished() = false

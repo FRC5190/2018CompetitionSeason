@@ -19,6 +19,7 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
@@ -68,6 +69,7 @@ class Robot : IterativeRobot() {
         Pathreader
         NavX
         Vision
+        LEDs
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
@@ -97,14 +99,12 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-
         pollForFMSData()
 
         DriveSubsystem.autoReset()
         NavX.reset()
 
         AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
-//        StraightDriveCommand(-8.0).start()
     }
 
 
@@ -124,6 +124,8 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+
+        pollForFMSData()
 
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())

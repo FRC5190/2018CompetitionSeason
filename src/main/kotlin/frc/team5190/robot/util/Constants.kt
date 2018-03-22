@@ -31,8 +31,8 @@ object MotorIDs {
 }
 
 object ChannelIDs {
-    const val LEFT_CUBE_SENSOR = 8
-    const val RIGHT_CUBE_SENSOR = 9
+    const val LEFT_CUBE_SENSOR = 2
+    const val RIGHT_CUBE_SENSOR = 3
 }
 
 object SolenoidIDs {
@@ -77,7 +77,7 @@ object DriveConstants {
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
-    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -130,7 +130,8 @@ object ArmConstants {
 }
 
 object IntakeConstants {
-    const val DEFAULT_SPEED = 0.65
+    const val DEFAULT_IN_SPEED = 1.0
+    const val DEFAULT_OUT_SPEED = 0.65
 }
 
 object ClimbConstants {

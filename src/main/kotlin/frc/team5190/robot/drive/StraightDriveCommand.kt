@@ -21,11 +21,6 @@ open class StraightDriveCommand(private val feet: Double,
                                 private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
 
 
-    constructor(driveToZero: Boolean) : this(0.0) {
-        this.driveToZero = driveToZero
-    }
-
-    private var driveToZero = false
 
     // Setpoint in Native Units
     private var setPoint: Double? = null
@@ -39,8 +34,7 @@ open class StraightDriveCommand(private val feet: Double,
      * Initializes the command
      */
     override fun initialize() {
-        setPoint = if (!driveToZero) Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
-        else (DriveSubsystem.falconDrive.leftEncoderPosition + DriveSubsystem.falconDrive.rightEncoderPosition) / 2.0
+        setPoint = Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
 
         DriveSubsystem.falconDrive.allMasters.forEach {
             it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(cruiseVel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), TIMEOUT)

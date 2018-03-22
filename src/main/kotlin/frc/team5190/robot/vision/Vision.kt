@@ -38,7 +38,7 @@ object Vision {
                 threadStarted = System.currentTimeMillis()
 
                 // run for 16s
-                while (System.currentTimeMillis() - threadStarted < 3000) {
+                while (System.currentTimeMillis() - threadStarted < 2000) {
                     try {
                         processData()
                         sleep(10)

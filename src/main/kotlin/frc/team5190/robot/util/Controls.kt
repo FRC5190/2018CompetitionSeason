@@ -14,6 +14,7 @@ import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
 import kotlin.math.absoluteValue
+import kotlin.math.pow
 
 object Controls {
 
@@ -21,6 +22,8 @@ object Controls {
 
     private var teleIntake = false
     private var triggerState = false
+
+    private var autoShiftGear = Gear.HIGH
 
     fun driveSubsystem() {
         when {
@@ -33,16 +36,15 @@ object Controls {
         }
 
         if (Robot.INSTANCE!!.isOperatorControl) {
-            if (MainXbox.aButton) {
-                // Auto Shift Logic
-                val speed = DriveSubsystem.falconDrive.allMasters.map { Maths.nativeUnitsPer100MsToFeetPerSecond(it.getSelectedSensorVelocity(0).absoluteValue) }.average()
-                when {
-                    speed > DriveConstants.AUTO_SHIFT_HIGH_THRESHOLD -> DriveSubsystem.falconDrive.gear = Gear.HIGH
-                    speed < DriveConstants.AUTO_SHIFT_LOW_THRESHOLD -> DriveSubsystem.falconDrive.gear = Gear.LOW
-                }
-            } else {
-                DriveSubsystem.falconDrive.gear = Gear.HIGH
+            // Auto Shift Logic
+            val speed = DriveSubsystem.falconDrive.allMasters.map { Maths.nativeUnitsPer100MsToFeetPerSecond(it.getSelectedSensorVelocity(0).absoluteValue) }.average()
+            when {
+                speed > DriveConstants.AUTO_SHIFT_HIGH_THRESHOLD -> autoShiftGear = Gear.HIGH
+                speed < DriveConstants.AUTO_SHIFT_LOW_THRESHOLD -> autoShiftGear = Gear.LOW
             }
+            DriveSubsystem.falconDrive.gear = if (MainXbox.aButton) autoShiftGear else Gear.HIGH
+        }else{
+            autoShiftGear = Gear.HIGH
         }
 
     }
@@ -54,11 +56,11 @@ object Controls {
 
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) && !climbState -> {
-                IntakeCommand(IntakeDirection.IN, inSpeed = 1.0).start()
+                IntakeCommand(IntakeDirection.IN).start()
                 teleIntake = true
             }
             MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) >= 0.1 && !climbState -> {
-                IntakeCommand(IntakeDirection.OUT, outSpeed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) * 0.8).start()
+                IntakeCommand(IntakeDirection.OUT, outSpeed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft).pow(2.0) * 0.8).start()
                 teleIntake = true
             }
             teleIntake -> {
@@ -109,7 +111,7 @@ object Controls {
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
-        if(lastPov != pov) {
+        if (lastPov != pov) {
             when (pov) {
             // Up - Scale
                 0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)

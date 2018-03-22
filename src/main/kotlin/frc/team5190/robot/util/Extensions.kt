@@ -61,8 +61,8 @@ fun limitCurrent(buffer: CircularBuffer): MotorState {
 }
 
 fun CANifier.setLEDOutput(r: Int, g: Int, b: Int) {
-    setLEDOutput(r * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelA)
-    setLEDOutput(g * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelB)
+    setLEDOutput(r * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelB)
+    setLEDOutput(g * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelA)
     setLEDOutput(b * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelC)
 }
 

@@ -6,9 +6,9 @@
 package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
-import edu.wpi.first.wpilibj.Compressor
-import edu.wpi.first.wpilibj.Solenoid
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.command.Subsystem
+import frc.team5190.robot.MainXbox
 import frc.team5190.robot.util.*
 
 object DriveSubsystem : Subsystem() {
@@ -40,6 +40,10 @@ object DriveSubsystem : Subsystem() {
      */
     override fun periodic() {
         falconDrive.feedSafety()
+
+        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kRight)) {
+            controlMode = if (controlMode == DriveMode.CURVE) DriveMode.TANK else DriveMode.CURVE
+        }
     }
 
     /**

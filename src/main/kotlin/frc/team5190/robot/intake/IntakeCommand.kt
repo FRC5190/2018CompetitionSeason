@@ -8,16 +8,17 @@ package frc.team5190.robot.intake
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.util.IntakeConstants
+import kotlin.math.absoluteValue
 
 /**
  *  Command that either intakes or outputs the cube
  */
 open class IntakeCommand(private val direction: IntakeDirection, private val timeout: Double = -.1,
-                    private val inSpeed: Double = IntakeConstants.DEFAULT_SPEED,
-                    private val outSpeed: Double = IntakeConstants.DEFAULT_SPEED) : Command() {
+                    private val inSpeed: Double = IntakeConstants.DEFAULT_IN_SPEED,
+                    private val outSpeed: Double = IntakeConstants.DEFAULT_OUT_SPEED) : Command() {
 
     init {
-        requires(IntakeSubsystem)
+        this.requires(IntakeSubsystem)
     }
 
     /**
@@ -29,8 +30,8 @@ open class IntakeCommand(private val direction: IntakeDirection, private val tim
         if (timeout > 0) setTimeout(timeout)
 
         val motorOutput = when (direction) {
-            IntakeDirection.IN -> -inSpeed
-            IntakeDirection.OUT -> outSpeed
+            IntakeDirection.IN -> -(inSpeed.absoluteValue)
+            IntakeDirection.OUT -> outSpeed.absoluteValue
         }
 
         IntakeSubsystem.set(ControlMode.PercentOutput, motorOutput)

@@ -16,7 +16,7 @@ import frc.team5190.robot.util.Maths
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.followers.EncoderFollower
 
-class MotionProfileCommand(folder: String, file: String, val isReversed: Boolean, isMirrored: Boolean) : Command() {
+class MotionProfileCommand(folder: String, file: String, private val isReversed: Boolean, isMirrored: Boolean, val useGyro: Boolean = true) : Command() {
 
     private val leftPath = Pathreader.getPath(folder, "$file Left Detailed")
     private val rightPath = Pathreader.getPath(folder, "$file Right Detailed")
@@ -60,7 +60,7 @@ class MotionProfileCommand(folder: String, file: String, val isReversed: Boolean
             val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
             val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
-            var turn = 1.6 * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
+            var turn = (if (useGyro) 1.6 else 0.0) * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
             turn *= (if (isMirrored) -1 else 1)
             turn = turn.coerceIn(-1.0, 1.0)
 
@@ -75,11 +75,11 @@ class MotionProfileCommand(folder: String, file: String, val isReversed: Boolean
 
         DriveSubsystem.falconDrive.leftMotors.forEach {
             it.inverted = isReversed
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
         DriveSubsystem.falconDrive.rightMotors.forEach {
             it.inverted = !isReversed
-            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
 
         startTime = Timer.getFPGATimestamp()
