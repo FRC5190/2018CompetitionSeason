@@ -28,14 +28,14 @@ object LEDs : Subsystem() {
                 if (System.currentTimeMillis() % 600 > 300)
                     leds.setLEDOutput(0, 0, 0)
                 else
-                    leds.setLEDOutput(255, 200, 0)
+                    leds.setLEDOutput(255, 100, 0)
             } else if (IntakeSubsystem.isCubeIn) {
                 if (blinkedFor == 0L) blinkedFor = System.currentTimeMillis()
                 if (System.currentTimeMillis() % 400 > 200 && System.currentTimeMillis() - blinkedFor < 2000)
                     leds.setLEDOutput(0, 0, 0)
                 else {
                     if (Robot.INSTANCE!!.isAutonomous)
-                        leds.setLEDOutput(128, 128, 0)
+                        leds.setLEDOutput(64, 0, 128)
                     else
                         leds.setLEDOutput(0, 255, 0)
                 }

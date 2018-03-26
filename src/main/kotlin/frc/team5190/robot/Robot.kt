@@ -91,6 +91,7 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Gyro", NavX.angle)
 
         SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
+        SmartDashboard.putData(ArmSubsystem)
 
         Scheduler.getInstance().run()
     }
@@ -99,9 +100,12 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
+        println("Dank Memes.")
+
         pollForFMSData()
 
         DriveSubsystem.autoReset()
+        IntakeSubsystem.enableVoltageCompensation()
         NavX.reset()
 
         AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
@@ -126,9 +130,9 @@ class Robot : IterativeRobot() {
     override fun teleopInit() {
 
         pollForFMSData()
-
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+        IntakeSubsystem.disableVoltageCompensation()
 
         DriveSubsystem.currentCommand?.cancel()
 

@@ -35,7 +35,6 @@ class AutoHelper {
             // Center switch autonomous cases.
                 "CS-L", "CS-R" -> commandGroup {
                     val firstSwitch = MotionProfileCommand(folder, "Switch", false, false)
-                    val secondSwitch = MotionProfileCommand(folder, "Switch 2", false, false)
 
                     addSequential(commandGroup {
                         addParallel(firstSwitch)
@@ -55,7 +54,7 @@ class AutoHelper {
                             })
                         })
                     })
-                    addSequential(TurnCommand(0.0, false, 0.0))
+                    addSequential(TurnCommand(if (folder.last() == 'L') 7.5 else 0.0, false, 0.0))
                     addSequential(PickupCubeCommand(visionCheck = false), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
                     addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
@@ -107,12 +106,13 @@ class AutoHelper {
                                     addSequential(object : Command() {
                                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                                     })
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = if (folder.first() == folder.last()) 1.0 else 0.9, timeout = 1.0))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = if (folder.first() == folder.last()) 0.85 else 0.75, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
                             })
                         })
                     })
+
 
                     // Pickup 2nd Cube
                     addSequential(commandGroup {
@@ -130,14 +130,14 @@ class AutoHelper {
 
                     // Drop 2nd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(ArcDriveCommand(-5.75, if (folder.last() == 'R') 2.0 else 12.5), 4.0)
+                        addParallel(ArcDriveCommand(-5.75, if (folder.last() == 'R') 1.0 else 15.0), 4.0)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
                             addSequential(TimedCommand(0.2))
-                            addSequential(object : IntakeCommand(IntakeDirection.OUT, outSpeed = 1.0, timeout = 0.75) {
+                            addSequential(object : IntakeCommand(IntakeDirection.OUT, outSpeed = 0.75, timeout = 0.95) {
                                 override fun end() {
                                     DriveSubsystem.currentCommand?.cancel()
                                 }

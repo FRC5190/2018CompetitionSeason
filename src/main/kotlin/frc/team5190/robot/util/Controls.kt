@@ -22,7 +22,6 @@ object Controls {
 
     private var teleIntake = false
     private var triggerState = false
-
     private var autoShiftGear = Gear.HIGH
 
     fun driveSubsystem() {
@@ -111,7 +110,7 @@ object Controls {
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
-        if (lastPov != pov) {
+        if(lastPov != pov) {
             when (pov) {
             // Up - Scale
                 0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)

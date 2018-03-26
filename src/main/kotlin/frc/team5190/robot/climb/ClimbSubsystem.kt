@@ -18,8 +18,10 @@ object ClimbSubsystem : Subsystem() {
     internal val backWinchMotor = TalonSRX(MotorIDs.BACK_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
 
     init {
+        backWinchMotor.inverted = true
         with(TalonSRX(MotorIDs.BACK_WINCH_SLAVE)) {
             follow(backWinchMotor)
+            inverted = true
         }
     }
 
