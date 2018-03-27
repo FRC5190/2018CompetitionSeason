@@ -18,6 +18,9 @@ import jaci.pathfinder.followers.EncoderFollower
 
 class MotionProfileCommand(folder: String, file: String, private val isReversed: Boolean, isMirrored: Boolean, val useGyro: Boolean = true) : Command() {
 
+    private val syncNotifier = Object()
+    private var stopNotifier = false
+
     private val leftPath = Pathreader.getPath(folder, "$file Left Detailed")
     private val rightPath = Pathreader.getPath(folder, "$file Right Detailed")
 
@@ -52,21 +55,28 @@ class MotionProfileCommand(folder: String, file: String, private val isReversed:
             configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
-        notifier = Notifier({
-            val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
-            val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
+        notifier = Notifier {
+            synchronized(syncNotifier) {
+                if(stopNotifier) {
+                    println("Oof MotionProfile Notifier still running!")
+                    return@Notifier
+                }
 
-            val actualHeading = (if (isMirrored) 1 else -1) * NavX.angle
-            val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
+                val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
+                val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
 
-            val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
-            var turn = (if (useGyro) 1.6 else 0.0) * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
-            turn *= (if (isMirrored) -1 else 1)
-            turn = turn.coerceIn(-1.0, 1.0)
+                val actualHeading = (if (isMirrored) 1 else -1) * NavX.angle
+                val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
-            println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn")
-            DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
-        })
+                val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
+                var turn = (if (useGyro) 1.6 else 0.0) * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
+                turn *= (if (isMirrored) -1 else 1)
+                turn = turn.coerceIn(-1.0, 1.0)
+
+                println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn")
+                DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
+            }
+        }
     }
 
     override fun initialize() {
@@ -83,20 +93,22 @@ class MotionProfileCommand(folder: String, file: String, private val isReversed:
         }
 
         startTime = Timer.getFPGATimestamp()
+        stopNotifier = false
         notifier.startPeriodic(DriveConstants.MOTION_DT)
     }
 
     override fun end() {
-
         println("has ended")
 
-        notifier.stop()
+        synchronized(syncNotifier) {
+            stopNotifier = true
+            notifier.stop()
+            DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
 
-        DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
-
-        DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
-        DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
+            DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
+            DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
+        }
     }
 
-        override fun isFinished() = (Timer.getFPGATimestamp() - startTime!!) > (mpTime - 0.1)
+    override fun isFinished() = (Timer.getFPGATimestamp() - startTime!!) > (mpTime - 0.1)
 }
