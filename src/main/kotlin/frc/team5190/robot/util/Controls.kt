@@ -70,18 +70,32 @@ object Controls {
     }
 
     fun armSubsystem() {
+
+        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kLeft)) {
+            if (ArmSubsystem.closedLpControl) ArmSubsystem.disableSensorControl() else ArmSubsystem.enableSensorControl()
+        }
+
         when {
             MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.3)
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
 
-            MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() + 50)
-            MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() - 50)
+            MainXbox.yButtonReleased -> if (ArmSubsystem.closedLpControl) {
+                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() + 50)
+            } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
+            MainXbox.bButtonReleased -> if (ArmSubsystem.closedLpControl) {
+                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() - 50)
+            } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
         }
     }
 
     private var lastPov = -1
 
     fun elevatorSubsystem() {
+
+        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kLeft)) {
+            if (ElevatorSubsystem.closedLpControl) ElevatorSubsystem.disableSensorControl() else ElevatorSubsystem.enableSensorControl()
+        }
+
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
                 val motorOut = 0.55
@@ -91,7 +105,9 @@ object Controls {
             }
             triggerState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
-                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
+                if (ElevatorSubsystem.closedLpControl) {
+                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
+                } else ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
                 triggerState = false
             }
         }
@@ -103,14 +119,18 @@ object Controls {
             }
             MainXbox.getBumperReleased(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
-                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
+
+                if (ElevatorSubsystem.closedLpControl) {
+                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
+                } else ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
+
             }
         }
 
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
-        if(lastPov != pov) {
+        if(lastPov != pov && ElevatorSubsystem.closedLpControl) {
             when (pov) {
             // Up - Scale
                 0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)

@@ -39,8 +39,23 @@ object ElevatorSubsystem : Subsystem() {
     private var stalled = false
 
     var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
+    var closedLpControl = true
 
     init {
+        enableSensorControl()
+
+        // Configure Slave Motor
+        with(TalonSRX(MotorIDs.ELEVATOR_SLAVE)) {
+            inverted = true
+            follow(masterElevatorMotor)
+            setNeutralMode(NeutralMode.Brake)
+        }
+
+        // Configure current limiting
+        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
+    }
+
+    fun enableSensorControl() {
         with(masterElevatorMotor) {
             // Motor Inversion
             inverted = false
@@ -71,17 +86,17 @@ object ElevatorSubsystem : Subsystem() {
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
 
-        }
+            closedLpControl = true
 
-        // Configure Slave Motor
-        with(TalonSRX(MotorIDs.ELEVATOR_SLAVE)) {
-            inverted = true
-            follow(masterElevatorMotor)
-            setNeutralMode(NeutralMode.Brake)
         }
+    }
 
-        // Configure current limiting
-        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
+    fun disableSensorControl() {
+        with(masterElevatorMotor) {
+            overrideLimitSwitchesEnable(false)
+            configForwardSoftLimitEnable(false, TIMEOUT)
+            closedLpControl = false
+        }
     }
 
     /**

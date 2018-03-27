@@ -25,6 +25,9 @@ object ArmSubsystem : Subsystem() {
     private var stalled = false
     private var state = MotorState.OK
 
+    // Variable that stores the mode the subsyste,
+    var closedLpControl = true
+
     // Returns the amperage of the motor
     val amperage
         get() = masterArmMotor.outputCurrent
@@ -34,6 +37,13 @@ object ArmSubsystem : Subsystem() {
         get() = masterArmMotor.getSelectedSensorPosition(0)
 
     init {
+        enableSensorControl()
+
+        // Configure current limiting
+        currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
+    }
+
+    fun enableSensorControl() {
         with(masterArmMotor) {
             // Motor Inversion
             inverted = ArmConstants.INVERTED
@@ -61,10 +71,16 @@ object ArmSubsystem : Subsystem() {
 
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
-        }
 
-        // Configure current limiting
-        currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
+            closedLpControl = true
+        }
+    }
+
+    fun disableSensorControl() {
+        with(masterArmMotor) {
+            configReverseSoftLimitEnable(false, TIMEOUT)
+            closedLpControl = false
+        }
     }
 
     /**
