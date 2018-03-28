@@ -14,6 +14,7 @@ import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.Trajectory
 import jaci.pathfinder.followers.EncoderFollower
 
 class MotionProfileCommand(folder: String, file: String, private val isReversed: Boolean, isMirrored: Boolean, val useGyro: Boolean = true) : Command() {
@@ -21,8 +22,8 @@ class MotionProfileCommand(folder: String, file: String, private val isReversed:
     private val syncNotifier = Object()
     private var stopNotifier = false
 
-    private val leftPath = Pathreader.getPath(folder, "$file Left Detailed")
-    private val rightPath = Pathreader.getPath(folder, "$file Right Detailed")
+    private val leftPath: Trajectory
+    private val rightPath: Trajectory
 
     private val leftEncoderFollower: EncoderFollower
     private val rightEncoderFollower: EncoderFollower
@@ -35,10 +36,9 @@ class MotionProfileCommand(folder: String, file: String, private val isReversed:
     private var startTime: Double? = null
 
     init {
-        if (leftPath == null || rightPath == null)
-            throw NullPointerException("Paths were not received from Pathreader.").apply {
-                printStackTrace()
-            }
+        val trajectories = Pathreader.getPath(folder, file)
+        leftPath = trajectories[0]
+        rightPath = trajectories[1]
 
         requires(DriveSubsystem)
 
@@ -57,7 +57,7 @@ class MotionProfileCommand(folder: String, file: String, private val isReversed:
 
         notifier = Notifier {
             synchronized(syncNotifier) {
-                if(stopNotifier) {
+                if (stopNotifier) {
                     println("Oof MotionProfile Notifier still running!")
                     return@Notifier
                 }
