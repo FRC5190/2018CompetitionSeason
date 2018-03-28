@@ -17,7 +17,7 @@ import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import jaci.pathfinder.followers.EncoderFollower
 
-class MotionProfileCommand(folder: String, file: String, private val isReversed: Boolean, isMirrored: Boolean, val useGyro: Boolean = true) : Command() {
+open class MotionProfileCommand(folder: String, file: String, private val isReversed: Boolean, isMirrored: Boolean, val useGyro: Boolean = true) : Command() {
 
     private val syncNotifier = Object()
     private var stopNotifier = false

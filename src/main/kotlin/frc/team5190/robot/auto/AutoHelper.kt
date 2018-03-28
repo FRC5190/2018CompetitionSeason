@@ -70,15 +70,13 @@ class AutoHelper {
                     })
                 }
 
-
-
             // Scale autonomous cases
                 "LS-LL", "RS-RR", "LS-RL", "RS-LR",
                 "LS-RR", "RS-LL", "LS-LR", "RS-RL" -> commandGroup {
 
                     val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
                     val timeToGoUp = if (folder.first() == folder.last()) 2.50 else 1.50
-                    val mpCommand = MotionProfileCommand(folderIn, "Scale", true, folder.first() == 'R')
+                    val mpCommand = MotionProfileCommand(folderIn, "Drop First Cube", true, folder.first() == 'R')
 
                     // Drop 1st Cube on Scale
                     addSequential(commandGroup {
@@ -117,49 +115,48 @@ class AutoHelper {
                     // Pickup 2nd Cube
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(commandGroup {
-                            addSequential(StraightDriveCommand(0.1), 0.01)
-                            addSequential(TurnCommand(if (folder.last() == 'R') 0.0 else -10.0))
-                            addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.SWITCH.ticks - 100
-                            })
-                            addSequential(PickupCubeCommand(inSpeed = -1.0, visionCheck = folder.first() == folder.last()), 3.25)
-                            addSequential(IntakeHoldCommand(), 0.001)
+                        addParallel(IntakeCommand(IntakeDirection.IN, inSpeed = -1.0, timeout = 5.0))
+                        addParallel(object : MotionProfileCommand(folder, "Pickup Second Cube", false, folder.first() == 'R') {
+                            override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
                         })
                     })
 
+                    addSequential(IntakeHoldCommand(), 0.001)
+
                     // Drop 2nd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(ArcDriveCommand(-5.75, if (folder.last() == 'R') 1.0 else 15.0), 4.0)
+                        addParallel(MotionProfileCommand(folder, "Drop Second Cube", true, folder.first() == 'R'))
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(TimedCommand(0.2))
-                            addSequential(object : IntakeCommand(IntakeDirection.OUT, outSpeed = 0.75, timeout = 0.95) {
-                                override fun end() {
-                                    DriveSubsystem.currentCommand?.cancel()
-                                }
-                            })
+                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.75, timeout = 0.95))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
 
-                    // TODO POTENTIAL 3RD CUBE TESTING FOR ASHEVILLE
+                    // Pickup 3rd Cube
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(commandGroup {
-                            addSequential(StraightDriveCommand(0.1), 0.01)
-                            addSequential(TurnCommand(if (folder.last() == 'R') 20.0 else -20.0))
-                            addSequential(object : Command() {
-                                override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.SWITCH.ticks - 100
-                            })
-                            addSequential(PickupCubeCommand(inSpeed = -1.0), 3.25)
-                            addSequential(IntakeHoldCommand(), 0.001)
+                        addParallel(IntakeCommand(IntakeDirection.IN, inSpeed = -1.0, timeout = 5.0))
+                        addParallel(object : MotionProfileCommand(folder, "Pickup Third Cube", false, folder.first() == 'R') {
+                            override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
                         })
                     })
 
+                    // Drop 3rd Cube in Scale
+                    addSequential(commandGroup {
+                        addParallel(MotionProfileCommand(folder, "Drop Third Cube", true, folder.first() == 'R'))
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
+                        addParallel(commandGroup {
+                            addSequential(object : Command() {
+                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                            })
+                            addSequential(IntakeCommand(IntakeDirection.OUT, outSpeed = 0.75, timeout = 0.95))
+                            addSequential(IntakeHoldCommand(), 0.001)
+                        })
+                    })
                 }
                 else -> throw IllegalArgumentException("Scenario does not exist.")
             }

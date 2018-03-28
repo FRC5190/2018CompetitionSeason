@@ -77,6 +77,8 @@ object ArmSubsystem : Subsystem() {
             configReverseSoftLimitEnable(false, TIMEOUT)
             closedLpControl = false
         }
+
+        set(ControlMode.PercentOutput, 0.0)
     }
 
     /**

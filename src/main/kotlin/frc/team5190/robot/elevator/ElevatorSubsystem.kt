@@ -97,6 +97,8 @@ object ElevatorSubsystem : Subsystem() {
             configForwardSoftLimitEnable(false, TIMEOUT)
             closedLpControl = false
         }
+
+        set(ControlMode.PercentOutput, 0.0)
     }
 
     /**
