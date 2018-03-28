@@ -16,6 +16,7 @@ import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
+import frc.team5190.robot.diagnostics.Diagnostics
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
@@ -100,6 +101,8 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
+        if (Diagnostics.isRunning) Diagnostics.cancel()
+
         println("Dank Memes.")
 
         pollForFMSData()
@@ -118,6 +121,9 @@ class Robot : IterativeRobot() {
      * Executed once when robot is disabled.
      */
     override fun disabledInit() {
+
+        if (Diagnostics.isRunning) Diagnostics.cancel()
+
         IdleClimbCommand().start()
         ClimbSubsystem.climbState = false
     }
@@ -128,6 +134,8 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
+
+        if (Diagnostics.isRunning) Diagnostics.cancel()
 
         pollForFMSData()
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
@@ -141,6 +149,10 @@ class Robot : IterativeRobot() {
     }
 
     override fun teleopPeriodic() {}
+
+    override fun testInit() {
+        Diagnostics.start()
+    }
 
     private fun pollForFMSData() {
         switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
