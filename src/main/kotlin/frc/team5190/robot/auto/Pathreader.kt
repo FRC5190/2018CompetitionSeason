@@ -53,7 +53,7 @@ object Pathreader {
                 // Create response listener
                 listenerId = responseEntry.addListener({ entryNotification: EntryNotification ->
                     requestFuture.complete(gson.fromJson(entryNotification.value.string))
-                }, EntryListenerFlags.kImmediate)
+                }, EntryListenerFlags.kNew or EntryListenerFlags.kUpdate)
 
                 // Send the request
                 requestEntry.forceSetString(gson.toJson(PathRequest(folderName, fileName)))
