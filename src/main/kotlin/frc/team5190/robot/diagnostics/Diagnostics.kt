@@ -8,7 +8,7 @@ package frc.team5190.robot.diagnostics
 import edu.wpi.first.wpilibj.command.CommandGroup
 import frc.team5190.robot.util.commandGroup
 
-object Diagnostics : CommandGroup() {
+class Diagnostics : CommandGroup() {
 
     private val armSubsystemDiagnostics = ArmSubsystemDiagnostics()
     private val elevatorSubsystemDiagnostics = ElevatorSubsystemDiagnostics()
