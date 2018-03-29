@@ -22,7 +22,6 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.commandGroup
 import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
@@ -102,7 +101,6 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-
         println("Dank Memes.")
 
         pollForFMSData()
@@ -111,14 +109,7 @@ class Robot : IterativeRobot() {
         IntakeSubsystem.enableVoltageCompensation()
         NavX.reset()
 
-//        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
-
-        //  PATH TESTING
-        commandGroup {
-            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", true, true))
-        }.start()
-
-
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
     }
 
 

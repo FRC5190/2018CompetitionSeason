@@ -30,6 +30,7 @@ class Diagnostics : CommandGroup() {
                 (elevatorSubsystemDiagnostics.isCompleted && !elevatorSubsystemDiagnostics.hasPassedTest)) {
             end()
         }
+        println("Diagnostics Ended")
     }
 
 }

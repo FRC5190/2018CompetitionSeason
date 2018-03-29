@@ -5,27 +5,27 @@
 
 package frc.team5190.robot.climb
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.util.*
 
 object ClimbSubsystem : Subsystem() {
 
-    val hookSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.HOOK)
-
-    internal val frontWinchMotor = TalonSRX(MotorIDs.FRONT_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
-    internal val backWinchMotor = TalonSRX(MotorIDs.BACK_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
+    private val masterClimbMotor = TalonSRX(MotorIDs.WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
 
     init {
-        backWinchMotor.inverted = true
-        with(TalonSRX(MotorIDs.BACK_WINCH_SLAVE)) {
-            follow(backWinchMotor)
+        with(TalonSRX(MotorIDs.WINCH_SLAVE)) {
+            follow(masterClimbMotor)
             inverted = true
         }
     }
 
     var climbState = false
+
+    fun set(controlMode: ControlMode, output: Double) {
+        masterClimbMotor.set(controlMode, output)
+    }
 
     override fun initDefaultCommand() {
         defaultCommand = IdleClimbCommand()

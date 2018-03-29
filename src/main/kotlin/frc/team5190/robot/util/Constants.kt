@@ -23,10 +23,8 @@ object MotorIDs {
     const val INTAKE_LEFT = 7
     const val INTAKE_RIGHT = 9
 
-    const val FRONT_WINCH_MASTER = 10
-
-    const val BACK_WINCH_MASTER = 11
-    const val BACK_WINCH_SLAVE = 12
+    const val WINCH_MASTER = 10
+    const val WINCH_SLAVE = 11
 
 }
 
