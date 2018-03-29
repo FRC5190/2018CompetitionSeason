@@ -9,6 +9,7 @@ package frc.team5190.robot.auto
 
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
+import edu.wpi.first.networktables.EntryListenerFlags
 import edu.wpi.first.networktables.EntryNotification
 import edu.wpi.first.networktables.NetworkTableInstance
 import jaci.pathfinder.Pathfinder
@@ -50,7 +51,7 @@ object Pathreader {
                 // Create response listener
                 listenerId = responseEntry.addListener({ entryNotification: EntryNotification ->
                     requestFuture.complete(gson.fromJson(entryNotification.value.string))
-                }, 0)
+                }, EntryListenerFlags.kNew or EntryListenerFlags.kUpdate)
 
                 // Send the request
                 requestEntry.forceSetString(gson.toJson(PathRequest(folderName, fileName)))
