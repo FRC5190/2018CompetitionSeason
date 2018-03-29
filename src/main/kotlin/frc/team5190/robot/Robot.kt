@@ -22,7 +22,6 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.commandGroup
 import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
@@ -102,8 +101,6 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        if (Diagnostics.isRunning) Diagnostics.cancel()
-
         println("Dank Memes.")
 
         pollForFMSData()
@@ -112,18 +109,7 @@ class Robot : IterativeRobot() {
         IntakeSubsystem.enableVoltageCompensation()
         NavX.reset()
 
-//        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
-
-        //  PATH TESTING
-        commandGroup {
-            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", true, false))
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", false, false))
-            addSequential(MotionProfileCommand("LS-LL", "Drop Second Cube", true, false))
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", false, false))
-            addSequential(MotionProfileCommand("LS-LL", "Drop Third Cube", true, false))
-        }.start()
-
-
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
     }
 
 
@@ -134,7 +120,6 @@ class Robot : IterativeRobot() {
      */
     override fun disabledInit() {
 
-        if (Diagnostics.isRunning) Diagnostics.cancel()
 
         IdleClimbCommand().start()
         ClimbSubsystem.climbState = false
@@ -146,8 +131,6 @@ class Robot : IterativeRobot() {
      * Executed when teleop is initialized
      */
     override fun teleopInit() {
-
-        if (Diagnostics.isRunning) Diagnostics.cancel()
 
         pollForFMSData()
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
@@ -163,7 +146,7 @@ class Robot : IterativeRobot() {
     override fun teleopPeriodic() {}
 
     override fun testInit() {
-        Diagnostics.start()
+        Diagnostics().start()
     }
 
     private fun pollForFMSData() {

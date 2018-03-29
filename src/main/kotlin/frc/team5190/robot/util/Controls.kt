@@ -8,8 +8,9 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team5190.robot.*
-import frc.team5190.robot.arm.*
-import frc.team5190.robot.climb.*
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.climb.ClimbSubsystem
+import frc.team5190.robot.climb.WinchCommand
 import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
@@ -147,36 +148,10 @@ object Controls {
     }
 
     fun climbSubsystem() {
-        if (ClimbSubsystem.climbState) {
-            if (MainXbox.aButtonPressed) {
-                BalanceWinchCommand().start()
-            }
-            if (MainXbox.aButtonReleased) {
-                WinchCommand().start()
-            }
-        }
 
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
-            if (ClimbSubsystem.currentCommand !is WinchCommand) {
-                commandGroup {
-                    addSequential(commandGroup {
-                        addParallel(commandGroup {
-                            addSequential(AutoArmCommand(ArmPosition.ALL_UP), 2.0)
-                            addSequential(DeployHookCommand())
-                        })
-                        addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                    })
-                    addSequential(WinchCommand())
-                }.start()
-            } else {
-                ClimbSubsystem.currentCommand?.cancel()
-                // Just in case the Hook doesn't deploy (idk this happened once before)
-                commandGroup {
-                    addSequential(DeployHookCommand())
-                    addSequential(WinchCommand())
-                }.start()
-            }
+            WinchCommand().start()
         }
 
         if (MainXbox.startButtonPressed) {
@@ -186,10 +161,7 @@ object Controls {
     }
 
     fun winchSubsystem() {
-        if (!MainXbox.getBumper(GenericHID.Hand.kLeft)) ClimbSubsystem.frontWinchMotor.set(ControlMode.PercentOutput, MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) * ClimbConstants.PEAK_OUTPUT)
-        if (!MainXbox.getBumper(GenericHID.Hand.kRight)) ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, MainXbox.getTriggerAxis(GenericHID.Hand.kRight) * ClimbConstants.PEAK_OUTPUT)
-
-        if (MainXbox.getBumper(GenericHID.Hand.kLeft)) ClimbSubsystem.frontWinchMotor.set(ControlMode.PercentOutput, -0.3)
-        if (MainXbox.getBumper(GenericHID.Hand.kRight)) ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, -0.3)
+        if (!MainXbox.getBumper(GenericHID.Hand.kLeft)) ClimbSubsystem.set(ControlMode.PercentOutput, MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) * ClimbConstants.PEAK_OUTPUT)
+        if (!MainXbox.getBumper(GenericHID.Hand.kRight)) ClimbSubsystem.set(ControlMode.PercentOutput, -MainXbox.getTriggerAxis(GenericHID.Hand.kRight) * ClimbConstants.PEAK_OUTPUT)
     }
 }

@@ -15,16 +15,14 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import java.io.File
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
+import java.util.concurrent.*
 
 /**
  * Class that loads files from local resources or from Network Tables
  */
 object Pathreader {
 
-    private const val PATHFEEDER_MODE = true
+    private const val PATHFEEDER_MODE = false
 
     private val allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
         folder.listFiles().filter { it.isFile }.map { file ->
@@ -57,6 +55,8 @@ object Pathreader {
 
                 // Send the request
                 requestEntry.forceSetString(gson.toJson(PathRequest(folderName, fileName)))
+
+                NetworkTableInstance.getDefault().flush()
 
                 try {
                     // Wait for response for 4 seconds

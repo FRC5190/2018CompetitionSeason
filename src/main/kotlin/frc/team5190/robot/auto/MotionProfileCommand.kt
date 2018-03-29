@@ -17,7 +17,7 @@ import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import jaci.pathfinder.followers.EncoderFollower
 
-open class MotionProfileCommand(folder: String, file: String, private val isReversed: Boolean, isMirrored: Boolean, val useGyro: Boolean = true) : Command() {
+open class MotionProfileCommand(folder: String, file: String, private val robotReversed: Boolean, isMirrored: Boolean, val useGyro: Boolean = true, val gyroMultiplier: Double = 1.0) : Command() {
 
     private val syncNotifier = Object()
     private var stopNotifier = false
@@ -40,17 +40,17 @@ open class MotionProfileCommand(folder: String, file: String, private val isReve
         leftPath = trajectories[0]
         rightPath = trajectories[1]
 
-        requires(DriveSubsystem)
+        this.requires(DriveSubsystem)
 
         val leftTrajectory = if (isMirrored) rightPath else leftPath
         val rightTrajectory = if (isMirrored) leftPath else rightPath
 
-        leftEncoderFollower = EncoderFollower(if (isReversed) rightTrajectory else leftTrajectory).apply {
+        leftEncoderFollower = EncoderFollower(if (robotReversed) rightTrajectory else leftTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
             configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
-        rightEncoderFollower = EncoderFollower(if (isReversed) leftTrajectory else rightTrajectory).apply {
+        rightEncoderFollower = EncoderFollower(if (robotReversed) leftTrajectory else rightTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.rightEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
             configurePIDVA(2.0, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
@@ -65,11 +65,16 @@ open class MotionProfileCommand(folder: String, file: String, private val isReve
                 val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition)
                 val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition)
 
-                val actualHeading = (if (isMirrored) 1 else -1) * NavX.angle
+                var actualHeading = (if (isMirrored) 1 else -1) * NavX.angle
+
+                if (gyroMultiplier == -1.0) {
+                    actualHeading = Pathfinder.boundHalfDegrees(actualHeading + 180.0)
+                }
+
                 val desiredHeading = Pathfinder.r2d(leftEncoderFollower.heading)
 
                 val angleDifference = Pathfinder.boundHalfDegrees((desiredHeading) - (actualHeading))
-                var turn = (if (useGyro) 1.6 else 0.0) * (-1 / 80.0) * angleDifference * (if (isReversed) -1 else 1)
+                var turn = (if (useGyro) 1.6 else 0.0) * (-1 / 80.0) * angleDifference * (if (robotReversed) -1 else 1)
                 turn *= (if (isMirrored) -1 else 1)
                 turn = turn.coerceIn(-1.0, 1.0)
 
@@ -84,11 +89,11 @@ open class MotionProfileCommand(folder: String, file: String, private val isReve
 
 
         DriveSubsystem.falconDrive.leftMotors.forEach {
-            it.inverted = isReversed
+            it.inverted = robotReversed
             it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
         DriveSubsystem.falconDrive.rightMotors.forEach {
-            it.inverted = !isReversed
+            it.inverted = !robotReversed
             it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
         }
 
