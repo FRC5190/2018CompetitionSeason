@@ -25,9 +25,6 @@ object ArmSubsystem : Subsystem() {
     private var stalled = false
     private var state = MotorState.OK
 
-    // Variable that stores the mode the subsyste,
-    var closedLpControl = true
-
     // Returns the current encoder position of the motor
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
@@ -67,15 +64,12 @@ object ArmSubsystem : Subsystem() {
 
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
-
-            closedLpControl = true
         }
     }
 
     fun disableSensorControl() {
         with(masterArmMotor) {
             configReverseSoftLimitEnable(false, TIMEOUT)
-            closedLpControl = false
         }
 
         set(ControlMode.PercentOutput, 0.0)

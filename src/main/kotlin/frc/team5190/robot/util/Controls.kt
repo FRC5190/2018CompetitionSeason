@@ -71,19 +71,14 @@ object Controls {
     }
 
     fun armSubsystem() {
-
-        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kLeft)) {
-            if (ArmSubsystem.closedLpControl) ArmSubsystem.disableSensorControl() else ArmSubsystem.enableSensorControl()
-        }
-
         when {
             MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.3)
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
 
-            MainXbox.yButtonReleased -> if (ArmSubsystem.closedLpControl) {
+            MainXbox.yButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
                 ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() + 50)
             } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
-            MainXbox.bButtonReleased -> if (ArmSubsystem.closedLpControl) {
+            MainXbox.bButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
                 ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() - 50)
             } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
         }
@@ -94,7 +89,13 @@ object Controls {
     fun elevatorSubsystem() {
 
         if (MainXbox.getStickButtonPressed(GenericHID.Hand.kLeft)) {
-            if (ElevatorSubsystem.closedLpControl) ElevatorSubsystem.disableSensorControl() else ElevatorSubsystem.enableSensorControl()
+            if (ElevatorSubsystem.closedLpControl) {
+                ElevatorSubsystem.disableSensorControl()
+                ArmSubsystem.disableSensorControl()
+            } else {
+                ElevatorSubsystem.enableSensorControl()
+                ArmSubsystem.enableSensorControl()
+            }
         }
 
         when {

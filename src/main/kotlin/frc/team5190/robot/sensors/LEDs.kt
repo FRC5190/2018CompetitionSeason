@@ -8,7 +8,6 @@ package frc.team5190.robot.sensors
 import com.ctre.phoenix.CANifier
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.Robot
-import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
@@ -27,7 +26,7 @@ object LEDs : Subsystem() {
             leds.setLEDOutput(0, 0, 0)
         } else {
 
-            if (!ArmSubsystem.closedLpControl && !ElevatorSubsystem.closedLpControl) {
+            if (!ElevatorSubsystem.closedLpControl) {
                 if (System.currentTimeMillis() % 600 > 300)
                     leds.setLEDOutput(0, 0, 0)
                 else
