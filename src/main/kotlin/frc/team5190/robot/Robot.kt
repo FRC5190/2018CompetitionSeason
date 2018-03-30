@@ -13,16 +13,16 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.*
+import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.Pathreader
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
-import frc.team5190.robot.diagnostics.Diagnostics
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.vision.Vision
 import openrio.powerup.MatchData
 
 /**
@@ -69,7 +69,6 @@ class Robot : IterativeRobot() {
 
         Pathreader
         NavX
-        Vision
         LEDs
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
@@ -101,7 +100,6 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
-        println("Dank Memes.")
 
         pollForFMSData()
 
@@ -119,8 +117,6 @@ class Robot : IterativeRobot() {
      * Executed once when robot is disabled.
      */
     override fun disabledInit() {
-
-
         IdleClimbCommand().start()
         ClimbSubsystem.climbState = false
     }
@@ -133,6 +129,7 @@ class Robot : IterativeRobot() {
     override fun teleopInit() {
 
         pollForFMSData()
+
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         IntakeSubsystem.disableVoltageCompensation()
@@ -143,11 +140,6 @@ class Robot : IterativeRobot() {
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
     }
 
-    override fun teleopPeriodic() {}
-
-    override fun testInit() {
-        Diagnostics().start()
-    }
 
     private fun pollForFMSData() {
         switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)

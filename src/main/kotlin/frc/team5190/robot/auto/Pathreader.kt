@@ -22,7 +22,7 @@ import java.util.concurrent.*
  */
 object Pathreader {
 
-    private const val PATHFEEDER_MODE = false
+    private const val PATHFEEDER_MODE = true
 
     private val allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
         folder.listFiles().filter { it.isFile }.map { file ->
@@ -40,8 +40,9 @@ object Pathreader {
     fun getPath(folderName: String, fileName: String): Array<Trajectory> {
         if (PATHFEEDER_MODE) {
             println("Requesting path from pathfeeder...")
-            val responseEntry = pathfinderOutputTable.getEntry("path_${pathRequestId++}_response")
-            val requestEntry = pathfinderInputTable.getEntry("path_${pathRequestId++}_request")
+            val requestId = pathRequestId++
+            val responseEntry = pathfinderOutputTable.getEntry("path_${requestId}_response")
+            val requestEntry = pathfinderInputTable.getEntry("path_${requestId}_request")
 
             val requestFuture = CompletableFuture<Array<Trajectory>>()
 

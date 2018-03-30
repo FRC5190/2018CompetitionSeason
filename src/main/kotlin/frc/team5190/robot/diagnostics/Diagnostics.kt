@@ -14,6 +14,8 @@ class Diagnostics : CommandGroup() {
     private val elevatorSubsystemDiagnostics = ElevatorSubsystemDiagnostics()
     private val driveSubsystemDiagnostics = DriveSubsystemDiagnostics()
 
+    var hasFinished = false
+
     init {
         addSequential(commandGroup {
             addParallel(driveSubsystemDiagnostics)
@@ -28,8 +30,13 @@ class Diagnostics : CommandGroup() {
         if ((armSubsystemDiagnostics.isCompleted && !armSubsystemDiagnostics.hasPassedTest) ||
                 (driveSubsystemDiagnostics.isCompleted && !driveSubsystemDiagnostics.hasPassedTest) ||
                 (elevatorSubsystemDiagnostics.isCompleted && !elevatorSubsystemDiagnostics.hasPassedTest)) {
-            end()
+            hasFinished = true
         }
+    }
+
+    override fun isFinished() = hasFinished
+
+    override fun end() {
         println("Diagnostics Ended")
     }
 

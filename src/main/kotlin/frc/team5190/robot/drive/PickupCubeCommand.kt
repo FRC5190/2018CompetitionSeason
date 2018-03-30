@@ -8,10 +8,8 @@ package frc.team5190.robot.drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.IntakeConstants
 import frc.team5190.robot.util.Maths
-import frc.team5190.robot.vision.Vision
 import kotlin.math.absoluteValue
 
 class PickupCubeCommand(private val inSpeed: Double = IntakeConstants.DEFAULT_IN_SPEED,
@@ -23,7 +21,6 @@ class PickupCubeCommand(private val inSpeed: Double = IntakeConstants.DEFAULT_IN
     }
 
     override fun initialize() {
-        if (visionCheck) Vision.start()
 
         DriveSubsystem.resetEncoders()
 
@@ -38,13 +35,13 @@ class PickupCubeCommand(private val inSpeed: Double = IntakeConstants.DEFAULT_IN
         IntakeSubsystem.set(ControlMode.PercentOutput, -(inSpeed.absoluteValue))
     }
 
-    override fun returnPIDInput() = if (Vision.isTgtVisible == 1L && visionCheck) Vision.tgtAngleAbsolute - NavX.angle else 0.0
+    override fun returnPIDInput() = 0.0
 
     override fun usePIDOutput(output: Double) {
 
         println("Vision Angle: ${returnPIDInput()}, PID Output: $output")
 
-        val speed = if (Vision.isTgtVisible == 1L) 0.35 else 0.25
+        val speed = 0.25
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, speed - output, speed + output, false)
     }
 

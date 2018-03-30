@@ -5,11 +5,24 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.*
-import frc.team5190.robot.arm.*
-import frc.team5190.robot.drive.*
-import frc.team5190.robot.elevator.*
-import frc.team5190.robot.intake.*
+import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.CommandGroup
+import edu.wpi.first.wpilibj.command.TimedCommand
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.drive.ArcDriveCommand
+import frc.team5190.robot.drive.PickupCubeCommand
+import frc.team5190.robot.drive.TurnCommand
+import frc.team5190.robot.elevator.AutoElevatorCommand
+import frc.team5190.robot.elevator.ElevatorPosition
+import frc.team5190.robot.elevator.ElevatorPreset
+import frc.team5190.robot.elevator.ElevatorPresetCommand
+import frc.team5190.robot.intake.IntakeCommand
+import frc.team5190.robot.intake.IntakeDirection
+import frc.team5190.robot.intake.IntakeHoldCommand
+import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
@@ -19,12 +32,6 @@ import openrio.powerup.MatchData
 class AutoHelper {
     companion object {
 
-        /**
-         * Returns an autonomous command pertaining to the FMS data
-         * @param startingPositions Starting Position
-         * @param switchOwnedSide The owned side of the switch
-         * @param scaleOwnedSide The owned side of the scale
-         */
         fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
             // Get the folder that the paths are contained within
@@ -34,6 +41,9 @@ class AutoHelper {
             return when (folder) {
             // Center switch autonomous cases.
                 "CS-L", "CS-R" -> commandGroup {
+
+                    NavX.angleOffset = 0.0
+
                     val firstSwitch = MotionProfileCommand(folder, "Switch", false, false)
 
                     addSequential(commandGroup {
@@ -73,10 +83,12 @@ class AutoHelper {
             // Scale autonomous cases
                 "LS-LL", "RS-RR", "LS-RL", "RS-LR",
                 "LS-RR", "RS-LL", "LS-LR", "RS-RL" -> commandGroup {
+                    // oof offset angle so its in phase
+                    NavX.angleOffset = 180.0
 
                     val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
                     val timeToGoUp = if (folder.first() == folder.last()) 2.50 else 1.50
-                    val mpCommand = MotionProfileCommand(folderIn, "Drop First Cube", true, folder.first() == 'R')
+                    val mpCommand = MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = folder.first() == 'R')
 
                     // Drop 1st Cube on Scale
                     addSequential(commandGroup {
@@ -116,7 +128,7 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         addParallel(IntakeCommand(IntakeDirection.IN, inSpeed = -1.0, timeout = 5.0))
-                        addParallel(object : MotionProfileCommand(folder, "Pickup Second Cube", false, folder.first() == 'R') {
+                        addParallel(object : MotionProfileCommand(folder, "Pickup Second Cube", pathMirrored = folder.first() == 'R') {
                             override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
                         })
                     })
@@ -125,7 +137,7 @@ class AutoHelper {
 
                     // Drop 2nd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Drop Second Cube", true, folder.first() == 'R'))
+                        addParallel(MotionProfileCommand(folder, "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.first() == 'R'))
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
@@ -140,14 +152,14 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         addParallel(IntakeCommand(IntakeDirection.IN, inSpeed = -1.0, timeout = 5.0))
-                        addParallel(object : MotionProfileCommand(folder, "Pickup Third Cube", false, folder.first() == 'R') {
+                        addParallel(object : MotionProfileCommand(folder, "Pickup Third Cube", pathMirrored = folder.first() == 'R') {
                             override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
                         })
                     })
 
                     // Drop 3rd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Drop Third Cube", true, folder.first() == 'R'))
+                        addParallel(MotionProfileCommand(folder, "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.first() == 'R'))
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
@@ -158,6 +170,7 @@ class AutoHelper {
                         })
                     })
                 }
+
                 else -> throw IllegalArgumentException("Scenario does not exist.")
             }
         }

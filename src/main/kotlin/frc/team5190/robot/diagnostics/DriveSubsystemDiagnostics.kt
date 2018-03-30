@@ -11,7 +11,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 import kotlin.math.absoluteValue
 
-class DriveSubsystemDiagnostics : TimedCommand(3.0) {
+class DriveSubsystemDiagnostics : TimedCommand(2.0) {
 
     val hasPassedTest
         get() = passedTest
@@ -28,10 +28,11 @@ class DriveSubsystemDiagnostics : TimedCommand(3.0) {
     }
 
     override fun execute() {
-        DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.3, 0.3)
+        DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.5, 0.5)
     }
 
     override fun end() {
+        DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
         if ((DriveSubsystem.falconDrive.leftEncoderPosition - DriveSubsystem.falconDrive.rightEncoderPosition).absoluteValue < 400 && NavX.angle.absoluteValue < 5.0
                 && DriveSubsystem.falconDrive.allMasters.all { talons -> talons.getSelectedSensorPosition(0) > 100 }) {
             println("Drive Subsystem OK")
@@ -39,6 +40,6 @@ class DriveSubsystemDiagnostics : TimedCommand(3.0) {
         } else {
             println("Drive Subsystem FAILED")
         }
-
     }
 }
+
