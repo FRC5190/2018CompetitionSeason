@@ -21,7 +21,7 @@ object LEDs : Subsystem() {
     private val COLOR_CLEAR = Color(0, 0, 0)
     private val COLOR_RED = Color(255, 0, 0)
     private val COLOR_ORANGE = Color(255, 100, 0)
-    private val COLOR_PURPLE = Color(64, 0, 128)
+    private val COLOR_AUTO = Color(128, 0, 128)
     private val COLOR_GREEN = Color(0, 255, 0)
 
     private var blinkedFor = 0L
@@ -37,7 +37,7 @@ object LEDs : Subsystem() {
             IntakeSubsystem.isCubeIn -> {
                 if (blinkedFor == 0L) blinkedFor = System.currentTimeMillis()
                 if (System.currentTimeMillis() % 400 > 200 && System.currentTimeMillis() - blinkedFor < 2000) COLOR_CLEAR
-                else if (Robot.INSTANCE!!.isAutonomous) COLOR_PURPLE else COLOR_GREEN
+                else if (Robot.INSTANCE!!.isAutonomous) COLOR_AUTO else COLOR_GREEN
             }
             else -> {
                 blinkedFor = 0L
