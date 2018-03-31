@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.DriveConstants
@@ -75,7 +74,7 @@ open class MotionProfileCommand(folder: String, file: String,
 
                 val angleDifference = Pathfinder.boundHalfDegrees(actualHeading - desiredHeading)
 
-                val turn = (-1 / 80.0) * angleDifference
+                val turn = 1.6 * (-1 / 80.0) * angleDifference
 
                 println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn")
                 DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)

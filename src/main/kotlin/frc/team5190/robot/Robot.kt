@@ -13,9 +13,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.Pathreader
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
@@ -23,6 +21,7 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
 /**
@@ -107,11 +106,25 @@ class Robot : IterativeRobot() {
         IntakeSubsystem.enableVoltageCompensation()
         NavX.reset()
 
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        NavX.angleOffset = 180.0
+
+
+
+
+
+        commandGroup {
+            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = false))
+            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = false))
+            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
+        }.start()
+
+//        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
     }
 
 
-    override fun autonomousPeriodic() {}
+    override fun autonomousPeriodic() {
+
+    }
 
     /**
      * Executed once when robot is disabled.

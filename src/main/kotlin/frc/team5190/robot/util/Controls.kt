@@ -76,10 +76,10 @@ object Controls {
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
 
             MainXbox.yButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
-                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() + 50)
+                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
             } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
             MainXbox.bButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
-                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() - 50)
+                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
             } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
         }
     }
@@ -108,7 +108,7 @@ object Controls {
             triggerState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
                 if (ElevatorSubsystem.closedLpControl) {
-                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
+                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
                 } else ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
                 triggerState = false
             }
@@ -123,7 +123,7 @@ object Controls {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
 
                 if (ElevatorSubsystem.closedLpControl) {
-                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
+                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
                 } else ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
 
             }

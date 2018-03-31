@@ -8,6 +8,7 @@ package frc.team5190.robot.arm
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.util.*
 
 /**
@@ -42,9 +43,9 @@ object ArmSubsystem : Subsystem() {
             inverted = ArmConstants.INVERTED
 
             // Sensors and Safety
-            configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, TIMEOUT)
+            configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, TIMEOUT)
             setSensorPhase(ArmConstants.SENSOR_PHASE)
-            configReverseSoftLimitEnable(true, TIMEOUT)
+            configReverseSoftLimitEnable(false, TIMEOUT)
             configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks - 100, TIMEOUT)
 
             // Brake Mode
@@ -121,6 +122,7 @@ object ArmSubsystem : Subsystem() {
      * Runs periodically
      */
     override fun periodic() {
+        SmartDashboard.putNumber("Absolute", (currentPosition % 1440).toDouble())
         Controls.armSubsystem()
         currentLimiting()
     }
@@ -130,9 +132,9 @@ object ArmSubsystem : Subsystem() {
  * Enum class that holds the different arm positions.
  */
 enum class ArmPosition(val ticks: Int) {
-    BEHIND(ArmConstants.DOWN_TICKS + 1550),
-    ALL_UP(ArmConstants.DOWN_TICKS + 1250),
-    UP(ArmConstants.DOWN_TICKS + 800),
-    MIDDLE(ArmConstants.DOWN_TICKS + 350),
+    BEHIND((ArmConstants.DOWN_TICKS + (1550 / (4096 / 1440)))),
+    ALL_UP(ArmConstants.DOWN_TICKS + (1250 / (4096 / 1440))),
+    UP(ArmConstants.DOWN_TICKS + (800 / (4096 / 1440))),
+    MIDDLE(ArmConstants.DOWN_TICKS + (350 / (4096 / 1440))),
     DOWN(ArmConstants.DOWN_TICKS);
 }

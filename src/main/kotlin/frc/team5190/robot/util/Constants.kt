@@ -43,11 +43,11 @@ object SolenoidIDs {
 
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 2.0
+    const val WHEEL_RADIUS = 3.0
     const val DRIVE_BASE_WIDTH = 29.5
 
-    const val MAX_RPM_HIGH = 1050
-    const val MAX_STU_HIGH = 2556
+    const val MAX_RPM_HIGH = 925
+    const val MAX_STU_HIGH = 2220
 
     const val P_HIGH = 2.0
     const val I_HIGH = 0.0
@@ -75,7 +75,7 @@ object DriveConstants {
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
-    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -104,7 +104,7 @@ object ElevatorConstants {
 }
 
 object ArmConstants {
-    const val INVERTED = true                  // true for falcon heavy, false for falcon 9
+    const val INVERTED = false                  // true for falcon heavy, false for falcon 9
     const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
 
     const val P = 2.5
@@ -112,7 +112,7 @@ object ArmConstants {
     const val D = 0.0
     const val PID_SLOT = 0
     
-    const val DOWN_TICKS = 1000                 // 1000 for falcon heavy, 1330 for falcon 9
+    const val DOWN_TICKS = 110                 // 1000 for falcon heavy, 1330 for falcon 9
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30

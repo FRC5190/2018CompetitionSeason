@@ -26,7 +26,7 @@ class ElevatorSubsystemDiagnostics : TimedCommand(3.0) {
     }
 
     override fun execute() {
-        ElevatorSubsystem.set(ControlMode.PercentOutput, 0.2)
+        ElevatorSubsystem.set(ControlMode.PercentOutput, 0.4)
     }
 
     override fun end() {

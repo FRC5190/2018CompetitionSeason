@@ -26,7 +26,7 @@ class ArmSubsystemDiagnostics : TimedCommand(3.0) {
     }
 
     override fun execute() {
-        ArmSubsystem.set(ControlMode.PercentOutput, 0.05)
+        ArmSubsystem.set(ControlMode.PercentOutput, 0.2)
     }
 
     override fun end() {
