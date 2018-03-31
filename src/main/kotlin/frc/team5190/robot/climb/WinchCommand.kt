@@ -26,5 +26,9 @@ class IdleClimbCommand : Command() {
         ClimbSubsystem.set(ControlMode.PercentOutput, 0.0)
     }
 
+    override fun end() {
+        ClimbSubsystem.set(ControlMode.PercentOutput, 0.0)
+    }
+
     override fun isFinished() = false
 }

@@ -162,7 +162,6 @@ object Controls {
     }
 
     fun winchSubsystem() {
-        if (!MainXbox.getBumper(GenericHID.Hand.kLeft)) ClimbSubsystem.set(ControlMode.PercentOutput, MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) * ClimbConstants.PEAK_OUTPUT)
-        if (!MainXbox.getBumper(GenericHID.Hand.kRight)) ClimbSubsystem.set(ControlMode.PercentOutput, -MainXbox.getTriggerAxis(GenericHID.Hand.kRight) * ClimbConstants.PEAK_OUTPUT)
+        ClimbSubsystem.set(ControlMode.PercentOutput, (MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) - MainXbox.getTriggerAxis(GenericHID.Hand.kRight)) * ClimbConstants.PEAK_OUTPUT)
     }
 }
