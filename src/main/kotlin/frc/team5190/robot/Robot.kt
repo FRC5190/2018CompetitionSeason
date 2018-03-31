@@ -18,7 +18,7 @@ import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.intake.*
 import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.NavX
 import frc.team5190.robot.util.commandGroup
@@ -113,9 +113,24 @@ class Robot : IterativeRobot() {
 
 
         commandGroup {
-            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = false))
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = false))
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
+            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = true))
+            addSequential(commandGroup {
+                addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = true))
+                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
+            })
+            addSequential(IntakeHoldCommand(), 0.001)
+            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = true))
+            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 1.0), 0.5)
+
+            addSequential(IntakeHoldCommand(), 0.001)
+
+            addSequential(commandGroup {
+                addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = true))
+                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
+            })
+            addSequential(IntakeHoldCommand(), 0.001)
+            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = true))
+
         }.start()
 
 //        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()

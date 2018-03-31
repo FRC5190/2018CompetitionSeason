@@ -9,9 +9,7 @@ package frc.team5190.robot.auto
 
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import edu.wpi.first.networktables.EntryListenerFlags
-import edu.wpi.first.networktables.EntryNotification
-import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.networktables.*
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import java.io.File

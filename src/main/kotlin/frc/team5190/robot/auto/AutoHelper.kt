@@ -99,7 +99,7 @@ class AutoHelper {
                                     addSequential(object : Command() {
                                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                                     })
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (folder.first() == folder.last()) 0.85 else 0.75, timeout = 1.0))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.85, timeout = 0.5))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
                             })
@@ -111,8 +111,8 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
-                        addParallel(object : MotionProfileCommand(folderIn, "Pickup Second Cube", pathMirrored = folder.first() == 'R') {
-                            override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
+                        addParallel(object : MotionProfileCommand(folderIn, "Pickup Second Cube", pathMirrored = folder.last() == 'R') {
+                            override fun isFinished() = super.isFinished() && IntakeSubsystem.isCubeIn
                         })
                     })
 
@@ -120,13 +120,13 @@ class AutoHelper {
 
                     // Drop 2nd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folderIn, "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.first() == 'R'))
+                        addParallel(MotionProfileCommand(folderIn, "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.75, timeout = 0.95))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.65, timeout = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -135,20 +135,20 @@ class AutoHelper {
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
-                        addParallel(object : MotionProfileCommand(folderIn, "Pickup Third Cube", pathMirrored = folder.first() == 'R') {
+                        addParallel(object : MotionProfileCommand(folderIn, "Pickup Third Cube", pathMirrored = folder.last() == 'R') {
                             override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
                         })
                     })
 
                     // Drop 3rd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folderIn, "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.first() == 'R'))
+                        addParallel(MotionProfileCommand(folderIn, "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.75, timeout = 0.95))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.55, timeout = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
