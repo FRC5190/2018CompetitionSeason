@@ -6,6 +6,7 @@
 package frc.team5190.robot.sensors
 
 import com.ctre.phoenix.CANifier
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
 
@@ -15,19 +16,18 @@ object Lidar {
 
     private val interpolateFunction: PolynomialSplineFunction
 
-    private val minInputValue: Double
-    private val maxInputValue: Double
-    private val allowedTolerance = 100.0
+    // All in inches
+    private val minScaleHeight = 48.0
+    private val maxScaleHeight = 72.0
+    private val allowedTolerance = 3.0
 
-    val underScale: Boolean
-        get() = minInputValue - allowedTolerance < rawDistance && rawDistance < maxInputValue + allowedTolerance
+    var underScale = false
+        private set
 
+    var scaleHeight = 0.0
+        private set
 
-    val scaleHeight: Double
-        get() = interpolateFunction.value(rawDistance)
-
-    val rawDistance: Double
-        get() = pwmData[0]
+    private var rawDistance = 0.0
 
     init {
         val interpolator = LinearInterpolator()
@@ -39,14 +39,24 @@ object Lidar {
                 7.0 to 10.0
         )
 
-        minInputValue = data.map { it.first }.min()!!
-        maxInputValue = data.map { it.first }.max()!!
-
         interpolateFunction = interpolator.interpolate(data.map { it.first }.toDoubleArray(), data.map { it.second }.toDoubleArray())
     }
 
     fun periodic() {
         LEDs.canifier.getPWMInput(CANifier.PWMChannel.PWMChannel0, pwmData)
+
+        rawDistance = pwmData[0]
+        if (interpolateFunction.isValidPoint(rawDistance)) {
+            // If the values are within our calibrated value range, then calculate the height of scale and if bot is under it
+            scaleHeight = interpolateFunction.value(rawDistance)
+            underScale = minScaleHeight - allowedTolerance < scaleHeight && scaleHeight < maxScaleHeight + allowedTolerance
+        } else {
+            underScale = false
+        }
+
+        SmartDashboard.putNumber("Raw Scale Height", rawDistance)
+        SmartDashboard.putNumber("Scale Height", scaleHeight)
+        SmartDashboard.putBoolean("Under Scale", underScale)
     }
 
 }
