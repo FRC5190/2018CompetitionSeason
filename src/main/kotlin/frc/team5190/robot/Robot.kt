@@ -19,8 +19,7 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.LEDs
-import frc.team5190.robot.sensors.Pigeon
+import frc.team5190.robot.sensors.*
 import openrio.powerup.MatchData
 
 /**
@@ -72,6 +71,7 @@ class Robot : IterativeRobot() {
         ArmSubsystem
 
         Pathreader
+        Lidar
         Pigeon
         LEDs
 
