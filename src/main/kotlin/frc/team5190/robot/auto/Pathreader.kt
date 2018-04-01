@@ -3,7 +3,6 @@
  * Ryan Segerstrom, Prateek Machiraju
  */
 
-@file:Suppress("DEPRECATION")
 
 package frc.team5190.robot.auto
 
@@ -20,7 +19,7 @@ import java.util.concurrent.*
  */
 object Pathreader {
 
-    private const val PATHFEEDER_MODE = true
+    private const val PATHFEEDER_MODE = false
 
     private val allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
         folder.listFiles().filter { it.isFile }.map { file ->
@@ -36,6 +35,7 @@ object Pathreader {
     private val gson = Gson()
 
     fun getPath(folderName: String, fileName: String): Array<Trajectory> {
+        @Suppress("ConstantConditionIf")
         if (PATHFEEDER_MODE) {
             println("Requesting path from pathfeeder...")
             val requestId = pathRequestId++

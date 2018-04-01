@@ -5,7 +5,6 @@
 
 package frc.team5190.robot.sensors
 
-import com.ctre.phoenix.CANifier
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.Robot
 import frc.team5190.robot.climb.ClimbSubsystem
@@ -15,8 +14,6 @@ import frc.team5190.robot.util.setLEDOutput
 import java.awt.Color
 
 object LEDs : Subsystem() {
-
-    internal val canifier = CANifier(16)
 
     private val COLOR_CLEAR = Color(0, 0, 0)
     private val COLOR_RED = Color(255, 0, 0)
@@ -29,9 +26,7 @@ object LEDs : Subsystem() {
     override fun initDefaultCommand() {}
 
     override fun periodic() {
-        Lidar.periodic()
-
-        canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec || !Robot.INSTANCE!!.isEnabled)
+        Canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec || !Robot.INSTANCE!!.isEnabled)
             COLOR_CLEAR
         else when {
             !ElevatorSubsystem.closedLpControl -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_RED

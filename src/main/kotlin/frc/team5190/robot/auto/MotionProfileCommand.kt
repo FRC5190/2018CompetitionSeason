@@ -44,17 +44,17 @@ open class MotionProfileCommand(folder: String, file: String,
 
         this.requires(DriveSubsystem)
 
-        var leftTrajectory = if (pathMirrored) rightPath else leftPath
-        var rightTrajectory = if (pathMirrored) leftPath else rightPath
+        val leftTrajectory = if (pathMirrored) rightPath else leftPath
+        val rightTrajectory = if (pathMirrored) leftPath else rightPath
 
         leftEncoderFollower = EncoderFollower(if (robotReversed xor pathReversed) rightTrajectory else leftTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(1.7, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(1.7, 0.0, 0.05, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         rightEncoderFollower = EncoderFollower(if (robotReversed xor pathReversed) leftTrajectory else rightTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.rightEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(1.7, 0.0, 0.0, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(1.7, 0.0, 0.05, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         notifier = Notifier {
@@ -66,8 +66,8 @@ open class MotionProfileCommand(folder: String, file: String,
 
                 val robotReversedMul = if (robotReversed) -1 else 1
 
-                val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition * robotReversedMul).coerceAtLeast(-0.2) * robotReversedMul
-                val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition * robotReversedMul).coerceAtLeast(-0.2) * robotReversedMul
+                val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition * robotReversedMul).coerceAtLeast(-0.1) * robotReversedMul
+                val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition * robotReversedMul).coerceAtLeast(-0.1) * robotReversedMul
 
                 val actualHeading = Pathfinder.boundHalfDegrees((Pigeon.correctedAngle + if(robotReversed xor pathReversed) 180 else 0))
                 val desiredHeading = (if (pathMirrored) -1 else 1) * Pathfinder.boundHalfDegrees(Pathfinder.r2d(leftEncoderFollower.heading))
@@ -101,8 +101,6 @@ open class MotionProfileCommand(folder: String, file: String,
     }
 
     override fun end() {
-        println("has ended")
-
         synchronized(syncNotifier) {
             stopNotifier = true
             notifier.stop()

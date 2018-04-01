@@ -6,11 +6,12 @@
 package frc.team5190.robot.sensors
 
 import com.ctre.phoenix.CANifier
+import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction
 
-object Lidar {
+object Lidar : Subsystem() {
 
     private val pwmData = DoubleArray(2)
 
@@ -42,8 +43,8 @@ object Lidar {
         interpolateFunction = interpolator.interpolate(data.map { it.first }.toDoubleArray(), data.map { it.second }.toDoubleArray())
     }
 
-    fun periodic() {
-        LEDs.canifier.getPWMInput(CANifier.PWMChannel.PWMChannel0, pwmData)
+    override fun periodic() {
+        Canifier.getPWMInput(CANifier.PWMChannel.PWMChannel0, pwmData)
 
         rawDistance = pwmData[0]
         if (interpolateFunction.isValidPoint(rawDistance)) {
@@ -58,5 +59,7 @@ object Lidar {
         SmartDashboard.putNumber("Scale Height", scaleHeight)
         SmartDashboard.putBoolean("Under Scale", underScale)
     }
+
+    override fun initDefaultCommand() {}
 
 }

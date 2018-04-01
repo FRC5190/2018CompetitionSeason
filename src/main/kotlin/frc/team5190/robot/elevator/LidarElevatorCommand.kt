@@ -10,6 +10,7 @@ class LidarElevatorCommand : Command() {
 
     init {
         requires(ElevatorSubsystem)
+        requires(Lidar)
     }
 
     private val heightBuffer = CircularBuffer(20)
