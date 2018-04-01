@@ -16,7 +16,7 @@ import java.awt.Color
 
 object LEDs : Subsystem() {
 
-    private val canifier = CANifier(16)
+    internal val canifier = CANifier(16)
 
     private val COLOR_CLEAR = Color(0, 0, 0)
     private val COLOR_RED = Color(255, 0, 0)
@@ -29,6 +29,8 @@ object LEDs : Subsystem() {
     override fun initDefaultCommand() {}
 
     override fun periodic() {
+        Lidar.periodic()
+
         canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec || !Robot.INSTANCE!!.isEnabled)
             COLOR_CLEAR
         else when {
