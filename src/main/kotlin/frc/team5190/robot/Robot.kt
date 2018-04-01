@@ -71,6 +71,7 @@ class Robot : IterativeRobot() {
         ArmSubsystem
 
         Pathreader
+        Canifier
         Lidar
         Pigeon
         LEDs
