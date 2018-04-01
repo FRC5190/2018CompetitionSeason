@@ -1,7 +1,9 @@
 package frc.team5190.robot.elevator
 
 import edu.wpi.first.wpilibj.command.CommandGroup
-import frc.team5190.robot.arm.*
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.util.commandGroup
 
 class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
@@ -20,8 +22,10 @@ class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                 addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
             }
-            ElevatorPreset.BEHIND -> {
-                addParallel(AutoElevatorCommand(ElevatorPosition.SCALE))
+            ElevatorPreset.BEHIND, ElevatorPreset.BEHIND_LIDAR -> {
+                addParallel(if (elevatorPosition == ElevatorPreset.BEHIND_LIDAR) LidarElevatorCommand()
+                else AutoElevatorCommand(ElevatorPosition.SCALE))
+
                 addParallel(commandGroup {
                     addSequential(object : AutoArmCommand(ArmPosition.UP) {
                         override fun isFinished() = ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks
@@ -46,5 +50,6 @@ enum class ElevatorPreset {
     INTAKE,
     SWITCH,
     SCALE,
-    BEHIND
+    BEHIND,
+    BEHIND_LIDAR
 }
