@@ -93,7 +93,7 @@ class AutoHelper {
                                 override fun isFinished() = (System.currentTimeMillis() - startTime) > (firstCube.mpTime - timeToGoUp).coerceAtLeast(0.001) * 1000
                             })
                             addSequential(commandGroup {
-                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND), 3.0)
+                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
                                 addParallel(commandGroup {
                                     addSequential(object : Command() {
                                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
@@ -120,7 +120,7 @@ class AutoHelper {
                     // Drop 2nd Cube in Scale
                     addSequential(commandGroup {
                         addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND), 3.0)
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
@@ -145,7 +145,7 @@ class AutoHelper {
                     // Go to Scale with 3rd Cube
                     addSequential(commandGroup {
                         addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100

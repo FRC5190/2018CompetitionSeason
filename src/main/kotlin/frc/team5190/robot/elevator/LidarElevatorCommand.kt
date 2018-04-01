@@ -6,7 +6,7 @@ import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.Lidar
 import frc.team5190.robot.util.CircularBuffer
 
-class LidarElevatorCommand() : Command() {
+class LidarElevatorCommand : Command() {
 
     init {
         requires(ElevatorSubsystem)
