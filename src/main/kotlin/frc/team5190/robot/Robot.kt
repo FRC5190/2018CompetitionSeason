@@ -81,8 +81,8 @@ class Robot : IterativeRobot() {
         autoChooser.addObject("Legacy", "Legacy")
         autoChooser.addDefault("Modern", "Modern")
 
-
         SmartDashboard.putData("Starting Position", sideChooser)
+        SmartDashboard.putData("Auto Mode", autoChooser)
     }
 
     /**
