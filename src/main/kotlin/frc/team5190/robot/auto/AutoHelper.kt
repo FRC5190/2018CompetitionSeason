@@ -40,7 +40,7 @@ class AutoHelper {
                         })
                     })
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", robotReversed = true, pathReversed =  true, pathMirrored = folder.last() == 'R'))
+                        addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.5))
                             addSequential(commandGroup {
@@ -105,59 +105,63 @@ class AutoHelper {
                         })
                     })
 
-
                     // Pickup 2nd Cube
                     addSequential(commandGroup {
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(IntakeCommand(IntakeDirection.IN, speed = 0.50, timeout = 5.0))
-                        addParallel(object : MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = folder.last() == 'R') {
-                            override fun isFinished() = super.isFinished() && IntakeSubsystem.isCubeIn
-                        }, 4.0)
-                    })
+                        addSequential(commandGroup {
+                            addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                            addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
+                            addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = folder.last() == 'R'))
+                        })
+                        addSequential(IntakeHoldCommand(), 0.001)
 
-                    addSequential(IntakeHoldCommand(), 0.001)
+                    })
 
                     // Drop 2nd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
+                        val dropSecondCubePath = MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R')
+                        addParallel(dropSecondCubePath)
                         addParallel(commandGroup {
-                            addSequential(object : Command() {
-                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                            addSequential(TimedCommand(dropSecondCubePath.mpTime - 2.0))
+                            addSequential(commandGroup {
+                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
+                                addParallel(commandGroup {
+                                    addSequential(object : Command() {
+                                        override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                                    })
+                                    addSequential(TimedCommand(0.4))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 1.0))
+                                    addSequential(IntakeHoldCommand(), 0.001)
+                                })
                             })
-                            addSequential(TimedCommand(0.4))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 1.0))
-                            addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
 
                     // Pickup 3rd Cube
                     addSequential(commandGroup {
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
-                        addParallel(object : MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = folder.last() == 'R') {
-                            override fun isFinished() = super.isFinished() && IntakeSubsystem.isCubeIn
-                        }, 4.0)
+                        addSequential(commandGroup {
+                            addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                            addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
+                            addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = folder.last() == 'R'))
+                        })
+                        addSequential(IntakeHoldCommand(), 0.001)
                     })
-
-                    addSequential(IntakeHoldCommand(), 0.001)
 
                     // Go to Scale with 3rd Cube
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
+                        val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R')
+                        addParallel(dropThirdCubePath)
                         addParallel(commandGroup {
-                            addSequential(object : Command() {
-                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
-                            })
+                            addSequential(TimedCommand(dropThirdCubePath.mpTime - 2.0))
+                            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
                         })
                     })
                 }
 
-                else -> throw IllegalArgumentException("Scenario does not exist.")
+                else -> commandGroup { addSequential(StraightDriveCommand((if (startingPositions == StartingPositions.CENTER) 1 else -1) * 10.0)) }
             }
         }
     }
+
     object LegacyAuto {
         fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
@@ -210,7 +214,7 @@ class AutoHelper {
 
                     val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
                     val timeToGoUp = if (folder.first() == folder.last()) 2.50 else 1.50
-                    val mpCommand = MotionProfileCommand(folderIn, "Scale", true, folder.first() == 'R')
+                    val mpCommand = MotionProfileCommand(folderIn, "Scale", true, false, folder.first() == 'R')
 
                     // Drop 1st Cube on Scale
                     addSequential(commandGroup {
