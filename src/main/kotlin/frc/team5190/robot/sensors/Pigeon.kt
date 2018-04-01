@@ -5,6 +5,7 @@
 
 package frc.team5190.robot.sensors
 
+import com.ctre.phoenix.ErrorCode
 import com.ctre.phoenix.sensors.PigeonIMU
 import frc.team5190.robot.util.TIMEOUT
 import jaci.pathfinder.Pathfinder
@@ -15,7 +16,7 @@ import jaci.pathfinder.Pathfinder
 object Pigeon : PigeonIMU(17) {
 
     init {
-        setYaw(0.0, TIMEOUT)
+        reset()
     }
 
     var angleOffset = 0.0
@@ -27,4 +28,6 @@ object Pigeon : PigeonIMU(17) {
             return Pathfinder.boundHalfDegrees(ypr[0] + angleOffset)
         }
 
+
+    fun reset(): ErrorCode = setYaw(0.0, TIMEOUT)
 }

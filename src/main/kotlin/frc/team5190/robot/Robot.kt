@@ -21,7 +21,6 @@ import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.Pigeon
-import frc.team5190.robot.util.TIMEOUT
 import openrio.powerup.MatchData
 
 /**
@@ -42,6 +41,9 @@ class Robot : IterativeRobot() {
 
     // Shows a dropdown of the controllers that will be used.
     private val controllerChooser = SendableChooser<String>()
+
+    // Shows a dropdown of which auto to use
+    private val autoChooser = SendableChooser<String>()
 
     // Variable that stores which side of the switch to go to.
     private var switchSide = MatchData.OwnedSide.UNKNOWN
@@ -76,6 +78,10 @@ class Robot : IterativeRobot() {
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
+        autoChooser.addObject("Legacy", "Legacy")
+        autoChooser.addDefault("Modern", "Modern")
+
+
         SmartDashboard.putData("Starting Position", sideChooser)
     }
 
@@ -89,8 +95,6 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
-
-
 
         SmartDashboard.putNumber("Gyro", Pigeon.correctedAngle)
 
@@ -109,40 +113,42 @@ class Robot : IterativeRobot() {
 
         DriveSubsystem.autoReset()
         IntakeSubsystem.enableVoltageCompensation()
-
-        Pigeon.setYaw(0.0, TIMEOUT)
+        Pigeon.reset()
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
+        /* TESTING
+        commandGroup {
+            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = false))
+            addSequential(commandGroup {
+                addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = false))
+                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
+            })
+            addSequential(IntakeHoldCommand(), 0.001)
+            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
+            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 1.0), 0.5)
 
-//        commandGroup {
-//            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = false))
-//            addSequential(commandGroup {
-//                addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = false))
-//                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
-//            })
-//            addSequential(IntakeHoldCommand(), 0.001)
-//            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
-//            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 1.0), 0.5)
-//
-//            addSequential(IntakeHoldCommand(), 0.001)
-//
-//            addSequential(commandGroup {
-//                addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = false))
-//                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
-//            })
-//            addSequential(IntakeHoldCommand(), 0.001)
-//            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
-//
-//        }.start()
+            addSequential(IntakeHoldCommand(), 0.001)
 
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+            addSequential(commandGroup {
+                addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = false))
+                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
+            })
+            addSequential(IntakeHoldCommand(), 0.001)
+            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
+
+        }.start()
+        */
+
+        if (autoChooser.selected == "Legacy") {
+            AutoHelper.LegacyAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        } else {
+            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        }
     }
 
 
-    override fun autonomousPeriodic() {
-//        println(Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
-    }
+    override fun autonomousPeriodic() {}
 
     /**
      * Executed once when robot is disabled.
