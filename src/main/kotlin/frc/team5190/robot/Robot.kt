@@ -55,6 +55,7 @@ class Robot : IterativeRobot() {
 
     // Variable that stores if FMS data has been received
     var dataRec = false
+        private set
 
 
     /**
@@ -90,18 +91,7 @@ class Robot : IterativeRobot() {
      * Executed periodically.
      */
     override fun robotPeriodic() {
-
-        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
-        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
-
-        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
-        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
-
-        SmartDashboard.putNumber("Gyro", Pigeon.correctedAngle)
-
-        SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
-        SmartDashboard.putData(ArmSubsystem)
-
+        SmartDashboard.putNumber("Pigeon Corrected Angle", Pigeon.correctedAngle)
         Scheduler.getInstance().run()
     }
 

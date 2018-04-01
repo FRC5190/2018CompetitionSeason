@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.Robot
 import frc.team5190.robot.util.*
 
@@ -73,7 +74,10 @@ object IntakeSubsystem : Subsystem() {
      * Executed periodcally
      */
     override fun periodic() {
+
+        SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
         if (!Robot.INSTANCE!!.isOperatorControl) return
+
 
         Controls.intakeSubsystem()
 

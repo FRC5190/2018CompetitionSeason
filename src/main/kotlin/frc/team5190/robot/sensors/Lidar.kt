@@ -61,5 +61,4 @@ object Lidar : Subsystem() {
     }
 
     override fun initDefaultCommand() {}
-
 }

@@ -123,6 +123,8 @@ object ArmSubsystem : Subsystem() {
      */
     override fun periodic() {
         SmartDashboard.putNumber("Absolute", (currentPosition % 1440).toDouble())
+        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
+
         Controls.armSubsystem()
         currentLimiting()
     }

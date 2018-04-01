@@ -154,6 +154,9 @@ object ElevatorSubsystem : Subsystem() {
      */
     override fun periodic() {
         SmartDashboard.putNumber("Elevator Power", masterElevatorMotor.motorOutputPercent)
+        SmartDashboard.putNumber("Elevator Encoder Position", currentPosition.toDouble())
+
+
         if (ElevatorSubsystem.isElevatorAtBottom && !hasBeenReset) {
             this.resetEncoders()
             hasBeenReset = true
