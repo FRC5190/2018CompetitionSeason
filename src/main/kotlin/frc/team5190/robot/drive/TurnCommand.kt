@@ -7,7 +7,7 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
-import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.sensors.Pigeon
 import frc.team5190.robot.util.DriveConstants
 
 /**
@@ -47,9 +47,9 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
     override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
 
     /**
-     * Input from the PID comes from the NavX
+     * Input from the PID comes from the Pigeon
      */
-    override fun returnPIDInput(): Double = NavX.pidGet()
+    override fun returnPIDInput(): Double = Pigeon.correctedAngle
 
     // Time variable for isFinished method
     private var time = 0

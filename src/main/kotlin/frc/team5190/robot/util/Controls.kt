@@ -76,7 +76,7 @@ object Controls {
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
 
             MainXbox.yButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
-                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition + 50.0)
             } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
             MainXbox.bButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
                 ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())

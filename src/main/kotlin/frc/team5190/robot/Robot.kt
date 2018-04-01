@@ -18,10 +18,10 @@ import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
-import frc.team5190.robot.intake.*
+import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.LEDs
-import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.util.commandGroup
+import frc.team5190.robot.sensors.Pigeon
+import frc.team5190.robot.util.TIMEOUT
 import openrio.powerup.MatchData
 
 /**
@@ -40,7 +40,7 @@ class Robot : IterativeRobot() {
     // Shows a drop down on dashboard that allows us to select which mode we want
     private val sideChooser = SendableChooser<StartingPositions>()
 
-    // Shows a dropdown of the controllers that weill be used.
+    // Shows a dropdown of the controllers that will be used.
     private val controllerChooser = SendableChooser<String>()
 
     // Variable that stores which side of the switch to go to.
@@ -49,7 +49,10 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
+    // Gets the alliance that 5190 is part of when competing
     var alliance = DriverStation.Alliance.Invalid
+
+    // Variable that stores if FMS data has been received
     var dataRec = false
 
 
@@ -67,7 +70,7 @@ class Robot : IterativeRobot() {
         ArmSubsystem
 
         Pathreader
-        NavX
+        Pigeon
         LEDs
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
@@ -87,7 +90,9 @@ class Robot : IterativeRobot() {
         SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
         SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
-        SmartDashboard.putNumber("Gyro", NavX.angle)
+
+
+        SmartDashboard.putNumber("Gyro", Pigeon.correctedAngle)
 
         SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
         SmartDashboard.putData(ArmSubsystem)
@@ -104,41 +109,39 @@ class Robot : IterativeRobot() {
 
         DriveSubsystem.autoReset()
         IntakeSubsystem.enableVoltageCompensation()
-        NavX.reset()
 
-        NavX.angleOffset = 180.0
+        Pigeon.setYaw(0.0, TIMEOUT)
 
-
-
+        Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
 
-        commandGroup {
-            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = true))
-            addSequential(commandGroup {
-                addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = true))
-                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
-            })
-            addSequential(IntakeHoldCommand(), 0.001)
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = true))
-            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 1.0), 0.5)
+//        commandGroup {
+//            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = false))
+//            addSequential(commandGroup {
+//                addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = false))
+//                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
+//            })
+//            addSequential(IntakeHoldCommand(), 0.001)
+//            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
+//            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 1.0), 0.5)
+//
+//            addSequential(IntakeHoldCommand(), 0.001)
+//
+//            addSequential(commandGroup {
+//                addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = false))
+//                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
+//            })
+//            addSequential(IntakeHoldCommand(), 0.001)
+//            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
+//
+//        }.start()
 
-            addSequential(IntakeHoldCommand(), 0.001)
-
-            addSequential(commandGroup {
-                addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = true))
-                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
-            })
-            addSequential(IntakeHoldCommand(), 0.001)
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = true))
-
-        }.start()
-
-//        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
     }
 
 
     override fun autonomousPeriodic() {
-
+//        println(Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
     }
 
     /**

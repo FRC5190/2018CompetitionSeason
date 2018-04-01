@@ -59,7 +59,7 @@ object Pathreader {
 
                 try {
                     // Wait for response for 4 seconds
-                    return requestFuture.get(4L, TimeUnit.SECONDS)
+                    return requestFuture.get(10L, TimeUnit.SECONDS)
                 } catch (e: TimeoutException) {
                     println("Failed to get path from PathFeeder, loading from file instead")
                     e.printStackTrace()

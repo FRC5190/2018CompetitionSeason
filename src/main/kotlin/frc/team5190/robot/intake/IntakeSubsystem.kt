@@ -21,8 +21,10 @@ object IntakeSubsystem : Subsystem() {
     private val leftCubeSensor = AnalogInput(ChannelIDs.LEFT_CUBE_SENSOR)
     private val rightCubeSensor = AnalogInput(ChannelIDs.RIGHT_CUBE_SENSOR)
 
+    @Suppress("ConstantConditionIf")
     val isCubeIn
-        get() = leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
+        get() = if (DriveConstants.IS_RACE_ROBOT) leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
+        else leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
 
     val amperage
         get() = masterIntakeMotor.outputCurrent

@@ -9,7 +9,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.intake.IntakeSubsystem
 
-class IntakeSubsystemDiagnostics : TimedCommand(3.0) {
+class IntakeSubsystemDiagnostics : TimedCommand(1.5) {
 
     init {
         requires(IntakeSubsystem)

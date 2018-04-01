@@ -7,7 +7,7 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
-import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.sensors.Pigeon
 import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 
@@ -32,7 +32,7 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
      * Initializes the command
      */
     override fun initialize() {
-        val currentAngle = NavX.angle
+        val currentAngle = Pigeon.correctedAngle
 
         val angleDelta = Math.toRadians((angle - currentAngle) % 180)
 

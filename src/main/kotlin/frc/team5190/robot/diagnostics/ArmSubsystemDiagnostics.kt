@@ -9,7 +9,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team5190.robot.arm.ArmSubsystem
 
-class ArmSubsystemDiagnostics : TimedCommand(3.0) {
+class ArmSubsystemDiagnostics : TimedCommand(1.5) {
 
     val hasPassedTest
         get() = passedTest
@@ -30,7 +30,8 @@ class ArmSubsystemDiagnostics : TimedCommand(3.0) {
     }
 
     override fun end() {
-        if (ArmSubsystem.currentPosition > initialEncoderPosition!! + 150) {
+        ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
+        if (ArmSubsystem.currentPosition > initialEncoderPosition!! + 50) {
             println("Arm Subsystem OK")
             passedTest = true
         } else {

@@ -132,9 +132,9 @@ object ArmSubsystem : Subsystem() {
  * Enum class that holds the different arm positions.
  */
 enum class ArmPosition(val ticks: Int) {
-    BEHIND((ArmConstants.DOWN_TICKS + (1550 / (4096 / 1440)))),
-    ALL_UP(ArmConstants.DOWN_TICKS + (1250 / (4096 / 1440))),
-    UP(ArmConstants.DOWN_TICKS + (800 / (4096 / 1440))),
-    MIDDLE(ArmConstants.DOWN_TICKS + (350 / (4096 / 1440))),
+    BEHIND((ArmConstants.DOWN_TICKS + 380)),
+    ALL_UP(ArmConstants.DOWN_TICKS + 250),
+    UP(ArmConstants.DOWN_TICKS + 200),
+    MIDDLE(ArmConstants.DOWN_TICKS + 100),
     DOWN(ArmConstants.DOWN_TICKS);
 }
