@@ -30,7 +30,7 @@ open class MotionProfileCommand(folder: String, file: String,
     private val leftEncoderFollower: EncoderFollower
     private val rightEncoderFollower: EncoderFollower
 
-    val mpTime
+    val pathDuration
         get() = leftPath.length() * DriveConstants.MOTION_DT
 
     private val notifier: Notifier
@@ -49,12 +49,12 @@ open class MotionProfileCommand(folder: String, file: String,
 
         leftEncoderFollower = EncoderFollower(if (robotReversed xor pathReversed) rightTrajectory else leftTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.leftEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(1.7, 0.0, 0.05, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         rightEncoderFollower = EncoderFollower(if (robotReversed xor pathReversed) leftTrajectory else rightTrajectory).apply {
             configureEncoder(DriveSubsystem.falconDrive.rightEncoderPosition, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS / 6.0)
-            configurePIDVA(1.7, 0.0, 0.05, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
+            configurePIDVA(DriveConstants.P_HIGH, DriveConstants.I_HIGH, DriveConstants.D_HIGH, 1 / Maths.rpmToFeetPerSecond(DriveConstants.MAX_RPM_HIGH, DriveConstants.WHEEL_RADIUS), 0.0)
         }
 
         notifier = Notifier {
@@ -69,14 +69,15 @@ open class MotionProfileCommand(folder: String, file: String,
                 val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition * robotReversedMul).coerceAtLeast(-0.1) * robotReversedMul
                 val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition * robotReversedMul).coerceAtLeast(-0.1) * robotReversedMul
 
-                val actualHeading = Pathfinder.boundHalfDegrees((Pigeon.correctedAngle + if(robotReversed xor pathReversed) 180 else 0))
+                val actualHeading = Pathfinder.boundHalfDegrees((Pigeon.correctedAngle + if (robotReversed xor pathReversed) 180 else 0))
                 val desiredHeading = (if (pathMirrored) -1 else 1) * Pathfinder.boundHalfDegrees(Pathfinder.r2d(leftEncoderFollower.heading))
 
                 val angleDifference = Pathfinder.boundHalfDegrees(actualHeading - desiredHeading)
 
                 val turn = 2.0 * (1 / 80.0) * angleDifference
 
-                println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn, Angle Difference: $angleDifference")
+//                println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn, Angle Difference: $angleDifference")
+
                 DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
             }
         }

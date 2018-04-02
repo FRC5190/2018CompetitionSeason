@@ -139,8 +139,6 @@ class Robot : IterativeRobot() {
     }
 
 
-    override fun autonomousPeriodic() {}
-
     /**
      * Executed once when robot is disabled.
      */
@@ -149,7 +147,6 @@ class Robot : IterativeRobot() {
         ClimbSubsystem.climbState = false
     }
 
-    override fun disabledPeriodic() {}
 
     /**
      * Executed when teleop is initialized

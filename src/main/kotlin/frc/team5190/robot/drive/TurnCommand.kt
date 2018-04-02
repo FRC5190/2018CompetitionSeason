@@ -16,7 +16,7 @@ import frc.team5190.robot.util.DriveConstants
  * @param visionCheck Whether to use vision for cube detection
  * @param tolerance Tolerance
  */
-class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
+class TurnCommand(val angle: Double) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
 
     init {
         requires(DriveSubsystem)
@@ -28,12 +28,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
     override fun initialize() {
         setTimeout(2.5)
 
-        when (visionCheck) {
-            false -> setpoint = angle
-            true -> {
-
-            }
-        }
+        setpoint = angle
 
         setInputRange(-180.0, 180.0)
         pidController.setOutputRange(-1.0, 1.0)

@@ -49,9 +49,9 @@ object DriveConstants {
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 2.0
+    const val P_HIGH = 1.7
     const val I_HIGH = 0.0
-    const val D_HIGH = 20.0
+    const val D_HIGH = 0.0
 
     const val PID_SLOT_HIGH = 0
 

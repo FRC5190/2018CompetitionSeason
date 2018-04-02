@@ -28,13 +28,13 @@ class AutoHelper {
             // Center switch autonomous cases.
                 "CS-L", "CS-R" -> commandGroup {
 
-                    val firstSwitch = MotionProfileCommand(folder, "Drop First Cube")
+                    val firstPathToSwitch = MotionProfileCommand(folder, "Drop First Cube")
 
                     addSequential(commandGroup {
-                        addParallel(firstSwitch)
+                        addParallel(firstPathToSwitch)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0)
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(firstSwitch.mpTime - 0.2))
+                            addSequential(TimedCommand(firstPathToSwitch.pathDuration - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
@@ -43,21 +43,19 @@ class AutoHelper {
                         addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.5))
-                            addSequential(commandGroup {
-                                addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                            })
+                            addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
                     })
-                    addSequential(TurnCommand(0.0, false, 0.0))
+                    addSequential(TurnCommand(angle = 0.0))
                     addSequential(PickupCubeCommand(visionCheck = false), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
-                    addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
+                    addSequential(ArcDriveCommand(feet = -5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
 
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", pathMirrored = folder.last() == 'R'), firstSwitch.mpTime - 0.4)
+                        addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", pathMirrored = folder.last() == 'R'), firstPathToSwitch.pathDuration - 0.4)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(firstSwitch.mpTime - 0.2))
+                            addSequential(TimedCommand(firstPathToSwitch.pathDuration - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
@@ -90,7 +88,7 @@ class AutoHelper {
                                     startTime = System.currentTimeMillis()
                                 }
 
-                                override fun isFinished() = (System.currentTimeMillis() - startTime) > (firstCube.mpTime - timeToGoUp).coerceAtLeast(0.001) * 1000
+                                override fun isFinished() = (System.currentTimeMillis() - startTime) > (firstCube.pathDuration - timeToGoUp).coerceAtLeast(0.001) * 1000
                             })
                             addSequential(commandGroup {
                                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
@@ -121,7 +119,7 @@ class AutoHelper {
                         val dropSecondCubePath = MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R')
                         addParallel(dropSecondCubePath)
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(dropSecondCubePath.mpTime - 2.0))
+                            addSequential(TimedCommand(dropSecondCubePath.pathDuration - 2.0))
                             addSequential(commandGroup {
                                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
                                 addParallel(commandGroup {
@@ -129,7 +127,7 @@ class AutoHelper {
                                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                                     })
                                     addSequential(TimedCommand(0.4))
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 1.0))
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.75, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
                             })
@@ -151,7 +149,7 @@ class AutoHelper {
                         val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R')
                         addParallel(dropThirdCubePath)
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(dropThirdCubePath.mpTime - 2.0))
+                            addSequential(TimedCommand(dropThirdCubePath.pathDuration - 2.0))
                             addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
                         })
                     })
@@ -178,7 +176,7 @@ class AutoHelper {
                         addParallel(firstSwitch)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(firstSwitch.mpTime - 0.2))
+                            addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
@@ -192,16 +190,16 @@ class AutoHelper {
                             })
                         })
                     })
-                    addSequential(TurnCommand(if (folder.last() == 'L') -7.5 else 0.0, false, 0.0))
+                    addSequential(TurnCommand(angle = if (folder.last() == 'L') -7.5 else 0.0))
                     addSequential(PickupCubeCommand(visionCheck = false), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
                     addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
 
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Switch", false, false), firstSwitch.mpTime - 0.4)
+                        addParallel(MotionProfileCommand(folder, "Switch", false, false), firstSwitch.pathDuration - 0.4)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(firstSwitch.mpTime - 0.2))
+                            addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
@@ -234,7 +232,7 @@ class AutoHelper {
                                     startTime = System.currentTimeMillis()
                                 }
 
-                                override fun isFinished() = (System.currentTimeMillis() - startTime) > (mpCommand.mpTime - timeToGoUp).coerceAtLeast(0.001) * 1000
+                                override fun isFinished() = (System.currentTimeMillis() - startTime) > (mpCommand.pathDuration - timeToGoUp).coerceAtLeast(0.001) * 1000
                             })
                             addSequential(commandGroup {
                                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
