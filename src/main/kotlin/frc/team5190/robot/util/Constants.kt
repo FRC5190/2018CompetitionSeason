@@ -75,7 +75,7 @@ object DriveConstants {
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
-    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -104,15 +104,16 @@ object ElevatorConstants {
 }
 
 object ArmConstants {
-    const val INVERTED = false                  // true for falcon heavy, false for falcon 9
-    const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
+    const val INVERTED = DriveConstants.IS_RACE_ROBOT
+    const val SENSOR_PHASE = !DriveConstants.IS_RACE_ROBOT
 
     const val P = 4.0
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
     
-    const val DOWN_TICKS = -507                // 1000 for falcon heavy, 1330 for falcon 9
+    @Suppress("ConstantConditionIf")
+    val DOWN_TICKS = if(DriveConstants.IS_RACE_ROBOT) -795 else -1152
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30

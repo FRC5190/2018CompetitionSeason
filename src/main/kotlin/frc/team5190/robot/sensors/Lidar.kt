@@ -36,8 +36,10 @@ object Lidar : Subsystem() {
         // X - Raw Sensor Units
         // Y - Height in Inches
         val data = arrayOf(
-                5.0 to 6.0,
-                7.0 to 10.0
+                1200.0 to 48.0,
+                1490.0 to 59.0,
+                1790.0 to 69.0
+
         )
 
         interpolateFunction = interpolator.interpolate(data.map { it.first }.toDoubleArray(), data.map { it.second }.toDoubleArray())

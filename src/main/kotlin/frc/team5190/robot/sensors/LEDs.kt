@@ -18,7 +18,7 @@ object LEDs : Subsystem() {
     private val COLOR_CLEAR = Color(0, 0, 0)
     private val COLOR_RED = Color(255, 0, 0)
     private val COLOR_ORANGE = Color(255, 100, 0)
-    private val COLOR_AUTO = Color(128, 0, 128)
+    private val COLOR_AUTO = Color(255, 17, 115)
     private val COLOR_GREEN = Color(0, 255, 0)
 
     private var blinkedFor = 0L

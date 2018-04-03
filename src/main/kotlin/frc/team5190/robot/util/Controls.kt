@@ -141,7 +141,7 @@ object Controls {
             // Down - Intake
                 180 -> ElevatorPresetCommand(ElevatorPreset.INTAKE)
             // Left - Scale Backwards
-                270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND)
+                270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR)
                 else -> null
             }?.start()
         }

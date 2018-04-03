@@ -39,7 +39,7 @@ class TurnCommand(val angle: Double) : PIDCommand(DriveConstants.TURN_P, DriveCo
     /**
      * Uses the output of the PID controller to control the DriveTrain
      */
-    override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
+    override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, -output, output)
 
     /**
      * Input from the PID comes from the Pigeon

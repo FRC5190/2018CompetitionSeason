@@ -183,5 +183,5 @@ enum class ElevatorPosition(var ticks: Int) {
     FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
     SCALE(17000),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
-    INTAKE(500);
+    INTAKE(if (DriveConstants.IS_RACE_ROBOT) 500 else 1100);
 }

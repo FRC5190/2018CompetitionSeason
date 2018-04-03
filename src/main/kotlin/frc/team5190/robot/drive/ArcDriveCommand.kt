@@ -32,7 +32,7 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
      * Initializes the command
      */
     override fun initialize() {
-        val currentAngle = Pigeon.correctedAngle
+        val currentAngle = -Pigeon.correctedAngle
 
         val angleDelta = Math.toRadians((angle - currentAngle) % 180)
 

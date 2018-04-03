@@ -66,8 +66,8 @@ open class MotionProfileCommand(folder: String, file: String,
 
                 val robotReversedMul = if (robotReversed) -1 else 1
 
-                val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition * robotReversedMul).coerceAtLeast(-0.1) * robotReversedMul
-                val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition * robotReversedMul).coerceAtLeast(-0.1) * robotReversedMul
+                val leftOutput = leftEncoderFollower.calculate(DriveSubsystem.falconDrive.leftEncoderPosition * robotReversedMul).coerceAtLeast(-0.05) * robotReversedMul
+                val rightOutput = rightEncoderFollower.calculate(DriveSubsystem.falconDrive.rightEncoderPosition * robotReversedMul).coerceAtLeast(-0.05) * robotReversedMul
 
                 val actualHeading = Pathfinder.boundHalfDegrees((Pigeon.correctedAngle + if (robotReversed xor pathReversed) 180 else 0))
                 val desiredHeading = (if (pathMirrored) -1 else 1) * Pathfinder.boundHalfDegrees(Pathfinder.r2d(leftEncoderFollower.heading))
