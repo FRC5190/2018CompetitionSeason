@@ -26,8 +26,6 @@ class LidarElevatorCommand : Command() {
         ElevatorSubsystem.set(ControlMode.MotionMagic,
                 if (Lidar.underScale) heightBuffer.average.coerceIn(ElevatorPosition.FIRST_STAGE.ticks.toDouble(), ElevatorPosition.SCALE_HIGH.ticks.toDouble())
                 else ElevatorPosition.SCALE.ticks.toDouble())
-
-        println(heightBuffer.average)
     }
 
     override fun end() {
@@ -35,6 +33,6 @@ class LidarElevatorCommand : Command() {
     }
 
     override fun isFinished() = !IntakeSubsystem.isCubeIn
-            && ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks -  ElevatorSubsystem.inchesToNativeUnits(1.0)
+            && ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks - ElevatorSubsystem.inchesToNativeUnits(1.0)
 
 }

@@ -130,7 +130,6 @@ class AutoHelper {
                                     addSequential(object : Command() {
                                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                                     })
-                                    addSequential(TimedCommand(0.4))
                                     addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
@@ -156,7 +155,7 @@ class AutoHelper {
                         addParallel(dropThirdCubePath)
                         addParallel(commandGroup {
                             addSequential(TimedCommand(dropThirdCubePath.pathDuration - 2.0))
-                            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
+                            addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
                         })
                     })
                 }
