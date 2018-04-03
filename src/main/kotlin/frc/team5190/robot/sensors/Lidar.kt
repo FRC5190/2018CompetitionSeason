@@ -18,9 +18,9 @@ object Lidar : Subsystem() {
     private val interpolateFunction: PolynomialSplineFunction
 
     // All in inches
-    private val minScaleHeight = 48.0
-    private val maxScaleHeight = 72.0
-    private val allowedTolerance = 3.0
+    private const val minScaleHeight = 48.0
+    private const val maxScaleHeight = 72.0
+    private const val allowedTolerance = 3.0
 
     var underScale = false
         private set

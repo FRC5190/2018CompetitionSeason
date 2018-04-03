@@ -25,11 +25,13 @@ class AutoHelper {
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
             return when (folder) {
-            // Center switch autonomous cases.
                 "CS-L", "CS-R" -> commandGroup {
 
                     val firstPathToSwitch = MotionProfileCommand(folder, "Drop First Cube")
 
+                    /*
+                    Drop 1st Cube in Switch
+                     */
                     addSequential(commandGroup {
                         addParallel(firstPathToSwitch)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0)
@@ -39,6 +41,10 @@ class AutoHelper {
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
+
+                    /*
+                    Come back to Center
+                     */
                     addSequential(commandGroup {
                         addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
                         addParallel(commandGroup {
@@ -46,14 +52,23 @@ class AutoHelper {
                             addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         })
                     })
-                    addSequential(TurnCommand(angle = 0.0))
-                    addSequential(commandGroup {
-                        addParallel(StraightDriveCommand(5.0, cruiseVel = 5.0, accel = 4.0))
-                        addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
-                    })
-                    addSequential(IntakeHoldCommand(), 0.001)
-                    addSequential(ArcDriveCommand(feet = -4.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
 
+                    /*
+                    Pickup 2nd Cube
+                     */
+                    addSequential(commandGroup {
+                        addSequential(TurnCommand(angle = 0.0))
+                        addSequential(commandGroup {
+                            addParallel(StraightDriveCommand(5.0, cruiseVel = 5.0, accel = 4.0))
+                            addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
+                        })
+                        addSequential(IntakeHoldCommand(), 0.001)
+                        addSequential(ArcDriveCommand(feet = -4.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
+                    })
+
+                    /*
+                    Drop 2nd Cube in Switch
+                     */
                     addSequential(commandGroup {
                         addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", pathMirrored = folder.last() == 'R'), firstPathToSwitch.pathDuration - 0.4)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
@@ -65,7 +80,6 @@ class AutoHelper {
                     })
                 }
 
-            // Scale autonomous cases
                 "LS-LL", "RS-RR", "LS-RL", "RS-LR",
                 "LS-RR", "RS-LL", "LS-LR", "RS-RL" -> commandGroup {
 
@@ -73,7 +87,9 @@ class AutoHelper {
                     val firstCube = MotionProfileCommand(if (folder.first() == folder.last()) "LS-LL" else "LS-RR", "Drop First Cube",
                             robotReversed = true, pathMirrored = folder.first() == 'R')
 
-                    // Drop 1st Cube on Scale
+                    /*
+                    Drop 1st Cube in Scale
+                    */
                     addSequential(commandGroup {
                         addParallel(firstCube)
                         addParallel(commandGroup {
@@ -106,7 +122,9 @@ class AutoHelper {
                         })
                     })
 
-                    // Pickup 2nd Cube
+                    /*
+                    Pickup 2nd Cube
+                     */
                     addSequential(commandGroup {
                         addSequential(commandGroup {
                             addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
@@ -119,7 +137,9 @@ class AutoHelper {
 
                     })
 
-                    // Drop 2nd Cube in Scale
+                    /*
+                     Drop 2nd Cube in Scale
+                      */
                     addSequential(commandGroup {
                         val dropSecondCubePath = MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R')
                         addParallel(dropSecondCubePath)
@@ -137,7 +157,9 @@ class AutoHelper {
                         })
                     })
 
-                    // Pickup 3rd Cube
+                    /*
+                     Pickup 3rd Cube
+                      */
                     addSequential(commandGroup {
                         addSequential(commandGroup {
                             addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
@@ -149,7 +171,9 @@ class AutoHelper {
                         addSequential(IntakeHoldCommand(), 0.001)
                     })
 
-                    // Go to Scale with 3rd Cube
+                    /*
+                     Go to Scale with 3rd Cube
+                      */
                     addSequential(commandGroup {
                         val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R')
                         addParallel(dropThirdCubePath)
