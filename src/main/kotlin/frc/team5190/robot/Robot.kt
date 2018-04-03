@@ -44,6 +44,9 @@ class Robot : IterativeRobot() {
     // Shows a dropdown of which auto to use
     private val autoChooser = SendableChooser<String>()
 
+    // Shows a dropdown of how many cubes to interact with during auto
+    private val cubeChooser = SendableChooser<Int>()
+
     // Variable that stores which side of the switch to go to.
     private var switchSide = MatchData.OwnedSide.UNKNOWN
 
@@ -83,7 +86,11 @@ class Robot : IterativeRobot() {
         autoChooser.addObject("Legacy", "Legacy")
         autoChooser.addDefault("Modern", "Modern")
 
+        cubeChooser.addDefault("2", 2)
+        cubeChooser.addObject("3", 3)
+
         SmartDashboard.putData("Starting Position", sideChooser)
+        SmartDashboard.putData("# Cubes for Auto", cubeChooser)
         SmartDashboard.putData("Auto Mode", autoChooser)
     }
 
@@ -134,7 +141,7 @@ class Robot : IterativeRobot() {
         if (autoChooser.selected == "Legacy") {
             AutoHelper.LegacyAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
         } else {
-            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected).start()
         }
     }
 
