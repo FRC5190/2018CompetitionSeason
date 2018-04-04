@@ -8,7 +8,7 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team5190.robot.*
-import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.WinchCommand
 import frc.team5190.robot.drive.*
@@ -43,7 +43,7 @@ object Controls {
                 speed < DriveConstants.AUTO_SHIFT_LOW_THRESHOLD -> autoShiftGear = Gear.LOW
             }
             DriveSubsystem.falconDrive.gear = if (MainXbox.aButton) autoShiftGear else Gear.HIGH
-        }else{
+        } else {
             autoShiftGear = Gear.HIGH
         }
 
@@ -132,7 +132,7 @@ object Controls {
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
-        if(lastPov != pov && ElevatorSubsystem.closedLpControl) {
+        if (lastPov != pov && ElevatorSubsystem.closedLpControl) {
             when (pov) {
             // Up - Scale
                 0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)
@@ -152,7 +152,13 @@ object Controls {
 
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
-            WinchCommand().start()
+            commandGroup {
+                addSequential(commandGroup {
+                    addParallel(AutoArmCommand(ArmPosition.ALL_UP), 2.0)
+                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                })
+                addSequential(WinchCommand())
+            }.start()
         }
 
         if (MainXbox.startButtonPressed) {
