@@ -64,7 +64,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         rightMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+            it.setSensorPhase(DriveConstants.IS_RACE_ROBOT)
             it.configOpenloopRamp(0.0, TIMEOUT)
         }
 
@@ -75,6 +75,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
+
+            it.configVoltageCompSaturation(12.0, TIMEOUT)
+            it.enableVoltageCompensation(false)
             //it.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, TIMEOUT)
         }
     }

@@ -76,7 +76,7 @@ open class MotionProfileCommand(folder: String, file: String,
 
                 val turn = 2.0 * (1 / 80.0) * angleDifference
 
-//                println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn, Angle Difference: $angleDifference")
+                println("Actual Heading: $actualHeading, Desired Heading: $desiredHeading, Turn: $turn, Angle Difference: $angleDifference")
 
                 DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
             }

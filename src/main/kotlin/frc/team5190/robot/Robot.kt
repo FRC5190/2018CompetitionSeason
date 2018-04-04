@@ -115,34 +115,14 @@ class Robot : IterativeRobot() {
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
-        /* TESTING
-        commandGroup {
-            addSequential(MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true, pathMirrored = false))
-            addSequential(commandGroup {
-                addParallel(MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = false))
-                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
-            })
-            addSequential(IntakeHoldCommand(), 0.001)
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
-            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 1.0), 0.5)
+        MotionProfileCommand("LS-LL", "Test", pathMirrored = false, robotReversed = true).start()
 
-            addSequential(IntakeHoldCommand(), 0.001)
-
-            addSequential(commandGroup {
-                addParallel(MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = false))
-                addParallel(IntakeCommand(IntakeDirection.IN), 3.0)
-            })
-            addSequential(IntakeHoldCommand(), 0.001)
-            addSequential(MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = false))
-
-        }.start()
-        */
-
-        if (autoChooser.selected == "Legacy") {
-            AutoHelper.LegacyAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
-        } else {
-            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected).start()
-        }
+//        if (autoChooser.selected == "Legacy") {
+//            AutoHelper.LegacyAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+//        } else {
+//            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected
+//                    ?: 2).start()
+//        }
     }
 
 

@@ -19,7 +19,7 @@ open class AutoArmCommand(armPosition: ArmPosition) : Command() {
     private val armPosition = armPosition.ticks
 
     init {
-        requires(ArmSubsystem)
+        this.requires(ArmSubsystem)
     }
 
     /**
