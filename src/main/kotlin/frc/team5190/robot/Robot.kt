@@ -115,14 +115,12 @@ class Robot : IterativeRobot() {
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
-        MotionProfileCommand("LS-LL", "Test", pathMirrored = false, robotReversed = true).start()
-
-//        if (autoChooser.selected == "Legacy") {
-//            AutoHelper.LegacyAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
-//        } else {
-//            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected
-//                    ?: 2).start()
-//        }
+        if (autoChooser.selected == "Legacy") {
+            AutoHelper.LegacyAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        } else {
+            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected
+                    ?: 2).start()
+        }
     }
 
 

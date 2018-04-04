@@ -178,10 +178,7 @@ class AutoHelper {
                         addSequential(commandGroup {
                             val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R')
                             addParallel(dropThirdCubePath)
-                            addParallel(commandGroup {
-                                addSequential(TimedCommand(dropThirdCubePath.pathDuration - 1.0))
-                                addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
-                            })
+                            addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
                         })
                     }
                 }
