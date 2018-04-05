@@ -134,8 +134,9 @@ object IntakeConstants {
 }
 
 object ClimbConstants {
+    const val SCALE_POS = 4096
+
     const val PEAK_OUTPUT = 1.0
-    const val CORRECTION_OUTPUT = 0.2
 }
 
 const val TIMEOUT = 20

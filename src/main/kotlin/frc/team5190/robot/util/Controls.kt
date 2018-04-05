@@ -8,7 +8,9 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team5190.robot.*
+import frc.team5190.robot.arm.ArmPosition
 import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.WinchCommand
 import frc.team5190.robot.drive.*
@@ -152,6 +154,10 @@ object Controls {
 
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
+            commandGroup {
+                addParallel(AutoArmCommand(ArmPosition.ALL_UP))
+                addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+            }.start()
             WinchCommand().start()
         }
 
@@ -162,6 +168,19 @@ object Controls {
     }
 
     fun winchSubsystem() {
-        ClimbSubsystem.set(ControlMode.PercentOutput, (MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) - MainXbox.getTriggerAxis(GenericHID.Hand.kRight)) * ClimbConstants.PEAK_OUTPUT)
+        MainXbox.getRightY().takeIf { it.absoluteValue > 0.1 && DriveSubsystem.controlMode == DriveMode.CURVE }?.let {
+            ClimbSubsystem.set(ControlMode.PercentOutput, it * ClimbConstants.PEAK_OUTPUT)
+        }
+
+        val pov = MainXbox.pov
+        if (lastPov != pov && ElevatorSubsystem.closedLpControl) {
+            when (pov) {
+            // Right - Scale Height
+                90 -> ClimbSubsystem.set(ControlMode.MotionMagic, ClimbConstants.SCALE_POS.toDouble())
+            // Down - Original Position
+                180 -> ClimbSubsystem.set(ControlMode.MotionMagic, 0.0)
+            }
+        }
+        lastPov = pov
     }
 }
