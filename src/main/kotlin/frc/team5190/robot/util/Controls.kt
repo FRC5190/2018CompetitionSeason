@@ -8,7 +8,7 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team5190.robot.*
-import frc.team5190.robot.arm.*
+import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.WinchCommand
 import frc.team5190.robot.drive.*
@@ -152,13 +152,7 @@ object Controls {
 
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
-            commandGroup {
-                addSequential(commandGroup {
-                    addParallel(AutoArmCommand(ArmPosition.ALL_UP), 2.0)
-                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                })
-                addSequential(WinchCommand())
-            }.start()
+            WinchCommand().start()
         }
 
         if (MainXbox.startButtonPressed) {

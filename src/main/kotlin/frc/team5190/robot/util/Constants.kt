@@ -113,7 +113,7 @@ object ArmConstants {
     const val PID_SLOT = 0
     
     @Suppress("ConstantConditionIf")
-    val DOWN_TICKS = -795
+    val DOWN_TICKS = if (DriveConstants.IS_RACE_ROBOT) -795 else -880
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
@@ -125,7 +125,7 @@ object ArmConstants {
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000
-    const val MOTION_ACCELERATION = 350
+    const val MOTION_ACCELERATION = 500
 }
 
 object IntakeConstants {
