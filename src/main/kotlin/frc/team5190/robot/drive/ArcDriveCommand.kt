@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.sensors.Pigeon
 import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
+import jaci.pathfinder.Pathfinder
 
 /**
  * Command that drives to tgtRange
@@ -32,9 +33,9 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
      * Initializes the command
      */
     override fun initialize() {
-        val currentAngle = -Pigeon.correctedAngle
+        val currentAngle = Pigeon.correctedAngle
 
-        val angleDelta = Math.toRadians((angle - currentAngle) % 180)
+        val angleDelta = Math.toRadians(Pathfinder.boundHalfDegrees(angle - currentAngle))
 
         val radius = feet / Math.sin(angleDelta) * Math.sin((Math.PI - angleDelta) / 2.0)
         val arcLength = radius * angleDelta
@@ -42,8 +43,8 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
 //        println("Angle: ${Math.toDegrees(angleDelta)} Radius: $radius, Arc Length: $arcLength")
 
         val wheelBase = DriveConstants.DRIVE_BASE_WIDTH / 12.0 / 2.0
-        val leftScale = ((radius + wheelBase) * angleDelta) / arcLength
-        val rightScale = ((radius - wheelBase) * angleDelta) / arcLength
+        val leftScale = ((radius - wheelBase) * angleDelta) / arcLength
+        val rightScale = ((radius + wheelBase) * angleDelta) / arcLength
 
         println("Left Scale: $leftScale Right Scale: $rightScale")
         with(DriveSubsystem.falconDrive.leftMaster) {

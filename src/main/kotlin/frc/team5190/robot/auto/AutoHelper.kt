@@ -156,7 +156,7 @@ class AutoHelper {
                         })
                     })
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Center", true, false, false, false))
+                        addParallel(MotionProfileCommand(folder, "Center", robotReversed = true, pathReversed = true))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.5))
                             addSequential(commandGroup {
@@ -164,7 +164,7 @@ class AutoHelper {
                             })
                         })
                     })
-                    addSequential(TurnCommand(angle = if (folder.last() == 'L') 7.5 else 0.0))
+                    addSequential(TurnCommand(angle = 0.0))
                     addSequential(PickupCubeCommand(visionCheck = false), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
                     addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
@@ -213,7 +213,7 @@ class AutoHelper {
                                 addParallel(commandGroup {
                                     addSequential(object : Command() {
                                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
-                                    })
+                                    }, 3.0)
                                     addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (folder.first() == folder.last()) 0.85 else 0.75, timeout = 1.0))
                                     addSequential(IntakeHoldCommand(), 0.001)
                                 })
@@ -227,7 +227,7 @@ class AutoHelper {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                         addParallel(commandGroup {
                             addSequential(StraightDriveCommand(0.1), 0.01)
-                            addSequential(TurnCommand(if (folder.last() == 'R') 0.0 else 10.0))
+                            addSequential(TurnCommand(if (folder.last() == 'R') 180.0 else -170.0))
                             addSequential(object : Command() {
                                 override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.SWITCH.ticks - 100
                             })
@@ -238,7 +238,7 @@ class AutoHelper {
 
                     // Drop 2nd Cube in Scale
                     addSequential(commandGroup {
-                        addParallel(ArcDriveCommand(-5.75, if (folder.last() == 'R') -1.0 else -15.0), 4.0)
+                        addParallel(ArcDriveCommand(-5.75, if (folder.last() == 'R') -179.0 else 165.0), 4.0)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
