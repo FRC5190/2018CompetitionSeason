@@ -8,22 +8,27 @@ package frc.team5190.robot.climb
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.util.*
 
 object ClimbSubsystem : Subsystem() {
 
-    private val masterClimbMotor = TalonSRX(MotorIDs.WINCH_MASTER)
+    val masterClimbMotor = TalonSRX(MotorIDs.WINCH_MASTER)
 
     init {
-        with(masterClimbMotor){
+        with(masterClimbMotor) {
+            inverted = true
+            setSensorPhase(true)
+
             configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT)
 
-            configPID(0, 1.0, 0.0, 0.0, TIMEOUT)
+            configPID(0, 5.0, 0.0, 0.0, TIMEOUT)
             configMotionCruiseVelocity(1000000, TIMEOUT)
-            configMotionAcceleration(4096, TIMEOUT)
+            configMotionAcceleration(4096/10, TIMEOUT)
         }
         with(TalonSRX(MotorIDs.WINCH_SLAVE)) {
             follow(masterClimbMotor)
+            inverted = true
         }
     }
 
@@ -39,5 +44,8 @@ object ClimbSubsystem : Subsystem() {
 
     override fun periodic() {
         Controls.climbSubsystem()
+
+        SmartDashboard.putNumber("Winch Encoder", masterClimbMotor.getSelectedSensorPosition(0).toDouble())
+        SmartDashboard.putNumber("Winch Percent", masterClimbMotor.motorOutputPercent)
     }
 }

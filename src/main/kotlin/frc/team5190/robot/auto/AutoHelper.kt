@@ -25,60 +25,7 @@ class AutoHelper {
             if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
 
             return when (folder) {
-                "CS-L", "CS-R" -> commandGroup {
-
-                    val firstPathToSwitch = MotionProfileCommand(folder, "Drop First Cube")
-
-                    /*
-                    Drop 1st Cube in Switch
-                     */
-                    addSequential(commandGroup {
-                        addParallel(firstPathToSwitch)
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0)
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(firstPathToSwitch.pathDuration - 0.2))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
-                            addSequential(IntakeHoldCommand(), 0.001)
-                        })
-                    })
-
-                    /*
-                    Come back to Center
-                     */
-                    addSequential(commandGroup {
-                        addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = folder.last() == 'R'))
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(0.5))
-                            addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        })
-                    })
-
-                    /*
-                    Pickup 2nd Cube
-                     */
-                    addSequential(commandGroup {
-                        addSequential(TurnCommand(angle = 0.0))
-                        addSequential(commandGroup {
-                            addParallel(StraightDriveCommand(5.0, cruiseVel = 5.0, accel = 4.0))
-                            addParallel(IntakeCommand(IntakeDirection.IN, timeout = 3.0))
-                        })
-                        addSequential(IntakeHoldCommand(), 0.001)
-                        addSequential(ArcDriveCommand(feet = -4.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
-                    })
-
-                    /*
-                    Drop 2nd Cube in Switch
-                     */
-                    addSequential(commandGroup {
-                        addParallel(MotionProfileCommand("CS-L", "Pickup Second Cube", pathMirrored = folder.last() == 'R'), firstPathToSwitch.pathDuration - 0.4)
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(firstPathToSwitch.pathDuration - 0.2))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
-                            addSequential(IntakeHoldCommand(), 0.001)
-                        })
-                    })
-                }
+                "CS-L", "CS-R" -> LegacyAuto.getAuto(startingPositions, switchOwnedSide, scaleOwnedSide)
 
                 "LS-LL", "RS-RR", "LS-RL", "RS-LR",
                 "LS-RR", "RS-LL", "LS-LR", "RS-RL" -> commandGroup {
@@ -209,7 +156,7 @@ class AutoHelper {
                         })
                     })
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Center", true, false, false))
+                        addParallel(MotionProfileCommand(folder, "Center", true, false, false, false))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.5))
                             addSequential(commandGroup {
@@ -217,7 +164,7 @@ class AutoHelper {
                             })
                         })
                     })
-                    addSequential(TurnCommand(angle = if (folder.last() == 'L') -7.5 else 0.0))
+                    addSequential(TurnCommand(angle = if (folder.last() == 'L') 0.0 else 0.0))
                     addSequential(PickupCubeCommand(visionCheck = false), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
                     addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)

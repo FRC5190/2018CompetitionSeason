@@ -49,7 +49,7 @@ object DriveConstants {
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 1.7
+    const val P_HIGH = 2.0
     const val I_HIGH = 0.0
     const val D_HIGH = 0.0
 
@@ -125,7 +125,7 @@ object ArmConstants {
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000
-    const val MOTION_ACCELERATION = 500
+    const val MOTION_ACCELERATION = 350
 }
 
 object IntakeConstants {
@@ -134,7 +134,8 @@ object IntakeConstants {
 }
 
 object ClimbConstants {
-    const val SCALE_POS = 4096
+    const val SCALE_POS = 24000
+    const val CLIMB_POS = 200
 
     const val PEAK_OUTPUT = 1.0
 }

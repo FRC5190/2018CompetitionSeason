@@ -167,9 +167,21 @@ object Controls {
         }
     }
 
+    private var winchMoving = false
+
     fun winchSubsystem() {
-        MainXbox.getRightY().takeIf { it.absoluteValue > 0.1 && DriveSubsystem.controlMode == DriveMode.CURVE }?.let {
-            ClimbSubsystem.set(ControlMode.PercentOutput, it * ClimbConstants.PEAK_OUTPUT)
+        val winchSpeed = MainXbox.getRightY().takeIf { it.absoluteValue > 0.1 && DriveSubsystem.controlMode == DriveMode.CURVE }
+        winchSpeed?.let {
+            ClimbSubsystem.set(ControlMode.PercentOutput, -it * ClimbConstants.PEAK_OUTPUT)
+            winchMoving = true
+        }
+        if(winchSpeed == null && winchMoving){
+            if(ElevatorSubsystem.closedLpControl){
+                ClimbSubsystem.set(ControlMode.MotionMagic, ClimbSubsystem.masterClimbMotor.getSelectedSensorPosition(0).toDouble())
+            }else {
+                ClimbSubsystem.set(ControlMode.PercentOutput, 0.0)
+            }
+            winchMoving = false
         }
 
         val pov = MainXbox.pov
@@ -178,7 +190,7 @@ object Controls {
             // Right - Scale Height
                 90 -> ClimbSubsystem.set(ControlMode.MotionMagic, ClimbConstants.SCALE_POS.toDouble())
             // Down - Original Position
-                180 -> ClimbSubsystem.set(ControlMode.MotionMagic, 0.0)
+                180 -> ClimbSubsystem.set(ControlMode.MotionMagic, ClimbConstants.CLIMB_POS.toDouble())
             }
         }
         lastPov = pov
