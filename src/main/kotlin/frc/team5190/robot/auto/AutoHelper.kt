@@ -164,7 +164,7 @@ class AutoHelper {
                             })
                         })
                     })
-                    addSequential(TurnCommand(angle = if (folder.last() == 'L') 0.0 else 0.0))
+                    addSequential(TurnCommand(angle = if (folder.last() == 'L') 7.5 else 0.0))
                     addSequential(PickupCubeCommand(visionCheck = false), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
                     addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
