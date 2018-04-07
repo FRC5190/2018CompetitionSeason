@@ -24,7 +24,7 @@ object MotorIDs {
     const val INTAKE_RIGHT = 9
 
     const val WINCH_MASTER = 10
-    const val WINCH_SLAVE = 11
+    const val WINCH_SLAVE = 59
 
 }
 
@@ -75,7 +75,7 @@ object DriveConstants {
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
-    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -134,8 +134,8 @@ object IntakeConstants {
 }
 
 object ClimbConstants {
-    const val SCALE_POS = 24000
-    const val CLIMB_POS = 200
+    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 37000 else 24000
+    val CLIMB_POS = if(DriveConstants.IS_RACE_ROBOT) 0 else 200
 
     const val PEAK_OUTPUT = 1.0
 }

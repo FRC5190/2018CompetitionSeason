@@ -34,8 +34,8 @@ object Lidar : Subsystem() {
         // Y - Height in Inches
         val data = arrayOf(
                 1200.0 to 48.0,
-                1490.0 to 59.0,
-                1790.0 to 69.0
+                1490.0 to 62.0,
+                1700.0 to 70.0
         )
 
         data.forEach { regressionFunction.addData(it.first, it.second) }

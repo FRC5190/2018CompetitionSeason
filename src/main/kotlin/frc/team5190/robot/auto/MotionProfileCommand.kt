@@ -74,7 +74,7 @@ open class MotionProfileCommand(folder: String, file: String,
 
                 val angleDifference = Pathfinder.boundHalfDegrees(actualHeading - desiredHeading)
 
-                var turn = 1.7 * (1 / 80.0) * angleDifference
+                var turn = 1.5 * (1 / 80.0) * angleDifference
                 turn = if (useGyro) turn else 0.0
 
                 println("Left: ${leftOutput + turn}, Right: ${rightOutput - turn}")

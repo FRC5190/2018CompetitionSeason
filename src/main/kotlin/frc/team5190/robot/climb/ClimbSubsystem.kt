@@ -17,18 +17,18 @@ object ClimbSubsystem : Subsystem() {
 
     init {
         with(masterClimbMotor) {
-            inverted = true
-            setSensorPhase(true)
+            inverted = !DriveConstants.IS_RACE_ROBOT
+            setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
 
             configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT)
 
             configPID(0, 5.0, 0.0, 0.0, TIMEOUT)
             configMotionCruiseVelocity(1000000, TIMEOUT)
-            configMotionAcceleration(4096/10, TIMEOUT)
+            configMotionAcceleration(4096, TIMEOUT)
         }
         with(TalonSRX(MotorIDs.WINCH_SLAVE)) {
             follow(masterClimbMotor)
-            inverted = true
+            inverted =  !DriveConstants.IS_RACE_ROBOT
         }
     }
 

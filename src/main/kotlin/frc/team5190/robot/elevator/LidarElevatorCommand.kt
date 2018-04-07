@@ -14,7 +14,7 @@ class LidarElevatorCommand : Command() {
         requires(Lidar)
     }
 
-    private val heightBuffer = CircularBuffer(2)
+    private val heightBuffer = CircularBuffer(3)
 
     override fun initialize() {
         ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT

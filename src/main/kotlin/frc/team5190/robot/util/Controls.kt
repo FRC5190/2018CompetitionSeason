@@ -102,6 +102,7 @@ object Controls {
 
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
+                ElevatorSubsystem.currentCommand?.cancel()
                 val motorOut = 0.55
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
@@ -117,6 +118,7 @@ object Controls {
         }
         when {
             MainXbox.getBumper(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
+                ElevatorSubsystem.currentCommand?.cancel()
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 val motorOut = -0.3
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
