@@ -42,7 +42,7 @@ class Robot : IterativeRobot() {
     private val controllerChooser = SendableChooser<String>()
 
     // Shows a dropdown of which auto to use
-    private val autoChooser = SendableChooser<String>()
+    private val crossAutoChooser = SendableChooser<Boolean>()
 
     // Shows a dropdown of how many cubes to interact with during auto
     private val cubeChooser = SendableChooser<Int>()
@@ -83,15 +83,15 @@ class Robot : IterativeRobot() {
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
-        autoChooser.addObject("Legacy", "Legacy")
-        autoChooser.addDefault("Modern", "Modern")
+        crossAutoChooser.addObject("Legacy", false)
+        crossAutoChooser.addDefault("Modern", true)
 
         cubeChooser.addDefault("2", 2)
         cubeChooser.addObject("3", 3)
 
         SmartDashboard.putData("Starting Position", sideChooser)
         SmartDashboard.putData("# Cubes for Auto", cubeChooser)
-        SmartDashboard.putData("Auto Mode", autoChooser)
+        SmartDashboard.putData("Cross Auto Mode", crossAutoChooser)
     }
 
     /**
@@ -115,12 +115,7 @@ class Robot : IterativeRobot() {
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
-        if (autoChooser.selected == "Legacy") {
-            AutoHelper.LegacyAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
-        } else {
-            AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected
-                    ?: 2).start()
-        }
+        AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected, crossAutoChooser.selected).start()
     }
 
 

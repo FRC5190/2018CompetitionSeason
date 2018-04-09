@@ -6,6 +6,8 @@
 package frc.team5190.robot.climb
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
@@ -22,9 +24,12 @@ object ClimbSubsystem : Subsystem() {
 
             configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT)
 
-            configPID(0, 5.0, 0.0, 0.0, TIMEOUT)
+            configPID(0, 2.0, 0.0, 0.0, TIMEOUT)
             configMotionCruiseVelocity(1000000, TIMEOUT)
-            configMotionAcceleration(4096, TIMEOUT)
+            configMotionAcceleration(12000, TIMEOUT)
+
+            configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, TIMEOUT)
+            overrideLimitSwitchesEnable(true)
         }
         with(TalonSRX(MotorIDs.WINCH_SLAVE)) {
             follow(masterClimbMotor)

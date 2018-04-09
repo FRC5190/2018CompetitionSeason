@@ -8,6 +8,7 @@ package frc.team5190.robot.sensors
 import com.ctre.phoenix.CANifier
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team5190.robot.util.DriveConstants
 import org.apache.commons.math3.stat.regression.SimpleRegression
 
 object Lidar : Subsystem() {
@@ -32,7 +33,12 @@ object Lidar : Subsystem() {
     init {
         // X - Raw Sensor Units
         // Y - Height in Inches
-        val data = arrayOf(
+        val data = if (DriveConstants.IS_RACE_ROBOT) arrayOf(
+                1050.0 to 45.0,
+                1500.0 to 55.0,
+                1900.0 to 70.0
+        )
+        else arrayOf(
                 1200.0 to 48.0,
                 1490.0 to 62.0,
                 1700.0 to 70.0

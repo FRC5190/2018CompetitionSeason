@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.Lidar
 import frc.team5190.robot.util.CircularBuffer
+import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.ElevatorConstants
 
 class LidarElevatorCommand : Command() {
@@ -21,7 +22,7 @@ class LidarElevatorCommand : Command() {
     }
 
     override fun execute() {
-        if (Lidar.underScale) heightBuffer.add(ElevatorSubsystem.inchesToNativeUnits(Lidar.scaleHeight - 15).toDouble())
+        if (Lidar.underScale) heightBuffer.add(ElevatorSubsystem.inchesToNativeUnits(Lidar.scaleHeight - 15.0).toDouble())
 
         ElevatorSubsystem.set(ControlMode.MotionMagic,
                 if (Lidar.underScale) heightBuffer.average.coerceIn(ElevatorPosition.FIRST_STAGE.ticks.toDouble(), ElevatorPosition.SCALE_HIGH.ticks.toDouble())

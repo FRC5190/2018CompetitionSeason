@@ -62,7 +62,7 @@ object Controls {
                 teleIntake = true
             }
             MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) >= 0.1 && !climbState -> {
-                IntakeCommand(IntakeDirection.OUT, speed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft).pow(2.0) * 0.8).start()
+                IntakeCommand(IntakeDirection.OUT, speed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft).pow(2.0) * 0.65).start()
                 teleIntake = true
             }
             teleIntake -> {
@@ -90,7 +90,7 @@ object Controls {
 
     fun elevatorSubsystem() {
 
-        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kLeft)) {
+        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kRight)) {
             if (ElevatorSubsystem.closedLpControl) {
                 ElevatorSubsystem.disableSensorControl()
                 ArmSubsystem.disableSensorControl()
@@ -156,10 +156,12 @@ object Controls {
 
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
-            commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.ALL_UP))
-                addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-            }.start()
+            if(ElevatorSubsystem.closedLpControl) {
+                commandGroup {
+                    addParallel(AutoArmCommand(ArmPosition.ALL_UP))
+                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
+                }.start()
+            }
             WinchCommand().start()
         }
 

@@ -46,9 +46,12 @@ object DriveSubsystem : Subsystem() {
         SmartDashboard.putNumber("Left Encoder Position", falconDrive.leftEncoderPosition.toDouble())
         SmartDashboard.putNumber("Right Encoder Position", falconDrive.rightEncoderPosition.toDouble())
 
-        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kRight)) {
-            controlMode = if (controlMode == DriveMode.CURVE) DriveMode.TANK else DriveMode.CURVE
-        }
+        SmartDashboard.putNumber("Left Power", falconDrive.leftMaster.outputCurrent)
+        SmartDashboard.putNumber("Right Power", falconDrive.rightMaster.outputCurrent)
+
+//        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kRight)) {
+//            controlMode = if (controlMode == DriveMode.CURVE) DriveMode.TANK else DriveMode.CURVE
+//        }
     }
 
     /**
