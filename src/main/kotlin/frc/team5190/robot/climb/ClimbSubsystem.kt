@@ -31,9 +31,15 @@ object ClimbSubsystem : Subsystem() {
             configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, TIMEOUT)
             overrideLimitSwitchesEnable(true)
         }
-        with(TalonSRX(MotorIDs.WINCH_SLAVE)) {
+        val slaveClimbMotor = TalonSRX(MotorIDs.WINCH_SLAVE).apply {
             follow(masterClimbMotor)
             inverted =  !DriveConstants.IS_RACE_ROBOT
+        }
+        arrayOf(masterClimbMotor, slaveClimbMotor).forEach {
+            it.configContinuousCurrentLimit(40, TIMEOUT)
+            it.configPeakCurrentDuration(0, TIMEOUT)
+            it.configPeakCurrentLimit(0, TIMEOUT)
+            it.enableCurrentLimit(true)
         }
     }
 
