@@ -5,25 +5,43 @@
 
 package frc.team5190.robot.climb
 
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.util.*
 
 object ClimbSubsystem : Subsystem() {
 
-    val hookSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.HOOK)
-
-    internal val frontWinchMotor = TalonSRX(MotorIDs.FRONT_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
-    internal val backWinchMotor = TalonSRX(MotorIDs.BACK_WINCH_MASTER).apply { configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT) }
+    val masterClimbMotor = TalonSRX(MotorIDs.WINCH_MASTER)
 
     init {
-        with(TalonSRX(MotorIDs.BACK_WINCH_SLAVE)) {
-            follow(backWinchMotor)
+        with(masterClimbMotor) {
+            inverted = !DriveConstants.IS_RACE_ROBOT
+            setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
+
+            configPeakOutput(ClimbConstants.PEAK_OUTPUT, -ClimbConstants.PEAK_OUTPUT, TIMEOUT)
+
+            configPID(0, 2.0, 0.0, 0.0, TIMEOUT)
+            configMotionCruiseVelocity(1000000, TIMEOUT)
+            configMotionAcceleration(12000, TIMEOUT)
+
+            configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, TIMEOUT)
+            overrideLimitSwitchesEnable(true)
+        }
+        with(TalonSRX(MotorIDs.WINCH_SLAVE)) {
+            follow(masterClimbMotor)
+            inverted =  !DriveConstants.IS_RACE_ROBOT
         }
     }
 
     var climbState = false
+
+    fun set(controlMode: ControlMode, output: Double) {
+        masterClimbMotor.set(controlMode, output)
+    }
 
     override fun initDefaultCommand() {
         defaultCommand = IdleClimbCommand()
@@ -31,5 +49,8 @@ object ClimbSubsystem : Subsystem() {
 
     override fun periodic() {
         Controls.climbSubsystem()
+
+        SmartDashboard.putNumber("Winch Encoder", masterClimbMotor.getSelectedSensorPosition(0).toDouble())
+        SmartDashboard.putNumber("Winch Percent", masterClimbMotor.motorOutputPercent)
     }
 }

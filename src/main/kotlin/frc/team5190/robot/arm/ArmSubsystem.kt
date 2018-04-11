@@ -8,6 +8,7 @@ package frc.team5190.robot.arm
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.util.*
 
 /**
@@ -25,23 +26,26 @@ object ArmSubsystem : Subsystem() {
     private var stalled = false
     private var state = MotorState.OK
 
-    // Returns the amperage of the motor
-    val amperage
-        get() = masterArmMotor.outputCurrent
-
     // Returns the current encoder position of the motor
     val currentPosition
         get() = masterArmMotor.getSelectedSensorPosition(0)
 
     init {
+        enableSensorControl()
+
+        // Configure current limiting
+        currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
+    }
+
+    fun enableSensorControl() {
         with(masterArmMotor) {
             // Motor Inversion
             inverted = ArmConstants.INVERTED
 
             // Sensors and Safety
-            configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, TIMEOUT)
+            configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, TIMEOUT)
             setSensorPhase(ArmConstants.SENSOR_PHASE)
-            configReverseSoftLimitEnable(true, TIMEOUT)
+            configReverseSoftLimitEnable(false, TIMEOUT)
             configReverseSoftLimitThreshold(ArmPosition.DOWN.ticks - 100, TIMEOUT)
 
             // Brake Mode
@@ -62,9 +66,14 @@ object ArmSubsystem : Subsystem() {
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
         }
+    }
 
-        // Configure current limiting
-        currentBuffer.configureForTalon(ArmConstants.LOW_PEAK, ArmConstants.HIGH_PEAK, ArmConstants.DUR)
+    fun disableSensorControl() {
+        with(masterArmMotor) {
+            configReverseSoftLimitEnable(false, TIMEOUT)
+        }
+
+        set(ControlMode.PercentOutput, 0.0)
     }
 
     /**
@@ -113,13 +122,10 @@ object ArmSubsystem : Subsystem() {
      * Runs periodically
      */
     override fun periodic() {
-
-        if (currentPosition > 4096 || currentPosition < 0) {
-            masterArmMotor.setSelectedSensorPosition(currentPosition % 4096, 0, TIMEOUT)
-        }
+        SmartDashboard.putNumber("Absolute", (currentPosition % 1440).toDouble())
+        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
 
         Controls.armSubsystem()
-
         currentLimiting()
     }
 }
@@ -128,9 +134,9 @@ object ArmSubsystem : Subsystem() {
  * Enum class that holds the different arm positions.
  */
 enum class ArmPosition(val ticks: Int) {
-    BEHIND(ArmConstants.DOWN_TICKS + 1550),
-    ALL_UP(ArmConstants.DOWN_TICKS + 1250),
-    UP(ArmConstants.DOWN_TICKS + 800),
-    MIDDLE(ArmConstants.DOWN_TICKS + 350),
+    BEHIND((ArmConstants.DOWN_TICKS + 380)),
+    ALL_UP(ArmConstants.DOWN_TICKS + 250),
+    UP(ArmConstants.DOWN_TICKS + 200),
+    MIDDLE(ArmConstants.DOWN_TICKS + 100),
     DOWN(ArmConstants.DOWN_TICKS);
 }

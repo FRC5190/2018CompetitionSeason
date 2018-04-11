@@ -39,8 +39,23 @@ object ElevatorSubsystem : Subsystem() {
     private var stalled = false
 
     var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
+    var closedLpControl = true
 
     init {
+        enableSensorControl()
+
+        // Configure Slave Motor
+        with(TalonSRX(MotorIDs.ELEVATOR_SLAVE)) {
+            inverted = true
+            follow(masterElevatorMotor)
+            setNeutralMode(NeutralMode.Brake)
+        }
+
+        // Configure current limiting
+        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
+    }
+
+    fun enableSensorControl() {
         with(masterElevatorMotor) {
             // Motor Inversion
             inverted = false
@@ -71,17 +86,19 @@ object ElevatorSubsystem : Subsystem() {
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
 
+            closedLpControl = true
+
+        }
+    }
+
+    fun disableSensorControl() {
+        with(masterElevatorMotor) {
+            overrideLimitSwitchesEnable(false)
+            configForwardSoftLimitEnable(false, TIMEOUT)
+            closedLpControl = false
         }
 
-        // Configure Slave Motor
-        with(TalonSRX(MotorIDs.ELEVATOR_SLAVE)) {
-            inverted = true
-            follow(masterElevatorMotor)
-            setNeutralMode(NeutralMode.Brake)
-        }
-
-        // Configure current limiting
-        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
+        set(ControlMode.PercentOutput, 0.0)
     }
 
     /**
@@ -137,6 +154,9 @@ object ElevatorSubsystem : Subsystem() {
      */
     override fun periodic() {
         SmartDashboard.putNumber("Elevator Power", masterElevatorMotor.motorOutputPercent)
+        SmartDashboard.putNumber("Elevator Encoder Position", currentPosition.toDouble())
+
+
         if (ElevatorSubsystem.isElevatorAtBottom && !hasBeenReset) {
             this.resetEncoders()
             hasBeenReset = true
@@ -163,5 +183,5 @@ enum class ElevatorPosition(var ticks: Int) {
     FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
     SCALE(17000),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
-    INTAKE(500);
+    INTAKE(if (DriveConstants.IS_RACE_ROBOT) 500 else 1100);
 }

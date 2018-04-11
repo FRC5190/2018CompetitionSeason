@@ -13,9 +13,10 @@ import kotlin.math.absoluteValue
 /**
  *  Command that either intakes or outputs the cube
  */
-open class IntakeCommand(private val direction: IntakeDirection, private val timeout: Double = -.1,
-                    private val inSpeed: Double = IntakeConstants.DEFAULT_IN_SPEED,
-                    private val outSpeed: Double = IntakeConstants.DEFAULT_OUT_SPEED) : Command() {
+open class IntakeCommand(private val direction: IntakeDirection, private val timeout: Double = -.1, speed: Double = -1.0) : Command() {
+
+    private val speed = speed.takeIf { it >= 0.0 }
+            ?: if (direction == IntakeDirection.IN) IntakeConstants.DEFAULT_IN_SPEED else IntakeConstants.DEFAULT_OUT_SPEED
 
     init {
         this.requires(IntakeSubsystem)
@@ -30,8 +31,8 @@ open class IntakeCommand(private val direction: IntakeDirection, private val tim
         if (timeout > 0) setTimeout(timeout)
 
         val motorOutput = when (direction) {
-            IntakeDirection.IN -> -(inSpeed.absoluteValue)
-            IntakeDirection.OUT -> outSpeed.absoluteValue
+            IntakeDirection.IN -> -(speed).absoluteValue
+            IntakeDirection.OUT -> speed.absoluteValue
         }
 
         IntakeSubsystem.set(ControlMode.PercentOutput, motorOutput)

@@ -19,9 +19,7 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.LEDs
-import frc.team5190.robot.sensors.NavX
-import frc.team5190.robot.vision.Vision
+import frc.team5190.robot.sensors.*
 import openrio.powerup.MatchData
 
 /**
@@ -40,8 +38,14 @@ class Robot : IterativeRobot() {
     // Shows a drop down on dashboard that allows us to select which mode we want
     private val sideChooser = SendableChooser<StartingPositions>()
 
-    // Shows a dropdown of the controllers that weill be used.
+    // Shows a dropdown of the controllers that will be used.
     private val controllerChooser = SendableChooser<String>()
+
+    // Shows a dropdown of which auto to use
+    private val crossAutoChooser = SendableChooser<Boolean>()
+
+    // Shows a dropdown of how many cubes to interact with during auto
+    private val cubeChooser = SendableChooser<Int>()
 
     // Variable that stores which side of the switch to go to.
     private var switchSide = MatchData.OwnedSide.UNKNOWN
@@ -49,8 +53,12 @@ class Robot : IterativeRobot() {
     // Variable that stores which side of the scale to go to.
     private var scaleSide = MatchData.OwnedSide.UNKNOWN
 
+    // Gets the alliance that 5190 is part of when competing
     var alliance = DriverStation.Alliance.Invalid
+
+    // Variable that stores if FMS data has been received
     var dataRec = false
+        private set
 
 
     /**
@@ -67,31 +75,30 @@ class Robot : IterativeRobot() {
         ArmSubsystem
 
         Pathreader
-        NavX
-        Vision
+        Canifier
+        Lidar
+        Pigeon
         LEDs
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
+        crossAutoChooser.addObject("Legacy", false)
+        crossAutoChooser.addDefault("Modern", true)
+
+        cubeChooser.addDefault("2", 2)
+        cubeChooser.addObject("3", 3)
+
         SmartDashboard.putData("Starting Position", sideChooser)
+        SmartDashboard.putData("# Cubes for Auto", cubeChooser)
+        SmartDashboard.putData("Cross Auto Mode", crossAutoChooser)
     }
 
     /**
      * Executed periodically.
      */
     override fun robotPeriodic() {
-
-        SmartDashboard.putNumber("Left Encoder Position", DriveSubsystem.falconDrive.leftEncoderPosition.toDouble())
-        SmartDashboard.putNumber("Right Encoder Position", DriveSubsystem.falconDrive.rightEncoderPosition.toDouble())
-
-        SmartDashboard.putNumber("Elevator Encoder Position", ElevatorSubsystem.currentPosition.toDouble())
-        SmartDashboard.putNumber("Arm Encoder Position", ArmSubsystem.currentPosition.toDouble())
-
-        SmartDashboard.putNumber("Gyro", NavX.angle)
-
-        SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
-
+        SmartDashboard.putNumber("Pigeon Corrected Angle", Pigeon.correctedAngle)
         Scheduler.getInstance().run()
     }
 
@@ -99,16 +106,18 @@ class Robot : IterativeRobot() {
      * Executed when autonomous is initialized
      */
     override fun autonomousInit() {
+
         pollForFMSData()
 
         DriveSubsystem.autoReset()
-        NavX.reset()
+        IntakeSubsystem.enableVoltageCompensation()
+        Pigeon.reset()
 
-        AutoHelper.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
+
+        AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected, crossAutoChooser.selected).start()
     }
 
-
-    override fun autonomousPeriodic() {}
 
     /**
      * Executed once when robot is disabled.
@@ -118,7 +127,6 @@ class Robot : IterativeRobot() {
         ClimbSubsystem.climbState = false
     }
 
-    override fun disabledPeriodic() {}
 
     /**
      * Executed when teleop is initialized
@@ -129,6 +137,7 @@ class Robot : IterativeRobot() {
 
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+        IntakeSubsystem.disableVoltageCompensation()
 
         DriveSubsystem.currentCommand?.cancel()
 
@@ -136,7 +145,6 @@ class Robot : IterativeRobot() {
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
     }
 
-    override fun teleopPeriodic() {}
 
     private fun pollForFMSData() {
         switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)

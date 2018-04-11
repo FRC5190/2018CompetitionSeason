@@ -23,10 +23,8 @@ object MotorIDs {
     const val INTAKE_LEFT = 7
     const val INTAKE_RIGHT = 9
 
-    const val FRONT_WINCH_MASTER = 10
-
-    const val BACK_WINCH_MASTER = 11
-    const val BACK_WINCH_SLAVE = 12
+    const val WINCH_MASTER = 10
+    const val WINCH_SLAVE = 59
 
 }
 
@@ -53,7 +51,7 @@ object DriveConstants {
 
     const val P_HIGH = 2.0
     const val I_HIGH = 0.0
-    const val D_HIGH = 20.0
+    const val D_HIGH = 0.0
 
     const val PID_SLOT_HIGH = 0
 
@@ -83,7 +81,7 @@ object DriveConstants {
 object ElevatorConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
 
-    const val P = 0.5
+    const val P = 0.3
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
@@ -106,15 +104,16 @@ object ElevatorConstants {
 }
 
 object ArmConstants {
-    const val INVERTED = true                  // true for falcon heavy, false for falcon 9
-    const val SENSOR_PHASE = true              // true for falcon heavy, false for falcon 9
+    const val INVERTED = DriveConstants.IS_RACE_ROBOT
+    const val SENSOR_PHASE = !DriveConstants.IS_RACE_ROBOT
 
-    const val P = 2.5
+    const val P = 4.0
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
     
-    const val DOWN_TICKS = 1000                 // 1000 for falcon heavy, 1330 for falcon 9
+    @Suppress("ConstantConditionIf")
+    val DOWN_TICKS = if (DriveConstants.IS_RACE_ROBOT) -795 else -880
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
@@ -122,7 +121,7 @@ object ArmConstants {
     const val LIMITING_REDUCTION_FACTOR = 0.3
 
     const val NOMINAL_OUT = 0.0
-    const val PEAK_OUT = 0.75
+    const val PEAK_OUT = 1.00
     const val TOLERANCE = 0
 
     const val MOTION_VELOCITY = 1000000
@@ -135,10 +134,12 @@ object IntakeConstants {
 }
 
 object ClimbConstants {
-    const val PEAK_OUTPUT = 1.0
+    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 37000 else 24000
+    val CLIMB_POS = if(DriveConstants.IS_RACE_ROBOT) 0 else 200
 
-    const val CORRECTION_OUTPUT = 0.2
+    const val PEAK_OUTPUT = 1.0
 }
 
 const val TIMEOUT = 20
+
 

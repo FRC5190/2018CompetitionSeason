@@ -8,8 +8,11 @@ package frc.team5190.robot.util
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.GenericHID
 import frc.team5190.robot.*
-import frc.team5190.robot.arm.*
-import frc.team5190.robot.climb.*
+import frc.team5190.robot.arm.ArmPosition
+import frc.team5190.robot.arm.ArmSubsystem
+import frc.team5190.robot.arm.AutoArmCommand
+import frc.team5190.robot.climb.ClimbSubsystem
+import frc.team5190.robot.climb.WinchCommand
 import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
@@ -22,7 +25,6 @@ object Controls {
 
     private var teleIntake = false
     private var triggerState = false
-
     private var autoShiftGear = Gear.HIGH
 
     fun driveSubsystem() {
@@ -43,7 +45,7 @@ object Controls {
                 speed < DriveConstants.AUTO_SHIFT_LOW_THRESHOLD -> autoShiftGear = Gear.LOW
             }
             DriveSubsystem.falconDrive.gear = if (MainXbox.aButton) autoShiftGear else Gear.HIGH
-        }else{
+        } else {
             autoShiftGear = Gear.HIGH
         }
 
@@ -60,7 +62,7 @@ object Controls {
                 teleIntake = true
             }
             MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) >= 0.1 && !climbState -> {
-                IntakeCommand(IntakeDirection.OUT, outSpeed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft).pow(2.0) * 0.8).start()
+                IntakeCommand(IntakeDirection.OUT, speed = MainXbox.getTriggerAxis(GenericHID.Hand.kLeft).pow(2.0) * 0.65).start()
                 teleIntake = true
             }
             teleIntake -> {
@@ -75,16 +77,32 @@ object Controls {
             MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.3)
             MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
 
-            MainXbox.yButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() + 50)
-            MainXbox.bButtonReleased -> ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble() - 50)
+            MainXbox.yButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
+                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition + 50.0)
+            } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
+            MainXbox.bButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
+                ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
+            } else ArmSubsystem.set(ControlMode.PercentOutput, 0.0)
         }
     }
 
     private var lastPov = -1
 
     fun elevatorSubsystem() {
+
+        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kRight)) {
+            if (ElevatorSubsystem.closedLpControl) {
+                ElevatorSubsystem.disableSensorControl()
+                ArmSubsystem.disableSensorControl()
+            } else {
+                ElevatorSubsystem.enableSensorControl()
+                ArmSubsystem.enableSensorControl()
+            }
+        }
+
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
+                ElevatorSubsystem.currentCommand?.cancel()
                 val motorOut = 0.55
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
@@ -92,26 +110,33 @@ object Controls {
             }
             triggerState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
-                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition + 500.0)
+                if (ElevatorSubsystem.closedLpControl) {
+                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
+                } else ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
                 triggerState = false
             }
         }
         when {
             MainXbox.getBumper(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
+                ElevatorSubsystem.currentCommand?.cancel()
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
                 val motorOut = -0.3
                 ElevatorSubsystem.set(ControlMode.PercentOutput, motorOut)
             }
             MainXbox.getBumperReleased(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
                 ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
-                ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition - 500.0)
+
+                if (ElevatorSubsystem.closedLpControl) {
+                    ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
+                } else ElevatorSubsystem.set(ControlMode.PercentOutput, 0.0)
+
             }
         }
 
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
-        if (lastPov != pov) {
+        if (lastPov != pov && ElevatorSubsystem.closedLpControl) {
             when (pov) {
             // Up - Scale
                 0 -> ElevatorPresetCommand(ElevatorPreset.SCALE)
@@ -120,7 +145,7 @@ object Controls {
             // Down - Intake
                 180 -> ElevatorPresetCommand(ElevatorPreset.INTAKE)
             // Left - Scale Backwards
-                270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND)
+                270 -> ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR)
                 else -> null
             }?.start()
         }
@@ -128,36 +153,16 @@ object Controls {
     }
 
     fun climbSubsystem() {
-        if (ClimbSubsystem.climbState) {
-            if (MainXbox.aButtonPressed) {
-                BalanceWinchCommand().start()
-            }
-            if (MainXbox.aButtonReleased) {
-                WinchCommand().start()
-            }
-        }
 
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
-            if (ClimbSubsystem.currentCommand !is WinchCommand) {
+            if(ElevatorSubsystem.closedLpControl) {
                 commandGroup {
-                    addSequential(commandGroup {
-                        addParallel(commandGroup {
-                            addSequential(AutoArmCommand(ArmPosition.ALL_UP), 2.0)
-                            addSequential(DeployHookCommand())
-                        })
-                        addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
-                    })
-                    addSequential(WinchCommand())
-                }.start()
-            } else {
-                ClimbSubsystem.currentCommand?.cancel()
-                // Just in case the Hook doesn't deploy (idk this happened once before)
-                commandGroup {
-                    addSequential(DeployHookCommand())
-                    addSequential(WinchCommand())
+                    addParallel(AutoArmCommand(ArmPosition.ALL_UP))
+                    addParallel(AutoElevatorCommand(ElevatorPosition.INTAKE))
                 }.start()
             }
+            WinchCommand().start()
         }
 
         if (MainXbox.startButtonPressed) {
@@ -166,11 +171,32 @@ object Controls {
         }
     }
 
-    fun winchSubsystem() {
-        if (!MainXbox.getBumper(GenericHID.Hand.kLeft)) ClimbSubsystem.frontWinchMotor.set(ControlMode.PercentOutput, MainXbox.getTriggerAxis(GenericHID.Hand.kLeft) * ClimbConstants.PEAK_OUTPUT)
-        if (!MainXbox.getBumper(GenericHID.Hand.kRight)) ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, MainXbox.getTriggerAxis(GenericHID.Hand.kRight) * ClimbConstants.PEAK_OUTPUT)
+    private var winchMoving = false
 
-        if (MainXbox.getBumper(GenericHID.Hand.kLeft)) ClimbSubsystem.frontWinchMotor.set(ControlMode.PercentOutput, -0.3)
-        if (MainXbox.getBumper(GenericHID.Hand.kRight)) ClimbSubsystem.backWinchMotor.set(ControlMode.PercentOutput, -0.3)
+    fun winchSubsystem() {
+        val winchSpeed = MainXbox.getRightY().takeIf { it.absoluteValue > 0.1 && DriveSubsystem.controlMode == DriveMode.CURVE }
+        winchSpeed?.let {
+            ClimbSubsystem.set(ControlMode.PercentOutput, -it * ClimbConstants.PEAK_OUTPUT)
+            winchMoving = true
+        }
+        if(winchSpeed == null && winchMoving){
+            if(ElevatorSubsystem.closedLpControl){
+                ClimbSubsystem.set(ControlMode.MotionMagic, ClimbSubsystem.masterClimbMotor.getSelectedSensorPosition(0).toDouble())
+            }else {
+                ClimbSubsystem.set(ControlMode.PercentOutput, 0.0)
+            }
+            winchMoving = false
+        }
+
+        val pov = MainXbox.pov
+        if (lastPov != pov && ElevatorSubsystem.closedLpControl) {
+            when (pov) {
+            // Right - Scale Height
+                90 -> ClimbSubsystem.set(ControlMode.MotionMagic, ClimbConstants.SCALE_POS.toDouble())
+            // Down - Original Position
+                180 -> ClimbSubsystem.set(ControlMode.MotionMagic, ClimbConstants.CLIMB_POS.toDouble())
+            }
+        }
+        lastPov = pov
     }
 }

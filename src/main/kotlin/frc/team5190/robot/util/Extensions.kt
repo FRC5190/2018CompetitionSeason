@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.CommandGroup
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
+import java.awt.Color
 
 fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup {
     val group = CommandGroup()
@@ -59,6 +60,8 @@ fun TalonSRX.configLimitSwitchSource(type: LimitSwitchSource, normalOpenOrClose:
 fun limitCurrent(buffer: CircularBuffer): MotorState {
     return buffer.motorState
 }
+
+fun CANifier.setLEDOutput(color: Color) = setLEDOutput(color.red, color.green, color.blue)
 
 fun CANifier.setLEDOutput(r: Int, g: Int, b: Int) {
     setLEDOutput(r * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelB)

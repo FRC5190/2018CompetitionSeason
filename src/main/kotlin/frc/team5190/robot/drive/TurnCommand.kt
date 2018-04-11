@@ -7,9 +7,8 @@ package frc.team5190.robot.drive
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.PIDCommand
-import frc.team5190.robot.sensors.NavX
+import frc.team5190.robot.sensors.Pigeon
 import frc.team5190.robot.util.DriveConstants
-import frc.team5190.robot.vision.Vision
 
 /**
  * Command that turns the robot to a certain tgtAngle
@@ -17,7 +16,7 @@ import frc.team5190.robot.vision.Vision
  * @param visionCheck Whether to use vision for cube detection
  * @param tolerance Tolerance
  */
-class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val tolerance: Double = 0.0) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
+class TurnCommand(val angle: Double) : PIDCommand(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D) {
 
     init {
         requires(DriveSubsystem)
@@ -29,29 +28,7 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
     override fun initialize() {
         setTimeout(2.5)
 
-        when (visionCheck) {
-            false -> setpoint = angle
-            true -> {
-                when (Vision.isTgtVisible == 1L) {
-                    false -> {
-                        println("Vision subsystem did not find any target object")
-                        setpoint = angle
-                    }
-                    true -> {
-                        val x = NavX.pidGet()                   // current absolute tgtAngle
-                        val y = x + (Vision.tgtAngle)    // Vision absolute tgtAngle
-                        // (y - tgtAngle) is correction and it should be less than tolerance
-                        setpoint = if (Math.abs(y - angle) < tolerance) {
-                            println("Vision subsystem corrected $angle to $y")
-                            y
-                        } else {
-                            println("Vision subsystem found object at $y instead of $angle, and it was outside tolerance range")
-                            angle
-                        }
-                    }
-                }
-            }
-        }
+        setpoint = angle
 
         setInputRange(-180.0, 180.0)
         pidController.setOutputRange(-1.0, 1.0)
@@ -62,12 +39,12 @@ class TurnCommand(val angle: Double, val visionCheck: Boolean = false, val toler
     /**
      * Uses the output of the PID controller to control the DriveTrain
      */
-    override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, output, -output)
+    override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, -output, output)
 
     /**
-     * Input from the PID comes from the NavX
+     * Input from the PID comes from the Pigeon
      */
-    override fun returnPIDInput(): Double = NavX.pidGet()
+    override fun returnPIDInput(): Double = Pigeon.correctedAngle
 
     // Time variable for isFinished method
     private var time = 0
