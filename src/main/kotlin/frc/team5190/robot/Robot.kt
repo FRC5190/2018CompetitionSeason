@@ -115,7 +115,11 @@ class Robot : IterativeRobot() {
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
-        AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
+        AutoHelper.getAuto(startingPositions = sideChooser.selected,
+                switchOwnedSide = switchSide,
+                scaleOwnedSide = scaleSide,
+                sameSideAutoMode = sameSideAutoChooser.selected,
+                crossAutoMode = crossAutoChooser.selected).start()
     }
 
     /**
