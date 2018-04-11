@@ -6,8 +6,10 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.IterativeRobot
+import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
@@ -17,6 +19,7 @@ import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.drive.StraightDriveCommand
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.*
@@ -80,6 +83,11 @@ class Robot : IterativeRobot() {
         Pigeon
         LEDs
 
+        CameraServer.getInstance().startAutomaticCapture().apply {
+            setResolution(640, 480)
+            setFPS(20)
+        }
+
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
         sideChooser.addDefault("Left", StartingPositions.LEFT)
 
@@ -115,9 +123,11 @@ class Robot : IterativeRobot() {
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
+//        MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true).start()
+
+//        StraightDriveCommand(-20.0, cruiseVel = 9.0, accel = 5.0).start()
         AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected, crossAutoChooser.selected).start()
     }
-
 
     /**
      * Executed once when robot is disabled.

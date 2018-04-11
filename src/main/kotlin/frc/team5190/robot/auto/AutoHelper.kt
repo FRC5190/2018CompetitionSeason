@@ -63,13 +63,14 @@ class AutoHelper {
                                 override fun isFinished() = (System.currentTimeMillis() - startTime) > (firstCube.pathDuration - timeToGoUp).coerceAtLeast(0.001) * 1000
                             })
                             addSequential(commandGroup {
-                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
+                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
                                 addParallel(commandGroup {
                                     addSequential(object : Command() {
                                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
-                                    })
-                                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.40, timeout = 0.50))
-                                    addSequential(IntakeHoldCommand(), 0.001)
+                                        override fun end() {
+                                            DriveSubsystem.currentCommand?.cancel()
+                                        }
+                                    }, 3.0)
                                 })
                             })
                         })
@@ -79,9 +80,21 @@ class AutoHelper {
                     Pickup 2nd Cube
                      */
                     addSequential(commandGroup {
+
                         addSequential(commandGroup {
+
+                            addParallel(commandGroup {
+                                addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.40, timeout = 0.50))
+                                addSequential(IntakeHoldCommand(), 0.001)
+                            })
+
                             addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                            addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
+                            addParallel(commandGroup {
+                                addSequential(object : Command() {
+                                    override fun isFinished() = ElevatorSubsystem.currentPosition < ElevatorPosition.SWITCH.ticks
+                                })
+                                addSequential(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
+                            })
                             addParallel(object : MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = folder.last() == 'R') {
                                 override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
                             })

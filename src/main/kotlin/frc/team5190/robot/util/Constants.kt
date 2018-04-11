@@ -75,7 +75,7 @@ object DriveConstants {
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
-    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
