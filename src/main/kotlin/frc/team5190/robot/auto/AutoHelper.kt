@@ -5,18 +5,11 @@
 
 package frc.team5190.robot.auto
 
-import edu.wpi.first.wpilibj.command.Command
-import edu.wpi.first.wpilibj.command.CommandGroup
-import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team5190.robot.arm.ArmPosition
-import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.arm.AutoArmCommand
+import edu.wpi.first.wpilibj.command.*
+import frc.team5190.robot.arm.*
 import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
-import frc.team5190.robot.intake.IntakeCommand
-import frc.team5190.robot.intake.IntakeDirection
-import frc.team5190.robot.intake.IntakeHoldCommand
-import frc.team5190.robot.intake.IntakeSubsystem
+import frc.team5190.robot.intake.*
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
@@ -24,8 +17,81 @@ import openrio.powerup.MatchData
  * Contains methods that help with autonomous
  */
 class AutoHelper {
+
+    companion object {
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, sameSideAutoMode: AutoModes, crossAutoMode: AutoModes): CommandGroup {
+
+            var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
+            if (folder[0] == 'C') folder = folder.substring(0, folder.length - 1)
+
+            val isRightStart = folder.first() == 'R'
+
+            return when (folder) {
+                "CS-L, CS-R" -> {
+                    commandGroup { }
+                }
+
+                "LS-LL", "LS-RL", "RS-RR", "RS-LR" -> {
+                    when (sameSideAutoMode) {
+                        AutoModes.FULL -> commandGroup {
+
+                        }
+
+                        AutoModes.NON_INTERFERING -> commandGroup {
+                            addSequential(commandGroup {
+                                addParallel(MotionProfileCommand("LS-LL", "Non Interfering", robotReversed = true, pathMirrored = isRightStart))
+                                addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                                addParallel(AutoArmCommand(ArmPosition.UP))
+                            })
+                            addSequential(commandGroup {
+                                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
+                                addParallel(commandGroup {
+                                    addSequential(object : Command() {
+                                        override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                                    })
+                                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.75, timeout = 0.5))
+                                    addSequential(IntakeHoldCommand(), 0.001)
+                                })
+                            })
+                        }
+
+
+                        AutoModes.SWITCH -> commandGroup {
+
+                        }
+
+
+                        AutoModes.BASELINE -> commandGroup {
+                            addSequential(StraightDriveCommand(distance = -12.0))
+                        }
+                    }
+                }
+
+
+
+
+
+                "LS-RR", "LS-LR", "RS-LL", "RS-RL" -> {
+                    when (crossAutoMode) {
+                        AutoModes.FULL -> TODO()
+                        AutoModes.NON_INTERFERING -> TODO()
+                        AutoModes.SWITCH -> TODO()
+
+
+                        AutoModes.BASELINE -> commandGroup { addSequential(StraightDriveCommand(distance = -12.0)) }
+                    }
+                }
+
+                else -> {
+                    commandGroup { }
+                }
+            }
+        }
+    }
+
+
     object ModernAuto {
-        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, cubes: Int, modernCrossAuto: Boolean): CommandGroup {
+        fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide): CommandGroup {
 
             // Get the folder that the paths are contained within
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
@@ -439,4 +505,8 @@ class AutoHelper {
  */
 enum class StartingPositions {
     LEFT, CENTER, RIGHT;
+}
+
+enum class AutoModes(val numCubes: String) {
+    FULL("2.5 / 3"), NON_INTERFERING("1"), SWITCH("0 / 1"), BASELINE("0");
 }

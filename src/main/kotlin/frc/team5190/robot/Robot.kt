@@ -6,10 +6,7 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.CameraServer
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.IterativeRobot
-import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
@@ -19,7 +16,6 @@ import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.drive.StraightDriveCommand
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.*
@@ -45,10 +41,8 @@ class Robot : IterativeRobot() {
     private val controllerChooser = SendableChooser<String>()
 
     // Shows a dropdown of which auto to use
-    private val crossAutoChooser = SendableChooser<Boolean>()
-
-    // Shows a dropdown of how many cubes to interact with during auto
-    private val cubeChooser = SendableChooser<Int>()
+    private val crossAutoChooser = SendableChooser<AutoModes>()
+    private val sameSideAutoChooser = SendableChooser<AutoModes>()
 
     // Variable that stores which side of the switch to go to.
     private var switchSide = MatchData.OwnedSide.UNKNOWN
@@ -89,17 +83,15 @@ class Robot : IterativeRobot() {
         }
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
-        sideChooser.addDefault("Left", StartingPositions.LEFT)
 
-        crossAutoChooser.addObject("Legacy", false)
-        crossAutoChooser.addDefault("Modern", true)
+        AutoModes.values().forEach { sameSideAutoChooser.addObject(it.name.toLowerCase().capitalize() + "(${it.numCubes})", it) }
+        AutoModes.values().forEach { crossAutoChooser.addObject(it.name.toLowerCase().capitalize() + "(${it.numCubes})", it) }
 
-        cubeChooser.addDefault("2", 2)
-        cubeChooser.addObject("3", 3)
 
         SmartDashboard.putData("Starting Position", sideChooser)
-        SmartDashboard.putData("# Cubes for Auto", cubeChooser)
-        SmartDashboard.putData("Cross Auto Mode", crossAutoChooser)
+
+        SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
+        SmartDashboard.putData("Same Side Scale Mode", sameSideAutoChooser)
     }
 
     /**
@@ -123,10 +115,7 @@ class Robot : IterativeRobot() {
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
-//        MotionProfileCommand("LS-LL", "Drop First Cube", robotReversed = true).start()
-
-//        StraightDriveCommand(-20.0, cruiseVel = 9.0, accel = 5.0).start()
-        AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide, cubeChooser.selected, crossAutoChooser.selected).start()
+        AutoHelper.ModernAuto.getAuto(sideChooser.selected, switchSide, scaleSide).start()
     }
 
     /**
