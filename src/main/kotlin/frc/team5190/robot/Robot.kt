@@ -48,7 +48,7 @@ class Robot : IterativeRobot() {
     private var switchSide = MatchData.OwnedSide.UNKNOWN
 
     // Variable that stores which side of the scale to go to.
-    private var scaleSide = MatchData.OwnedSide.UNKNOWN
+    var scaleSide = MatchData.OwnedSide.UNKNOWN
 
     // Gets the alliance that 5190 is part of when competing
     var alliance = DriverStation.Alliance.Invalid
