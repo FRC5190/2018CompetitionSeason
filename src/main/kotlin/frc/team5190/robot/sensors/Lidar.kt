@@ -74,7 +74,7 @@ object Lidar : Subsystem() {
 
         SmartDashboard.putNumber("Raw Scale Height", rawDistance)
         SmartDashboard.putNumber("Scale Height", scaleHeight)
-        SmartDashboard.putBoolean("Servo Angle", servoAngle)
+        SmartDashboard.putNumber("Servo Angle", servoAngle)
         SmartDashboard.putBoolean("Under Scale", underScale)
     }
 
