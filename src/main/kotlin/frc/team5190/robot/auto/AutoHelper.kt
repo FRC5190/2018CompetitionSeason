@@ -65,18 +65,17 @@ class AutoHelper {
                 }
 
                 "LS-LL", "LS-RL", "RS-RR", "RS-LR" -> when (sameSideAutoMode) {
-                    AutoModes.FULL              -> getFullAuto(folder, folderIn, isRightStart)
-                    AutoModes.NON_INTERFERING   -> getNonInterferingAuto(folderIn, isRightStart)
-                    AutoModes.SWITCH            -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
-                    AutoModes.BASELINE          -> getBaselineAuto()
+                    AutoModes.FULL      -> getFullAuto(folderIn, isRightStart)
+                    AutoModes.SIMPLE    -> getSimpleAuto(folderIn, isRightStart)
+                    AutoModes.SWITCH    -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
+                    AutoModes.BASELINE  -> getBaselineAuto()
                 }
 
-
                 "LS-RR", "LS-LR", "RS-LL", "RS-RL" -> when (crossAutoMode) {
-                    AutoModes.FULL              -> getFullAuto(folder, folderIn, isRightStart)
-                    AutoModes.NON_INTERFERING   -> getNonInterferingAuto(folderIn, isRightStart)
-                    AutoModes.SWITCH            -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
-                    AutoModes.BASELINE          -> getBaselineAuto()
+                    AutoModes.FULL      -> getFullAuto(folderIn, isRightStart)
+                    AutoModes.SIMPLE    -> getSimpleAuto(folderIn, isRightStart)
+                    AutoModes.SWITCH    -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
+                    AutoModes.BASELINE  -> getBaselineAuto()
                 }
 
                 else -> {
@@ -109,7 +108,7 @@ class AutoHelper {
             addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
         }
 
-        private fun getNonInterferingAuto(folder: String, isRightStart: Boolean) = commandGroup {
+        private fun getSimpleAuto(folder: String, isRightStart: Boolean) = commandGroup {
             addSequential(commandGroup {
                 addParallel(MotionProfileCommand(folder, "Non Interfering", robotReversed = true, pathMirrored = isRightStart))
                 addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
@@ -127,9 +126,9 @@ class AutoHelper {
             })
         }
 
-        private fun getFullAuto(folder: String, folderIn: String, isRightStart: Boolean) = commandGroup {
+        private fun getFullAuto(folderIn: String, isRightStart: Boolean) = commandGroup {
 
-            val timeToGoUp = if (folder.first() == folder.last()) 2.50 else 1.50
+            val timeToGoUp = if (folderIn.first() == folderIn.last()) 2.50 else 1.50
             val firstCube = MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart)
 
             /*
@@ -237,5 +236,5 @@ enum class StartingPositions {
 }
 
 enum class AutoModes(val numCubes: String) {
-    FULL("2.5 / 3"), NON_INTERFERING("1"), SWITCH("0 / 1"), BASELINE("0");
+    FULL("2.5 / 3"), SIMPLE("1"), SWITCH("0 / 1"), BASELINE("0");
 }

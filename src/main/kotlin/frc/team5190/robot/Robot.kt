@@ -84,8 +84,8 @@ class Robot : IterativeRobot() {
 
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
 
-        AutoModes.values().forEach { sameSideAutoChooser.addObject(it.name.toLowerCase().capitalize() + "(${it.numCubes})", it) }
-        AutoModes.values().forEach { crossAutoChooser.addObject(it.name.toLowerCase().capitalize() + "(${it.numCubes})", it) }
+        AutoModes.values().forEach { sameSideAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it) }
+        AutoModes.values().forEach { crossAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it) }
 
 
         SmartDashboard.putData("Starting Position", sideChooser)
