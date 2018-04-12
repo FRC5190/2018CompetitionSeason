@@ -16,7 +16,6 @@ import frc.team5190.robot.util.Maths
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import jaci.pathfinder.followers.EncoderFollower
-import kotlin.math.absoluteValue
 
 open class MotionProfileCommand(folder: String, file: String,
                                 private val robotReversed: Boolean = false, private val pathReversed: Boolean = false,
@@ -30,6 +29,16 @@ open class MotionProfileCommand(folder: String, file: String,
 
     private val leftEncoderFollower: EncoderFollower
     private val rightEncoderFollower: EncoderFollower
+
+    val robotPosition: Pair<Double, Double>?
+        get() {
+            if(leftEncoderFollower.isFinished || rightEncoderFollower.isFinished) return null
+            val x1 = leftEncoderFollower.segment.x
+            val y1 = leftEncoderFollower.segment.y
+            val x2 = rightEncoderFollower.segment.x
+            val y2 = rightEncoderFollower.segment.y
+            return (x1 + x2) / 2.0 to (y1 + y2) / 2.0
+        }
 
     val pathDuration
         get() = leftPath.length() * DriveConstants.MOTION_DT

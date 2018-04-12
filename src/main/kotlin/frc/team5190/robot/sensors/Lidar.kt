@@ -6,14 +6,23 @@
 package frc.team5190.robot.sensors
 
 import com.ctre.phoenix.CANifier
+import edu.wpi.first.wpilibj.Servo
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team5190.robot.Robot
+import frc.team5190.robot.auto.MotionProfileCommand
+import frc.team5190.robot.drive.DriveSubsystem
+import frc.team5190.robot.util.ChannelIDs
 import frc.team5190.robot.util.DriveConstants
+import jaci.pathfinder.Pathfinder
+import openrio.powerup.MatchData
 import org.apache.commons.math3.stat.regression.SimpleRegression
 
 object Lidar : Subsystem() {
 
     private val pwmData = DoubleArray(2)
+
+    private var lidarServo = Servo(ChannelIDs.LIDAR_SERVO)
 
     private val regressionFunction = SimpleRegression()
 
@@ -54,8 +63,18 @@ object Lidar : Subsystem() {
         scaleHeight = regressionFunction.predict(rawDistance)
         underScale = minScaleHeight - allowedTolerance < scaleHeight && scaleHeight < maxScaleHeight + allowedTolerance
 
+        val scaleSide = Robot.INSTANCE!!.scaleSide
+
+        val servoAngle = Pathfinder.boundHalfDegrees(((DriveSubsystem.currentCommand as? MotionProfileCommand?)?.robotPosition?.let {
+            val scalePosition = if (scaleSide == MatchData.OwnedSide.LEFT) 19.5 to 27.0 else 7.5 to 27.0
+            return@let Math.toDegrees(Math.atan2(scalePosition.second - it.second, scalePosition.first - it.first)) + 180.0 + Pigeon.correctedAngle
+        } ?: (if (scaleSide == MatchData.OwnedSide.LEFT) 1.0 else -1.0) * 25.0) - 90.0)
+
+        lidarServo.angle = if (Robot.INSTANCE!!.isOperatorControl) 90.0 else servoAngle
+
         SmartDashboard.putNumber("Raw Scale Height", rawDistance)
         SmartDashboard.putNumber("Scale Height", scaleHeight)
+        SmartDashboard.putNumber("Servo Angle", servoAngle)
         SmartDashboard.putBoolean("Under Scale", underScale)
     }
 
