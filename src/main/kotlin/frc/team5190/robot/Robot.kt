@@ -19,6 +19,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.*
+import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
 
 /**
@@ -115,11 +116,13 @@ class Robot : IterativeRobot() {
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
 
-        AutoHelper.getAuto(startingPositions = sideChooser.selected,
+
+        AutoHelper.getAuto(startingPositions = StartingPositions.RIGHT,
                 switchOwnedSide = switchSide,
                 scaleOwnedSide = scaleSide,
-                sameSideAutoMode = sameSideAutoChooser.selected,
-                crossAutoMode = crossAutoChooser.selected).start()
+                sameSideAutoMode = AutoModes.FULL,
+                crossAutoMode = AutoModes.FULL).start()
+
     }
 
     /**
@@ -146,6 +149,10 @@ class Robot : IterativeRobot() {
 
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
+    }
+
+    override fun teleopPeriodic() {
+        println(Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
     }
 
 

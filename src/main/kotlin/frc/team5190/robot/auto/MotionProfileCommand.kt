@@ -19,7 +19,11 @@ import jaci.pathfinder.followers.EncoderFollower
 
 open class MotionProfileCommand(folder: String, file: String,
                                 private val robotReversed: Boolean = false, private val pathReversed: Boolean = false,
-                                pathMirrored: Boolean = false, useGyro: Boolean = true) : Command() {
+                                private val pathMirrored: Boolean = false, useGyro: Boolean = true) : Command() {
+
+    companion object {
+        var robotPosition: Pair<Double, Double>? = null
+    }
 
     private val syncNotifier = Object()
     private var stopNotifier = false
@@ -30,14 +34,17 @@ open class MotionProfileCommand(folder: String, file: String,
     private val leftEncoderFollower: EncoderFollower
     private val rightEncoderFollower: EncoderFollower
 
-    val robotPosition: Pair<Double, Double>?
+    val currentRobotPosition: Pair<Double, Double>?
         get() {
             if(leftEncoderFollower.isFinished || rightEncoderFollower.isFinished) return null
             val x1 = leftEncoderFollower.segment.x
             val y1 = leftEncoderFollower.segment.y
             val x2 = rightEncoderFollower.segment.x
             val y2 = rightEncoderFollower.segment.y
-            return (x1 + x2) / 2.0 to (y1 + y2) / 2.0
+            return (x1 + x2) / 2.0 to ((y1 + y2) / 2.0).let {
+                if(pathMirrored) 27.0 - it
+                else it
+            }
         }
 
     val pathDuration
@@ -90,6 +97,7 @@ open class MotionProfileCommand(folder: String, file: String,
                 //println("Angle Difference: $angleDifference, Left: ${leftEncoderFollower.segment.velocity} Left Actual: ${Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0).absoluteValue)}")
 
                 DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
+                robotPosition = currentRobotPosition
             }
         }
     }
@@ -116,6 +124,7 @@ open class MotionProfileCommand(folder: String, file: String,
         synchronized(syncNotifier) {
             stopNotifier = true
             notifier.stop()
+            robotPosition = null
             DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
         }
     }

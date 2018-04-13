@@ -25,7 +25,7 @@ object IntakeSubsystem : Subsystem() {
     @Suppress("ConstantConditionIf")
     val isCubeIn
         get() = if (DriveConstants.IS_RACE_ROBOT) leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
-        else leftCubeSensor.voltage > 0.9 || rightCubeSensor.voltage > 0.9
+        else leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
 
     val amperage
         get() = masterIntakeMotor.outputCurrent

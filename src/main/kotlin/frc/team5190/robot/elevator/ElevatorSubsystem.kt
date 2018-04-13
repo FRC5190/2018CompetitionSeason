@@ -188,7 +188,7 @@ object ElevatorSubsystem : Subsystem() {
  */
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(20.0)),
-    FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(30.0)),
+    FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(32.0)),
     SCALE(17000),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),
     INTAKE(if (DriveConstants.IS_RACE_ROBOT) 500 else 1100);

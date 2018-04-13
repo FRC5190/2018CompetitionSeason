@@ -65,17 +65,17 @@ class AutoHelper {
                 }
 
                 "LS-LL", "LS-RL", "RS-RR", "RS-LR" -> when (sameSideAutoMode) {
-                    AutoModes.FULL      -> getFullAuto(folderIn, isRightStart)
-                    AutoModes.SIMPLE    -> getSimpleAuto(folderIn, isRightStart)
-                    AutoModes.SWITCH    -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
-                    AutoModes.BASELINE  -> getBaselineAuto()
+                    AutoModes.FULL -> getFullAuto(folderIn, isRightStart)
+                    AutoModes.SIMPLE -> getSimpleAuto(folderIn, isRightStart)
+                    AutoModes.SWITCH -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
+                    AutoModes.BASELINE -> getBaselineAuto()
                 }
 
                 "LS-RR", "LS-LR", "RS-LL", "RS-RL" -> when (crossAutoMode) {
-                    AutoModes.FULL      -> getFullAuto(folderIn, isRightStart)
-                    AutoModes.SIMPLE    -> getSimpleAuto(folderIn, isRightStart)
-                    AutoModes.SWITCH    -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
-                    AutoModes.BASELINE  -> getBaselineAuto()
+                    AutoModes.FULL -> getFullAuto(folderIn, isRightStart)
+                    AutoModes.SIMPLE -> getSimpleAuto(folderIn, isRightStart)
+                    AutoModes.SWITCH -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
+                    AutoModes.BASELINE -> getBaselineAuto()
                 }
 
                 else -> {
@@ -174,7 +174,15 @@ class AutoHelper {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                     addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
                     addParallel(object : MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = isRightStart) {
-                        override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
+
+                        var startTime: Long = 0L
+
+                        override fun initialize() {
+                            super.initialize()
+                            startTime = System.currentTimeMillis()
+                        }
+
+                        override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
                     })
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
@@ -189,7 +197,10 @@ class AutoHelper {
                 addParallel(dropSecondCubePath)
                 addParallel(commandGroup {
                     addSequential(commandGroup {
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand((dropSecondCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
+                            addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
+                        })
                         addParallel(commandGroup {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
@@ -209,19 +220,41 @@ class AutoHelper {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                     addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
                     addParallel(object : MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = isRightStart) {
-                        override fun isFinished() = super.isFinished() || IntakeSubsystem.isCubeIn
+
+                        var startTime: Long = 0L
+
+                        override fun initialize() {
+                            super.initialize()
+                            startTime = System.currentTimeMillis()
+                        }
+
+                        override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
                     })
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
             })
 
             /*
-             Go to Scale with 3rd Cube
+             Drop 3rd Cube in Scale
               */
             addSequential(commandGroup {
                 val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = isRightStart)
                 addParallel(dropThirdCubePath)
-                addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
+                addParallel(commandGroup {
+                    addSequential(commandGroup {
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand((dropThirdCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
+                            addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0)
+                        })
+                        addParallel(commandGroup {
+                            addSequential(object : Command() {
+                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                            })
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 0.50))
+                            addSequential(IntakeHoldCommand(), 0.001)
+                        })
+                    })
+                })
             })
 
         }
