@@ -64,11 +64,10 @@ object Lidar : Subsystem() {
 
         val scaleSide = Robot.INSTANCE!!.scaleSide
 
-
         val servoAngle = Pathfinder.boundHalfDegrees(MotionProfileCommand.robotPosition?.let {
-            val scalePosition = if (scaleSide == MatchData.OwnedSide.LEFT) 20.5 to 27.0 else 6.5 to 27.0
-            return@let -Math.toDegrees(Math.atan2(scalePosition.second - it.second, scalePosition.first - it.first)) + 180.0 + Pigeon.correctedAngle
-        } ?: (if (scaleSide == MatchData.OwnedSide.LEFT) 1.0 else -1.0) * 25.0 + 180.0) - 90.0
+            val scalePosition = 27.0 to 13.5 + (if(scaleSide == MatchData.OwnedSide.LEFT) 1.0 else -1.0) * 6.5
+            return@let Math.toDegrees(Math.atan2(scalePosition.second - it.second, scalePosition.first - it.first)) + 180.0 + Pigeon.correctedAngle
+        } ?: (if (scaleSide == MatchData.OwnedSide.LEFT) 1.0 else -1.0) * 25.0) + 90.0
 
         lidarServo.angle = if (Robot.INSTANCE!!.isOperatorControl) 90.0 else servoAngle
 
