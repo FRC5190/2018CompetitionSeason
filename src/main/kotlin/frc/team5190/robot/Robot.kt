@@ -6,7 +6,9 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.CameraServer
+import edu.wpi.first.wpilibj.IterativeRobot
+import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
@@ -35,24 +37,24 @@ class Robot : IterativeRobot() {
         INSTANCE = this
     }
 
-    // Shows a drop down on dashboard that allows us to select which mode we want
+
     private val sideChooser = SendableChooser<StartingPositions>()
 
-    // Shows a dropdown of the controllers that will be used.
-    private val controllerChooser = SendableChooser<String>()
-
-    // Shows a dropdown of which auto to use
     private val crossAutoChooser = SendableChooser<AutoModes>()
     private val sameSideAutoChooser = SendableChooser<AutoModes>()
 
-    // Variable that stores which side of the switch to go to.
-    private var switchSide = MatchData.OwnedSide.UNKNOWN
-
-    // Variable that stores which side of the scale to go to.
+    var switchSide = MatchData.OwnedSide.UNKNOWN
     var scaleSide = MatchData.OwnedSide.UNKNOWN
 
-    // Gets the alliance that 5190 is part of when competing
-    var alliance = DriverStation.Alliance.Invalid
+    var sideChooserSelected = StartingPositions.LEFT
+    var sameSideAutoSelected = AutoModes.FULL
+    var crossAutoSelected = AutoModes.FULL
+
+    private var autonomousRoutine: CommandGroup? = null
+
+
+    // Shows a dropdown of the controllers that will be used.
+    private val controllerChooser = SendableChooser<String>()
 
     // Variable that stores if FMS data has been received
     var dataRec = false
@@ -93,6 +95,10 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
         SmartDashboard.putData("Same Side Scale Mode", sameSideAutoChooser)
+
+        sameSideAutoSelected = sameSideAutoChooser.selected
+        crossAutoSelected = crossAutoChooser.selected
+        sideChooserSelected = sideChooser.selected
     }
 
     /**
@@ -100,6 +106,28 @@ class Robot : IterativeRobot() {
      */
     override fun robotPeriodic() {
         SmartDashboard.putNumber("Pigeon Corrected Angle", Pigeon.correctedAngle)
+
+        if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning == false) {
+            // Regenerate the routine if any variables have changed.
+            if (sideChooser.selected != sideChooserSelected ||
+                    sameSideAutoChooser.selected != sameSideAutoSelected ||
+                    crossAutoChooser.selected != crossAutoSelected ||
+                    MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) != switchSide ||
+                    MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide) {
+
+                sideChooserSelected = sideChooser.selected
+                sameSideAutoSelected = sameSideAutoChooser.selected
+                crossAutoSelected = crossAutoChooser.selected
+
+                switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
+                scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+
+                dataRec = true
+
+                autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+            }
+        }
+
         Scheduler.getInstance().run()
     }
 
@@ -108,21 +136,15 @@ class Robot : IterativeRobot() {
      */
     override fun autonomousInit() {
 
-        pollForFMSData()
-
         DriveSubsystem.autoReset()
         IntakeSubsystem.enableVoltageCompensation()
         Pigeon.reset()
 
         Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
+    }
 
-
-        AutoHelper.getAuto(startingPositions = StartingPositions.RIGHT,
-                switchOwnedSide = switchSide,
-                scaleOwnedSide = scaleSide,
-                sameSideAutoMode = AutoModes.FULL,
-                crossAutoMode = AutoModes.FULL).start()
-
+    override fun autonomousPeriodic() {
+        if (autonomousRoutine?.isRunning == false) autonomousRoutine?.start()
     }
 
     /**
@@ -139,8 +161,6 @@ class Robot : IterativeRobot() {
      */
     override fun teleopInit() {
 
-        pollForFMSData()
-
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         IntakeSubsystem.disableVoltageCompensation()
@@ -153,14 +173,5 @@ class Robot : IterativeRobot() {
 
     override fun teleopPeriodic() {
         println(Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
-    }
-
-
-    private fun pollForFMSData() {
-        switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
-        scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
-
-        dataRec = true
-        alliance = DriverStation.getInstance().alliance
     }
 }
