@@ -14,7 +14,10 @@ import kotlin.math.absoluteValue
  * Command that moves the elevator to different presets
  * @param position The position in Native Units that the elevator must travel to
  */
-open class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
+open class AutoElevatorCommand(val ticks: Double) : Command() {
+
+    constructor(position: ElevatorPosition) : this(position.ticks.toDouble())
+
 
     init {
         this.requires(ElevatorSubsystem)
@@ -25,7 +28,7 @@ open class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
      */
     override fun initialize() {
         ElevatorSubsystem.peakElevatorOutput = ElevatorConstants.ACTIVE_PEAK_OUT
-        ElevatorSubsystem.set(ControlMode.MotionMagic, position.ticks.toDouble())
+        ElevatorSubsystem.set(ControlMode.MotionMagic, ticks)
     }
 
     /**
@@ -38,5 +41,5 @@ open class AutoElevatorCommand(val position: ElevatorPosition) : Command() {
     /**
      * Checks if the elevator has reached the setpoint
      */
-    override fun isFinished() = (ElevatorSubsystem.currentPosition - position.ticks).absoluteValue < ElevatorSubsystem.inchesToNativeUnits(1.0)
+    override fun isFinished() = (ElevatorSubsystem.currentPosition - ticks).absoluteValue < ElevatorSubsystem.inchesToNativeUnits(1.0)
 }

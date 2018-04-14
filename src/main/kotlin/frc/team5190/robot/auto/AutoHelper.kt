@@ -7,7 +7,8 @@ package frc.team5190.robot.auto
 
 import edu.wpi.first.wpilibj.command.*
 import frc.team5190.robot.arm.*
-import frc.team5190.robot.drive.*
+import frc.team5190.robot.drive.StraightDriveCommand
+import frc.team5190.robot.drive.TurnCommand
 import frc.team5190.robot.elevator.*
 import frc.team5190.robot.intake.*
 import frc.team5190.robot.util.commandGroup
@@ -28,38 +29,70 @@ class AutoHelper {
 
             return when (folder) {
                 "CS-L, CS-R" -> commandGroup {
-                    val firstSwitch = MotionProfileCommand(folder, "Switch", false, false)
+                    val firstSwitch = MotionProfileCommand(folder, "Switch", robotReversed = true)
 
+                    // Drop First Cube
                     addSequential(commandGroup {
                         addParallel(firstSwitch)
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0)
+                        addParallel(commandGroup {
+                            addSequential(AutoElevatorCommand(ElevatorPosition.FIRST_STAGE))
+                            addSequential(AutoArmCommand(ArmPosition.BEHIND))
+                        })
                         addParallel(commandGroup {
                             addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.3, timeout = 0.5))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
-                    addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Center", robotReversed = true, pathReversed = true))
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(0.5))
-                            addSequential(commandGroup {
-                                addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                            })
-                        })
-                    })
-                    addSequential(TurnCommand(angle = if (folder.last() == 'L') -5.0 else 0.0))
-                    addSequential(PickupCubeCommand(visionCheck = false), 4.0)
-                    addSequential(IntakeHoldCommand(), 0.001)
-                    addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
 
+                    // Pickup Second Cube
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Switch", false, false), firstSwitch.pathDuration - 0.4)
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
+                        addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 10.0))
+                        addParallel(object : MotionProfileCommand("CS-L", "Pickup Second Cube", pathReversed = true, pathMirrored = folder.first() == 'R') {
+                            var startTime: Long = 0L
+
+                            override fun initialize() {
+                                super.initialize()
+                                startTime = System.currentTimeMillis()
+                            }
+
+                            override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
+                        })
+                    })
+
+                    // Drop Second Cube
+                    addSequential(commandGroup {
+
+                        val dropSecondCubePath = MotionProfileCommand("CS-L", "Pickup Second Cube", robotReversed = true, pathMirrored = folder.first() == 'R')
+
+                        addParallel(dropSecondCubePath)
                         addParallel(commandGroup {
-                            addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
-                            addSequential(IntakeHoldCommand(), 0.001)
+                            addSequential(AutoElevatorCommand(ElevatorPosition.FIRST_STAGE))
+                            addSequential(AutoArmCommand(ArmPosition.BEHIND))
+                        })
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(dropSecondCubePath.pathDuration - 0.2))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.5, timeout = 0.5))
+                        })
+                    })
+
+                    // Pickup Third Cube
+                    addSequential(commandGroup {
+                        addParallel(commandGroup {
+                            addSequential(AutoArmCommand(ArmPosition.DOWN))
+                            addSequential(AutoElevatorCommand(4000.0))
+                        })
+                        addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 10.0))
+                        addParallel(object : MotionProfileCommand("CS-L", "Pickup Third Cube", pathReversed = true, pathMirrored = folder.first() == 'R') {
+                            var startTime: Long = 0L
+
+                            override fun initialize() {
+                                super.initialize()
+                                startTime = System.currentTimeMillis()
+                            }
+
+                            override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
                         })
                     })
                 }
