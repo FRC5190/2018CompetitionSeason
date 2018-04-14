@@ -28,14 +28,17 @@ class AutoHelper {
             val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
 
             return when (folder) {
-                "CS-L, CS-R" -> commandGroup {
-                    val firstSwitch = MotionProfileCommand(folder, "Switch", robotReversed = true)
+                "CS-L", "CS-R" -> commandGroup {
+                    val firstSwitch = MotionProfileCommand(folder, "Drop First Cube", robotReversed = true)
 
                     // Drop First Cube
                     addSequential(commandGroup {
                         addParallel(firstSwitch)
                         addParallel(commandGroup {
-                            addSequential(AutoElevatorCommand(ElevatorPosition.FIRST_STAGE))
+                            addSequential(commandGroup {
+                                addParallel(AutoElevatorCommand(ElevatorPosition.FIRST_STAGE), 1.0)
+                                addParallel(AutoArmCommand(ArmPosition.UP), 0.5)
+                            })
                             addSequential(AutoArmCommand(ArmPosition.BEHIND))
                         })
                         addParallel(commandGroup {
@@ -45,6 +48,7 @@ class AutoHelper {
                         })
                     })
 
+                    /*
                     // Pickup Second Cube
                     addSequential(commandGroup {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
@@ -95,6 +99,7 @@ class AutoHelper {
                             override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
                         })
                     })
+                    */
                 }
 
                 "LS-LL", "LS-RL", "RS-RR", "RS-LR" -> when (sameSideAutoMode) {
@@ -162,11 +167,7 @@ class AutoHelper {
         private fun getFullAuto(folderIn: String, isRightStart: Boolean) = commandGroup {
 
             val timeToGoUp = if (folderIn.first() == folderIn.last()) 2.50 else 1.50
-            val firstCube = object : MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart) {
-                override fun isFinished(): Boolean {
-                    return super.isFinished() || (ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks && !IntakeSubsystem.isCubeIn && ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100)
-                }
-            }
+            val firstCube = MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart)
 
             /*
             Drop 1st Cube in Scale
@@ -194,9 +195,9 @@ class AutoHelper {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
-                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 120
+                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.65, timeout = 0.50))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 0.50))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -246,7 +247,7 @@ class AutoHelper {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 0.50))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.40, timeout = 0.50))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -291,12 +292,14 @@ class AutoHelper {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 0.50))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.35, timeout = 0.50))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
                 })
             })
+
+            addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
 
         }
     }

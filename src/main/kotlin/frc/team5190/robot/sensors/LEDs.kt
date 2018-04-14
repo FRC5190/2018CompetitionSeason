@@ -30,12 +30,13 @@ object LEDs : Subsystem() {
         Canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec)
             COLOR_CLEAR
         else when {
+            Robot.INSTANCE!!.isDisabled -> COLOR_WHITE
             !ElevatorSubsystem.closedLpControl -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_RED
             ClimbSubsystem.climbState -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_ORANGE
             IntakeSubsystem.isCubeIn -> {
                 if (blinkedFor == 0L) blinkedFor = System.currentTimeMillis()
                 if (System.currentTimeMillis() % 400 > 200 && System.currentTimeMillis() - blinkedFor < 2000) COLOR_CLEAR
-                else if (Robot.INSTANCE!!.isAutonomous) COLOR_AUTO else if (Robot.INSTANCE!!.isOperatorControl) COLOR_GREEN else COLOR_WHITE
+                else if (Robot.INSTANCE!!.isAutonomous) COLOR_AUTO else COLOR_GREEN
             }
             else -> {
                 blinkedFor = 0L

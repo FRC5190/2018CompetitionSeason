@@ -21,7 +21,6 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.*
-import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
 
 /**
@@ -109,22 +108,26 @@ class Robot : IterativeRobot() {
 
         if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning != true) {
             // Regenerate the routine if any variables have changed.
-            if (sideChooser.selected != sideChooserSelected ||
-                    sameSideAutoChooser.selected != sameSideAutoSelected ||
-                    crossAutoChooser.selected != crossAutoSelected ||
-                    MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) != switchSide ||
-                    MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide) {
+            try {
+                if (sideChooser.selected != sideChooserSelected ||
+                        sameSideAutoChooser.selected != sameSideAutoSelected ||
+                        crossAutoChooser.selected != crossAutoSelected ||
+                        MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) != switchSide ||
+                        MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide) {
 
-                sideChooserSelected = sideChooser.selected
-                sameSideAutoSelected = sameSideAutoChooser.selected
-                crossAutoSelected = crossAutoChooser.selected
+                    sideChooserSelected = sideChooser.selected
+                    sameSideAutoSelected = sameSideAutoChooser.selected
+                    crossAutoSelected = crossAutoChooser.selected
 
-                switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
-                scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
+                    switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
+                    scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
 
-                dataRec = true
+                    dataRec = switchSide != MatchData.OwnedSide.UNKNOWN && scaleSide != MatchData.OwnedSide.UNKNOWN
 
-                autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                }
+            } catch (e: Exception) {
+
             }
         }
 
@@ -140,7 +143,7 @@ class Robot : IterativeRobot() {
         IntakeSubsystem.enableVoltageCompensation()
         Pigeon.reset()
 
-        Pigeon.angleOffset = if (sideChooser.selected == StartingPositions.CENTER) 0.0 else 180.0
+        Pigeon.angleOffset = 180.0
     }
 
     override fun autonomousPeriodic() {

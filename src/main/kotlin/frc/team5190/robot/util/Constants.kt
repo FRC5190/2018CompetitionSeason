@@ -45,7 +45,7 @@ object SolenoidIDs {
 
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 3.0
+    const val WHEEL_RADIUS = 2.95
     const val DRIVE_BASE_WIDTH = 29.5
 
     const val MAX_RPM_HIGH = 925

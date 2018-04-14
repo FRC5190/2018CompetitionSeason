@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Trajectory acceleration="3.0" driveBase="TANK" dt="0.02"
     fitMethod="HERMITE_QUINTIC" jerk="60.0" units="IMPERIAL"
-    velocity="7.0" wheelBaseD="0.0" wheelBaseW="2.458">
+    velocity="3.0" wheelBaseD="0.0" wheelBaseW="2.458">
     <Waypoint>
         <X>8.0</X>
         <Y>14.0</Y>

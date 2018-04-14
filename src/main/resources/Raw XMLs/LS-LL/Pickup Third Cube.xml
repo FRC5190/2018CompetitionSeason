@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Trajectory acceleration="3.0" driveBase="TANK" dt="0.02"
+<Trajectory acceleration="6.0" driveBase="TANK" dt="0.02"
     fitMethod="HERMITE_QUINTIC" jerk="40.0" units="IMPERIAL"
     velocity="8.0" wheelBaseD="0.0" wheelBaseW="2.458">
     <Waypoint>
