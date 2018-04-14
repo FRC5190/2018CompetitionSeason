@@ -16,6 +16,7 @@ import frc.team5190.robot.util.Maths
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import jaci.pathfinder.followers.EncoderFollower
+import kotlin.math.absoluteValue
 
 open class MotionProfileCommand(folder: String, file: String,
                                 private val robotReversed: Boolean = false, private val pathReversed: Boolean = false,
@@ -93,8 +94,6 @@ open class MotionProfileCommand(folder: String, file: String,
 
                 var turn = 1.0 * (1 / 80.0) * angleDifference
                 turn = if (useGyro) turn else 0.0
-
-                //println("Angle Difference: $angleDifference, Left: ${leftEncoderFollower.segment.velocity} Left Actual: ${Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0).absoluteValue)}")
 
                 DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
                 robotPosition = currentRobotPosition

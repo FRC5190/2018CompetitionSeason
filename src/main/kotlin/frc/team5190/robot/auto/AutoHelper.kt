@@ -129,7 +129,11 @@ class AutoHelper {
         private fun getFullAuto(folderIn: String, isRightStart: Boolean) = commandGroup {
 
             val timeToGoUp = if (folderIn.first() == folderIn.last()) 2.50 else 1.50
-            val firstCube = MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart)
+            val firstCube = object : MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart) {
+                override fun isFinished(): Boolean {
+                    return super.isFinished() || (ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks && !IntakeSubsystem.isCubeIn && ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100)
+                }
+            }
 
             /*
             Drop 1st Cube in Scale
@@ -157,9 +161,9 @@ class AutoHelper {
                         addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
                         addParallel(commandGroup {
                             addSequential(object : Command() {
-                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 120
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.40, timeout = 0.50))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.65, timeout = 0.50))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -172,7 +176,7 @@ class AutoHelper {
             addSequential(commandGroup {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                    addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
+                    addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 10.0))
                     addParallel(object : MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = isRightStart) {
 
                         var startTime: Long = 0L
@@ -193,7 +197,11 @@ class AutoHelper {
              Drop 2nd Cube in Scale
               */
             addSequential(commandGroup {
-                val dropSecondCubePath = MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = isRightStart)
+                val dropSecondCubePath = object : MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = isRightStart) {
+                    override fun isFinished(): Boolean {
+                         return super.isFinished() || (ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks && !IntakeSubsystem.isCubeIn && ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100)
+                    }
+                }
                 addParallel(dropSecondCubePath)
                 addParallel(commandGroup {
                     addSequential(commandGroup {

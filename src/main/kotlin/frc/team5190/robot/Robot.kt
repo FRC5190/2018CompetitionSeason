@@ -96,9 +96,9 @@ class Robot : IterativeRobot() {
         SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
         SmartDashboard.putData("Same Side Scale Mode", sameSideAutoChooser)
 
-        sameSideAutoSelected = sameSideAutoChooser.selected
-        crossAutoSelected = crossAutoChooser.selected
-        sideChooserSelected = sideChooser.selected
+//        sameSideAutoSelected = sameSideAutoChooser.selected
+//        crossAutoSelected = crossAutoChooser.selected
+//        sideChooserSelected = sideChooser.selected
     }
 
     /**
@@ -107,7 +107,7 @@ class Robot : IterativeRobot() {
     override fun robotPeriodic() {
         SmartDashboard.putNumber("Pigeon Corrected Angle", Pigeon.correctedAngle)
 
-        if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning == false) {
+        if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning != true) {
             // Regenerate the routine if any variables have changed.
             if (sideChooser.selected != sideChooserSelected ||
                     sameSideAutoChooser.selected != sameSideAutoSelected ||
@@ -165,13 +165,9 @@ class Robot : IterativeRobot() {
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         IntakeSubsystem.disableVoltageCompensation()
 
-        DriveSubsystem.currentCommand?.cancel()
+       autonomousRoutine?.cancel()
 
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
-    }
-
-    override fun teleopPeriodic() {
-        println(Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
     }
 }
