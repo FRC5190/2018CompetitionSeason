@@ -71,7 +71,7 @@ object Lidar : Subsystem() {
 
         servoAngle = ((servoAngle + 90) % 360) - 90.0
 
-        lidarServo.angle = if (Robot.INSTANCE!!.isOperatorControl) Pigeon.correctedAngle else servoAngle
+        lidarServo.angle = if (Robot.INSTANCE!!.isOperatorControl) 90.0 else servoAngle
 
         SmartDashboard.putNumber("Raw Scale Height", rawDistance)
         SmartDashboard.putNumber("Scale Height", scaleHeight)

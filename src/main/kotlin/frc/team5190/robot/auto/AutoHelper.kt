@@ -103,14 +103,14 @@ class AutoHelper {
                 }
 
                 "LS-LL", "LS-RL", "RS-RR", "RS-LR" -> when (sameSideAutoMode) {
-                    AutoModes.FULL -> getFullAuto(folderIn, isRightStart)
+                    AutoModes.FULL -> getFullAuto(folderIn, isRightStart, scaleOwnedSide)
                     AutoModes.SIMPLE -> getSimpleAuto(folderIn, isRightStart)
                     AutoModes.SWITCH -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
                     AutoModes.BASELINE -> getBaselineAuto()
                 }
 
                 "LS-RR", "LS-LR", "RS-LL", "RS-RL" -> when (crossAutoMode) {
-                    AutoModes.FULL -> getFullAuto(folderIn, isRightStart)
+                    AutoModes.FULL -> getFullAuto(folderIn, isRightStart, scaleOwnedSide)
                     AutoModes.SIMPLE -> getSimpleAuto(folderIn, isRightStart)
                     AutoModes.SWITCH -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
                     AutoModes.BASELINE -> getBaselineAuto()
@@ -164,7 +164,7 @@ class AutoHelper {
             })
         }
 
-        private fun getFullAuto(folderIn: String, isRightStart: Boolean) = commandGroup {
+        private fun getFullAuto(folderIn: String, isRightStart: Boolean, scaleOwnedSide: MatchData.OwnedSide) = commandGroup {
 
             val timeToGoUp = if (folderIn.first() == folderIn.last()) 2.50 else 1.50
             val firstCube = MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart)
@@ -211,7 +211,7 @@ class AutoHelper {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                     addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 10.0))
-                    addParallel(object : MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = isRightStart) {
+                    addParallel(object : MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
 
                         var startTime: Long = 0L
 
@@ -231,7 +231,7 @@ class AutoHelper {
              Drop 2nd Cube in Scale
               */
             addSequential(commandGroup {
-                val dropSecondCubePath = object : MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = isRightStart) {
+                val dropSecondCubePath = object : MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
                     override fun isFinished(): Boolean {
                          return super.isFinished() || (ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks && !IntakeSubsystem.isCubeIn && ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100)
                     }
@@ -261,7 +261,7 @@ class AutoHelper {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
                     addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
-                    addParallel(object : MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = isRightStart) {
+                    addParallel(object : MotionProfileCommand("LS-LL", "Pickup Third Cube", pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
 
                         var startTime: Long = 0L
 
@@ -280,7 +280,7 @@ class AutoHelper {
              Drop 3rd Cube in Scale
               */
             addSequential(commandGroup {
-                val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = isRightStart)
+                val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)
                 addParallel(dropThirdCubePath)
                 addParallel(commandGroup {
                     addSequential(commandGroup {

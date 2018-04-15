@@ -19,7 +19,7 @@ import java.util.concurrent.*
  */
 object Pathreader {
 
-    private const val PATHFEEDER_MODE = true
+    private const val PATHFEEDER_MODE = false
 
     private val allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
         folder.listFiles().filter { it.isFile }.map { file ->
