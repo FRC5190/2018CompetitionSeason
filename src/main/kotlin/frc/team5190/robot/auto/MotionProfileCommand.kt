@@ -19,7 +19,7 @@ import jaci.pathfinder.followers.EncoderFollower
 
 open class MotionProfileCommand(folder: String, file: String,
                                 private val robotReversed: Boolean = false, private val pathReversed: Boolean = false,
-                                private val pathMirrored: Boolean = false, useGyro: Boolean = true) : Command() {
+                                private val pathMirrored: Boolean = false, private val useGyro: Boolean = true) : Command() {
 
     companion object {
         var robotPosition: Pair<Double, Double>? = null
@@ -31,8 +31,8 @@ open class MotionProfileCommand(folder: String, file: String,
     private val leftPath: Trajectory
     private val rightPath: Trajectory
 
-    private val leftEncoderFollower: EncoderFollower
-    private val rightEncoderFollower: EncoderFollower
+    private lateinit var leftEncoderFollower: EncoderFollower
+    private lateinit var rightEncoderFollower: EncoderFollower
 
     private val currentRobotPosition: Pair<Double, Double>?
         get() {
@@ -50,7 +50,7 @@ open class MotionProfileCommand(folder: String, file: String,
     val pathDuration
         get() = leftPath.length() * DriveConstants.MOTION_DT
 
-    private val notifier: Notifier
+    private lateinit var notifier: Notifier
 
     private var startTime: Double? = null
 
@@ -60,6 +60,21 @@ open class MotionProfileCommand(folder: String, file: String,
         rightPath = trajectories[1].let { if (pathReversed) reverseTrajectory(it) else it }
 
         this.requires(DriveSubsystem)
+
+    }
+
+    private fun reverseTrajectory(trajectory: Trajectory): Trajectory {
+        val newTrajectory = trajectory.copy()
+        val distance = newTrajectory.segments.last().position
+        newTrajectory.segments.reverse()
+        newTrajectory.segments.forEach {
+            it.position = distance - it.position
+        }
+        return newTrajectory
+    }
+
+    override fun initialize() {
+        DriveSubsystem.resetEncoders()
 
         val leftTrajectory = if (pathMirrored) rightPath else leftPath
         val rightTrajectory = if (pathMirrored) leftPath else rightPath
@@ -98,20 +113,6 @@ open class MotionProfileCommand(folder: String, file: String,
                 robotPosition = currentRobotPosition
             }
         }
-    }
-
-    private fun reverseTrajectory(trajectory: Trajectory): Trajectory {
-        val newTrajectory = trajectory.copy()
-        val distance = newTrajectory.segments.last().position
-        newTrajectory.segments.reverse()
-        newTrajectory.segments.forEach {
-            it.position = distance - it.position
-        }
-        return newTrajectory
-    }
-
-    override fun initialize() {
-        DriveSubsystem.resetEncoders()
 
         startTime = Timer.getFPGATimestamp()
         stopNotifier = false
