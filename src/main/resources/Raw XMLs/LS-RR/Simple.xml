@@ -19,12 +19,12 @@
     </Waypoint>
     <Waypoint>
         <X>20.0</X>
-        <Y>10.0</Y>
+        <Y>11.0</Y>
         <Angle>-1.5707963267948966</Angle>
     </Waypoint>
     <Waypoint>
-        <X>24.75</X>
-        <Y>7.0</Y>
+        <X>25.0</X>
+        <Y>8.0</Y>
         <Angle>0.0</Angle>
     </Waypoint>
 </Trajectory>

@@ -28,11 +28,11 @@ class AutoHelper {
 
             return when (folder) {
                 "CS-L", "CS-R" -> commandGroup {
-                    val firstSwitch = MotionProfileCommand(folder, "Switch")
+                    val firstSwitch = MotionProfileCommand(folder, "Switch", false, false)
 
                     addSequential(commandGroup {
                         addParallel(firstSwitch)
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0)
                         addParallel(commandGroup {
                             addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
                             addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
@@ -40,7 +40,7 @@ class AutoHelper {
                         })
                     })
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Center", robotReversed = true))
+                        addParallel(MotionProfileCommand(folder, "Center", robotReversed = true, pathReversed = true))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(0.5))
                             addSequential(commandGroup {
@@ -48,13 +48,13 @@ class AutoHelper {
                             })
                         })
                     })
-                    addSequential(TurnCommand(if (folder.last() == 'L') 5.0 else 0.0))
+                    addSequential(TurnCommand(angle = if (folder.last() == 'L') -2.0 else 0.0), 1.0)
                     addSequential(PickupCubeCommand(visionCheck = false), 4.0)
                     addSequential(IntakeHoldCommand(), 0.001)
                     addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
 
                     addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Switch"), firstSwitch.pathDuration - 0.4)
+                        addParallel(MotionProfileCommand(folder, "Switch", false, false), firstSwitch.pathDuration - 0.4)
                         addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
                         addParallel(commandGroup {
                             addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
@@ -92,13 +92,13 @@ class AutoHelper {
         private fun getSwitchAuto(isRightStart: Boolean) = commandGroup {
             addSequential(commandGroup {
                 addParallel(MotionProfileCommand("LS-LL", "Switch", robotReversed = true, pathMirrored = isRightStart))
-                addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                addParallel(AutoArmCommand(ArmPosition.UP))
+                addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH), 1.5)
+                addParallel(AutoArmCommand(ArmPosition.UP), 1.5)
             })
 
-            addSequential(TurnCommand(90.0 * if (isRightStart) -1 else 1))
+            addSequential(TurnCommand(90.0 * if (isRightStart) 1 else -1), 1.5)
             addSequential(commandGroup {
-                addParallel(AutoArmCommand(ArmPosition.DOWN))
+                addParallel(AutoArmCommand(ArmPosition.DOWN), 1.5)
                 addParallel(StraightDriveCommand(2.5), 1.0)
             })
 
@@ -111,8 +111,8 @@ class AutoHelper {
         private fun getSimpleAuto(folder: String, isRightStart: Boolean) = commandGroup {
             addSequential(commandGroup {
                 addParallel(MotionProfileCommand(folder, "Simple", robotReversed = true, pathMirrored = isRightStart))
-                addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                addParallel(AutoArmCommand(ArmPosition.UP))
+                addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH), 1.5)
+                addParallel(AutoArmCommand(ArmPosition.UP), 1.5)
             })
             addSequential(commandGroup {
                 addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
@@ -120,7 +120,7 @@ class AutoHelper {
                     addSequential(object : Command() {
                         override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                     })
-                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.75, timeout = 0.5))
+                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 1.0, timeout = 1.0))
                     addSequential(IntakeHoldCommand(), 0.001)
                 })
             })
@@ -129,7 +129,11 @@ class AutoHelper {
         private fun getFullAuto(folderIn: String, isRightStart: Boolean, scaleOwnedSide: MatchData.OwnedSide) = commandGroup {
 
             val timeToGoUp = if (folderIn.first() == folderIn.last()) 2.50 else 1.50
-            val firstCube = MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart)
+            val firstCube = object : MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart) {
+                override fun isFinished(): Boolean {
+                    return super.isFinished() || (ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks && !IntakeSubsystem.isCubeIn && ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100)
+                }
+            }
 
             /*
             Drop 1st Cube in Scale

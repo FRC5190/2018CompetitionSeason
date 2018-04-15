@@ -21,6 +21,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.*
+import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
 
 /**
@@ -50,6 +51,8 @@ class Robot : IterativeRobot() {
     var crossAutoSelected = AutoModes.FULL
 
     private var autonomousRoutine: CommandGroup? = null
+
+    private var hasRunAuto = false
 
 
     // Shows a dropdown of the controllers that will be used.
@@ -145,7 +148,10 @@ class Robot : IterativeRobot() {
     }
 
     override fun autonomousPeriodic() {
-        if (autonomousRoutine?.isRunning == false) autonomousRoutine?.start()
+        if (autonomousRoutine?.isRunning == false && !hasRunAuto) {
+            autonomousRoutine?.start()
+            hasRunAuto = true
+        }
     }
 
     /**
@@ -170,5 +176,9 @@ class Robot : IterativeRobot() {
 
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
+    }
+
+    override fun teleopPeriodic() {
+        println(Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
     }
 }

@@ -8,13 +8,13 @@
         <Angle>0.0</Angle>
     </Waypoint>
     <Waypoint>
-        <X>22.5</X>
-        <Y>24.5</Y>
+        <X>22.8</X>
+        <Y>24.8</Y>
         <Angle>-0.17453292519943295</Angle>
     </Waypoint>
     <Waypoint>
         <X>27.25</X>
-        <Y>20.8</Y>
+        <Y>21.2</Y>
         <Angle>-1.5707963267948966</Angle>
     </Waypoint>
 </Trajectory>

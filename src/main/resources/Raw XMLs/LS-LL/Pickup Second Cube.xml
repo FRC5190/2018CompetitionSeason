@@ -3,7 +3,7 @@
     fitMethod="HERMITE_QUINTIC" jerk="40.0" units="IMPERIAL"
     velocity="6.0" wheelBaseD="0.0" wheelBaseW="2.458">
     <Waypoint>
-        <X>25.25</X>
+        <X>25.1</X>
         <Y>20.8</Y>
         <Angle>-0.4363323129985824</Angle>
     </Waypoint>
