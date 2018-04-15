@@ -94,10 +94,6 @@ class Robot : IterativeRobot() {
 
         SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
         SmartDashboard.putData("Same Side Scale Mode", sameSideAutoChooser)
-
-//        sameSideAutoSelected = sameSideAutoChooser.selected
-//        crossAutoSelected = crossAutoChooser.selected
-//        sideChooserSelected = sideChooser.selected
     }
 
     /**
@@ -113,7 +109,9 @@ class Robot : IterativeRobot() {
                         sameSideAutoChooser.selected != sameSideAutoSelected ||
                         crossAutoChooser.selected != crossAutoSelected ||
                         MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) != switchSide ||
-                        MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide) {
+                        MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide ||
+                        autonomousRoutine?.isCompleted == true ||
+                        autonomousRoutine?.isCanceled == true) {
 
                     sideChooserSelected = sideChooser.selected
                     sameSideAutoSelected = sameSideAutoChooser.selected
@@ -143,7 +141,7 @@ class Robot : IterativeRobot() {
         IntakeSubsystem.enableVoltageCompensation()
         Pigeon.reset()
 
-        Pigeon.angleOffset = 180.0
+        Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
     }
 
     override fun autonomousPeriodic() {
@@ -168,7 +166,7 @@ class Robot : IterativeRobot() {
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         IntakeSubsystem.disableVoltageCompensation()
 
-       autonomousRoutine?.cancel()
+        autonomousRoutine?.cancel()
 
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"

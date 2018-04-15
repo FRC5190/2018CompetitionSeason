@@ -20,7 +20,6 @@ object LEDs : Subsystem() {
     private val COLOR_ORANGE = Color(255, 100, 0)
     private val COLOR_AUTO = Color(255, 17, 115)
     private val COLOR_GREEN = Color(0, 255, 0)
-    private val COLOR_WHITE = Color(255, 255, 255)
 
     private var blinkedFor = 0L
 
@@ -30,7 +29,7 @@ object LEDs : Subsystem() {
         Canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec)
             COLOR_CLEAR
         else when {
-            Robot.INSTANCE!!.isDisabled -> COLOR_WHITE
+            Robot.INSTANCE!!.isDisabled -> COLOR_AUTO
             !ElevatorSubsystem.closedLpControl -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_RED
             ClimbSubsystem.climbState -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_ORANGE
             IntakeSubsystem.isCubeIn -> {

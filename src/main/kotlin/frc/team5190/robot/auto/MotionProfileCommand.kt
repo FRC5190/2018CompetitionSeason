@@ -34,7 +34,7 @@ open class MotionProfileCommand(folder: String, file: String,
     private val leftEncoderFollower: EncoderFollower
     private val rightEncoderFollower: EncoderFollower
 
-    val currentRobotPosition: Pair<Double, Double>?
+    private val currentRobotPosition: Pair<Double, Double>?
         get() {
             if(leftEncoderFollower.isFinished || rightEncoderFollower.isFinished) return null
             val x1 = leftEncoderFollower.segment.x
