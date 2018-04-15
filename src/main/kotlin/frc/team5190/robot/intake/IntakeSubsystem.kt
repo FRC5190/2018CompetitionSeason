@@ -25,7 +25,7 @@ object IntakeSubsystem : Subsystem() {
     @Suppress("ConstantConditionIf")
     val isCubeIn
         get() = if (DriveConstants.IS_RACE_ROBOT) leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
-        else leftCubeSensor.voltage > 0.9 || rightCubeSensor.voltage > 0.9
+        else leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
 
     val amperage
         get() = masterIntakeMotor.outputCurrent
@@ -35,14 +35,20 @@ object IntakeSubsystem : Subsystem() {
     val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
     init {
-        with(masterIntakeMotor) {
+        masterIntakeMotor.apply {
             inverted = false
             configVoltageCompSaturation(12.0, TIMEOUT)
             enableVoltageCompensation(true)
         }
-        with(TalonSRX(MotorIDs.INTAKE_RIGHT)) {
+        val slaveIntakeMotor = TalonSRX(MotorIDs.INTAKE_RIGHT).apply{
             follow(masterIntakeMotor)
             inverted = true
+        }
+        arrayOf(masterIntakeMotor, slaveIntakeMotor).forEach {
+            it.configContinuousCurrentLimit(18, TIMEOUT)
+            it.configPeakCurrentDuration(0, TIMEOUT)
+            it.configPeakCurrentLimit(0, TIMEOUT)
+            it.enableCurrentLimit(true)
         }
     }
 

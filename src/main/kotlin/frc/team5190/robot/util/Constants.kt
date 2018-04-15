@@ -31,6 +31,8 @@ object MotorIDs {
 object ChannelIDs {
     const val LEFT_CUBE_SENSOR = 2
     const val RIGHT_CUBE_SENSOR = 3
+
+    const val LIDAR_SERVO = 0
 }
 
 object SolenoidIDs {
@@ -43,13 +45,13 @@ object SolenoidIDs {
 
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 3.0
+    const val WHEEL_RADIUS = 2.95
     const val DRIVE_BASE_WIDTH = 29.5
 
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 2.0
+    const val P_HIGH = 1.7
     const val I_HIGH = 0.0
     const val D_HIGH = 0.0
 
@@ -75,7 +77,7 @@ object DriveConstants {
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
-    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
+    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -113,7 +115,7 @@ object ArmConstants {
     const val PID_SLOT = 0
     
     @Suppress("ConstantConditionIf")
-    val DOWN_TICKS = if (DriveConstants.IS_RACE_ROBOT) -795 else -880
+    val DOWN_TICKS = if (DriveConstants.IS_RACE_ROBOT) -795 else -730
 
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30

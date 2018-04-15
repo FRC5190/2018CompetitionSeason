@@ -5,7 +5,10 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
@@ -54,30 +57,23 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         allMasters.forEach {
             it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, TIMEOUT)
             it.setSelectedSensorPosition(0, 0, TIMEOUT)
+            it.configPeakOutput(1.0, -1.0, TIMEOUT)
+            it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
+            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
         }
 
         gear = Gear.HIGH
 
-        leftMotors.forEach {
+        leftMotors.forEach { it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT) }
+        rightMotors.forEach { it.setSensorPhase(false) }
+
+        allMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
-            it.configOpenloopRamp(0.0, TIMEOUT)
-        }
-
-        rightMotors.forEach {
-            it.setNeutralMode(NeutralMode.Brake)
-            it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT)
-            it.configOpenloopRamp(0.0, TIMEOUT)
-        }
-
-        allMasters.forEach {
-            it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
-            it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
-
-            it.configVoltageCompSaturation(12.0, TIMEOUT)
-            it.enableVoltageCompensation(false)
-            //it.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, TIMEOUT)
+            it.configContinuousCurrentLimit(40, TIMEOUT)
+            it.configPeakCurrentDuration(0, TIMEOUT)
+            it.configPeakCurrentLimit(0, TIMEOUT)
+            it.enableCurrentLimit(true)
         }
     }
 
@@ -86,7 +82,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
      */
     internal fun autoReset() {
         this.reset()
-        allMotors.forEach { it.configPeakOutput(0.9, -0.9, TIMEOUT) }
     }
 
     /**
@@ -95,7 +90,6 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
-            it.configPeakOutput(0.8, -0.8, TIMEOUT)
             it.clearMotionProfileTrajectories()
             it.selectProfileSlot(0, 0)
         }

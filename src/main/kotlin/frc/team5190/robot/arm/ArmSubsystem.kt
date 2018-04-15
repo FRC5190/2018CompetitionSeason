@@ -65,6 +65,11 @@ object ArmSubsystem : Subsystem() {
 
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
+
+            configContinuousCurrentLimit(20, TIMEOUT)
+            configPeakCurrentDuration(0, TIMEOUT)
+            configPeakCurrentLimit(0, TIMEOUT)
+            enableCurrentLimit(true)
         }
     }
 

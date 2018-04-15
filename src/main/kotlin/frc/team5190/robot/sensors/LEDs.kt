@@ -26,9 +26,10 @@ object LEDs : Subsystem() {
     override fun initDefaultCommand() {}
 
     override fun periodic() {
-        Canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec || !Robot.INSTANCE!!.isEnabled)
+        Canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec)
             COLOR_CLEAR
         else when {
+            Robot.INSTANCE!!.isDisabled -> COLOR_AUTO
             !ElevatorSubsystem.closedLpControl -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_RED
             ClimbSubsystem.climbState -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_ORANGE
             IntakeSubsystem.isCubeIn -> {

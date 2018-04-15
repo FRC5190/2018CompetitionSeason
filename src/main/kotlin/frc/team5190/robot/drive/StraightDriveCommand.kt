@@ -12,11 +12,11 @@ import kotlin.math.absoluteValue
 
 /**
  * Command that drives to tgtRange
- * @param feet Distance to go forward
+ * @param distance Distance to go forward
  * @param cruiseVel Cruise velocity
  * @param accel Acceleration
  */
-open class StraightDriveCommand(private val feet: Double,
+open class StraightDriveCommand(private val distance: Double,
                                 private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
                                 private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
 
@@ -34,7 +34,7 @@ open class StraightDriveCommand(private val feet: Double,
      * Initializes the command
      */
     override fun initialize() {
-        setPoint = Maths.feetToNativeUnits(feet, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
+        setPoint = Maths.feetToNativeUnits(distance, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
 
         DriveSubsystem.falconDrive.allMasters.forEach {
             it.configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(cruiseVel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), TIMEOUT)
