@@ -54,7 +54,6 @@ class Robot : IterativeRobot() {
     var fmsDataReceived = false
 
 
-
     override fun robotInit() {
         // https://www.chiefdelphi.com/forums/showthread.php?p=1724798
         LiveWindow.disableAllTelemetry()
@@ -74,7 +73,7 @@ class Robot : IterativeRobot() {
 
         // Start camera stream
         CameraServer.getInstance().startAutomaticCapture().apply {
-            setResolution(640, 480)
+            setResolution(320, 240)
             setFPS(20)
         }
 
