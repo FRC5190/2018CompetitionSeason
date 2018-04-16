@@ -26,7 +26,7 @@ object LEDs : Subsystem() {
     override fun initDefaultCommand() {}
 
     override fun periodic() {
-        Canifier.setLEDOutput(if (!Robot.INSTANCE!!.dataRec)
+        Canifier.setLEDOutput(if (!Robot.INSTANCE!!.fmsDataReceived)
             COLOR_CLEAR
         else when {
             Robot.INSTANCE!!.isDisabled -> COLOR_AUTO
