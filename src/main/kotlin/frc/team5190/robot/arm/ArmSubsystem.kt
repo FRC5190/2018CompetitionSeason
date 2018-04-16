@@ -142,6 +142,6 @@ enum class ArmPosition(val ticks: Int) {
     BEHIND((ArmConstants.DOWN_TICKS + 380)),
     ALL_UP(ArmConstants.DOWN_TICKS + 250),
     UP(ArmConstants.DOWN_TICKS + 200),
-    MIDDLE(ArmConstants.DOWN_TICKS + 100),
+    MIDDLE(ArmConstants.DOWN_TICKS + 40),
     DOWN(ArmConstants.DOWN_TICKS);
 }

@@ -25,7 +25,7 @@ object ElevatorSubsystem : Subsystem() {
 
     // Returns the current encoder position of the elevator
     val currentPosition
-        get() = masterElevatorMotor.sensorCollection.quadraturePosition
+        get() = masterElevatorMotor.getSelectedSensorPosition(0)
 
     // Returns the amperage of the motor
     val amperage
@@ -86,7 +86,7 @@ object ElevatorSubsystem : Subsystem() {
             configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
 
             // Motion Magic Control
-            configMotionCruiseVelocity(ElevatorConstants.MOTION_VELOCITY, 10)
+            configMotionCruiseVelocity(inchesToNativeUnits(ElevatorConstants.MOTION_VELOCITY) / 10, 10)
             configMotionAcceleration(inchesToNativeUnits(ElevatorConstants.MOTION_ACCELERATION_INCHES) / 10, TIMEOUT)
             setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
             setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
@@ -187,7 +187,7 @@ object ElevatorSubsystem : Subsystem() {
  * Enum that contains elevator positions
  */
 enum class ElevatorPosition(var ticks: Int) {
-    SWITCH(ElevatorSubsystem.inchesToNativeUnits(20.0)),
+    SWITCH(ElevatorSubsystem.inchesToNativeUnits(27.0)),
     FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(32.0)),
     SCALE(17000),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(57.0)),

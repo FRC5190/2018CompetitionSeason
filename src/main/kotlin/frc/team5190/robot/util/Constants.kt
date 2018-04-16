@@ -101,7 +101,7 @@ object ElevatorConstants {
     const val SOFT_LIMIT_FWD = 22500
 
     // motion magic
-    const val MOTION_VELOCITY = 1000000000
+    const val MOTION_VELOCITY = 72.0
     const val MOTION_ACCELERATION_INCHES = 90.0
 }
 

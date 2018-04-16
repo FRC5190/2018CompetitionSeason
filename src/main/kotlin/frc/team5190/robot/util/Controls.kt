@@ -74,8 +74,8 @@ object Controls {
 
     fun armSubsystem() {
         when {
-            MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.3)
-            MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
+            MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.4)
+            MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.3)
 
             MainXbox.yButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
                 ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition + 50.0)
