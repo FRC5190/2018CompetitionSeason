@@ -6,22 +6,28 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.CameraServer
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.*
+import frc.team5190.robot.auto.AutoHelper
+import frc.team5190.robot.auto.AutoModes
+import frc.team5190.robot.auto.Pathreader
+import frc.team5190.robot.auto.StartingPositions
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
-import frc.team5190.robot.drive.StraightDriveCommand
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.*
-import frc.team5190.robot.util.commandGroup
+import frc.team5190.robot.sensors.Canifier
+import frc.team5190.robot.sensors.LEDs
+import frc.team5190.robot.sensors.Lidar
+import frc.team5190.robot.sensors.Pigeon
 import openrio.powerup.MatchData
 
 class Robot : IterativeRobot() {
@@ -101,7 +107,7 @@ class Robot : IterativeRobot() {
 
 
         // Receives game data from the FMS and generates autonomous routine
-        if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning != true) {
+        if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning != true && (!fmsDataReceived || INSTANCE!!.isDisabled)) {
             try {
                 if (sideChooser.selected != sideChooserSelected ||
                         sameSideAutoChooser.selected != sameSideAutoSelected ||
@@ -143,16 +149,12 @@ class Robot : IterativeRobot() {
             autonomousRoutine?.start()
             hasRunAuto = true
         }
-
-        // Runs baseline auto if for some reason FMS data was not received
-        if (Timer.getMatchTime() < 5.0 && !hasRunAuto) {
-            commandGroup {
-                addSequential(StraightDriveCommand(12.0 * if (sideChooserSelected == StartingPositions.CENTER) 1 else -1))
-            }.start()
-        }
     }
 
     override fun disabledInit() {
+
+        hasRunAuto = false
+
         // Clean up from climbing
         IdleClimbCommand().start()
         ClimbSubsystem.climbState = false
