@@ -90,8 +90,10 @@ open class MotionProfileCommand(folder: String, file: String,
 
                 val angleDifference = Pathfinder.boundHalfDegrees(actualHeading - desiredHeading)
 
-                var turn = 0.75 * (1 / 80.0) * angleDifference
+                var turn = 1.7 * (1 / 80.0) * angleDifference
                 turn = if (useGyro) turn else 0.0
+
+                println(angleDifference)
 
                 DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, leftOutput + turn, rightOutput - turn, squaredInputs = false)
                 robotPosition = currentRobotPosition

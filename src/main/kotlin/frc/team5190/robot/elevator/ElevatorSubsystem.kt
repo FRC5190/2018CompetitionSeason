@@ -48,7 +48,6 @@ object ElevatorSubsystem : Subsystem() {
         val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE).apply {
             inverted = true
             follow(masterElevatorMotor)
-            setNeutralMode(NeutralMode.Brake)
         }
 
         arrayOf(masterElevatorMotor, slaveElevatorMotor).forEach {
@@ -57,6 +56,11 @@ object ElevatorSubsystem : Subsystem() {
             it.configPeakCurrentDuration(0, TIMEOUT)
             it.configPeakCurrentLimit(0, TIMEOUT)
             it.enableCurrentLimit(true)
+
+            it.setNeutralMode(NeutralMode.Brake)
+
+            it.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, TIMEOUT)
+            it.configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
         }
 
         // Configure current limiting
@@ -76,14 +80,9 @@ object ElevatorSubsystem : Subsystem() {
             configForwardSoftLimitThreshold(ElevatorConstants.SOFT_LIMIT_FWD, TIMEOUT)
             configForwardSoftLimitEnable(true, TIMEOUT)
 
-            // Brake Mode
-            setNeutralMode(NeutralMode.Brake)
-
             // Closed Loop Control
             configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, TIMEOUT)
             configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), TIMEOUT)
-            configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, TIMEOUT)
-            configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
 
             // Motion Magic Control
             configMotionCruiseVelocity(inchesToNativeUnits(ElevatorConstants.MOTION_VELOCITY) / 10, 10)
@@ -95,7 +94,6 @@ object ElevatorSubsystem : Subsystem() {
             configOpenloopRamp(0.5, TIMEOUT)
 
             closedLpControl = true
-
         }
     }
 

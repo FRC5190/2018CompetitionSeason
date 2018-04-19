@@ -79,8 +79,8 @@ class Robot : IterativeRobot() {
 
         // Start camera stream
         CameraServer.getInstance().startAutomaticCapture().apply {
-            setResolution(320, 240)
-            setFPS(20)
+            setResolution(160, 120)
+            setFPS(15)
         }
 
         // Autonomous modes on Dashboard
@@ -99,9 +99,13 @@ class Robot : IterativeRobot() {
         // Reset subsystems for autonomous
         IntakeSubsystem.enableVoltageCompensation()
         DriveSubsystem.autoReset()
+
+        Pigeon.reset()
     }
 
     override fun robotPeriodic() {
+        Pigeon.update()
+
         // Logging
         SmartDashboard.putNumber("Pigeon Corrected Angle", Pigeon.correctedAngle)
 
@@ -129,18 +133,16 @@ class Robot : IterativeRobot() {
 
                     println("Received Game Specific Data: ${DriverStation.getInstance().gameSpecificMessage}")
 
+                    // Reset gyro
+                    Pigeon.reset()
+                    Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
+
                     autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
                 }
             } catch (ignored: Exception) {
             }
         }
         Scheduler.getInstance().run()
-    }
-
-    override fun autonomousInit() {
-        // Reset gyro
-        Pigeon.reset()
-        Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
     }
 
     override fun autonomousPeriodic() {
