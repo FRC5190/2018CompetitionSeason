@@ -136,7 +136,7 @@ object IntakeConstants {
 }
 
 object ClimbConstants {
-    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 43000 else 24000
+    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 47600 else 24000
     val CLIMB_POS = if(DriveConstants.IS_RACE_ROBOT) 0 else 200
 
     const val PEAK_OUTPUT = 1.0

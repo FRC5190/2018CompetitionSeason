@@ -75,11 +75,13 @@ class Robot : IterativeRobot() {
         Pigeon
         LEDs
 
+        /*
         // Start camera stream
         CameraServer.getInstance().startAutomaticCapture().apply {
             setResolution(160, 120)
             setFPS(15)
         }
+        */
 
         // Autonomous modes on Dashboard
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
@@ -99,6 +101,8 @@ class Robot : IterativeRobot() {
         DriveSubsystem.autoReset()
 
         Pigeon.reset()
+
+        ClimbSubsystem.climbState = false
     }
 
     override fun robotPeriodic() {
@@ -159,7 +163,7 @@ class Robot : IterativeRobot() {
 
         // Clean up from climbing
         IdleClimbCommand().start()
-        ClimbSubsystem.climbState = false
+//        ClimbSubsystem.climbState = false
     }
 
     override fun teleopInit() {

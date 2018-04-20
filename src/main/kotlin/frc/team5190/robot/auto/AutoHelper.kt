@@ -252,7 +252,7 @@ class AutoHelper {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 0.50))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (folderIn.first() == folderIn.last()) 0.5 else 0.65, timeout = 0.50))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -347,7 +347,7 @@ class AutoHelper {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.35, timeout = 0.50))
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.40, timeout = 0.50))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
