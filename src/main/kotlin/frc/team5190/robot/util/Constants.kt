@@ -45,7 +45,7 @@ object SolenoidIDs {
 
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 3.0
+    const val WHEEL_RADIUS = 5.921 / 2.0
     const val DRIVE_BASE_WIDTH = 29.5
 
     const val MAX_RPM_HIGH = 925
@@ -136,7 +136,7 @@ object IntakeConstants {
 }
 
 object ClimbConstants {
-    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 42500 else 24000
+    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 43000 else 24000
     val CLIMB_POS = if(DriveConstants.IS_RACE_ROBOT) 0 else 200
 
     const val PEAK_OUTPUT = 1.0

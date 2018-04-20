@@ -15,10 +15,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.arm.ArmSubsystem
-import frc.team5190.robot.auto.AutoHelper
-import frc.team5190.robot.auto.AutoModes
-import frc.team5190.robot.auto.Pathreader
-import frc.team5190.robot.auto.StartingPositions
+import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
 import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
@@ -28,6 +25,7 @@ import frc.team5190.robot.sensors.Canifier
 import frc.team5190.robot.sensors.LEDs
 import frc.team5190.robot.sensors.Lidar
 import frc.team5190.robot.sensors.Pigeon
+import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
 class Robot : IterativeRobot() {
@@ -137,6 +135,8 @@ class Robot : IterativeRobot() {
                     Pigeon.reset()
                     Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
 
+
+//                    autonomousRoutine = commandGroup { addSequential(MotionProfileCommand("LS-RR", "Drop First Cube", robotReversed = true, pathMirrored = true)) }
                     autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
                 }
             } catch (ignored: Exception) {

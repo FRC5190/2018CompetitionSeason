@@ -53,15 +53,15 @@ class AutoHelper {
                     addSequential(IntakeHoldCommand(), 0.001)
                     addSequential(ArcDriveCommand(-5.0, angle = 0.0, cruiseVel = 5.0, accel = 4.0), 1.75)
 
-                    addSequential(commandGroup {
-                        addParallel(MotionProfileCommand(folder, "Switch", false, false), firstSwitch.pathDuration - 0.4)
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
-                            addSequential(IntakeHoldCommand(), 0.001)
-                        })
-                    })
+//                    addSequential(commandGroup {
+//                        addParallel(MotionProfileCommand(folder, "Switch", false, false), firstSwitch.pathDuration - 0.4)
+//                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
+////                        addParallel(commandGroup {
+////                            addSequential(TimedCommand(firstSwitch.pathDuration - 0.2))
+////                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5))
+////                            addSequential(IntakeHoldCommand(), 0.001)
+////                        })
+//                    })
                 }
 
                 "LS-LL", "LS-RL", "RS-RR", "RS-LR" -> when (sameSideAutoMode) {
@@ -102,7 +102,7 @@ class AutoHelper {
                 addParallel(StraightDriveCommand(2.5), 1.0)
             })
 
-            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.4, timeout = 0.2))
+            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.4, timeout = 1.0))
             addSequential(IntakeHoldCommand(), 0.001)
             addSequential(StraightDriveCommand(-2.0))
             addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))

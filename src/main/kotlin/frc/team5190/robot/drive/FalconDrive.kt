@@ -70,7 +70,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         allMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
-            it.configContinuousCurrentLimit(40, TIMEOUT)
+            it.configContinuousCurrentLimit(37, TIMEOUT)
             it.configPeakCurrentDuration(0, TIMEOUT)
             it.configPeakCurrentLimit(0, TIMEOUT)
             it.enableCurrentLimit(true)

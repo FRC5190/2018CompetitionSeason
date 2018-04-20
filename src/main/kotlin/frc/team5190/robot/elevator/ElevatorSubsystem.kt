@@ -48,19 +48,19 @@ object ElevatorSubsystem : Subsystem() {
         val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE).apply {
             inverted = true
             follow(masterElevatorMotor)
+
+            configPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT, -ElevatorConstants.ACTIVE_PEAK_OUT, TIMEOUT)
         }
 
         arrayOf(masterElevatorMotor, slaveElevatorMotor).forEach {
-            // TODO Max should really be around 20 amps for both bots, but current as of 4/11/2018 race robot has elevator issue.
-            it.configContinuousCurrentLimit(if(DriveConstants.IS_RACE_ROBOT) 40 else 20, TIMEOUT)
+            it.configContinuousCurrentLimit(if(DriveConstants.IS_RACE_ROBOT) 30 else 20, TIMEOUT)
             it.configPeakCurrentDuration(0, TIMEOUT)
             it.configPeakCurrentLimit(0, TIMEOUT)
             it.enableCurrentLimit(true)
 
-            it.setNeutralMode(NeutralMode.Brake)
-
             it.configNominalOutput(ElevatorConstants.NOMINAL_OUT, -ElevatorConstants.NOMINAL_OUT, TIMEOUT)
-            it.configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
+
+            it.setNeutralMode(NeutralMode.Brake)
         }
 
         // Configure current limiting
@@ -92,6 +92,8 @@ object ElevatorSubsystem : Subsystem() {
 
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
+
+            configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
 
             closedLpControl = true
         }
