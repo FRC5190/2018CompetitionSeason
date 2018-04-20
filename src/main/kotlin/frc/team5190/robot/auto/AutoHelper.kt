@@ -368,5 +368,5 @@ enum class StartingPositions {
 }
 
 enum class AutoModes(val numCubes: String) {
-    FULL("2.5 / 3"), SIMPLE("1"), SWITCH("0 / 1"), CARRY_ALLIANCE("0 / 1 / 2"), BASELINE("0");
+    FULL("2.5 / 3"), SIMPLE("1"), SWITCH("0 / 1"), CARRY_ALLIANCE("1 / 2 / 3"), BASELINE("0");
 }
