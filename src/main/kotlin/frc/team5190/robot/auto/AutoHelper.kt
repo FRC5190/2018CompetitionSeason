@@ -252,6 +252,7 @@ class AutoHelper {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
+                            addSequential(TimedCommand(0.1))
                             addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (folderIn.first() == folderIn.last()) 0.5 else 0.65, timeout = 0.50))
                             addSequential(IntakeHoldCommand(), 0.001)
                         })

@@ -5,6 +5,7 @@
 
 package frc.team5190.robot.sensors
 
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team5190.robot.Robot
 import frc.team5190.robot.climb.ClimbSubsystem
@@ -30,8 +31,8 @@ object LEDs : Subsystem() {
         Canifier.setLEDOutput(if (!Robot.INSTANCE!!.fmsDataReceived)
             COLOR_CLEAR
         else when {
-            ClimbSubsystem.climbState -> if (System.currentTimeMillis() % 800 > 400) COLOR_CLEAR else COLOR_ORANGE
             Robot.INSTANCE!!.isDisabled -> COLOR_GREEN_LESS_INTENSE
+            ClimbSubsystem.climbState -> if ((Timer.getFPGATimestamp() * 1000.0) % 800 > 400) COLOR_CLEAR else COLOR_ORANGE
             !ElevatorSubsystem.closedLpControl -> if (System.currentTimeMillis() % 600 > 300) COLOR_CLEAR else COLOR_RED
             IntakeSubsystem.isCubeIn -> {
                 if (blinkedFor == 0L) blinkedFor = System.currentTimeMillis()
