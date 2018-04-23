@@ -5,10 +5,7 @@
 
 package frc.team5190.robot.drive
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
@@ -35,18 +32,12 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     // Values for all the motors of the Drive Train
     private val allMotors = listOf(*leftMotors.toTypedArray(), *rightMotors.toTypedArray())
 
-    /**
-     * Sets some initial values when the FalconDrive object is initialized.
-     */
+
     init {
         reset()
     }
 
-    /**
-     * Reset the drive train subsystem
-     * Call this when initializing  autonomous and teleop
-     * Resets all motors, their directions, and encoders
-     */
+    // Reset
     private fun reset() {
         leftMotors.forEach { it.inverted = false }
         rightMotors.forEach { it.inverted = true }
@@ -65,7 +56,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
         gear = Gear.HIGH
 
-        leftMotors.forEach { it.setSensorPhase(!DriveConstants.IS_RACE_ROBOT) }
+        leftMotors.forEach { it.setSensorPhase(false) }
         rightMotors.forEach { it.setSensorPhase(false) }
 
         allMotors.forEach {
@@ -77,16 +68,12 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         }
     }
 
-    /**
-     * Resets FalconDrive in Autonomous mode
-     */
+    // Auto reset
     internal fun autoReset() {
         this.reset()
     }
 
-    /**
-     * Resets FalconDrive in Teleop mode
-     */
+    // Teleop reset
     internal fun teleopReset() {
         this.reset()
         allMasters.forEach {
@@ -127,13 +114,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         m_safetyHelper.feed()
     }
 
-    /**
-     * Drives the motors in tank drive motion.
-     * @param controlMode The control mode in which to drive.
-     * @param _leftSpeed The speed at which the left side of the DriveTrain should move.
-     * @param _rightSpeed The speed at which the right side of the DriveTrain should move.
-     * @param squaredInputs Decides if the inputs should be squared.
-     */
+    // Controls motors in tank drive motion
     fun tankDrive(controlMode: ControlMode, _leftSpeed: Double, _rightSpeed: Double, squaredInputs: Boolean = true) {
         var leftSpeed = _leftSpeed
         var rightSpeed = _rightSpeed
@@ -161,13 +142,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
     private var stopAlpha = kDefaultQuickStopAlpha
     private var stopAccumulator = 0.0
 
-    /**
-     * Drives the motors in curvature drive motion.
-     * @param controlMode The control mode in which to drive.
-     * @param xSpeed The speed of the X axis.
-     * @param zRotation The speed of the rotation along the Z axis.
-     * @param isQuickTurn Decides if quick turn is enabled or disabled.
-     */
+    // Drives motor in Curve drive motion
     fun curvatureDrive(controlMode: ControlMode, xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
         var speed = xSpeed
         var rotation = zRotation

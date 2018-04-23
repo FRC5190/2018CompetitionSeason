@@ -13,11 +13,9 @@ import frc.team5190.robot.intake.*
 import frc.team5190.robot.util.commandGroup
 import openrio.powerup.MatchData
 
-/**
- * Contains methods that help with autonomous
- */
 class AutoHelper {
     companion object {
+        // Returns a command group with the appropriate autonomous routine
         fun getAuto(startingPositions: StartingPositions, switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, sameSideAutoMode: AutoModes, crossAutoMode: AutoModes): CommandGroup {
 
             var folder = "${startingPositions.name.first()}S-${switchOwnedSide.name.first()}${scaleOwnedSide.name.first()}"
@@ -27,6 +25,7 @@ class AutoHelper {
             val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
 
             return when (folder) {
+                // Switch auto from the center
                 "CS-L", "CS-R" -> commandGroup {
                     val firstSwitch = MotionProfileCommand(folder, "Switch", false, false)
 
@@ -64,34 +63,35 @@ class AutoHelper {
 //                    })
                 }
 
-
+                // Same side scale auto from the sides
                 "LS-LL", "LS-RL", "RS-RR", "RS-LR" -> when (sameSideAutoMode) {
                     AutoModes.FULL -> getFullAuto(folderIn, isRightStart, scaleOwnedSide)
                     AutoModes.SIMPLE -> getSimpleAuto(folderIn, isRightStart)
-                    AutoModes.CARRY_ALLIANCE -> getCarryEntireAllianceAuto(switchOwnedSide, scaleOwnedSide, folder, sameSideAuto = true)
                     AutoModes.SWITCH -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
                     AutoModes.BASELINE -> getBaselineAuto()
                 }
 
+                // Cross scale auto from the sides
                 "LS-RR", "LS-LR", "RS-LL", "RS-RL" -> when (crossAutoMode) {
                     AutoModes.FULL -> getFullAuto(folderIn, isRightStart, scaleOwnedSide)
                     AutoModes.SIMPLE -> getSimpleAuto(folderIn, isRightStart)
-                    AutoModes.CARRY_ALLIANCE -> getCarryEntireAllianceAuto(switchOwnedSide, scaleOwnedSide, folder, sameSideAuto = false)
                     AutoModes.SWITCH -> if (switchOwnedSide.name.first().toUpperCase() == folder.first()) getSwitchAuto(isRightStart) else getBaselineAuto()
                     AutoModes.BASELINE -> getBaselineAuto()
                 }
 
+                // Default -- should never be returned
                 else -> {
                     commandGroup { }
                 }
             }
         }
 
-
+        // Baseline auto
         private fun getBaselineAuto() = commandGroup {
             addSequential(StraightDriveCommand(distance = -12.0))
         }
 
+        // Switch auto
         private fun getSwitchAuto(isRightStart: Boolean) = commandGroup {
             addSequential(commandGroup {
                 addParallel(MotionProfileCommand("LS-LL", "Switch", robotReversed = true, pathMirrored = isRightStart))
@@ -111,92 +111,7 @@ class AutoHelper {
             addSequential(ElevatorPresetCommand(ElevatorPreset.INTAKE))
         }
 
-        private fun getCarryEntireAllianceAuto(switchOwnedSide: MatchData.OwnedSide, scaleOwnedSide: MatchData.OwnedSide, folder: String, sameSideAuto: Boolean): CommandGroup {
-
-            // Gives us a 75% chance of getting the switch when we start from the side
-
-            val isRightStart = folder.first() == 'R'
-            val folderIn = if (folder.first() == folder.last()) "LS-LL" else "LS-RR"
-
-            // Scale on our side and switch on other side
-            return if (sameSideAuto && folder.first() != switchOwnedSide.name.first().toUpperCase()) getFullAuto(folderIn, isRightStart, scaleOwnedSide)
-
-            // Scale on other side and switch on our side
-            else if (!sameSideAuto && folder.first() == switchOwnedSide.name.first().toUpperCase()) getSwitchAuto(isRightStart)
-
-            // Scale and switch on same side
-            else commandGroup {
-                val timeToGoUp = if (folderIn.first() == folderIn.last()) 2.50 else 1.50
-                val firstCube = object : MotionProfileCommand(folderIn, "Drop First Cube", robotReversed = true, pathMirrored = isRightStart) {
-                    override fun isFinished(): Boolean {
-                        return super.isFinished() || (ElevatorSubsystem.currentPosition > ElevatorPosition.FIRST_STAGE.ticks && !IntakeSubsystem.isCubeIn && ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100)
-                    }
-                }
-
-                // Drop First Cube in Scale
-                addSequential(commandGroup {
-                    addParallel(firstCube)
-                    addParallel(commandGroup {
-                        addSequential(TimedCommand(0.2))
-                        addSequential(object : CommandGroup() {
-                            var startTime: Long = 0
-
-                            init {
-                                addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
-                                addParallel(AutoArmCommand(ArmPosition.UP))
-                            }
-
-                            override fun initialize() {
-                                super.initialize()
-                                startTime = System.currentTimeMillis()
-                            }
-
-                            override fun isFinished() = (System.currentTimeMillis() - startTime) > (firstCube.pathDuration - timeToGoUp).coerceAtLeast(0.001) * 1000
-                        })
-                        addSequential(commandGroup {
-                            addParallel(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR))
-                            addParallel(commandGroup {
-                                addSequential(object : Command() {
-                                    override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
-                                })
-                                addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.50, timeout = 0.50))
-                                addSequential(IntakeHoldCommand(), 0.001)
-                            })
-                        })
-                    })
-                })
-
-                // Pickup Second Cube
-                addSequential(commandGroup {
-                    addSequential(commandGroup {
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                        addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 10.0))
-                        addParallel(object : MotionProfileCommand("LS-LL", "Pickup Second Cube", pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
-
-                            var startTime: Long = 0L
-
-                            override fun initialize() {
-                                super.initialize()
-                                startTime = System.currentTimeMillis()
-                            }
-
-                            override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
-                        })
-                    })
-                    addSequential(IntakeHoldCommand(), 0.001)
-                })
-
-                // Drop Second Cube in Switch
-                addSequential(commandGroup {
-                    addSequential(StraightDriveCommand(-0.5), 0.75)
-                    addSequential(ElevatorPresetCommand(ElevatorPreset.SWITCH), 1.5)
-                    addSequential(StraightDriveCommand(1.0), 0.75)
-                    addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.5, timeout = 0.5))
-                    addSequential(IntakeHoldCommand(), 0.001)
-                })
-            }
-        }
-
+        // Simple auto that does not interfere with other teams' advanced auto (Worlds)
         private fun getSimpleAuto(folder: String, isRightStart: Boolean) = commandGroup {
             addSequential(commandGroup {
                 addParallel(MotionProfileCommand(folder, "Simple", robotReversed = true, pathMirrored = isRightStart))
@@ -215,6 +130,7 @@ class AutoHelper {
             })
         }
 
+        // Complete 3 cube scale auto
         private fun getFullAuto(folderIn: String, isRightStart: Boolean, scaleOwnedSide: MatchData.OwnedSide) = commandGroup {
 
             val timeToGoUp = if (folderIn.first() == folderIn.last()) 2.50 else 1.50
@@ -224,9 +140,7 @@ class AutoHelper {
                 }
             }
 
-            /*
-            Drop 1st Cube in Scale
-            */
+            // 1st Cube in Scale
             addSequential(commandGroup {
                 addParallel(firstCube)
                 addParallel(commandGroup {
@@ -260,9 +174,7 @@ class AutoHelper {
                 })
             })
 
-            /*
-            Pickup 2nd Cube
-             */
+            // Pickup 2nd Cube
             addSequential(commandGroup {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
@@ -283,9 +195,7 @@ class AutoHelper {
 
             })
 
-            /*
-             Drop 2nd Cube in Scale
-              */
+            // 2nd Cube in Scale
             addSequential(commandGroup {
                 val dropSecondCubePath = object : MotionProfileCommand("LS-LL", "Pickup Second Cube", robotReversed = true, pathReversed = true, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
                     override fun isFinished(): Boolean {
@@ -310,9 +220,7 @@ class AutoHelper {
                 })
             })
 
-            /*
-        Pickup 3rd Cube
-         */
+            // Pickup 3rd Cube
             addSequential(commandGroup {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
@@ -332,9 +240,7 @@ class AutoHelper {
                 addSequential(IntakeHoldCommand(), 0.001)
             })
 
-            /*
-             Drop 3rd Cube in Scale
-              */
+            // 3rd Cube in Scale
             addSequential(commandGroup {
                 val dropThirdCubePath = MotionProfileCommand("LS-LL", "Pickup Third Cube", robotReversed = true, pathReversed = true, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)
                 addParallel(dropThirdCubePath)
@@ -361,13 +267,12 @@ class AutoHelper {
     }
 }
 
-/**
- * Stores starting position of the robot.
- */
+// Starting Position of the Robot
 enum class StartingPositions {
     LEFT, CENTER, RIGHT;
 }
 
+// Auto mode to run
 enum class AutoModes(val numCubes: String) {
-    FULL("2.5 / 3"), SIMPLE("1"), SWITCH("0 / 1"), CARRY_ALLIANCE("1 / 2 / 3"), BASELINE("0");
+    FULL("2.5 / 3"), SIMPLE("1"), SWITCH("0 / 1"), BASELINE("0");
 }

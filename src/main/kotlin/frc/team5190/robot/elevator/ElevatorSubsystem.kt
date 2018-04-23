@@ -27,16 +27,8 @@ object ElevatorSubsystem : Subsystem() {
     val currentPosition
         get() = masterElevatorMotor.getSelectedSensorPosition(0)
 
-    // Returns the amperage of the motor
-    val amperage
-        get() = masterElevatorMotor.outputCurrent
-
     // Variable used to reset encoder position
     private var hasBeenReset = false
-
-    // Variables used for current limiting
-    private var state = MotorState.OK
-    private var stalled = false
 
     var peakElevatorOutput = ElevatorConstants.IDLE_PEAK_OUT
     var closedLpControl = true
@@ -53,7 +45,7 @@ object ElevatorSubsystem : Subsystem() {
         }
 
         arrayOf(masterElevatorMotor, slaveElevatorMotor).forEach {
-            it.configContinuousCurrentLimit(if(DriveConstants.IS_RACE_ROBOT) 30 else 20, TIMEOUT)
+            it.configContinuousCurrentLimit(30, TIMEOUT)
             it.configPeakCurrentDuration(0, TIMEOUT)
             it.configPeakCurrentLimit(0, TIMEOUT)
             it.enableCurrentLimit(true)
@@ -109,57 +101,16 @@ object ElevatorSubsystem : Subsystem() {
         set(ControlMode.PercentOutput, 0.0)
     }
 
-    /**
-     * Sets the motor output
-     * @param controlMode Control Mode for the Talon
-     * @param output Output to the motor
-     */
     fun set(controlMode: ControlMode, output: Double) {
         masterElevatorMotor.set(controlMode, output)
     }
 
-
-    /**
-     * Resets encoders on the elevator
-     */
     private fun resetEncoders() = masterElevatorMotor.setSelectedSensorPosition(0, ElevatorConstants.PID_SLOT, TIMEOUT)!!
 
-    /**
-     * Enables current limiting on the motor so we don't stall it
-     */
-    private fun currentLimiting() {
-        currentBuffer.add(masterElevatorMotor.outputCurrent)
-        state = limitCurrent(currentBuffer)
-
-        when (state) {
-            MotorState.OK -> {
-                if (stalled) {
-                    masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
-                } else {
-                    masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, TIMEOUT)
-                }
-            }
-            MotorState.STALL -> {
-                masterElevatorMotor.configPeakOutput(peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, -peakElevatorOutput * ElevatorConstants.LIMITING_REDUCTION_FACTOR, TIMEOUT)
-                stalled = true
-            }
-            MotorState.GOOD -> {
-                masterElevatorMotor.configPeakOutput(peakElevatorOutput, -peakElevatorOutput, TIMEOUT)
-                stalled = false
-            }
-        }
-    }
-
-    /**
-     * Sets the default command for the subsystem
-     */
     override fun initDefaultCommand() {
         defaultCommand = ManualElevatorCommand()
     }
 
-    /**
-     * Executed periodically
-     */
     override fun periodic() {
         SmartDashboard.putNumber("Elevator Power", masterElevatorMotor.motorOutputPercent)
         SmartDashboard.putNumber("Elevator Encoder Position", currentPosition.toDouble())
@@ -175,21 +126,16 @@ object ElevatorSubsystem : Subsystem() {
 
         SmartDashboard.putBoolean("Reset Limit Switch", isElevatorAtBottom)
 
-        currentLimiting()
-
         Controls.elevatorSubsystem()
     }
 
     fun inchesToNativeUnits(inches: Double) = Maths.feetToNativeUnits(inches / 12.0, ElevatorConstants.SENSOR_UNITS_PER_ROTATION, 1.25 / 2.0)
 }
 
-/**
- * Enum that contains elevator positions
- */
 enum class ElevatorPosition(var ticks: Int) {
     SWITCH(ElevatorSubsystem.inchesToNativeUnits(27.0)),
     FIRST_STAGE(ElevatorSubsystem.inchesToNativeUnits(32.0)),
     SCALE(17000),
     SCALE_HIGH(ElevatorSubsystem.inchesToNativeUnits(60.0)),
-    INTAKE(if (DriveConstants.IS_RACE_ROBOT) 500 else 1100);
+    INTAKE(500);
 }

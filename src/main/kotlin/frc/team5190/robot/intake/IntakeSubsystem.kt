@@ -24,12 +24,7 @@ object IntakeSubsystem : Subsystem() {
 
     @Suppress("ConstantConditionIf")
     val isCubeIn
-        get() = if (DriveConstants.IS_RACE_ROBOT) leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
-        else leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
-
-    val amperage
-        get() = masterIntakeMotor.outputCurrent
-
+        get() = leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
 
     // Solenoid
     val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
@@ -60,25 +55,14 @@ object IntakeSubsystem : Subsystem() {
         masterIntakeMotor.enableVoltageCompensation(true)
     }
 
-    /**
-     * Sets motor output
-     * @param controlMode Control Mode of the Talon
-     * @param motorOutput Output to the talon
-     */
     fun set(controlMode: ControlMode, motorOutput: Double) {
         masterIntakeMotor.set(controlMode, motorOutput)
     }
 
-    /**
-     * Sets the default command
-     */
     override fun initDefaultCommand() {
         defaultCommand = IntakeHoldCommand()
     }
 
-    /**
-     * Executed periodcally
-     */
     override fun periodic() {
 
         SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
@@ -90,9 +74,6 @@ object IntakeSubsystem : Subsystem() {
     }
 }
 
-/**
- * Enum that holds intake directions
- */
 enum class IntakeDirection {
     IN, OUT
 }

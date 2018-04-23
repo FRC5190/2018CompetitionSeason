@@ -12,12 +12,6 @@ import frc.team5190.robot.util.DriveConstants
 import frc.team5190.robot.util.Maths
 import jaci.pathfinder.Pathfinder
 
-/**
- * Command that drives to tgtRange
- * @param feet Distance to go forward
- * @param cruiseVel Cruise velocity
- * @param accel Acceleration
- */
 class ArcDriveCommand(val feet: Double, val angle: Double,
                       private val cruiseVel: Double = DriveConstants.MOTION_MAGIC_CRUISE,
                       private val accel: Double = DriveConstants.MOTION_MAGIC_ACCEL) : Command() {
@@ -29,24 +23,20 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
         requires(DriveSubsystem)
     }
 
-    /**
-     * Initializes the command
-     */
     override fun initialize() {
+        // Calculuations
         val currentAngle = Pigeon.correctedAngle
 
         val angleDelta = Math.toRadians(Pathfinder.boundHalfDegrees(angle - currentAngle))
 
         val radius = feet / Math.sin(angleDelta) * Math.sin((Math.PI - angleDelta) / 2.0)
         val arcLength = radius * angleDelta
-//        println("Current Angle: $currentAngle New Angle: $tgtAngle Distance: $tgtRange")
-//        println("Angle: ${Math.toDegrees(angleDelta)} Radius: $radius, Arc Length: $arcLength")
 
         val wheelBase = DriveConstants.DRIVE_BASE_WIDTH / 12.0 / 2.0
         val leftScale = ((radius - wheelBase) * angleDelta) / arcLength
         val rightScale = ((radius + wheelBase) * angleDelta) / arcLength
 
-        println("Left Scale: $leftScale Right Scale: $rightScale")
+        // Motion Magic setpt
         with(DriveSubsystem.falconDrive.leftMaster) {
             configMotionCruiseVelocity(Maths.feetPerSecondToNativeUnitsPer100Ms(leftScale * cruiseVel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
             configMotionAcceleration(Maths.feetPerSecondToNativeUnitsPer100Ms(leftScale * accel, DriveConstants.WHEEL_RADIUS, DriveConstants.SENSOR_UNITS_PER_ROTATION).toInt(), 10)
@@ -63,9 +53,6 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
         }
     }
 
-    /**
-     * Ends the command
-     */
     override fun end() {
         DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
         DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }

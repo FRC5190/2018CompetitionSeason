@@ -40,7 +40,6 @@ object SolenoidIDs {
 
     const val DRIVE = 3
     const val INTAKE = 2
-    const val HOOK = 0
 }
 
 object DriveConstants {
@@ -76,8 +75,6 @@ object DriveConstants {
     const val MOTION_DT = 0.02
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
-
-    const val IS_RACE_ROBOT = true                 // true for falcon heavy, false for falcon 9
 }
 
 object ElevatorConstants {
@@ -91,7 +88,6 @@ object ElevatorConstants {
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
     const val DUR = 1000
-    const val LIMITING_REDUCTION_FACTOR = 0.3
 
     const val NOMINAL_OUT = 0.0
     const val IDLE_PEAK_OUT = 0.2
@@ -100,27 +96,20 @@ object ElevatorConstants {
 
     const val SOFT_LIMIT_FWD = 22500
 
-    // motion magic
     const val MOTION_VELOCITY = 72.0
     const val MOTION_ACCELERATION_INCHES = 90.0
 }
 
 object ArmConstants {
-    const val INVERTED = DriveConstants.IS_RACE_ROBOT
-    const val SENSOR_PHASE = !DriveConstants.IS_RACE_ROBOT
+    const val INVERTED = true
+    const val SENSOR_PHASE = false
 
     const val P = 4.0
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
-    
-    @Suppress("ConstantConditionIf")
-    val DOWN_TICKS = if (DriveConstants.IS_RACE_ROBOT) -795 else -730
 
-    const val LOW_PEAK = 5
-    const val HIGH_PEAK = 30
-    const val DUR = 1000
-    const val LIMITING_REDUCTION_FACTOR = 0.3
+    const val DOWN_TICKS = -795
 
     const val NOMINAL_OUT = 0.0
     const val PEAK_OUT = 1.00
@@ -136,8 +125,8 @@ object IntakeConstants {
 }
 
 object ClimbConstants {
-    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 47600 else 24000
-    val CLIMB_POS = if(DriveConstants.IS_RACE_ROBOT) 0 else 200
+    const val SCALE_POS = 47600
+    const val CLIMB_POS = 0
 
     const val PEAK_OUTPUT = 1.0
 }

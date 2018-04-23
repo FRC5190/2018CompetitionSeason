@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team5190.robot.Robot
 import frc.team5190.robot.auto.MotionProfileCommand
 import frc.team5190.robot.util.ChannelIDs
-import frc.team5190.robot.util.DriveConstants
 import jaci.pathfinder.Pathfinder
 import openrio.powerup.MatchData
 import org.apache.commons.math3.stat.regression.SimpleRegression
@@ -41,17 +40,11 @@ object Lidar : Subsystem() {
     init {
         // X - Raw Sensor Units
         // Y - Height in Inches
-        val data = if (DriveConstants.IS_RACE_ROBOT) arrayOf(
+        val data = arrayOf(
                 1050.0 to 45.0,
                 1500.0 to 55.0,
                 1900.0 to 70.0
         )
-        else arrayOf(
-                1200.0 to 48.0,
-                1490.0 to 62.0,
-                1700.0 to 70.0
-        )
-
         data.forEach { regressionFunction.addData(it.first, it.second) }
     }
 
