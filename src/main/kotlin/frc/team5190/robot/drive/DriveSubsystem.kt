@@ -29,16 +29,12 @@ object DriveSubsystem : Subsystem() {
             listOf(MotorIDs.FRONT_RIGHT, MotorIDs.REAR_RIGHT).map { WPI_TalonSRX(it) },
             Solenoid(SolenoidIDs.PCM, SolenoidIDs.DRIVE))
 
-    /**
-     * Initializes the default command for the subsystem
-     */
+    // Default command
     override fun initDefaultCommand() {
         this.defaultCommand = ManualDriveCommand()
     }
 
-    /**
-     * Executed periodically. Used for switching drive modes.
-     */
+    // Periodic 50hz loop
     override fun periodic() {
         falconDrive.feedSafety()
 
@@ -48,28 +44,20 @@ object DriveSubsystem : Subsystem() {
         SmartDashboard.putNumber("Left Power", falconDrive.leftMaster.outputCurrent)
         SmartDashboard.putNumber("Right Power", falconDrive.rightMaster.outputCurrent)
 
-//        if (MainXbox.getStickButtonPressed(GenericHID.Hand.kRight)) {
-//            controlMode = if (controlMode == DriveMode.CURVE) DriveMode.TANK else DriveMode.CURVE
-//        }
     }
 
-    /**
-     * Resets the DriveTrain in Teleop mode
-     */
+    // Teleop drive reset
     fun teleopReset() = falconDrive.teleopReset()
 
-    /**
-     * Resets the DriveTrain in Autonomous mode
-     */
+    // Auto drive reset
     fun autoReset() = falconDrive.autoReset()
 
+    // Encoder reset
     fun resetEncoders() = falconDrive.allMasters.forEach {it.setSelectedSensorPosition(0, 0, TIMEOUT)}
 
 }
 
-/**
- * Used for storing the various drive modes.
- */
+// Drive modes
 enum class DriveMode {
     ARCADE,
     TANK,

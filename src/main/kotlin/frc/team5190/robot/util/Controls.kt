@@ -27,6 +27,7 @@ object Controls {
     private var triggerState = false
     private var autoShiftGear = Gear.HIGH
 
+    // Controls for drive subsystem
     fun driveSubsystem() {
         when {
             DriveSubsystem.controlMode == DriveMode.ARCADE -> DriveSubsystem.falconDrive.arcadeDrive(-MainXbox.getLeftY(), MainXbox.getLeftX())
@@ -51,11 +52,12 @@ object Controls {
 
     }
 
+    // Controls for intake
     fun intakeSubsystem() {
 
         val climbState = ClimbSubsystem.climbState
 
-
+        // Left bumper for intake, left trigger for outtake
         when {
             MainXbox.getBumper(GenericHID.Hand.kLeft) && !climbState -> {
                 IntakeCommand(IntakeDirection.IN).start()
@@ -72,10 +74,12 @@ object Controls {
         }
     }
 
+    // Controls for arm
     fun armSubsystem() {
+        // Y button for arm up, B button for arm down
         when {
-            MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.3)
-            MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.2)
+            MainXbox.yButton -> ArmSubsystem.set(ControlMode.PercentOutput, 0.4)
+            MainXbox.bButton -> ArmSubsystem.set(ControlMode.PercentOutput, -0.3)
 
             MainXbox.yButtonReleased -> if (ElevatorSubsystem.closedLpControl) {
                 ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition + 50.0)
@@ -88,8 +92,10 @@ object Controls {
 
     private var lastPov = -1
 
+    // Controls for elevator
     fun elevatorSubsystem() {
 
+        // Right stick button toggles sensorless
         if (MainXbox.getStickButtonPressed(GenericHID.Hand.kRight)) {
             if (ElevatorSubsystem.closedLpControl) {
                 ElevatorSubsystem.disableSensorControl()
@@ -100,6 +106,7 @@ object Controls {
             }
         }
 
+        // Right trigger for elevator up and Right bumper for elevator down
         when {
             MainXbox.getTriggerPressed(GenericHID.Hand.kRight) && !ClimbSubsystem.climbState -> {
                 ElevatorSubsystem.currentCommand?.cancel()
@@ -136,6 +143,8 @@ object Controls {
         if (ClimbSubsystem.climbState) return
 
         val pov = MainXbox.pov
+        
+        // Elevator presets are mapped to D-Pad or paddles at the back of Xbone Elite
         if (lastPov != pov && ElevatorSubsystem.closedLpControl) {
             when (pov) {
             // Up - Scale
@@ -152,8 +161,10 @@ object Controls {
         lastPov = pov
     }
 
+    // Controls for climber
     fun climbSubsystem() {
 
+        // Back button enables climb state
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
             if(ElevatorSubsystem.closedLpControl) {
@@ -165,6 +176,7 @@ object Controls {
             WinchCommand().start()
         }
 
+        // Start button disables climb state
         if (MainXbox.startButtonPressed) {
             ClimbSubsystem.climbState = false
             ClimbSubsystem.currentCommand?.cancel()
@@ -173,7 +185,10 @@ object Controls {
 
     private var winchMoving = false
 
+    // Controls for climber winch
     fun winchSubsystem() {
+
+        // Right analog stick for winch
         val winchSpeed = MainXbox.getRightY().takeIf { it.absoluteValue > 0.1 && DriveSubsystem.controlMode == DriveMode.CURVE }
         winchSpeed?.let {
             ClimbSubsystem.set(ControlMode.PercentOutput, -it * ClimbConstants.PEAK_OUTPUT)
@@ -188,6 +203,7 @@ object Controls {
             winchMoving = false
         }
 
+        // Climb presets for two-button climb
         val pov = MainXbox.pov
         if (lastPov != pov && ElevatorSubsystem.closedLpControl) {
             when (pov) {

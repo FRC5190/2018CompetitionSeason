@@ -6,7 +6,7 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.CameraServer
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.CommandGroup
 import edu.wpi.first.wpilibj.command.Scheduler
@@ -21,12 +21,8 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
 import frc.team5190.robot.sensors.*
-import frc.team5190.robot.util.Maths
 import openrio.powerup.MatchData
 
-/**
- * Main robot class
- */
 class Robot : IterativeRobot() {
 
     companion object {
@@ -37,7 +33,7 @@ class Robot : IterativeRobot() {
         INSTANCE = this
     }
 
-
+    // Autonomous variables
     private val sideChooser = SendableChooser<StartingPositions>()
 
     private val crossAutoChooser = SendableChooser<AutoModes>()
@@ -51,25 +47,16 @@ class Robot : IterativeRobot() {
     var crossAutoSelected = AutoModes.FULL
 
     private var autonomousRoutine: CommandGroup? = null
-
     private var hasRunAuto = false
 
-
-    // Shows a dropdown of the controllers that will be used.
-    private val controllerChooser = SendableChooser<String>()
-
-    // Variable that stores if FMS data has been received
-    var dataRec = false
-        private set
+    var fmsDataReceived = false
 
 
-    /**
-     * Executed when robot code first launches and is ready to be initialized.
-     */
     override fun robotInit() {
         // https://www.chiefdelphi.com/forums/showthread.php?p=1724798
         LiveWindow.disableAllTelemetry()
 
+        // Initialize subsystems and sensors
         DriveSubsystem
         IntakeSubsystem
         ElevatorSubsystem
@@ -82,39 +69,46 @@ class Robot : IterativeRobot() {
         Pigeon
         LEDs
 
-        CameraServer.getInstance().startAutomaticCapture().apply {
-            setResolution(640, 480)
-            setFPS(20)
-        }
-
+        // Autonomous modes on Dashboard
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
 
-        AutoModes.values().forEach { sameSideAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it) }
-        AutoModes.values().forEach { crossAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it) }
-
+        AutoModes.values().forEach {
+            sameSideAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it)
+            crossAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it)
+        }
 
         SmartDashboard.putData("Starting Position", sideChooser)
 
         SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
         SmartDashboard.putData("Same Side Scale Mode", sameSideAutoChooser)
+
+        // Reset subsystems for autonomous
+        IntakeSubsystem.enableVoltageCompensation()
+        DriveSubsystem.autoReset()
+
+        Pigeon.reset()
+
+        ClimbSubsystem.climbState = false
     }
 
-    /**
-     * Executed periodically.
-     */
     override fun robotPeriodic() {
+        Pigeon.update()
+
+        // Logging
         SmartDashboard.putNumber("Pigeon Corrected Angle", Pigeon.correctedAngle)
 
-        if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning != true) {
-            // Regenerate the routine if any variables have changed.
+
+        // Receives game data from the FMS and generates autonomous routine
+        if (!INSTANCE!!.isOperatorControl && autonomousRoutine?.isRunning != true && (!fmsDataReceived || INSTANCE!!.isDisabled)) {
             try {
                 if (sideChooser.selected != sideChooserSelected ||
                         sameSideAutoChooser.selected != sameSideAutoSelected ||
                         crossAutoChooser.selected != crossAutoSelected ||
                         MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) != switchSide ||
                         MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide ||
-                        autonomousRoutine?.isCompleted == true ||
-                        autonomousRoutine?.isCanceled == true) {
+                        hasRunAuto) {
+
+                    DriveSubsystem.autoReset()
 
                     sideChooserSelected = sideChooser.selected
                     sameSideAutoSelected = sameSideAutoChooser.selected
@@ -123,62 +117,51 @@ class Robot : IterativeRobot() {
                     switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
                     scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
 
-                    dataRec = switchSide != MatchData.OwnedSide.UNKNOWN && scaleSide != MatchData.OwnedSide.UNKNOWN
+                    fmsDataReceived = switchSide != MatchData.OwnedSide.UNKNOWN && scaleSide != MatchData.OwnedSide.UNKNOWN
+
+                    println("Received Game Specific Data: ${DriverStation.getInstance().gameSpecificMessage}")
+
+                    // Reset gyro
+                    Pigeon.reset()
+                    Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
 
                     autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
                 }
-            } catch (e: Exception) {
-
+            } catch (ignored: Exception) {
             }
         }
-
         Scheduler.getInstance().run()
     }
 
-    /**
-     * Executed when autonomous is initialized
-     */
-    override fun autonomousInit() {
-
-        DriveSubsystem.autoReset()
-        IntakeSubsystem.enableVoltageCompensation()
-        Pigeon.reset()
-
-        Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
-    }
-
     override fun autonomousPeriodic() {
-        if (autonomousRoutine?.isRunning == false && !hasRunAuto) {
+        // Runs the autonomous routine once data has been received
+        if (autonomousRoutine?.isRunning == false && !hasRunAuto && switchSide != MatchData.OwnedSide.UNKNOWN && scaleSide != MatchData.OwnedSide.UNKNOWN) {
             autonomousRoutine?.start()
             hasRunAuto = true
         }
     }
 
-    /**
-     * Executed once when robot is disabled.
-     */
     override fun disabledInit() {
+
+        hasRunAuto = false
+
+        // Clean up from climbing
         IdleClimbCommand().start()
         ClimbSubsystem.climbState = false
     }
 
-
-    /**
-     * Executed when teleop is initialized
-     */
     override fun teleopInit() {
-
+        // Lock elevator in place
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         IntakeSubsystem.disableVoltageCompensation()
 
+
+        // Clean up from autonomous
         autonomousRoutine?.cancel()
+        hasRunAuto = true
 
         DriveSubsystem.teleopReset()
-        DriveSubsystem.controller = controllerChooser.selected ?: "Xbox"
-    }
-
-    override fun teleopPeriodic() {
-        println(Maths.nativeUnitsPer100MsToFeetPerSecond(DriveSubsystem.falconDrive.leftMaster.getSelectedSensorVelocity(0)))
+        DriveSubsystem.controller = "Xbox"
     }
 }

@@ -3,11 +3,6 @@
  * Ryan Segerstrom, Prateek Machiraju
  */
 
-/**
- * FRC Team 5190
- * Programming Team
- */
-
 package frc.team5190.robot.drive
 
 import edu.wpi.first.wpilibj.command.Command
@@ -16,13 +11,12 @@ import frc.team5190.robot.util.Controls
 class ManualDriveCommand : Command() {
 
     init {
-        this.requires(DriveSubsystem)
+        requires(DriveSubsystem)
     }
 
-    /**
-     * Called periodically until the command is triggerState or until interrupted.
-     */
+    // Executed periodically
     override fun execute() = Controls.driveSubsystem()
 
+    // Command never finishes because it is the default command
     override fun isFinished() = false
 }

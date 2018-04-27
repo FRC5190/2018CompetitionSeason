@@ -9,6 +9,7 @@ package frc.team5190.robot
 
 import edu.wpi.first.wpilibj.*
 
+// Bongos
 object Bongos : Joystick(0) {
     fun getLeftBongoSpeed() = when {
         this.getRawButton(4) -> 0.6
@@ -24,9 +25,7 @@ object Bongos : Joystick(0) {
 }
 
 
-/**
- * Xbox Controller object
- */
+// Xbox Controller
 object MainXbox : XboxController(0)
 
 fun XboxController.getLeftX() = getX(GenericHID.Hand.kLeft)

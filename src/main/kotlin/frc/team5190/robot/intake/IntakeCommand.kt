@@ -10,11 +10,9 @@ import edu.wpi.first.wpilibj.command.Command
 import frc.team5190.robot.util.IntakeConstants
 import kotlin.math.absoluteValue
 
-/**
- *  Command that either intakes or outputs the cube
- */
 open class IntakeCommand(private val direction: IntakeDirection, private val timeout: Double = -.1, speed: Double = -1.0) : Command() {
 
+    // Speed to apply to the motors
     private val speed = speed.takeIf { it >= 0.0 }
             ?: if (direction == IntakeDirection.IN) IntakeConstants.DEFAULT_IN_SPEED else IntakeConstants.DEFAULT_OUT_SPEED
 
@@ -22,14 +20,13 @@ open class IntakeCommand(private val direction: IntakeDirection, private val tim
         this.requires(IntakeSubsystem)
     }
 
-    /**
-     * Initializes the command
-     */
+    // Initializes the command
     override fun initialize() {
         IntakeSubsystem.intakeSolenoid.set(false)
 
         if (timeout > 0) setTimeout(timeout)
 
+        // Sends motor output to intake talons
         val motorOutput = when (direction) {
             IntakeDirection.IN -> -(speed).absoluteValue
             IntakeDirection.OUT -> speed.absoluteValue
@@ -38,9 +35,7 @@ open class IntakeCommand(private val direction: IntakeDirection, private val tim
         IntakeSubsystem.set(ControlMode.PercentOutput, motorOutput)
     }
 
-    /**
-     * Checks if the intake has finished outtaking or intaking based on amperage values and timeouts
-     */
+    // Checks command for completion
     override fun isFinished() = (timeout > 0 && isTimedOut) ||
             (direction == IntakeDirection.IN && IntakeSubsystem.isCubeIn)
 }

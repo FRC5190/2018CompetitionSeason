@@ -8,19 +8,19 @@ package frc.team5190.robot.intake
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 
-/**
- *  Default command that holds the cube while the robot is moving
- */
 class IntakeHoldCommand : Command() {
 
     init {
         requires(IntakeSubsystem)
     }
 
+    // Initializes command
     override fun initialize() {
+        // Engages intake piston
         IntakeSubsystem.intakeSolenoid.set(true)
         IntakeSubsystem.set(ControlMode.PercentOutput, 0.0)
     }
 
+    // Command never finishes because it is the default command
     override fun isFinished() = false
 }

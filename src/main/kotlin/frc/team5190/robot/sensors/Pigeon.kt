@@ -10,9 +10,7 @@ import com.ctre.phoenix.sensors.PigeonIMU
 import frc.team5190.robot.util.TIMEOUT
 import jaci.pathfinder.Pathfinder
 
-/**
- * Creates a Pigeon singleton object
- */
+// Pigeon IMU
 object Pigeon : PigeonIMU(17) {
 
     init {
@@ -20,14 +18,14 @@ object Pigeon : PigeonIMU(17) {
     }
 
     var angleOffset = 0.0
+    private val ypr = DoubleArray(3)
 
     val correctedAngle: Double
-        get() {
-            val ypr = DoubleArray(3)
-            getYawPitchRoll(ypr)
-            return Pathfinder.boundHalfDegrees(ypr[0] + angleOffset)
-        }
+        get() = Pathfinder.boundHalfDegrees(ypr[0] + angleOffset)
 
+    fun update() {
+        getYawPitchRoll(ypr)
+    }
 
     fun reset(): ErrorCode = setYaw(0.0, TIMEOUT)
 }

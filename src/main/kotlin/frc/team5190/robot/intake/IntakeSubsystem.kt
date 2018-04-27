@@ -24,18 +24,14 @@ object IntakeSubsystem : Subsystem() {
 
     @Suppress("ConstantConditionIf")
     val isCubeIn
-        get() = if (DriveConstants.IS_RACE_ROBOT) leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
-        else leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
-
-    val amperage
-        get() = masterIntakeMotor.outputCurrent
-
+        get() = leftCubeSensor.voltage > 0.9 && rightCubeSensor.voltage > 0.9
 
     // Solenoid
     val intakeSolenoid = Solenoid(SolenoidIDs.PCM, SolenoidIDs.INTAKE)
 
     init {
         masterIntakeMotor.apply {
+            // Motor inversion and voltage compensation
             inverted = false
             configVoltageCompSaturation(12.0, TIMEOUT)
             enableVoltageCompensation(true)
@@ -45,6 +41,7 @@ object IntakeSubsystem : Subsystem() {
             inverted = true
         }
         arrayOf(masterIntakeMotor, slaveIntakeMotor).forEach {
+            // Current limiting
             it.configContinuousCurrentLimit(18, TIMEOUT)
             it.configPeakCurrentDuration(0, TIMEOUT)
             it.configPeakCurrentLimit(0, TIMEOUT)
@@ -52,33 +49,27 @@ object IntakeSubsystem : Subsystem() {
         }
     }
 
+    // Disables voltage compensation
     fun disableVoltageCompensation() {
         masterIntakeMotor.enableVoltageCompensation(false)
     }
 
+    // Enables voltage compensation
     fun enableVoltageCompensation() {
         masterIntakeMotor.enableVoltageCompensation(true)
     }
 
-    /**
-     * Sets motor output
-     * @param controlMode Control Mode of the Talon
-     * @param motorOutput Output to the talon
-     */
+    // Sets output values to motors
     fun set(controlMode: ControlMode, motorOutput: Double) {
         masterIntakeMotor.set(controlMode, motorOutput)
     }
 
-    /**
-     * Sets the default command
-     */
+    // Default command
     override fun initDefaultCommand() {
         defaultCommand = IntakeHoldCommand()
     }
 
-    /**
-     * Executed periodcally
-     */
+    // Periodic 50hz loop
     override fun periodic() {
 
         SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)
@@ -90,9 +81,6 @@ object IntakeSubsystem : Subsystem() {
     }
 }
 
-/**
- * Enum that holds intake directions
- */
 enum class IntakeDirection {
     IN, OUT
 }

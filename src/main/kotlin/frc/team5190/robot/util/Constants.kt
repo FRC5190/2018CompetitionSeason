@@ -6,9 +6,7 @@
 
 package frc.team5190.robot.util
 
-/**
- * Contains Motor IDs.robot
- */
+// Motor IDs
 object MotorIDs {
     const val FRONT_LEFT = 1
     const val FRONT_RIGHT = 3
@@ -28,6 +26,7 @@ object MotorIDs {
 
 }
 
+// PWM and Analog Channel IDs
 object ChannelIDs {
     const val LEFT_CUBE_SENSOR = 2
     const val RIGHT_CUBE_SENSOR = 3
@@ -35,23 +34,24 @@ object ChannelIDs {
     const val LIDAR_SERVO = 0
 }
 
+// Solenoid IDs
 object SolenoidIDs {
     const val PCM = 41
 
     const val DRIVE = 3
     const val INTAKE = 2
-    const val HOOK = 0
 }
 
+// Drive Constants
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 2.95
+    const val WHEEL_RADIUS = 5.905 / 2.0
     const val DRIVE_BASE_WIDTH = 29.5
 
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
-    const val P_HIGH = 1.7
+    const val P_HIGH = 2.0
     const val I_HIGH = 0.0
     const val D_HIGH = 0.0
 
@@ -76,10 +76,9 @@ object DriveConstants {
     const val MOTION_DT = 0.02
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
-
-    const val IS_RACE_ROBOT = false                 // true for falcon heavy, false for falcon 9
 }
 
+// Elevator Constants
 object ElevatorConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
 
@@ -91,7 +90,6 @@ object ElevatorConstants {
     const val LOW_PEAK = 5
     const val HIGH_PEAK = 30
     const val DUR = 1000
-    const val LIMITING_REDUCTION_FACTOR = 0.3
 
     const val NOMINAL_OUT = 0.0
     const val IDLE_PEAK_OUT = 0.2
@@ -100,27 +98,21 @@ object ElevatorConstants {
 
     const val SOFT_LIMIT_FWD = 22500
 
-    // motion magic
-    const val MOTION_VELOCITY = 1000000000
+    const val MOTION_VELOCITY = 72.0
     const val MOTION_ACCELERATION_INCHES = 90.0
 }
 
+// Arm Constants
 object ArmConstants {
-    const val INVERTED = DriveConstants.IS_RACE_ROBOT
-    const val SENSOR_PHASE = !DriveConstants.IS_RACE_ROBOT
+    const val INVERTED = true
+    const val SENSOR_PHASE = false
 
     const val P = 4.0
     const val I = 0.0
     const val D = 0.0
     const val PID_SLOT = 0
-    
-    @Suppress("ConstantConditionIf")
-    val DOWN_TICKS = if (DriveConstants.IS_RACE_ROBOT) -795 else -730
 
-    const val LOW_PEAK = 5
-    const val HIGH_PEAK = 30
-    const val DUR = 1000
-    const val LIMITING_REDUCTION_FACTOR = 0.3
+    const val DOWN_TICKS = -795
 
     const val NOMINAL_OUT = 0.0
     const val PEAK_OUT = 1.00
@@ -130,18 +122,21 @@ object ArmConstants {
     const val MOTION_ACCELERATION = 350
 }
 
+// Intake Constants
 object IntakeConstants {
     const val DEFAULT_IN_SPEED = 1.0
     const val DEFAULT_OUT_SPEED = 0.65
 }
 
+// Climbing Constants
 object ClimbConstants {
-    val SCALE_POS = if(DriveConstants.IS_RACE_ROBOT) 37000 else 24000
-    val CLIMB_POS = if(DriveConstants.IS_RACE_ROBOT) 0 else 200
+    const val SCALE_POS = 47600
+    const val CLIMB_POS = 0
 
     const val PEAK_OUTPUT = 1.0
 }
 
+// Universal CTRE Timeout
 const val TIMEOUT = 20
 
 

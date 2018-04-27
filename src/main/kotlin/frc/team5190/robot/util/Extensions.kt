@@ -13,22 +13,16 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.drive.Gear
 import java.awt.Color
 
+
+// Extensions for functions
+
 fun commandGroup(create: CommandGroup.() -> Unit): CommandGroup {
     val group = CommandGroup()
     create.invoke(group)
     return group
 }
 
-/**
- * Configures the PID for the specified motor
- * @param p Proportional gain
- * @param i Integral gain
- * @param d Differential gain
- * @param power Max throttle power
- * @param rpm Max RPM
- * @param sensorUnitsPerRotation Sensor units per rotation
- * @param dev Feedback device used with the motor
- */
+
 fun TalonSRX.configPIDF(slotIdx: Int, p: Double, i: Double, d: Double, rpm: Int, sensorUnitsPerRotation: Int) {
     config_kP(slotIdx, p, 10)
     config_kI(slotIdx, i, 10)
@@ -57,10 +51,6 @@ fun TalonSRX.configLimitSwitchSource(type: LimitSwitchSource, normalOpenOrClose:
     configReverseLimitSwitchSource(type, normalOpenOrClose, timeoutMs)
 }
 
-fun limitCurrent(buffer: CircularBuffer): MotorState {
-    return buffer.motorState
-}
-
 fun CANifier.setLEDOutput(color: Color) = setLEDOutput(color.red, color.green, color.blue)
 
 fun CANifier.setLEDOutput(r: Int, g: Int, b: Int) {
@@ -69,9 +59,6 @@ fun CANifier.setLEDOutput(r: Int, g: Int, b: Int) {
     setLEDOutput(b * (1.0 / 255.0), CANifier.LEDChannel.LEDChannelC)
 }
 
-/**
- * Scales the output depending on the ControlMode.
- */
 fun ControlMode.scale(): Double {
     return when (this) {
         ControlMode.PercentOutput -> 1.0

@@ -9,10 +9,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.command.Command
 import kotlin.math.absoluteValue
 
-/**
- * Command that moves the arm to the desired location using Motion Magic
- * @param armPosition Arm position
- */
 open class AutoArmCommand(armPosition: ArmPosition) : Command() {
 
     // Arm position in Native Units
@@ -22,15 +18,11 @@ open class AutoArmCommand(armPosition: ArmPosition) : Command() {
         this.requires(ArmSubsystem)
     }
 
-    /**
-     * Initializes the command
-     */
+    // Initialize command
     override fun initialize() {
         ArmSubsystem.set(ControlMode.MotionMagic, armPosition.toDouble())
     }
 
-    /**
-     * Checks if the command has finished executing
-     */
+    // Checks command for completion
     override fun isFinished() = (ArmSubsystem.currentPosition - armPosition).absoluteValue < 150
 }
