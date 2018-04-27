@@ -14,10 +14,13 @@ class IntakeHoldCommand : Command() {
         requires(IntakeSubsystem)
     }
 
+    // Initializes command
     override fun initialize() {
+        // Engages intake piston
         IntakeSubsystem.intakeSolenoid.set(true)
         IntakeSubsystem.set(ControlMode.PercentOutput, 0.0)
     }
 
+    // Command never finishes because it is the default command
     override fun isFinished() = false
 }

@@ -10,9 +10,7 @@ import com.ctre.phoenix.sensors.PigeonIMU
 import frc.team5190.robot.util.TIMEOUT
 import jaci.pathfinder.Pathfinder
 
-/**
- * Creates a Pigeon singleton object
- */
+// Pigeon IMU
 object Pigeon : PigeonIMU(17) {
 
     init {

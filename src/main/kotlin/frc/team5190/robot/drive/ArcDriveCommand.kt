@@ -53,6 +53,7 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
         }
     }
 
+    // Called when command ends
     override fun end() {
         DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
         DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
@@ -60,6 +61,7 @@ class ArcDriveCommand(val feet: Double, val angle: Double,
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
+    // Command never ends until timed out because math is not fully implemented (it is but we are lazy)
     override fun isFinished() = false
 
 }

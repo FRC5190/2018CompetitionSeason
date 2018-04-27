@@ -24,7 +24,9 @@ open class StraightDriveCommand(private val distance: Double,
         this.requires(DriveSubsystem)
     }
 
+    // Initializes the command
     override fun initialize() {
+        // Motion magic setpoint
         setPoint = Maths.feetToNativeUnits(distance, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble()
 
         DriveSubsystem.falconDrive.allMasters.forEach {
@@ -36,6 +38,7 @@ open class StraightDriveCommand(private val distance: Double,
         }
     }
 
+    // Called when the command ends
     override fun end() {
         DriveSubsystem.falconDrive.leftMotors.forEach { it.inverted = false }
         DriveSubsystem.falconDrive.rightMotors.forEach { it.inverted = true }
@@ -43,6 +46,7 @@ open class StraightDriveCommand(private val distance: Double,
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, 0.0, 0.0)
     }
 
+    // Checks command for completion
     override fun isFinished() = DriveSubsystem.falconDrive.allMasters.any {
         (it.sensorCollection.quadraturePosition - setPoint!!).absoluteValue < Maths.feetToNativeUnits(0.1, DriveConstants.SENSOR_UNITS_PER_ROTATION, DriveConstants.WHEEL_RADIUS).toDouble() &&
                 it.sensorCollection.quadratureVelocity < 100

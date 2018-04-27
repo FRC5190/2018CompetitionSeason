@@ -21,7 +21,11 @@ class PickupCubeCommand(private val inSpeed: Double = IntakeConstants.DEFAULT_IN
         requires(IntakeSubsystem)
     }
 
+    // Initializes the command
     override fun initialize() {
+
+        // This command used to integrate Vision. We scrapped the idea because we didn't find it useful. This is the remnant class.
+        // All this command does now is drive forward until it has a cube
 
         DriveSubsystem.resetEncoders()
 
@@ -36,13 +40,16 @@ class PickupCubeCommand(private val inSpeed: Double = IntakeConstants.DEFAULT_IN
         IntakeSubsystem.set(ControlMode.PercentOutput, -(inSpeed.absoluteValue))
     }
 
+    // PID input value
     override fun returnPIDInput() = Pigeon.correctedAngle
 
+    // Use PID calculated output
     override fun usePIDOutput(output: Double) {
         val speed = 0.25
         DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, speed - output, speed + output, false)
     }
 
+    // Checks command for completion
     override fun isFinished() = IntakeSubsystem.isCubeIn || DriveSubsystem.falconDrive.allMasters.any {
         Maths.nativeUnitsToFeet(it.sensorCollection.quadraturePosition) > maxDist
     }

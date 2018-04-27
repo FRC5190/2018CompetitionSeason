@@ -17,8 +17,10 @@ import java.util.concurrent.*
 // Class that loads files from local resources or from Network Tables
 object Pathreader {
 
+    // Whether to pull paths from local store or Network Tables
     private const val PATHFEEDER_MODE = false
 
+    // Loads all paths to memory on robotInit
     private val allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
         folder.listFiles().filter { it.isFile }.map { file ->
             Pair("${folder.name}/${file.nameWithoutExtension}", Pathfinder.readFromCSV(file))

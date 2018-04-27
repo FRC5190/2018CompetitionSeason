@@ -6,9 +6,7 @@
 
 package frc.team5190.robot.util
 
-/**
- * Contains Motor IDs.robot
- */
+// Motor IDs
 object MotorIDs {
     const val FRONT_LEFT = 1
     const val FRONT_RIGHT = 3
@@ -28,6 +26,7 @@ object MotorIDs {
 
 }
 
+// PWM and Analog Channel IDs
 object ChannelIDs {
     const val LEFT_CUBE_SENSOR = 2
     const val RIGHT_CUBE_SENSOR = 3
@@ -35,6 +34,7 @@ object ChannelIDs {
     const val LIDAR_SERVO = 0
 }
 
+// Solenoid IDs
 object SolenoidIDs {
     const val PCM = 41
 
@@ -42,6 +42,7 @@ object SolenoidIDs {
     const val INTAKE = 2
 }
 
+// Drive Constants
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
     const val WHEEL_RADIUS = 5.905 / 2.0
@@ -77,6 +78,7 @@ object DriveConstants {
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 }
 
+// Elevator Constants
 object ElevatorConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
 
@@ -100,6 +102,7 @@ object ElevatorConstants {
     const val MOTION_ACCELERATION_INCHES = 90.0
 }
 
+// Arm Constants
 object ArmConstants {
     const val INVERTED = true
     const val SENSOR_PHASE = false
@@ -119,11 +122,13 @@ object ArmConstants {
     const val MOTION_ACCELERATION = 350
 }
 
+// Intake Constants
 object IntakeConstants {
     const val DEFAULT_IN_SPEED = 1.0
     const val DEFAULT_OUT_SPEED = 0.65
 }
 
+// Climbing Constants
 object ClimbConstants {
     const val SCALE_POS = 47600
     const val CLIMB_POS = 0
@@ -131,6 +136,7 @@ object ClimbConstants {
     const val PEAK_OUTPUT = 1.0
 }
 
+// Universal CTRE Timeout
 const val TIMEOUT = 20
 
 

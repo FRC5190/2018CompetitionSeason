@@ -6,7 +6,6 @@
 package frc.team5190.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.CameraServer
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.CommandGroup
@@ -21,11 +20,7 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.Canifier
-import frc.team5190.robot.sensors.LEDs
-import frc.team5190.robot.sensors.Lidar
-import frc.team5190.robot.sensors.Pigeon
-import frc.team5190.robot.util.commandGroup
+import frc.team5190.robot.sensors.*
 import openrio.powerup.MatchData
 
 class Robot : IterativeRobot() {
@@ -37,7 +32,6 @@ class Robot : IterativeRobot() {
     init {
         INSTANCE = this
     }
-
 
     // Autonomous variables
     private val sideChooser = SendableChooser<StartingPositions>()
@@ -74,14 +68,6 @@ class Robot : IterativeRobot() {
         Lidar
         Pigeon
         LEDs
-
-        /*
-        // Start camera stream
-        CameraServer.getInstance().startAutomaticCapture().apply {
-            setResolution(160, 120)
-            setFPS(15)
-        }
-        */
 
         // Autonomous modes on Dashboard
         StartingPositions.values().forEach { sideChooser.addObject(it.name.toLowerCase().capitalize(), it) }
@@ -139,8 +125,6 @@ class Robot : IterativeRobot() {
                     Pigeon.reset()
                     Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
 
-
-//                    autonomousRoutine = commandGroup { addSequential(MotionProfileCommand("LS-RR", "Drop First Cube", robotReversed = true, pathMirrored = true)) }
                     autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
                 }
             } catch (ignored: Exception) {
@@ -163,7 +147,7 @@ class Robot : IterativeRobot() {
 
         // Clean up from climbing
         IdleClimbCommand().start()
-//        ClimbSubsystem.climbState = false
+        ClimbSubsystem.climbState = false
     }
 
     override fun teleopInit() {

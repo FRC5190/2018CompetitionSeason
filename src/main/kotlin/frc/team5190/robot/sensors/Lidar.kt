@@ -48,6 +48,7 @@ object Lidar : Subsystem() {
         data.forEach { regressionFunction.addData(it.first, it.second) }
     }
 
+    // Periodic 50hz loop
     override fun periodic() {
         Canifier.getPWMInput(CANifier.PWMChannel.PWMChannel0, pwmData)
 
@@ -57,6 +58,8 @@ object Lidar : Subsystem() {
 
         val scaleSide = Robot.INSTANCE!!.scaleSide
 
+        // Servo calculations to make sure Lidar points towards scale in autonomous. This uses robot pose and scale pos and simple
+        // trigonometry to determine the servo angle. This ensures that the elevator goes to the appropriate scale height to score.
         var servoAngle = Pathfinder.boundHalfDegrees(MotionProfileCommand.robotPosition?.let {
             val scalePosition = 27.0 to 13.5 + (if(scaleSide == MatchData.OwnedSide.LEFT) 1.0 else -1.0) * 6.5
             return@let Math.toDegrees(Math.atan2(scalePosition.first - it.first, scalePosition.second - it.second)) + 180 + Pigeon.correctedAngle

@@ -8,7 +8,13 @@ import frc.team5190.robot.util.commandGroup
 
 class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
     init {
+        // Elevator presets used in teleop and autonomous
+        
+        // Intelligent self-crash avoidance to make sure arm is out of the way 
+        // before bringing down elevator.
+
         when (elevatorPosition) {
+            // Switch preset
             ElevatorPreset.SWITCH -> {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                 addParallel(commandGroup {
@@ -18,10 +24,14 @@ class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
                     addSequential(AutoElevatorCommand(ElevatorPosition.SWITCH))
                 })
             }
+            
+            // Scale preset
             ElevatorPreset.SCALE -> {
                 addParallel(AutoArmCommand(ArmPosition.MIDDLE))
                 addParallel(AutoElevatorCommand(ElevatorPosition.SCALE_HIGH))
             }
+
+            // Scale behind preset which uses Lidar to detect scale height
             ElevatorPreset.BEHIND, ElevatorPreset.BEHIND_LIDAR -> {
                 addParallel(if (elevatorPosition == ElevatorPreset.BEHIND_LIDAR) LidarElevatorCommand()
                 else AutoElevatorCommand(ElevatorPosition.SCALE))
@@ -33,6 +43,8 @@ class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
                     addSequential(AutoArmCommand(ArmPosition.BEHIND))
                 })
             }
+
+            // Intake preset
             ElevatorPreset.INTAKE -> {
                 addParallel(AutoArmCommand(ArmPosition.DOWN))
                 addParallel(commandGroup {
@@ -46,6 +58,7 @@ class ElevatorPresetCommand(elevatorPosition: ElevatorPreset) : CommandGroup() {
     }
 }
 
+// Stores elevator presets
 enum class ElevatorPreset {
     INTAKE,
     SWITCH,

@@ -31,6 +31,7 @@ object IntakeSubsystem : Subsystem() {
 
     init {
         masterIntakeMotor.apply {
+            // Motor inversion and voltage compensation
             inverted = false
             configVoltageCompSaturation(12.0, TIMEOUT)
             enableVoltageCompensation(true)
@@ -40,6 +41,7 @@ object IntakeSubsystem : Subsystem() {
             inverted = true
         }
         arrayOf(masterIntakeMotor, slaveIntakeMotor).forEach {
+            // Current limiting
             it.configContinuousCurrentLimit(18, TIMEOUT)
             it.configPeakCurrentDuration(0, TIMEOUT)
             it.configPeakCurrentLimit(0, TIMEOUT)
@@ -47,22 +49,27 @@ object IntakeSubsystem : Subsystem() {
         }
     }
 
+    // Disables voltage compensation
     fun disableVoltageCompensation() {
         masterIntakeMotor.enableVoltageCompensation(false)
     }
 
+    // Enables voltage compensation
     fun enableVoltageCompensation() {
         masterIntakeMotor.enableVoltageCompensation(true)
     }
 
+    // Sets output values to motors
     fun set(controlMode: ControlMode, motorOutput: Double) {
         masterIntakeMotor.set(controlMode, motorOutput)
     }
 
+    // Default command
     override fun initDefaultCommand() {
         defaultCommand = IntakeHoldCommand()
     }
 
+    // Periodic 50hz loop
     override fun periodic() {
 
         SmartDashboard.putBoolean("Cube In", IntakeSubsystem.isCubeIn)

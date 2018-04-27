@@ -16,24 +16,31 @@ class TurnCommand(val angle: Double) : PIDCommand(DriveConstants.TURN_P, DriveCo
         requires(DriveSubsystem)
     }
 
+    // Initializes the command
     override fun initialize() {
+        // Timeout
         setTimeout(2.5)
 
+        // Angle setpoint
         setpoint = angle
 
+        // Other PID values
         setInputRange(-180.0, 180.0)
         pidController.setOutputRange(-1.0, 1.0)
         pidController.setAbsoluteTolerance(5.0)
         pidController.setContinuous(true)
     }
 
+    // Use PID calculated output
     override fun usePIDOutput(output: Double) = DriveSubsystem.falconDrive.tankDrive(ControlMode.PercentOutput, -output, output)
 
+    // PID input value
     override fun returnPIDInput(): Double = Pigeon.correctedAngle
 
     // Time variable for isFinished method
     private var time = 0
 
+    // Checks command for completion
     override fun isFinished(): Boolean {
         if (pidController.onTarget()) {
             time++

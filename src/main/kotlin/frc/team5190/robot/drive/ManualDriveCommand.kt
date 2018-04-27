@@ -11,10 +11,12 @@ import frc.team5190.robot.util.Controls
 class ManualDriveCommand : Command() {
 
     init {
-        this.requires(DriveSubsystem)
+        requires(DriveSubsystem)
     }
 
+    // Executed periodically
     override fun execute() = Controls.driveSubsystem()
 
+    // Command never finishes because it is the default command
     override fun isFinished() = false
 }

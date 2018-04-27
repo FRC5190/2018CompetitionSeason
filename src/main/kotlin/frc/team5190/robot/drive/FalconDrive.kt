@@ -39,12 +39,15 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
 
     // Reset
     private fun reset() {
+        // Motor Inversion
         leftMotors.forEach { it.inverted = false }
         rightMotors.forEach { it.inverted = true }
 
+        // Master and slave config
         leftSlaves.forEach { it.follow(leftMaster) }
         rightSlaves.forEach { it.follow(rightMaster) }
 
+        // Masters settings
         allMasters.forEach {
             it.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, TIMEOUT)
             it.setSelectedSensorPosition(0, 0, TIMEOUT)
@@ -54,11 +57,14 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
         }
 
+        // Dual speed gearing
         gear = Gear.HIGH
 
+        // Sensor phase
         leftMotors.forEach { it.setSensorPhase(false) }
         rightMotors.forEach { it.setSensorPhase(false) }
 
+        // All motor settings
         allMotors.forEach {
             it.setNeutralMode(NeutralMode.Brake)
             it.configContinuousCurrentLimit(37, TIMEOUT)

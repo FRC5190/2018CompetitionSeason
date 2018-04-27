@@ -13,5 +13,6 @@ class ManualElevatorCommand : Command() {
         requires(ElevatorSubsystem)
     }
 
+    // Command never ends because it is the default command
     override fun isFinished() = false
 }
