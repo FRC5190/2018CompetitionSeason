@@ -54,9 +54,6 @@ object ElevatorSubsystem : Subsystem() {
 
             it.setNeutralMode(NeutralMode.Brake)
         }
-
-        // Configure current limiting
-        currentBuffer.configureForTalon(ElevatorConstants.LOW_PEAK, ElevatorConstants.HIGH_PEAK, ElevatorConstants.DUR)
     }
 
     fun enableSensorControl() {
