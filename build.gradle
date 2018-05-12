@@ -3,6 +3,15 @@ import jaci.openrio.gradle.GradleRIOPlugin
 import jaci.openrio.gradle.frc.FRCJavaArtifact
 import jaci.openrio.gradle.frc.RoboRIO
 
+buildscript {
+    ext.kotlin_version = '1.2.41'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.21"
     id "java"
@@ -10,6 +19,7 @@ plugins {
     id "idea"
     id "jaci.openrio.gradle.GradleRIO" version "2018.03.06"
 }
+apply plugin: 'kotlin'
 
 def TEAM = 5190
 def ROBOT_CLASS = "frc.team5190.robot.Robot"
@@ -70,6 +80,7 @@ dependencies {
     compile 'com.github.salomonbrys.kotson:kotson:2.5.0'
     compile 'org.apache.commons:commons-math3:3.6.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
