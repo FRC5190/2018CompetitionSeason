@@ -40,8 +40,6 @@ object ElevatorSubsystem : Subsystem() {
         val slaveElevatorMotor = TalonSRX(MotorIDs.ELEVATOR_SLAVE).apply {
             inverted = true
             follow(masterElevatorMotor)
-
-            configPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT, -ElevatorConstants.ACTIVE_PEAK_OUT, TIMEOUT)
         }
 
         arrayOf(masterElevatorMotor, slaveElevatorMotor).forEach {
@@ -82,7 +80,7 @@ object ElevatorSubsystem : Subsystem() {
             configClosedloopRamp(0.3, TIMEOUT)
             configOpenloopRamp(0.5, TIMEOUT)
 
-            configPeakOutput(ElevatorConstants.IDLE_PEAK_OUT, -ElevatorConstants.IDLE_PEAK_OUT, TIMEOUT)
+            configPeakOutput(ElevatorConstants.ACTIVE_PEAK_OUT, -ElevatorConstants.ACTIVE_PEAK_OUT, TIMEOUT)
 
             closedLpControl = true
         }
