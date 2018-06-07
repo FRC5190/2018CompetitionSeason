@@ -3,7 +3,7 @@
 This project includes code for our 2018 Robot for FRC Power UP, "Falcon Heavy"
 
 Some features of this robot include
- * 2 Cube Autonomous
+ * 3 Cube Autonomous
  * Vision Tracking to detect and go to cubes (2018Vision repository)
  * Path generation on a laptop via Network Tables (2018Feeder repository)
  * Elevator and Arm that can lock in place
