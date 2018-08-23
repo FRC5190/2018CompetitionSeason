@@ -1,31 +1,21 @@
-import jaci.gradle.deploy.artifact.FileCollectionArtifact
+/*
+ * FRC Team 5190
+ * Green Hope Falcons
+ */
 import jaci.openrio.gradle.GradleRIOPlugin
 import jaci.openrio.gradle.frc.FRCJavaArtifact
 import jaci.openrio.gradle.frc.RoboRIO
 
-buildscript {
-    ext.kotlin_version = '1.2.41'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.21"
+    id "org.jetbrains.kotlin.jvm" version "1.2.60"
     id "java"
-    id "eclipse"
     id "idea"
     id "jaci.openrio.gradle.GradleRIO" version "2018.03.06"
 }
-apply plugin: 'kotlin'
 
 def TEAM = 5190
 def ROBOT_CLASS = "frc.team5190.robot.Robot"
 
-// Define my targets (RoboRIO) and artifacts (deployable files)
-// This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
     targets {
         target("roborio", RoboRIO) {
@@ -38,54 +28,37 @@ deploy {
         artifact('frcJava', FRCJavaArtifact) {
             targets << "roborio"
         }
-
-        artifact('LS-LL', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/LS-LL')
-            directory = '/home/lvuser/paths/LS-LL'
-            targets << "roborio"
-        }
-
-        artifact('LS-RR', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/LS-RR')
-            directory = '/home/lvuser/paths/LS-RR'
-            targets << "roborio"
-        }
-
-        artifact('CS-L', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/CS-L')
-            directory = '/home/lvuser/paths/CS-L'
-            targets << "roborio"
-        }
-
-        artifact('CS-R', FileCollectionArtifact) {
-            files = project.fileTree(dir: 'src/main/resources/CS-R')
-            directory = '/home/lvuser/paths/CS-R'
-            targets << "roborio"
-        }
     }
 }
 
 repositories {
     mavenCentral()
 }
-// Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
-// and NavX.
+
+
+wpi {
+    ctreVersion = '5.3.1.0'
+}
+
 dependencies {
     compile wpilib()
     compile ctre()
     compile navx()
-    compile openrio.powerup.matchData()
     compile pathfinder()
+    compile openrio.powerup.matchData()
+
+    compile project("FalconLibrary")
+
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.3'
 
     compile 'com.github.salomonbrys.kotson:kotson:2.5.0'
     compile 'org.apache.commons:commons-math3:3.6.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile 'org.knowm.xchart:xchart:3.2.2'
+
+    testCompile 'junit:junit:4.12'
 }
 
-// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
-// in order to make them all available at runtime. Also adding the manifest so WPILib
-// knows where to look for our Robot Class.
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     manifest GradleRIOPlugin.javaManifest(ROBOT_CLASS)
@@ -104,4 +77,16 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+version 'unspecified'
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
 }
