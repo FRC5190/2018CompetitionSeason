@@ -76,6 +76,8 @@ object DriveConstants {
     const val MOTION_DT = 0.02
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
+
+    const val TRACK_WIDTH = 27.0 / 12.0
 }
 
 // Elevator Constants
