@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
+import frc.team5190.robot.auto.MotionProfileCommand2
 import frc.team5190.robot.util.*
 
 /**
@@ -55,6 +56,9 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configMotionProfileTrajectoryPeriod(10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, TIMEOUT)
             it.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, TIMEOUT)
+
+            it.config_kP(0, DriveConstants.P_HIGH, TIMEOUT)
+            it.config_kF(0, DriveConstants.V_HIGH, TIMEOUT)
         }
 
         // Dual speed gearing
@@ -208,6 +212,11 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
         rightMaster.set(controlMode, rightMotorOutput * controlMode.scale() * m_maxOutput)
 
         feedSafety()
+    }
+
+    fun setTrajectoryVelocity(pathOut: MotionProfileCommand2.Output) {
+        leftMaster.set(ControlMode.Velocity, pathOut.lSetpoint, DemandType.ArbitraryFeedForward, pathOut.lAdditiveFF)
+        rightMaster.set(ControlMode.Velocity, pathOut.rSetpoint, DemandType.ArbitraryFeedForward, pathOut.rAdditiveFF)
     }
 }
 

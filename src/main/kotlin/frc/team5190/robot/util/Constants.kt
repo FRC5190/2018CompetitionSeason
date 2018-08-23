@@ -54,6 +54,9 @@ object DriveConstants {
     const val P_HIGH = 2.0
     const val I_HIGH = 0.0
     const val D_HIGH = 0.0
+    const val V_HIGH = 0.656
+    const val A_HIGH = 0.030
+    const val S_HIGH = 0.050
 
     const val PID_SLOT_HIGH = 0
 

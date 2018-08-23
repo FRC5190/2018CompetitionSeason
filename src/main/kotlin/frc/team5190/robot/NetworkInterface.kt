@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Notifier
 import frc.team5190.lib.wrappers.FalconRobotBase
 import frc.team5190.lib.wrappers.networktables.FalconNetworkTable
 import frc.team5190.lib.wrappers.networktables.get
+import frc.team5190.robot.auto.MotionProfileCommand2
 
 @Suppress("HasPlatformType")
 object NetworkInterface {
