@@ -4,6 +4,7 @@
  */
 import jaci.openrio.gradle.GradleRIOPlugin
 import jaci.openrio.gradle.frc.FRCJavaArtifact
+import jaci.gradle.deploy.artifact.FileCollectionArtifact
 import jaci.openrio.gradle.frc.RoboRIO
 
 plugins {
@@ -38,7 +39,7 @@ deploy {
             directory = '/home/lvuser/paths/LS-RR'
             targets << "roborio"
         }
-         artifact('CS-L', FileCollectionArtifact) {	
+         artifact('CS-L', FileCollectionArtifact) {
             files = project.fileTree(dir: 'src/main/resources/CS-L')
             directory = '/home/lvuser/paths/CS-L'
             targets << "roborio"
