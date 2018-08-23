@@ -91,7 +91,6 @@ class MotionProfileCommand2(val trajectory: Trajectory<TimedState<Pose2dWithCurv
         lookaheadY = pathY
     }
 
-
     companion object {
         var pathX = 0.0
             private set

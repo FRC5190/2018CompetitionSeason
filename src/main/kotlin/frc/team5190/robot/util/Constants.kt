@@ -90,6 +90,9 @@ object ElevatorConstants {
     const val P = 0.3
     const val I = 0.0
     const val D = 0.0
+    const val F = 0.395
+
+
     const val PID_SLOT = 0
 
     const val LOW_PEAK = 5
@@ -112,9 +115,11 @@ object ArmConstants {
     const val INVERTED = true
     const val SENSOR_PHASE = false
 
-    const val P = 4.0
+    const val P = 4.5
     const val I = 0.0
     const val D = 0.0
+    const val F = 16.78 + 0.9
+
     const val PID_SLOT = 0
 
     const val DOWN_TICKS = -795
