@@ -18,13 +18,16 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.util.DriveConstants
 import kotlin.math.sign
 
-class MotionProfileCommand2(val trajectory: Trajectory<TimedState<Pose2dWithCurvature>>, mirrored: Boolean) : Command() {
+class MotionProfileCommand2(val trajectory: Trajectory<TimedState<Pose2dWithCurvature>>, mirrored: Boolean = false) : Command() {
 
     private val trajectoryFollower: TrajectoryFollower
 
     private val syncNotifier = Object()
     private var stopNotifier = false
     private val notifier: Notifier
+
+    val pathDuration
+        get() = trajectory.lastState.t
 
     private var lastVelocity = 0.0 to 0.0
 
