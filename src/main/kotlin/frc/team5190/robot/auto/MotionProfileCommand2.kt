@@ -18,7 +18,7 @@ import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.util.DriveConstants
 import kotlin.math.sign
 
-class MotionProfileCommand2(val trajectory: Trajectory<TimedState<Pose2dWithCurvature>>, mirrored: Boolean = false) : Command() {
+open class MotionProfileCommand2(val trajectory: Trajectory<TimedState<Pose2dWithCurvature>>, pathMirrored: Boolean = false) : Command() {
 
     private val trajectoryFollower: TrajectoryFollower
 
@@ -32,7 +32,10 @@ class MotionProfileCommand2(val trajectory: Trajectory<TimedState<Pose2dWithCurv
     private var lastVelocity = 0.0 to 0.0
 
     init {
-        val finalTrajectory = if (mirrored) {
+
+        this.requires(DriveSubsystem)
+
+        val finalTrajectory = if (pathMirrored) {
             TrajectoryUtil.mirrorTimed(trajectory)
         } else {
             trajectory

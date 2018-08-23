@@ -135,7 +135,7 @@ class Robot : IterativeRobot() {
                     DriveSubsystem.resetEncoders()
                     runBlocking { Localization.reset(sideChooserSelected.pose) }
 
-                    autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    autonomousRoutine = AutoHelper2.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
                 }
             } catch (ignored: Exception) {
             }
