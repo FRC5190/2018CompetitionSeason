@@ -64,6 +64,8 @@ class Robot : IterativeRobot() {
         ArmSubsystem
 
         Pathreader
+        Localization
+        NetworkInterface
         Canifier
         Lidar
         Pigeon
