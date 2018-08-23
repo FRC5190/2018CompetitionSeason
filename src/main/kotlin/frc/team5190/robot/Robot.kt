@@ -20,7 +20,11 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.*
+import frc.team5190.robot.sensors.Canifier
+import frc.team5190.robot.sensors.LEDs
+import frc.team5190.robot.sensors.Lidar
+import frc.team5190.robot.sensors.Pigeon
+import kotlinx.coroutines.experimental.runBlocking
 import openrio.powerup.MatchData
 
 class Robot : IterativeRobot() {
@@ -126,7 +130,10 @@ class Robot : IterativeRobot() {
 
                     // Reset gyro
                     Pigeon.reset()
-                    Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
+                    Pigeon.angleOffset = sideChooserSelected.pose.rotation.degrees
+
+                    DriveSubsystem.resetEncoders()
+                    runBlocking { Localization.reset(sideChooserSelected.pose) }
 
                     autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
                 }

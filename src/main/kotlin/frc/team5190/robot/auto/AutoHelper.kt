@@ -6,6 +6,7 @@
 package frc.team5190.robot.auto
 
 import edu.wpi.first.wpilibj.command.*
+import frc.team5190.lib.math.geometry.Pose2d
 import frc.team5190.robot.arm.*
 import frc.team5190.robot.drive.*
 import frc.team5190.robot.elevator.*
@@ -274,8 +275,10 @@ class AutoHelper {
 }
 
 // Starting Position of the Robot
-enum class StartingPositions {
-    LEFT, CENTER, RIGHT;
+enum class StartingPositions(val pose: Pose2d) {
+    LEFT(FastTrajectories.kSideStart),
+    CENTER(FastTrajectories.kCenterStart),
+    RIGHT(FastTrajectories.kSideStart.mirror)
 }
 
 // Auto mode to run
