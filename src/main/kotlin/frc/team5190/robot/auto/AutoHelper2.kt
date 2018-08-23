@@ -18,7 +18,7 @@ class AutoHelper2 {
                     sameSideAutoMode: AutoModes,
                     crossAutoMode: AutoModes): CommandGroup {
 
-            when (startingPositions) {
+            return when (startingPositions) {
                 StartingPositions.CENTER -> commandGroup {
                     val firstSwitch = MotionProfileCommand2(if (switchOwnedSide == MatchData.OwnedSide.LEFT) {
                         FastTrajectories.centerStartToLeftSwitch
@@ -67,7 +67,7 @@ class AutoHelper2 {
 
                 StartingPositions.RIGHT, StartingPositions.LEFT -> {
                     if (startingPositions.name.first().toUpperCase() == scaleOwnedSide.name.first().toUpperCase()) {
-                        return when (sameSideAutoMode) {
+                        when (sameSideAutoMode) {
                             AutoModes.BASELINE -> commandGroup {
                                 addSequential(MotionProfileCommand2(FastTrajectories.baseline, startingPositions == StartingPositions.RIGHT))
                             }
@@ -77,7 +77,7 @@ class AutoHelper2 {
                             }
                         }
                     } else {
-                        return when (crossAutoMode) {
+                        when (crossAutoMode) {
                             AutoModes.BASELINE -> commandGroup {
                                 addSequential(MotionProfileCommand2(FastTrajectories.baseline, startingPositions == StartingPositions.RIGHT))
                             }
