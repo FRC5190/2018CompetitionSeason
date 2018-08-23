@@ -65,6 +65,7 @@ class Robot : IterativeRobot() {
 
         Pathreader
         Localization
+        FastTrajectories
         NetworkInterface
         Canifier
         Lidar
