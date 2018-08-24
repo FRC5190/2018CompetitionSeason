@@ -98,7 +98,7 @@ class AutoHelper2 {
 
             val timeToGoUp = if (nearScale) 2.50 else 1.50
             val firstCube = object : MotionProfileCommand2(if (nearScale) FastTrajectories.leftStartToNearScale else FastTrajectories.leftStartToFarScale,
-                   pathMirrored = startingPositions == StartingPositions.RIGHT ) {
+                    pathMirrored = startingPositions == StartingPositions.RIGHT) {
 
                 override fun isFinished(): Boolean {
                     return super.isFinished() ||
@@ -110,7 +110,8 @@ class AutoHelper2 {
             // 1st Cube in Scale
             addSequential(commandGroup {
                 addParallel(firstCube) // Go to scale
-                addParallel(commandGroup { // Command that lets elevator go up to switch height
+                addParallel(commandGroup {
+                    // Command that lets elevator go up to switch height
                     addSequential(TimedCommand(0.2))
                     addSequential(object : CommandGroup() {
                         var startTime: Long = 0
@@ -228,11 +229,47 @@ class AutoHelper2 {
                 })
             })
 
+            // Pickup 4th Cube
             addSequential(commandGroup {
-                addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE))
-                addParallel(IntakeCommand(IntakeDirection.IN, timeout = 10.0))
-                addParallel(MotionProfileCommand2(FastTrajectories.scaleToCube3, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT))
+                addSequential(commandGroup {
+                    addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE)) // Elevator down
+                    addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 5.0))
+                    addParallel(object : MotionProfileCommand2(FastTrajectories.scaleToCube3, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
+
+                        var startTime: Long = 0L
+
+                        override fun initialize() {
+                            super.initialize()
+                            startTime = System.currentTimeMillis()
+                        }
+
+                        override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
+                    }) // Path to third cube
+                })
+                addSequential(IntakeHoldCommand(), 0.001)
             })
+
+            // 3rd Cube in Scale
+            addSequential(commandGroup {
+                val dropThirdCubePath = MotionProfileCommand2(FastTrajectories.cube3ToScale, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)
+                addParallel(dropThirdCubePath) // Go to scale
+                addParallel(commandGroup {
+                    addSequential(commandGroup {
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand((dropThirdCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
+                            addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0) // Elevator up 3 seconds before path ends
+                        })
+                        addParallel(commandGroup {
+                            addSequential(object : Command() {
+                                override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
+                            })
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.40, timeout = 0.50)) // Shoot cube when arm at appropriate position
+                            addSequential(IntakeHoldCommand(), 0.001)
+                        })
+                    })
+                })
+            })
+
 
         }
     }

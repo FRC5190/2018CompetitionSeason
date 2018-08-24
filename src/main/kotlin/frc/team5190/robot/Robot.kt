@@ -43,12 +43,16 @@ class Robot : IterativeRobot() {
     private val crossAutoChooser = SendableChooser<AutoModes>()
     private val sameSideAutoChooser = SendableChooser<AutoModes>()
 
+    private val autoTypeChooser = SendableChooser<AutoType>()
+
     var switchSide = MatchData.OwnedSide.UNKNOWN
     var scaleSide = MatchData.OwnedSide.UNKNOWN
 
     var sideChooserSelected = StartingPositions.LEFT
     var sameSideAutoSelected = AutoModes.FULL
     var crossAutoSelected = AutoModes.FULL
+
+    var autoTypeSelected = AutoType.NEW
 
     private var autonomousRoutine: CommandGroup? = null
     private var hasRunAuto = false
@@ -84,6 +88,10 @@ class Robot : IterativeRobot() {
             crossAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it)
         }
 
+        AutoType.values().forEach {
+            autoTypeChooser.addObject(it.name.toLowerCase().capitalize(), it)
+        }
+
         SmartDashboard.putData("Starting Position", sideChooser)
 
         SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
@@ -111,6 +119,7 @@ class Robot : IterativeRobot() {
                 if (sideChooser.selected != sideChooserSelected ||
                         sameSideAutoChooser.selected != sameSideAutoSelected ||
                         crossAutoChooser.selected != crossAutoSelected ||
+                        autoTypeChooser.selected != autoTypeSelected ||
                         MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) != switchSide ||
                         MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide ||
                         hasRunAuto) {
@@ -121,6 +130,8 @@ class Robot : IterativeRobot() {
                     sameSideAutoSelected = sameSideAutoChooser.selected
                     crossAutoSelected = crossAutoChooser.selected
 
+                    autoTypeSelected = autoTypeChooser.selected
+
                     switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
                     scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
 
@@ -128,14 +139,18 @@ class Robot : IterativeRobot() {
 
                     println("Received Game Specific Data: ${DriverStation.getInstance().gameSpecificMessage}")
 
-                    // Reset gyro
+                    // Reset gyrog
                     Pigeon.reset()
                     Pigeon.angleOffset = sideChooserSelected.pose.rotation.degrees
 
                     DriveSubsystem.resetEncoders()
                     runBlocking { Localization.reset(sideChooserSelected.pose) }
 
-                    autonomousRoutine = AutoHelper2.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    autonomousRoutine = if (autoTypeSelected == AutoType.NEW) {
+                        AutoHelper2.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    } else {
+                        AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    }
                 }
             } catch (ignored: Exception) {
             }
@@ -174,4 +189,6 @@ class Robot : IterativeRobot() {
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = "Xbox"
     }
+
+    enum class AutoType { CHAMPS, NEW }
 }
