@@ -135,7 +135,7 @@ class AutoHelper2 {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
                             addSequential(TimedCommand(0.1))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (nearScale) 0.5 else 0.65, timeout = 0.50)) // Shoot cube
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (nearScale) 0.35 else 0.65, timeout = 0.50)) // Shoot cube
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -147,17 +147,21 @@ class AutoHelper2 {
                 addSequential(commandGroup {
                     addParallel(ElevatorPresetCommand(ElevatorPreset.INTAKE)) // Elevator down
                     addParallel(IntakeCommand(IntakeDirection.IN, speed = 1.0, timeout = 10.0)) // Intake on
-                    addParallel(object : MotionProfileCommand2(FastTrajectories.scaleToCube1, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
+                    addParallel(commandGroup {
+                        addSequential(TimedCommand(0.3))
+                        addSequential(object : MotionProfileCommand2(FastTrajectories.scaleToCube1, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT) {
 
-                        var startTime: Long = 0L
+                            var startTime: Long = 0L
 
-                        override fun initialize() {
-                            super.initialize()
-                            startTime = System.currentTimeMillis()
-                        }
+                            override fun initialize() {
+                                super.initialize()
+                                startTime = System.currentTimeMillis()
+                            }
 
-                        override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
-                    }) // Path to second cube
+                            override fun isFinished() = super.isFinished() || ((System.currentTimeMillis() - startTime > 750) && IntakeSubsystem.isCubeIn)
+                        }) //
+                    })
+
                 })
                 addSequential(IntakeHoldCommand(), 0.001)
 
