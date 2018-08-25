@@ -74,7 +74,7 @@ class AutoHelper2 {
                     if (startingPositions.name.first().toUpperCase() == scaleOwnedSide.name.first().toUpperCase()) {
                         when (sameSideAutoMode) {
                             AutoModes.BASELINE -> commandGroup {
-                                addSequential(MotionProfileCommand2(FastTrajectories.baseline, startingPositions == StartingPositions.RIGHT))
+                                addSequential(MotionProfileCommand2(FastTrajectories.leftStartToNearScale, startingPositions == StartingPositions.RIGHT))
                             }
 
                             AutoModes.FULL, AutoModes.SIMPLE, AutoModes.SWITCH -> getFullAuto(startingPositions, scaleOwnedSide)
@@ -82,7 +82,7 @@ class AutoHelper2 {
                     } else {
                         when (crossAutoMode) {
                             AutoModes.BASELINE -> commandGroup {
-                                addSequential(MotionProfileCommand2(FastTrajectories.baseline, startingPositions == StartingPositions.RIGHT))
+                                addSequential(MotionProfileCommand2(FastTrajectories.leftStartToFarScale, startingPositions == StartingPositions.RIGHT))
                             }
 
                             AutoModes.FULL, AutoModes.SIMPLE, AutoModes.SWITCH -> getFullAuto(startingPositions, scaleOwnedSide)
@@ -96,7 +96,7 @@ class AutoHelper2 {
         private fun getFullAuto(startingPositions: StartingPositions, scaleOwnedSide: MatchData.OwnedSide) = commandGroup {
             val nearScale = startingPositions.name.first().toUpperCase() == scaleOwnedSide.name.first().toUpperCase()
 
-            val timeToGoUp = if (nearScale) 2.50 else 1.50
+            val timeToGoUp = if (nearScale) 1.75 else 1.50
             val firstCube = object : MotionProfileCommand2(if (nearScale) FastTrajectories.leftStartToNearScale else FastTrajectories.leftStartToFarScale,
                     pathMirrored = startingPositions == StartingPositions.RIGHT) {
 
@@ -117,7 +117,7 @@ class AutoHelper2 {
                         var startTime: Long = 0
 
                         init {
-                            addParallel(AutoElevatorCommand(ElevatorPosition.SWITCH))
+                            addParallel(AutoElevatorCommand(ElevatorPosition.FIRST_STAGE))
                             addParallel(AutoArmCommand(ArmPosition.UP))
                         }
 

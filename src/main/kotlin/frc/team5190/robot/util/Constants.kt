@@ -80,7 +80,7 @@ object DriveConstants {
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
 
-    const val TRACK_WIDTH = 27.0 / 12.0
+    const val TRACK_WIDTH = 2.6
 }
 
 // Elevator Constants
@@ -90,7 +90,7 @@ object ElevatorConstants {
     const val P = 0.3
     const val I = 0.0
     const val D = 0.0
-    const val F = 0.395
+    const val F = 0.0
 
 
     const val PID_SLOT = 0
@@ -118,7 +118,7 @@ object ArmConstants {
     const val P = 4.5
     const val I = 0.0
     const val D = 0.0
-    const val F = 16.78 + 0.9
+    const val F = 0.0
 
     const val PID_SLOT = 0
 

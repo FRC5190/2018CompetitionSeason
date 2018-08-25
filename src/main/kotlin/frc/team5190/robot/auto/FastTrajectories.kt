@@ -40,7 +40,7 @@ object FastTrajectories {
     // Constants in Feet Per Second
     private const val kMaxVelocity = 10.0
     private const val kMaxAcceleration = 4.0
-    private const val kMaxCentripetalAcceleration = 4.0
+    private const val kMaxCentripetalAcceleration = 3.0
 
     // Constraints
     private val kConstraints = arrayListOf<TimingConstraint<Pose2dWithCurvature>>(
@@ -61,8 +61,8 @@ object FastTrajectories {
     private val kNearCube2Adjusted = kNearCube2.transformBy(kCenterToIntake)
     private val kNearCube3Adjusted = kNearCube3.transformBy(kCenterToIntake)
 
-    private val kSwitchLeft = Pose2d(Translation2d(11.5, 18.2), Rotation2d())
-    private val kSwitchRight = Pose2d(Translation2d(11.5, 08.8), Rotation2d())
+    private val kSwitchLeft = Pose2d(Translation2d(11.5, 18.5), Rotation2d())
+    private val kSwitchRight = Pose2d(Translation2d(11.5, 08.5), Rotation2d())
 
     internal val kSwitchLeftAdjusted = kSwitchLeft.transformBy(kCenterToFrontBumper)
     private val kSwitchRightAdjusted = kSwitchRight.transformBy(kCenterToFrontBumper)
@@ -74,7 +74,7 @@ object FastTrajectories {
     // FastTrajectories
     val leftStartToNearScale = waypoints {
         +kSideStart
-        +kSideStart.transformBy(Pose2d.fromTranslation(Translation2d(-10.0, 0.0)))
+        +kSideStart.transformBy(Pose2d.fromTranslation(Translation2d(-8.0, 0.0)))
         +kNearScaleEmpty
     }.generateTrajectory(reversed = true)
 

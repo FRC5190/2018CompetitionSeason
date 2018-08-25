@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team5190.lib.wrappers.networktables.get
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
@@ -147,6 +148,8 @@ class Robot : IterativeRobot() {
 
                     DriveSubsystem.resetEncoders()
                     runBlocking { Localization.reset(sideChooserSelected.pose) }
+
+                    NetworkInterface.INSTANCE.getEntry("Reset").setBoolean(true)
 
                     autonomousRoutine = if (autoTypeSelected == AutoType.NEW) {
                         AutoHelper2.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)

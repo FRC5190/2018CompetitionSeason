@@ -75,6 +75,7 @@ class FalconDrive(val leftMotors: List<WPI_TalonSRX>,
             it.configPeakCurrentDuration(0, TIMEOUT)
             it.configPeakCurrentLimit(0, TIMEOUT)
             it.enableCurrentLimit(true)
+            it.configClosedloopRamp(0.3, TIMEOUT)
         }
     }
 
