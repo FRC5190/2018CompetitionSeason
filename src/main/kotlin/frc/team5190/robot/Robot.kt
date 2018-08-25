@@ -97,6 +97,8 @@ class Robot : IterativeRobot() {
         SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
         SmartDashboard.putData("Same Side Scale Mode", sameSideAutoChooser)
 
+        SmartDashboard.putData("Auto Type", autoTypeChooser)
+
         // Reset subsystems for autonomous
         IntakeSubsystem.enableVoltageCompensation()
         DriveSubsystem.autoReset()

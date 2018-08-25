@@ -251,12 +251,12 @@ class AutoHelper2 {
 
             // 4th Cube in Scale
             addSequential(commandGroup {
-                val dropThirdCubePath = MotionProfileCommand2(FastTrajectories.cube3ToScale, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)
-                addParallel(dropThirdCubePath) // Go to scale
+                val dropFourthCubePath = MotionProfileCommand2(FastTrajectories.cube3ToScale, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)
+                addParallel(dropFourthCubePath) // Go to scale
                 addParallel(commandGroup {
                     addSequential(commandGroup {
                         addParallel(commandGroup {
-                            addSequential(TimedCommand((dropThirdCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
+                            addSequential(TimedCommand((dropFourthCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
                             addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0) // Elevator up 3 seconds before path ends
                         })
                         addParallel(commandGroup {
