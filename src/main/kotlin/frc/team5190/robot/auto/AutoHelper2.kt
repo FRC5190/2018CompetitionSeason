@@ -249,7 +249,7 @@ class AutoHelper2 {
                 addSequential(IntakeHoldCommand(), 0.001)
             })
 
-            // 3rd Cube in Scale
+            // 4th Cube in Scale
             addSequential(commandGroup {
                 val dropThirdCubePath = MotionProfileCommand2(FastTrajectories.cube3ToScale, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)
                 addParallel(dropThirdCubePath) // Go to scale

@@ -139,7 +139,7 @@ class Robot : IterativeRobot() {
 
                     println("Received Game Specific Data: ${DriverStation.getInstance().gameSpecificMessage}")
 
-                    // Reset gyrog
+                    // Reset gyro
                     Pigeon.reset()
                     Pigeon.angleOffset = sideChooserSelected.pose.rotation.degrees
 
