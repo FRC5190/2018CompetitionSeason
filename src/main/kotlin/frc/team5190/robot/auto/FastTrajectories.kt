@@ -19,23 +19,23 @@ import frc.team5190.lib.math.trajectory.timing.TimingConstraint
 object FastTrajectories {
 
     // ROBOT DIMENSIONS
-    const val kRobotWidth = 27.0 / 12.0
-    const val kRobotLength = 33.0 / 12.0
-    const val kIntakeLength = 16.0 / 12.0
-    const val kBumperLength = 02.0 / 12.0
+    private const val kRobotWidth = 27.0 / 12.0
+    private const val kRobotLength = 33.0 / 12.0
+    private const val kIntakeLength = 16.0 / 12.0
+    private const val kBumperLength = 02.0 / 12.0
 
     // ROBOT POSES
-    const val kRobotStartX = (kRobotLength / 2.0) + kBumperLength
+    private const val kRobotStartX = (kRobotLength / 2.0) + kBumperLength
 
-    const val kExchangeZoneBottomY = 14.5
-    const val kPortalZoneBottomY = 27 - (29.69 / 12.0)
+    private const val kExchangeZoneBottomY = 14.5
+    private const val kPortalZoneBottomY = 27 - (29.69 / 12.0)
 
-    const val kRobotSideStartY = kPortalZoneBottomY - (kRobotWidth / 2.0) - kBumperLength
-    const val kRobotCenterStartY = kExchangeZoneBottomY - (kRobotWidth / 2.0) - kBumperLength
+    private const val kRobotSideStartY = kPortalZoneBottomY - (kRobotWidth / 2.0) - kBumperLength
+    private const val kRobotCenterStartY = kExchangeZoneBottomY - (kRobotWidth / 2.0) - kBumperLength
 
     // MECHANISM TRANSFORMATIONS
-    val kCenterToIntake = Pose2d(Translation2d(-(kRobotLength / 2.0) - kIntakeLength, 0.0), Rotation2d())
-    val kCenterToFrontBumper = Pose2d(Translation2d(-(kRobotLength / 2.0) - kBumperLength, 0.0), Rotation2d())
+    private val kCenterToIntake = Pose2d(Translation2d(-(kRobotLength / 2.0) - kIntakeLength, 0.0), Rotation2d())
+    private val kCenterToFrontBumper = Pose2d(Translation2d(-(kRobotLength / 2.0) - kBumperLength, 0.0), Rotation2d())
 
     // Constants in Feet Per Second
     private const val kMaxVelocity = 10.0
@@ -51,8 +51,8 @@ object FastTrajectories {
     internal val kCenterStart = Pose2d(Translation2d(kRobotStartX, kRobotCenterStartY), Rotation2d())
 
     private val kNearScaleEmpty = Pose2d(Translation2d(23.7, 20.2), Rotation2d.fromDegrees(160.0))
-    internal val kNearScaleFull = Pose2d(Translation2d(23.95, 20.2), Rotation2d.fromDegrees(160.0))
-    internal val kNearScaleFull2 = Pose2d(Translation2d(24.3, 20.2), Rotation2d.fromDegrees(160.0))
+    private val kNearScaleFull = Pose2d(Translation2d(23.95, 20.2), Rotation2d.fromDegrees(160.0))
+    private val kNearScaleFullInner = Pose2d(Translation2d(24.3, 20.2), Rotation2d.fromDegrees(160.0))
 
     private val kNearCube1 = Pose2d(Translation2d(16.5, 19.5), Rotation2d.fromDegrees(190.0))
     private val kNearCube2 = Pose2d(Translation2d(16.7, 17.0), Rotation2d.fromDegrees(220.0))
@@ -65,7 +65,7 @@ object FastTrajectories {
     private val kSwitchLeft = Pose2d(Translation2d(11.9, 18.5), Rotation2d())
     private val kSwitchRight = Pose2d(Translation2d(11.9, 08.5), Rotation2d())
 
-    internal val kSwitchLeftAdjusted = kSwitchLeft.transformBy(kCenterToFrontBumper)
+    private val kSwitchLeftAdjusted = kSwitchLeft.transformBy(kCenterToFrontBumper)
     private val kSwitchRightAdjusted = kSwitchRight.transformBy(kCenterToFrontBumper)
 
     private val kFrontPyramidCube = Pose2d(Translation2d(10.25, 13.5), Rotation2d())
@@ -82,8 +82,8 @@ object FastTrajectories {
     val leftStartToFarScale = waypoints {
         +kSideStart
         +kSideStart.transformBy(Pose2d(Translation2d(-13.0, 00.0), Rotation2d()))
-        +kSideStart.transformBy(Pose2d(Translation2d(-19.5, 05.0), Rotation2d.fromDegrees(-90.0)))
-        +kSideStart.transformBy(Pose2d(Translation2d(-19.5, 14.0), Rotation2d.fromDegrees(-90.0)))
+        +kSideStart.transformBy(Pose2d(Translation2d(-19.0, 05.0), Rotation2d.fromDegrees(-90.0)))
+        +kSideStart.transformBy(Pose2d(Translation2d(-19.0, 14.0), Rotation2d.fromDegrees(-90.0)))
         +kNearScaleEmpty.mirror
     }.generateTrajectory(reversed = true)
 
@@ -104,7 +104,7 @@ object FastTrajectories {
 
     val cube2ToScale = waypoints {
         +kNearCube2Adjusted
-        +kNearScaleFull2
+        +kNearScaleFullInner
     }.generateTrajectory(reversed = true)
 
     val scaleToCube3 = waypoints {
@@ -115,7 +115,7 @@ object FastTrajectories {
 
     val cube3ToScale = waypoints {
         +kNearCube3Adjusted
-        +kNearScaleFull2
+        +kNearScaleFullInner
     }.generateTrajectory(reversed = true)
 
     val centerStartToLeftSwitch = waypoints {

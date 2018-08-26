@@ -74,7 +74,7 @@ class AutoHelper2 {
                     if (startingPositions.name.first().toUpperCase() == scaleOwnedSide.name.first().toUpperCase()) {
                         when (sameSideAutoMode) {
                             AutoModes.BASELINE -> commandGroup {
-                                addSequential(MotionProfileCommand2(FastTrajectories.leftStartToNearScale, startingPositions == StartingPositions.RIGHT))
+                                addSequential(MotionProfileCommand2(FastTrajectories.baseline, startingPositions == StartingPositions.RIGHT))
                             }
 
                             AutoModes.FULL, AutoModes.SIMPLE, AutoModes.SWITCH -> getFullAuto(startingPositions, scaleOwnedSide)
@@ -82,7 +82,7 @@ class AutoHelper2 {
                     } else {
                         when (crossAutoMode) {
                             AutoModes.BASELINE -> commandGroup {
-                                addSequential(MotionProfileCommand2(FastTrajectories.leftStartToFarScale, startingPositions == StartingPositions.RIGHT))
+                                addSequential(MotionProfileCommand2(FastTrajectories.baseline, startingPositions == StartingPositions.RIGHT))
                             }
 
                             AutoModes.FULL, AutoModes.SIMPLE, AutoModes.SWITCH -> getFullAuto(startingPositions, scaleOwnedSide)
@@ -92,7 +92,7 @@ class AutoHelper2 {
             }
         }
 
-        // Complete 3 cube scale auto
+        // Complete 4 cube scale auto
         private fun getFullAuto(startingPositions: StartingPositions, scaleOwnedSide: MatchData.OwnedSide) = commandGroup {
             val nearScale = startingPositions.name.first().toUpperCase() == scaleOwnedSide.name.first().toUpperCase()
 
@@ -135,7 +135,7 @@ class AutoHelper2 {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
                             addSequential(TimedCommand(0.1))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (nearScale) 0.35 else 0.65, timeout = 0.50)) // Shoot cube
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (nearScale) 0.35 else 0.35, timeout = 0.50)) // Shoot cube
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
@@ -178,7 +178,7 @@ class AutoHelper2 {
                 addParallel(commandGroup {
                     addSequential(commandGroup {
                         addParallel(commandGroup {
-                            addSequential(TimedCommand((dropSecondCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
+                            addSequential(TimedCommand((dropSecondCubePath.pathDuration - 2.7).coerceAtLeast(0.001)))
                             addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0) // Elevator up 3 seconds before path ends
                         })
                         addParallel(commandGroup {
@@ -219,7 +219,7 @@ class AutoHelper2 {
                 addParallel(commandGroup {
                     addSequential(commandGroup {
                         addParallel(commandGroup {
-                            addSequential(TimedCommand((dropThirdCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
+                            addSequential(TimedCommand((dropThirdCubePath.pathDuration - 2.7).coerceAtLeast(0.001)))
                             addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0) // Elevator up 3 seconds before path ends
                         })
                         addParallel(commandGroup {
@@ -260,7 +260,7 @@ class AutoHelper2 {
                 addParallel(commandGroup {
                     addSequential(commandGroup {
                         addParallel(commandGroup {
-                            addSequential(TimedCommand((dropFourthCubePath.pathDuration - 3.0).coerceAtLeast(0.001)))
+                            addSequential(TimedCommand((dropFourthCubePath.pathDuration - 2.7).coerceAtLeast(0.001)))
                             addSequential(ElevatorPresetCommand(ElevatorPreset.BEHIND_LIDAR), 3.0) // Elevator up 3 seconds before path ends
                         })
                         addParallel(commandGroup {
