@@ -39,8 +39,8 @@ object FastTrajectories {
 
     // Constants in Feet Per Second
     private const val kMaxVelocity = 10.0
-    private const val kMaxAcceleration = 4.0
-    private const val kMaxCentripetalAcceleration = 3.0
+    private const val kMaxAcceleration = 5.0
+    private const val kMaxCentripetalAcceleration = 5.0
 
     // Constraints
     private val kConstraints = arrayListOf<TimingConstraint<Pose2dWithCurvature>>(
