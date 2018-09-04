@@ -40,7 +40,7 @@ open class MotionProfileCommand2(val trajectory: Trajectory<TimedState<Pose2dWit
         } else {
             trajectory
         }
-        trajectoryFollower = NonLinearController(finalTrajectory)
+        trajectoryFollower = NonLinearController(finalTrajectory, DriveConstants.FOLLOW_BETA, DriveConstants.FOLLOW_ZETA)
 
         notifier = Notifier {
             synchronized(syncNotifier) {

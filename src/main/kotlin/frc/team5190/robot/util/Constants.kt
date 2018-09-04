@@ -51,6 +51,9 @@ object DriveConstants {
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
+    const val FOLLOW_BETA = 0.30
+    const val FOLLOW_ZETA = 0.85
+
     const val P_HIGH = 2.0
     const val I_HIGH = 0.0
     const val D_HIGH = 0.0
