@@ -55,7 +55,7 @@ object FastTrajectories {
     private val kNearScaleFullInner = Pose2d(Translation2d(24.3, 20.2), Rotation2d.fromDegrees(160.0))
 
     private val kNearCube1 = Pose2d(Translation2d(16.5, 19.5), Rotation2d.fromDegrees(190.0))
-    private val kNearCube2 = Pose2d(Translation2d(16.7, 17.0), Rotation2d.fromDegrees(220.0))
+    private val kNearCube2 = Pose2d(Translation2d(16.7, 16.8), Rotation2d.fromDegrees(220.0))
     private val kNearCube3 = Pose2d(Translation2d(16.8, 14.5), Rotation2d.fromDegrees(245.0))
 
     private val kNearCube1Adjusted = kNearCube1.transformBy(kCenterToIntake)
@@ -82,8 +82,8 @@ object FastTrajectories {
     val leftStartToFarScale = waypoints {
         +kSideStart
         +kSideStart.transformBy(Pose2d(Translation2d(-13.0, 00.0), Rotation2d()))
-        +kSideStart.transformBy(Pose2d(Translation2d(-19.0, 05.0), Rotation2d.fromDegrees(-90.0)))
-        +kSideStart.transformBy(Pose2d(Translation2d(-19.0, 14.0), Rotation2d.fromDegrees(-90.0)))
+        +kSideStart.transformBy(Pose2d(Translation2d(-19.5, 05.0), Rotation2d.fromDegrees(-90.0)))
+        +kSideStart.transformBy(Pose2d(Translation2d(-19.5, 14.0), Rotation2d.fromDegrees(-90.0)))
         +kNearScaleEmpty.mirror
     }.generateTrajectory(reversed = true)
 

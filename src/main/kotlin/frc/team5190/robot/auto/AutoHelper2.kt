@@ -135,7 +135,7 @@ class AutoHelper2 {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
                             addSequential(TimedCommand(0.1))
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (nearScale) 0.35 else 0.35, timeout = 0.50)) // Shoot cube
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = if (nearScale) 0.35 else 0.65, timeout = 0.50)) // Shoot cube
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })
