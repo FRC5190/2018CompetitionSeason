@@ -1,5 +1,7 @@
 # 2018Bot
 
+[![Build Status](https://dev.azure.com/prateekmachiraju0645/Test%20Project/_apis/build/status/5190GreenHopeRobotics.2018Bot)](https://dev.azure.com/prateekmachiraju0645/Test%20Project/_build/latest?definitionId=1)
+
 This project includes code for our 2018 Robot for FRC Power UP, "Falcon Heavy"
 
 Some features of this robot include
