@@ -69,6 +69,7 @@ object ElevatorSubsystem : Subsystem() {
 
             // Closed Loop Control
             configPID(ElevatorConstants.PID_SLOT, ElevatorConstants.P, ElevatorConstants.I, ElevatorConstants.D, TIMEOUT)
+            config_kF(0, ElevatorConstants.F, TIMEOUT)
             configAllowableClosedloopError(ElevatorConstants.PID_SLOT, inchesToNativeUnits(ElevatorConstants.TOLERANCE_INCHES), TIMEOUT)
 
             // Motion Magic Control

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team5190.lib.wrappers.networktables.get
 import frc.team5190.robot.arm.ArmSubsystem
 import frc.team5190.robot.auto.*
 import frc.team5190.robot.climb.ClimbSubsystem
@@ -20,7 +21,11 @@ import frc.team5190.robot.climb.IdleClimbCommand
 import frc.team5190.robot.drive.DriveSubsystem
 import frc.team5190.robot.elevator.ElevatorSubsystem
 import frc.team5190.robot.intake.IntakeSubsystem
-import frc.team5190.robot.sensors.*
+import frc.team5190.robot.sensors.Canifier
+import frc.team5190.robot.sensors.LEDs
+import frc.team5190.robot.sensors.Lidar
+import frc.team5190.robot.sensors.Pigeon
+import kotlinx.coroutines.experimental.runBlocking
 import openrio.powerup.MatchData
 
 class Robot : IterativeRobot() {
@@ -39,12 +44,16 @@ class Robot : IterativeRobot() {
     private val crossAutoChooser = SendableChooser<AutoModes>()
     private val sameSideAutoChooser = SendableChooser<AutoModes>()
 
+    private val autoTypeChooser = SendableChooser<AutoType>()
+
     var switchSide = MatchData.OwnedSide.UNKNOWN
     var scaleSide = MatchData.OwnedSide.UNKNOWN
 
     var sideChooserSelected = StartingPositions.LEFT
     var sameSideAutoSelected = AutoModes.FULL
     var crossAutoSelected = AutoModes.FULL
+
+    var autoTypeSelected = AutoType.NEW
 
     private var autonomousRoutine: CommandGroup? = null
     private var hasRunAuto = false
@@ -64,6 +73,9 @@ class Robot : IterativeRobot() {
         ArmSubsystem
 
         Pathreader
+        Localization
+        FastTrajectories
+        NetworkInterface
         Canifier
         Lidar
         Pigeon
@@ -77,10 +89,16 @@ class Robot : IterativeRobot() {
             crossAutoChooser.addObject(it.name.toLowerCase().capitalize() + " (${it.numCubes})", it)
         }
 
+        AutoType.values().forEach {
+            autoTypeChooser.addObject(it.name.toLowerCase().capitalize(), it)
+        }
+
         SmartDashboard.putData("Starting Position", sideChooser)
 
         SmartDashboard.putData("Cross Scale Mode", crossAutoChooser)
         SmartDashboard.putData("Same Side Scale Mode", sameSideAutoChooser)
+
+        SmartDashboard.putData("Auto Type", autoTypeChooser)
 
         // Reset subsystems for autonomous
         IntakeSubsystem.enableVoltageCompensation()
@@ -104,6 +122,7 @@ class Robot : IterativeRobot() {
                 if (sideChooser.selected != sideChooserSelected ||
                         sameSideAutoChooser.selected != sameSideAutoSelected ||
                         crossAutoChooser.selected != crossAutoSelected ||
+                        autoTypeChooser.selected != autoTypeSelected ||
                         MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR) != switchSide ||
                         MatchData.getOwnedSide(MatchData.GameFeature.SCALE) != scaleSide ||
                         hasRunAuto) {
@@ -114,6 +133,8 @@ class Robot : IterativeRobot() {
                     sameSideAutoSelected = sameSideAutoChooser.selected
                     crossAutoSelected = crossAutoChooser.selected
 
+                    autoTypeSelected = autoTypeChooser.selected
+
                     switchSide = MatchData.getOwnedSide(MatchData.GameFeature.SWITCH_NEAR)
                     scaleSide = MatchData.getOwnedSide(MatchData.GameFeature.SCALE)
 
@@ -123,9 +144,18 @@ class Robot : IterativeRobot() {
 
                     // Reset gyro
                     Pigeon.reset()
-                    Pigeon.angleOffset = if (sideChooserSelected == StartingPositions.CENTER) 0.0 else 180.0
+                    Pigeon.angleOffset = sideChooserSelected.pose.rotation.degrees
 
-                    autonomousRoutine = AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    DriveSubsystem.resetEncoders()
+                    runBlocking { Localization.reset(sideChooserSelected.pose) }
+
+                    NetworkInterface.INSTANCE.getEntry("Reset").setBoolean(true)
+
+                    autonomousRoutine = if (autoTypeSelected == AutoType.NEW) {
+                        AutoHelper2.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    } else {
+                        AutoHelper.getAuto(sideChooserSelected, switchSide, scaleSide, sameSideAutoSelected, crossAutoSelected)
+                    }
                 }
             } catch (ignored: Exception) {
             }
@@ -164,4 +194,6 @@ class Robot : IterativeRobot() {
         DriveSubsystem.teleopReset()
         DriveSubsystem.controller = "Xbox"
     }
+
+    enum class AutoType { CHAMPS, NEW }
 }
