@@ -40,6 +40,7 @@ object ArmSubsystem : Subsystem() {
 
             // Closed Loop Control
             configPID(ArmConstants.PID_SLOT, ArmConstants.P, ArmConstants.I, ArmConstants.D, TIMEOUT)
+            config_kF(0, ArmConstants.F, TIMEOUT)
             configNominalOutput(ArmConstants.NOMINAL_OUT, -ArmConstants.NOMINAL_OUT, TIMEOUT)
             configPeakOutput(ArmConstants.PEAK_OUT, -ArmConstants.PEAK_OUT, TIMEOUT)
             configAllowableClosedloopError(0, ArmConstants.TOLERANCE, TIMEOUT)

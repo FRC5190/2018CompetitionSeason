@@ -21,11 +21,11 @@ object Pathreader {
     private const val PATHFEEDER_MODE = false
 
     // Loads all paths to memory on robotInit
-    private val allPaths = File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
-        folder.listFiles().filter { it.isFile }.map { file ->
-            Pair("${folder.name}/${file.nameWithoutExtension}", Pathfinder.readFromCSV(file))
-        }
-    }.flatten().toMap()
+    private val allPaths: Map<String, Trajectory> = mapOf()
+//            File("/home/lvuser/paths/").listFiles().filter { it.isDirectory }.map { folder ->
+//        folder.listFiles().filter { it.isFile }.map { file ->
+//            Pair("${folder.name}/${file.nameWithoutExtension}", Pathfinder.readFromCSV(file))
+//        }
 
     private val pathfinderOutputTable = NetworkTableInstance.getDefault().getTable("pathfinderOutput")!!
     private val pathfinderInputTable = NetworkTableInstance.getDefault().getTable("pathfinderInput")!!

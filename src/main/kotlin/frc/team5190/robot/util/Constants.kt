@@ -45,15 +45,21 @@ object SolenoidIDs {
 // Drive Constants
 object DriveConstants {
     const val SENSOR_UNITS_PER_ROTATION = 1440
-    const val WHEEL_RADIUS = 5.905 / 2.0
+    const val WHEEL_RADIUS = 2.92
     const val DRIVE_BASE_WIDTH = 29.5
 
     const val MAX_RPM_HIGH = 925
     const val MAX_STU_HIGH = 2220
 
+    const val FOLLOW_BETA = 0.30
+    const val FOLLOW_ZETA = 0.85
+
     const val P_HIGH = 2.0
     const val I_HIGH = 0.0
     const val D_HIGH = 0.0
+    const val V_HIGH = 0.656
+    const val A_HIGH = 0.030
+    const val S_HIGH = 0.050
 
     const val PID_SLOT_HIGH = 0
 
@@ -76,6 +82,8 @@ object DriveConstants {
     const val MOTION_DT = 0.02
     const val AUTO_SHIFT_LOW_THRESHOLD = 2.0
     const val AUTO_SHIFT_HIGH_THRESHOLD = 5.0
+
+    const val TRACK_WIDTH = 2.6
 }
 
 // Elevator Constants
@@ -85,6 +93,9 @@ object ElevatorConstants {
     const val P = 0.3
     const val I = 0.0
     const val D = 0.0
+    const val F = 0.0
+
+
     const val PID_SLOT = 0
 
     const val LOW_PEAK = 5
@@ -107,9 +118,11 @@ object ArmConstants {
     const val INVERTED = true
     const val SENSOR_PHASE = false
 
-    const val P = 4.0
+    const val P = 4.5
     const val I = 0.0
     const val D = 0.0
+    const val F = 0.0
+
     const val PID_SLOT = 0
 
     const val DOWN_TICKS = -795
