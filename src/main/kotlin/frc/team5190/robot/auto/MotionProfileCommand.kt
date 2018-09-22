@@ -58,7 +58,7 @@ open class MotionProfileCommand(folder: String, file: String,
     private var startTime: Double? = null
 
     init {
-        // Trajectories for each side of the drivetrain
+        // FastTrajectories for each side of the drivetrain
         val trajectories = Pathreader.getPath(folder, file)
         leftPath = trajectories[0].let { if (pathReversed) reverseTrajectory(it) else it }
         rightPath = trajectories[1].let { if (pathReversed) reverseTrajectory(it) else it }
