@@ -89,6 +89,14 @@ object ArmSubsystem : Subsystem() {
 
         Controls.armSubsystem()
     }
+
+    fun autoReset() {
+        masterArmMotor.config_kF(0, 0.0, TIMEOUT)
+    }
+
+    fun teleopReset() {
+        masterArmMotor.config_kF(0, 16.78 + 0.9, TIMEOUT)
+    }
 }
 
 // Arm position presets

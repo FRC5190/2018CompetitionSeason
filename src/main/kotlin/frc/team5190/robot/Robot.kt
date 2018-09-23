@@ -104,6 +104,8 @@ class Robot : IterativeRobot() {
         IntakeSubsystem.enableVoltageCompensation()
         DriveSubsystem.autoReset()
 
+        ArmSubsystem.autoReset()
+
         Pigeon.reset()
 
         ClimbSubsystem.climbState = false
@@ -114,6 +116,7 @@ class Robot : IterativeRobot() {
 
         // Logging
         SmartDashboard.putNumber("Pigeon Corrected Angle", Pigeon.correctedAngle)
+        SmartDashboard.putNumber("Localization Angle", Localization.robotPosition.rotation.degrees)
 
 
         // Receives game data from the FMS and generates autonomous routine
@@ -185,6 +188,8 @@ class Robot : IterativeRobot() {
         ElevatorSubsystem.set(ControlMode.MotionMagic, ElevatorSubsystem.currentPosition.toDouble())
         ArmSubsystem.set(ControlMode.MotionMagic, ArmSubsystem.currentPosition.toDouble())
         IntakeSubsystem.disableVoltageCompensation()
+
+        ArmSubsystem.teleopReset()
 
 
         // Clean up from autonomous
