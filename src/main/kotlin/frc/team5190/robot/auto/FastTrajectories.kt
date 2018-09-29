@@ -62,7 +62,7 @@ object FastTrajectories {
     private val kNearCube2Adjusted = kNearCube2.transformBy(kCenterToIntake)
     private val kNearCube3Adjusted = kNearCube3.transformBy(kCenterToIntake)
 
-    private val kFarCube1 = Pose2d(Translation2d(16.5, 20.2), Rotation2d.fromDegrees(190.0))
+    private val kFarCube1 = Pose2d(Translation2d(16.5, 20.0), Rotation2d.fromDegrees(195.0))
     private val kFarCube1Adjusted = kFarCube1.transformBy(kCenterToIntake)
 
     private val kSwitchLeft = Pose2d(Translation2d(11.9, 18.5), Rotation2d())
