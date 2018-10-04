@@ -1,5 +1,5 @@
 # 2018Bot
 
-Branch for Doyenne Inspiration Code
+Branch for THOR Code
 
 
