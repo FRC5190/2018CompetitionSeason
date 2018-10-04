@@ -163,10 +163,10 @@ object FastTrajectories {
 
     val pyramidToScale = waypoints {
         +kFrontPyramidCubeAdjusted
-        +kFrontPyramidCubeAdjusted.transformBy(Pose2d(Translation2d(1.0, 9.0), Rotation2d.fromDegrees(180.0)))
+        +kFrontPyramidCubeAdjusted.transformBy(Pose2d(Translation2d(2.0, 9.0), Rotation2d.fromDegrees(180.0)))
         +kFrontPyramidCubeAdjusted.transformBy(Pose2d(Translation2d(7.0, 9.0), Rotation2d.fromDegrees(180.0)))
         +kNearScaleEmpty
-    }.generateTrajectory(reversed = true)
+    }.generateTrajectory(reversed = true, maxVelocity = 4.0, maxAcceleration = 3.0, constraints = arrayListOf(CentripetalAccelerationConstraint(3.0)))
 
     val baseline = waypoints {
         +kSideStart

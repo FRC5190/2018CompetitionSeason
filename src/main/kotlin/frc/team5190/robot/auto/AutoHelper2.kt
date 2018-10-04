@@ -57,17 +57,21 @@ class AutoHelper2 {
                     })
 
                     addSequential(IntakeHoldCommand(), 0.001)
-                    addSequential(MotionProfileCommand2(FastTrajectories.pyramidToCenter)) // Drive back to wall
-
                     addSequential(commandGroup {
-                        addParallel(secondSwitch) // Path to go to switch
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0) // Elevator to switch height
-                        addParallel(commandGroup {
-                            addSequential(TimedCommand(secondSwitch.pathDuration - 0.2)) // Wait 0.2 seconds before path ends
-                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5)) // Outtake cube
-                            addSequential(IntakeHoldCommand(), 0.001)
-                        })
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
+                        addParallel(MotionProfileCommand2(FastTrajectories.pyramidToScale, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)) // Drive back to wall
                     })
+
+
+//                    addSequential(commandGroup {
+//                        addParallel(secondSwitch) // Path to go to switch
+//                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0) // Elevator to switch height
+//                        addParallel(commandGroup {
+//                            addSequential(TimedCommand(secondSwitch.pathDuration - 0.2)) // Wait 0.2 seconds before path ends
+//                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5)) // Outtake cube
+//                            addSequential(IntakeHoldCommand(), 0.001)
+//                        })
+//                    })
                 }
 
                 StartingPositions.RIGHT, StartingPositions.LEFT -> {
@@ -227,7 +231,7 @@ class AutoHelper2 {
                             addSequential(object : Command() {
                                 override fun isFinished() = ArmSubsystem.currentPosition > ArmPosition.BEHIND.ticks - 100
                             })
-                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.40, timeout = 0.50)) // Shoot cube when arm at appropriate position
+                            addSequential(IntakeCommand(IntakeDirection.OUT, speed = 0.20, timeout = 0.75)) // Shoot cube when arm at appropriate position
                             addSequential(IntakeHoldCommand(), 0.001)
                         })
                     })

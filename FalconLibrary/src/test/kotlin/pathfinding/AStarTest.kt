@@ -72,8 +72,8 @@ fun main(args: Array<String>) {
 
 
     PathWindow.path = arrayListOf(kFrontPyramidCubeAdjusted,
-            kFrontPyramidCubeAdjusted.transformBy(Pose2d(Translation2d(1.0, 9.0), Rotation2d.fromDegrees(180.0))),
-            kFrontPyramidCubeAdjusted.transformBy(Pose2d(Translation2d(7.0, 9.0), Rotation2d.fromDegrees(180.0))),
+            kFrontPyramidCubeAdjusted.transformBy(Pose2d(Translation2d(2.0, 8.0), Rotation2d.fromDegrees(180.0))),
+            kFrontPyramidCubeAdjusted.transformBy(Pose2d(Translation2d(7.0, 8.0), Rotation2d.fromDegrees(180.0))),
             kNearScaleEmpty)
 
     //AStarTest.start = Point(0.0, 2.5)
