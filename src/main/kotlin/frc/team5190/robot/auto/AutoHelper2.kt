@@ -57,21 +57,17 @@ class AutoHelper2 {
                     })
 
                     addSequential(IntakeHoldCommand(), 0.001)
+                    addSequential(MotionProfileCommand2(FastTrajectories.pyramidToCenter)) // Drive back to wall
+
                     addSequential(commandGroup {
-                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH))
-                        addParallel(MotionProfileCommand2(FastTrajectories.pyramidToScale, pathMirrored = scaleOwnedSide == MatchData.OwnedSide.RIGHT)) // Drive back to wall
+                        addParallel(secondSwitch) // Path to go to switch
+                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0) // Elevator to switch height
+                        addParallel(commandGroup {
+                            addSequential(TimedCommand(secondSwitch.pathDuration - 0.2)) // Wait 0.2 seconds before path ends
+                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5)) // Outtake cube
+                            addSequential(IntakeHoldCommand(), 0.001)
+                        })
                     })
-
-
-//                    addSequential(commandGroup {
-//                        addParallel(secondSwitch) // Path to go to switch
-//                        addParallel(ElevatorPresetCommand(ElevatorPreset.SWITCH), 3.0) // Elevator to switch height
-//                        addParallel(commandGroup {
-//                            addSequential(TimedCommand(secondSwitch.pathDuration - 0.2)) // Wait 0.2 seconds before path ends
-//                            addSequential(IntakeCommand(IntakeDirection.OUT, timeout = 0.2, speed = 0.5)) // Outtake cube
-//                            addSequential(IntakeHoldCommand(), 0.001)
-//                        })
-//                    })
                 }
 
                 StartingPositions.RIGHT, StartingPositions.LEFT -> {

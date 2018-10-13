@@ -167,6 +167,7 @@ object Controls {
         // Back button enables climb state
         if (MainXbox.backButtonPressed) {
             ClimbSubsystem.climbState = true
+            DriveSubsystem.controlMode = DriveMode.CURVE
             if(ElevatorSubsystem.closedLpControl) {
                 commandGroup {
                     addParallel(AutoArmCommand(ArmPosition.ALL_UP))
@@ -178,6 +179,7 @@ object Controls {
 
         // Start button disables climb state
         if (MainXbox.startButtonPressed) {
+            DriveSubsystem.controlMode = DriveMode.TANK
             ClimbSubsystem.climbState = false
             ClimbSubsystem.currentCommand?.cancel()
         }
